@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BitbucketMajeraCodeReviewSettings">
+    <option name="popularEmojiShortcuts">
+      <list />
+    </option>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="27c55dd0-ed84-4ad9-b5b9-da50a8c4f8d4" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/calagopus-docs.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.npmrc" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pnpm-lock.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/pnpm-workspace.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/app.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/content/getting-started.svx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/assets/favicon.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/components/TableOfContents.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/index.ts" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/layouts/DocsLayout.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/+layout.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/+page.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/docs/+layout.svelte" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/docs/+page.mdx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/routes/docs/getting-started/+page.mdx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/static/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/svelte.config.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tsconfig.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/vite.config.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager">
+    <option name="groupingKeys">
+      <option value="directory" />
+      <option value="repository" />
+    </option>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="fresh-start" />
+                    <option name="lastUsedInstant" value="1768736140" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1768736139" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="37nLjqtEoYZyk2M5QgSs4RIvkxj" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "fresh-start",
+    "javascript.nodejs.core.library.configured.version": "22.20.0",
+    "javascript.nodejs.core.library.typings.version": "22.19.3",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/jelco/Projects/calagopus-docs",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.standard": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.standard": "",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "settings.javascript.linters.eslint",
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "/home/jelco/Projects/calagopus-docs/node_modules/typescript/lib"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/routes/docs/getting-started/introduction" />
+      <recent name="$PROJECT_DIR$/src/content" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-WS-253.29346.143" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="27c55dd0-ed84-4ad9-b5b9-da50a8c4f8d4" name="Changes" comment="" />
+      <created>1767534026788</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1767534026788</updated>
+      <workItem from="1767534028075" duration="12011000" />
+      <workItem from="1767878401472" duration="20000" />
+      <workItem from="1768733135085" duration="446000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
