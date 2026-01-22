@@ -1,7 +1,7 @@
-import { defineConfig } from 'vitepress'
+import { withMermaid } from "vitepress-plugin-mermaid";
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+export default withMermaid({
   srcDir: "web",
   
   title: "Calagopus",
@@ -25,10 +25,18 @@ export default defineConfig({
         ]
       },
       {
-        text: 'Installation',
+        text: 'Panel',
         items: [
-          { text: 'Panel Installation', link: '/docs/installation/panel' },
-          { text: 'Wings Installation', link: '/docs/installation/wings' }
+          { text: 'Overview', link: '/docs/panel/overview' },
+          { text: 'Environment', link: '/docs/panel/environment' },
+          { text: 'Installation', link: '/docs/panel/installation' },
+        ]
+      },
+      {
+        text: 'Wings',
+        items: [
+          { text: 'Overview', link: '/docs/wings/overview' },
+          { text: 'Installation', link: '/docs/wings/installation' },
         ]
       }
     ],
@@ -41,5 +49,5 @@ export default defineConfig({
     search: {
       provider: 'local'
     }
-  }
+  },
 })
