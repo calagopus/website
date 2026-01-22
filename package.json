@@ -1,4 +1,12 @@
 {
+  "name": "website",
+  "private": true,
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=10.0.0"
+  },
+  "license": "MIT",
   "devDependencies": {
     "@braintree/sanitize-url": "^7.1.1",
     "cytoscape": "^3.33.1",

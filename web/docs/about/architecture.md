@@ -169,7 +169,7 @@ graph TD
   PrimaryDB -.->|Replication| ReplicaDBUS
 ```
 
-In this architecture, we have 3 regions: Germany, Singapore, and the USA. Each region has its own panel instance, cache, and backend cluster. The Germany region contains the primary database since it is essentially in the middle of the other two, while the Singapore and USA regions have read replicas. The load balancer distributes incoming requests to the appropriate panel instance based on factors such as geographic location or server load.
+In this architecture, we have 3 regions: Germany, Singapore, and the USA. Each region has its own panel instance, cache, and backend cluster. The Germany region contains the primary database since it is essentially in the middle of the other two, while the Singapore and USA regions have read replicas. The load balancer distributes incoming requests to the appropriate panel instance based on factors such as geographic location or server load. This is the same setup that [MCJars](https://mcjars.app) uses to distribute load globally.
 
 In a real-world scenario, having more than 2 backends per region is not needed as the backend is already multi-threaded and can handle many requests simultaneously. The reason why 2 is a good number is that one can be used for maintenance or updates while the other continues to serve requests, though this can be avoided by having sticky sessions at the load balancer level.
 
