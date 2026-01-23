@@ -3,6 +3,7 @@ import { withMermaid } from "vitepress-plugin-mermaid";
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   srcDir: "web",
+  cleanUrls: true,
   
   title: "Calagopus",
   description: "Game server management - made simple",
@@ -37,6 +38,12 @@ export default withMermaid({
         items: [
           { text: 'Overview', link: '/docs/wings/overview' },
           { text: 'Installation', link: '/docs/wings/installation' },
+        ]
+      },
+      {
+        text: 'Advanced',
+        items: [
+          { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
         ]
       }
     ],
