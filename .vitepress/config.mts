@@ -44,6 +44,7 @@ export default withMermaid({
         text: 'Advanced',
         items: [
           { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
+          { text: 'Reverse Proxy', link: '/docs/advanced/reverse-proxy' },
         ]
       }
     ],
