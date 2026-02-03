@@ -51,11 +51,7 @@ markdown: {
         text: 'Advanced',
         items: [
           { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
-<<<<<<< Updated upstream
-          { text: 'Reverse Proxy', link: '/docs/advanced/reverse-proxy' },
-=======
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
->>>>>>> Stashed changes
         ]
       }
     ],
