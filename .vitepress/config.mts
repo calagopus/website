@@ -29,6 +29,7 @@ markdown: {
         items: [
           { text: 'What is Calagopus?', link: '/docs/about/what-is-calagopus' },
           { text: 'Features', link: '/docs/about/features' },
+          { text: 'Benchmarks', link: '/docs/about/benchmarks' },
           { text: 'Architecture', link: '/docs/about/architecture' }
         ]
       },
