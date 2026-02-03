@@ -189,7 +189,7 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
     SSLCertificateFile      /etc/letsencrypt/live/<domain>/fullchain.pem
     SSLCertificateKeyFile   /etc/letsencrypt/live/<domain>/privkey.pem
 
-    SSLProtocol TLSv1.2 TLSv1.3
+    SSLProtocol -all +TLSv1.2 +TLSv1.3
     SSLCipherSuite HIGH:!aNULL:!MD5
     SSLHonorCipherOrder on
     SSLSessionTickets on
