@@ -39,6 +39,12 @@ markdown: {
           { text: 'Overview', link: '/docs/panel/overview' },
           { text: 'Environment', link: '/docs/panel/environment' },
           { text: 'Installation', link: '/docs/panel/installation' },
+          {
+            text: 'Extensions',
+            items: [
+              { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
+            ]
+          }
         ]
       },
       {
