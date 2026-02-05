@@ -6,7 +6,7 @@ export default withMermaid({
   srcDir: "web",
   cleanUrls: true,
 
-markdown: {
+  markdown: {
     config(md) {
       md.use(tabsMarkdownPlugin)
     },
@@ -14,6 +14,16 @@ markdown: {
 
   title: "Calagopus",
   description: "Game server management - made simple",
+  head: [
+    [
+      'link',
+      {
+        rel: 'icon',
+        href: '/favicon.ico',
+      },
+    ],
+  ],
+
   themeConfig: {
     logo: '/logo.svg',
 
