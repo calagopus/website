@@ -48,7 +48,13 @@ export default withMermaid({
         items: [
           { text: 'Overview', link: '/docs/panel/overview' },
           { text: 'Environment', link: '/docs/panel/environment' },
-          { text: 'Installation', link: '/docs/panel/installation' },
+          { text: 'Installation',
+            link: '/docs/panel/installation',
+            items: [
+              { text: 'Docker', link: '/docs/panel/installation/docker' },
+              { text: 'Package Manager', link: '/docs/panel/installation/pkgmanager' },
+            ]
+          },
           {
             text: 'Extensions',
             items: [
