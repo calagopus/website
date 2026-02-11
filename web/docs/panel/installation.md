@@ -67,6 +67,8 @@ With the APT/RPM repository, you can directly install Calagopus from your packag
 
 ::::tabs
 === With APT
+*todo: add postgres*
+
 #### Add the repository
 The first step to install Calagopus is to add the Calagopus APT repository. To do so, on your server run theses commands:
 
@@ -80,6 +82,31 @@ apt update
 Now that the repository has been added, you can now install the Calagopus Panel package. You can do this by running the following commands:
 ```bash
 apt install -y calagopus-panel
+```
+
+#### Configure Environment Variables 
+
+Before starting the Panel, you need to configure the environment variables. By default, the `.env` is not included in the package, you can download it manually by running the following commands:
+```bash
+mkdir -p /etc/calagopus
+cd /etc/calagopus
+
+curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
+ls -lha # should show you the .env file
+```
+
+Edit the `.env` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../panel/environment.md) for more details on each variable.
+
+If you prefer doing the absolute minimum, you can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
+
+```bash
+RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
+```
+
+To test the configuration, you can run:
+```bash
+calagopus-panel
 ```
 
 === With RPM
