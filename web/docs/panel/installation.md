@@ -61,6 +61,31 @@ If everything went well, you should be able to access the Panel by navigating to
 
 ![Calagopus Panel OOBE](./oobe.png)
 
+### On Linux with APT/RPM
+
+With the APT/RPM repository, you can directly install Calagopus from your package manager. Select your package manager below:
+
+::::tabs
+=== With APT
+#### Add the repository
+The first step to install Calagopus is to add the Calagopus APT repository. To do so, on your server run theses commands:
+
+```bash
+curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://packages.calagopus.com/deb stable main" | sudo tee /etc/apt/sources.list.d/calagopus.list
+apt update
+```
+
+#### Install Calagopus Panel
+Now that the repository has been added, you can now install the Calagopus Panel package. You can do this by running the following commands:
+```bash
+apt install -y calagopus-panel
+```
+
+=== With RPM
+dfg
+::::
+
 ### On Windows Bare Metal
 
 wip docs
