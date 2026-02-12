@@ -200,7 +200,7 @@ EOF
 #### Install Calagopus Panel
 Now that the repository has been added, you can now install the Calagopus Panel package. You can do this by running the following commands:
 ```bash
-# todo: add yum install
+dnf install calagopus-panel
 ```
 
 #### Database Configuration
