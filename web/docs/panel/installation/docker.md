@@ -1,6 +1,6 @@
 # Docker Panel Installation
 
-Please see the [Minimum Requirements](./overview.md#minimum-requirements) section in the Panel Overview documentation.
+Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview documentation.
 
 ## Getting Started
 
@@ -37,7 +37,7 @@ ls -lh # should show you the compose.yml file
 
 #### Configure Environment Variables
 
-Before starting the Panel, you need to configure the environment variables. Edit the `compose.yml` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../panel/environment.md) for more details on each variable.
+Before starting the Panel, you need to configure the environment variables. Edit the `compose.yml` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for more details on each variable.
 
 If you prefer doing the absolute minimum, you can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
 
