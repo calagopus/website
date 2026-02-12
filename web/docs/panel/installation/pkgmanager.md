@@ -36,7 +36,7 @@ sudo systemctl start redis-server
 ```
 
 #### Add the repository
-The first step to install Calagopus is to add the Calagopus APT repository. To do so, on your server run theses commands:
+The first step to install Calagopus is to add the Calagopus APT repository. If the APT repository is already added, you can skip this step. To do so, on your server run theses commands:
 
 ```bash
 curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
@@ -188,7 +188,7 @@ If your operating system isn't listed here, you can look up on Google on how to 
 :::
 
 #### Add the repository
-The first step to install Calagopus is to add the Calagopus RPM repository. To do so, on your server run theses commands:
+The first step to install Calagopus is to add the Calagopus RPM repository. If the RPM repository is already added, you can skip this step. To do so, on your server run theses commands:
 ```bash
 sudo rpm --import https://packages.calagopus.com/pubring.gpg
 sudo tee /etc/yum.repos.d/calagopus.repo > /dev/null <<EOF

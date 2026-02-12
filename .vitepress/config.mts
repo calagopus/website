@@ -67,7 +67,13 @@ export default withMermaid({
         text: 'Wings',
         items: [
           { text: 'Overview', link: '/docs/wings/overview' },
-          { text: 'Installation', link: '/docs/wings/installation' },
+          { text: 'Installation',
+            link: '/docs/wings/installation',
+            items: [
+              { text: 'Binary', link: '/docs/wings/installation/binary' },
+              { text: 'Package Manager', link: '/docs/wings/installation/pkgmanager' },
+            ]
+          },
         ]
       },
       {
