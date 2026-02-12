@@ -7,8 +7,17 @@
     "pnpm": ">=10.0.0"
   },
   "license": "MIT",
+  "scripts": {
+    "docs:dev": "vitepress dev",
+    "docs:build": "vitepress build",
+    "docs:preview": "vitepress preview",
+    "biome:validate": "biome format --css-parse-tailwind-directives=true && biome lint --css-parse-tailwind-directives=true && biome check",
+    "biome:fix": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write",
+    "biome:fix-unsafe": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write --unsafe"
+  },
   "devDependencies": {
-    "@braintree/sanitize-url": "^7.1.1",
+    "@biomejs/biome": "2.3.15",
+    "@braintree/sanitize-url": "^7.1.2",
     "cytoscape": "^3.33.1",
     "cytoscape-cose-bilkent": "^4.1.0",
     "dayjs": "^1.11.19",
@@ -17,11 +26,6 @@
     "vitepress": "2.0.0-alpha.15",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.7.3",
-    "vue": "^3.5.27"
-  },
-  "scripts": {
-    "docs:dev": "vitepress dev",
-    "docs:build": "vitepress build",
-    "docs:preview": "vitepress preview"
+    "vue": "^3.5.28"
   }
 }
