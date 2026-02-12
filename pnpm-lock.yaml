@@ -9,7 +9,7 @@ importers:
   .:
     devDependencies:
       '@biomejs/biome':
-        specifier: ^2.3.14
+        specifier: 2.3.15
         version: 2.3.15
       '@braintree/sanitize-url':
         specifier: ^7.1.2
