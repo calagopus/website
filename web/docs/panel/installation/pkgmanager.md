@@ -14,6 +14,10 @@ To install PostgreSQL, [click me to view the guide](https://wiki.postgresql.org/
 sudo apt update
 sudo apt install postgresql-18
 ```
+Then, start PostgreSQL when the server reboots:
+```bash
+sudo systemctl enable --now postgresql
+```
 
 To install Redis, run the following commands:
 ```bash
@@ -112,7 +116,7 @@ If everything went well, you should be able to access the Panel by navigating to
 #### Prerequisites
 This guide assumes you have PostgreSQL and Redis installed on your server.
 
-To install PostgreSQL, [click me to view the guide](https://www.postgresql.org/download/linux/redhat/) to add the RPM repository, but do not do the optional steps unless you know what you are doing. For example, if you use Fedora 43 and are on a x86_64 architecture, you would run:
+To install PostgreSQL, [click me to view the guide](https://www.postgresql.org/download/linux/redhat/) to add the RPM repository, but skip the database initialization step and skip straight to enable automatic start (the command should start with `sudo systemctl`). For example, if you use Fedora 43 and are on a x86_64 architecture, you would run:
 ```bash
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server
