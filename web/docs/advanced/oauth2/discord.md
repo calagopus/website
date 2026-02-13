@@ -1,0 +1,1 @@
+[Download `discord.yaml` ➚](./files/discord.yml)

@@ -81,6 +81,16 @@ export default withMermaid({
         items: [
           { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
+          {
+            text: 'Setting up OAuth2',
+            link: '/docs/advanced/oauth2',
+            items: [
+              { text: 'GitHub', link: '/docs/advanced/oauth2/github' },
+              { text: 'Google', link: '/docs/advanced/oauth2/google' },
+              { text: 'Discord', link: '/docs/advanced/oauth2/discord' },
+              { text: 'Self-Hosted', link: '/docs/advanced/oauth2/selfhosted' },
+            ],
+          },
         ],
       },
     ],
