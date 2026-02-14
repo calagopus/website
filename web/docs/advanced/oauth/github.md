@@ -49,7 +49,7 @@ Back to the panel, change the Client ID and the Client secret to the ones GitHub
 On the switches below, choose if you want to enable GitHub OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
 
 It should normally look like this:
-![GitHub Config](./files/images/github/config.png)
+![GitHub Config](./files/images/github/page.png)
 
 Finally, save your changes, and you should be done!
 
