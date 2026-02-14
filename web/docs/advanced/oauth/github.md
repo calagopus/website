@@ -1,14 +1,14 @@
-# GitHub OAuth2 Setup
+# GitHub OAuth Setup
 
-This guide will show you how to setup GitHub OAuth2 for your Calagopus Panel.
+This guide will show you how to setup GitHub OAuth for your Calagopus Panel.
 
 ### Prerequisites
-To setup GitHub OAuth2, you only need 2 things:
+To setup GitHub OAuth, you only need 2 things:
 * [A GitHub account](https://github.com)
 * A Calagopus Panel, cause why would you read this guide if you don't have one??
 
 ### Downloading required files
-To setup GitHub OAuth2, you can use the `github.yaml` file to import to Calagopus Panel without having to manually copy the values by yourself.
+To setup GitHub OAuth, you can use the `github.yaml` file to import to Calagopus Panel without having to manually copy the values by yourself.
 
 To download this file, right click on the link below, and save it locally on your computer.
 
