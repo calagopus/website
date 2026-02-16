@@ -1,6 +1,6 @@
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
-import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
