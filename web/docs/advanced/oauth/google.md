@@ -77,3 +77,46 @@ Add your contact information again, and then click `Next`.
 
 Accept the Google API Services: User Data Policy, and then click `Continue`, and then finally `Create`.
 ![](./files/images/google/image-12.png)
+
+Go back to the `Branding` tab at the left sidebar, and scroll down until you find `Authorized domains`. Add a new domain, and enter your top private domain your Calagopus Panel is located. For example, if your panel is `test.example.com`, you would put `example.com`. Finally, click the `Save` button.
+![](./files/images/google/image-13.png)
+
+::: warning
+Do NOT fill out the `App logo` field, as this will require getting your app verified, which can take some time.
+:::
+
+Next, go to the `Audience` tab, and publish the application.
+![](./files/images/google/image-14.png)
+
+#### Issue an OAuth client and key for that application
+Go back to the `APIs & Services` page. To do so, in the search bar, search for `APIs & Services` or something similar.
+![](./files/images/google/image-6.png)
+
+Pick `Credentials` in the sidebar. Click `+ Create credentials` dropdown and select `OAuth client ID`.
+![](./files/images/google/image-15.png)
+
+Pick `Web application` for the application type, type the name for the client, and add the redirect URL. Then, create the OAuth Client ID by clicking the `Create` button.
+![](./files/images/google/image-16.png)
+
+Copy both your Client ID and your Client secret, and then you can close Google Cloud. You will need thoses for the next step.
+![](./files/images/google/image-17.png)
+
+### Configuring the OAuth Provider
+Back to the panel, change the Client ID and the Client secret to the ones Google has given you.
+
+On the switches below, choose if you want to enable Google OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
+
+It should normally look like this:
+![Google Config](./files/images/google/page.png)
+
+Finally, save your changes, and you should be done!
+
+### Test the configuration
+To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Google account.
+![Testing Google](./files/images/google/test.png)
+
+If everything works correctly, you should now be able to see your Google account in your list.
+![List](./files/images/google/list.png)
+
+### Troubleshooting
+*todo: add troubleshooting guides*
