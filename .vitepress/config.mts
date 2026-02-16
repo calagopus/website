@@ -108,7 +108,7 @@ export default withMermaid({
               { text: 'GitHub', link: '/docs/advanced/oauth/github' },
               { text: 'Google', link: '/docs/advanced/oauth/google' },
               { text: 'Discord', link: '/docs/advanced/oauth/discord' },
-              { text: 'Self-Hosted', link: '/docs/advanced/oauth/selfhosted' },
+              { text: 'Generic', link: '/docs/advanced/oauth/generic' },
             ],
           },
         ],

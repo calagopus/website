@@ -14,6 +14,6 @@ Please see the [Google OAuth](./oauth/google.md) documentation in the OAuth part
 
 Please see the [Discord OAuth](./oauth/discord.md) documentation in the OAuth part of the documentation.
 
-### Self-hosted (authentik, Pocket-ID, authelia, etc.)
+### Generic (Custom OIDC Provider)
 
-Please see the [Self-hosted OAuth](./oauth/selfhosted.md) documentation in the OAuth part of the documentation.
+Please see the [Generic OAuth](./oauth/generic.md) documentation in the OAuth part of the documentation.
