@@ -1,10 +1,30 @@
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
   srcDir: 'web',
   cleanUrls: true,
+
+  vite: {
+    plugins: [
+      ViteImageOptimizer({
+        png: {
+          quality: 80,
+        },
+        jpeg: {
+          quality: 80,
+        },
+        webp: {
+          lossless: true,
+        },
+        svg: {
+          multipass: true,
+        },
+      }),
+    ],
+  },
 
   markdown: {
     config(md) {
