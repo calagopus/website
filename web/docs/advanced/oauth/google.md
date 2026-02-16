@@ -36,3 +36,44 @@ Once imported, click on the newly created Google provider's ID and you should ar
 ![Google OAuth page](./files/images/google/page.png)
 
 Copy the Redirect URL provided by the panel and proceed to the next step.
+
+### Setting up Google OAuth
+#### Select or create a Google Cloud project
+Go to [Google Cloud console](http://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
+![](./files/images/google/image-1.png)
+
+Once there, select a project that you want to use for the Google OAuth app.
+![](./files/images/google/image-2.png)
+
+::: details How to create a project in Google Cloud?
+In the `Select a project` pop-up, click `New project`.
+![](./files/images/google/image-3.png)
+
+Pick a name for the project, in this case Calagopus. The organisation field can be left to no organization.
+![](./files/images/google/image-4.png)
+
+Once the project has been created, wait for all the other steps to complete and then select the project.
+![](./files/images/google/image-5.png)
+:::
+
+#### Register the OAuth application
+In the search bar, search for `APIs & Services` or something similar.
+![](./files/images/google/image-6.png)
+
+Then in the left sidebar, pick `OAuth consent screen` to begin the OAuth application registration.
+![](./files/images/google/image-7.png)
+
+Then, on the `Google Auth Platform not configured yet` page, click on the `Get started` button.
+![](./files/images/google/image-8.png)
+
+On the next screen, pick the name of the application to show on the login page and add your contact information. Then, click on `Next`.
+![](./files/images/google/image-9.png)
+
+Choose `External` for the application type and then click `Next`.
+![](./files/images/google/image-10.png)
+
+Add your contact information again, and then click `Next`.
+![](./files/images/google/image-11.png)
+
+Accept the Google API Services: User Data Policy, and then click `Continue`, and then finally `Create`.
+![](./files/images/google/image-12.png)
