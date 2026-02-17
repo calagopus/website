@@ -29,7 +29,7 @@ Once you arrived to the page, find the 3 values here and paste it on a clipboard
 | **Token URL**  | `token_endpoint`         |
 | **Info URL**   | `userinfo_endpoint`      |
 
-On the same JSON object, look for the `claims_supported` key, and find the claims you need.
+On the same JSON object, look for the `claims_supported` key, and find the claims you need. Below are some JSON path examples that you could use, although you may need to tweak them a little for your specific provider.
 | Identifier          | Example                | Required |
 |---------------------|------------------------|----------|
 | **Identifier Path** | `$.sub`                | ✅        |
@@ -37,3 +37,25 @@ On the same JSON object, look for the `claims_supported` key, and find the claim
 | **Username Path**   | `$.preferred_username` | ❌        |
 | **First Name Path** | `$.given_name`         | ❌        |
 | **Last Name Path**  | `$.family_name`        | ❌        |
+
+Finally, look for the `scopes_supported` key, and find the scopes you need. Usually, you should only put `openid`, `profile` and `email`, but it may depend on your provider.
+
+Then, on your provider, setup Client ID and Client Secrets for Calagopus to use.
+
+### Configuring the OAuth Provider
+Once you got your URL's, your claims and your scopes, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
+![OAuth Providers tab](./files/images/oauth-providers.png)
+
+Then, click on the Create button and you should arrive to a page similar to this:
+![Create OAuth provider page](./files/images/create.png)
+
+On that page, fill out theses fields according to the table below:
+*todo: make table of stuff*
+
+Once that's done, you can click on the `Save` button, and your custom OIDC provider should be setup!
+
+### Test the configuration
+To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your OIDC provider's account. If everything works correctly, you should now be able to see your OIDC provider's in your list.
+
+### Troubleshooting
+*todo: add troubleshooting guides*
