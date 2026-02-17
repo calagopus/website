@@ -29,3 +29,11 @@ Once you arrived to the page, find the 3 values here and paste it on a clipboard
 | **Token URL**  | `token_endpoint`         |
 | **Info URL**   | `userinfo_endpoint`      |
 
+On the same JSON object, look for the `claims_supported` key, and find the claims you need.
+| Identifier          | Example                | Required |
+|---------------------|------------------------|----------|
+| **Identifier Path** | `$.sub`                | ✅        |
+| **Email Path**      | `$.email`              | ❌        |
+| **Username Path**   | `$.preferred_username` | ❌        |
+| **First Name Path** | `$.given_name`         | ❌        |
+| **Last Name Path**  | `$.family_name`        | ❌        |
