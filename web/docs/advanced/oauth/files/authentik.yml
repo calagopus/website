@@ -1,8 +1,8 @@
-name: 'Pocket-ID'
+name: 'Authentik'
 description: null
-auth_url: 'https://id.example.com/authorize'
-token_url: 'https://id.example.com/api/oidc/token'
-info_url: 'https://id.example.com/api/oidc/userinfo'
+auth_url: 'https://id.example.com/application/o/authorize'
+token_url: 'https://id.example.com/application/o/token'
+info_url: 'https://id.example.com/application/o/userinfo'
 scopes:
   - 'openid'
   - 'email'
