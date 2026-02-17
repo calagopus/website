@@ -11,4 +11,4 @@ Please see the [Docker Panel Installation](./installation/docker.md) documentati
 Please see the [Package Manager Panel Installation](./installation/pkgmanager.md) documentation in the Installation part of the documentation.
 === On Windows Bare Metal
 wip docs
-:::
+::::
