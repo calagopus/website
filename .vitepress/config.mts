@@ -109,6 +109,7 @@ export default withMermaid({
               { text: 'Google', link: '/docs/advanced/oauth/google' },
               { text: 'Discord', link: '/docs/advanced/oauth/discord' },
               { text: 'Generic', link: '/docs/advanced/oauth/generic' },
+              { text: 'Generic - Fields', link: '/docs/advanced/oauth/generic-fields' },
             ],
           },
         ],

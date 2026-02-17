@@ -49,8 +49,7 @@ Once you got your URL's, your claims and your scopes, head to your Calagopus Pan
 Then, click on the Create button and you should arrive to a page similar to this:
 ![Create OAuth provider page](./files/images/create.png)
 
-On that page, fill out theses fields according to the table below:
-*todo: make table of stuff*
+On that page, fill out theses fields according to [this guide ➚](./generic-fields.md). It will explain what each field represents and give you some examples for [Pocket-ID](./files/pocket-id.yml).
 
 Once that's done, you can click on the `Save` button, and your custom OIDC provider should be setup!
 
