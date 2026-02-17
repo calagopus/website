@@ -8,17 +8,17 @@ To setup GitHub OAuth, you only need 2 things:
 * A Calagopus Panel, cause why would you read this guide if you don't have one??
 
 ### Downloading required files
-To setup GitHub OAuth, you can use the `github.yaml` file to import to Calagopus Panel without having to manually copy the values by yourself.
+To setup GitHub OAuth, you can use the `github.yml` file to import to Calagopus Panel without having to manually copy the values by yourself.
 
 To download this file, right click on the link below, and save it locally on your computer.
 
-[Download `github.yaml` ➚](./files/github.yml)
+<a href="./files/github.yml" download>Download <code>github.yml</code> ➚</a>
 
 ### Import the template config
-Once `github.yaml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
+Once `github.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
 ![OAuth Providers tab](./files/images/oauth-providers.png)
 
-Then, click on the Import button and import the `github.yaml` file.
+Then, click on the Import button and import the `github.yml` file.
 ![Import OAuth Button](./files/images/import.png)
 
 Once imported, click on the newly created GitHub provider's ID and you should arrive to a page similar to this:
