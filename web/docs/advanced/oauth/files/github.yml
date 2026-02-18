@@ -1,0 +1,17 @@
+name: 'GitHub'
+description: null
+auth_url: 'https://github.com/login/oauth/authorize'
+token_url: 'https://github.com/login/oauth/access_token'
+info_url: 'https://api.github.com/user'
+scopes:
+  - 'read:user'
+identifier_path: '$.id'
+email_path: '$.email'
+username_path: '$.name'
+name_first_path: null
+name_last_path: null
+enabled: true
+login_only: false
+link_viewable: true
+user_manageable: true
+basic_auth: false

@@ -1,0 +1,18 @@
+name: 'Discord'
+description: null
+auth_url: 'https://discord.com/oauth2/authorize'
+token_url: 'https://discord.com/api/oauth2/token'
+info_url: 'https://discord.com/api/oauth2/@me'
+scopes:
+  - 'email'
+  - 'identify'
+identifier_path: '$.user.id'
+email_path: '$.user.email'
+username_path: '$.user.username'
+name_first_path: null
+name_last_path: null
+enabled: true
+login_only: true
+link_viewable: true
+user_manageable: true
+basic_auth: false

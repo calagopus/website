@@ -1,3 +1,4 @@
+import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 
@@ -5,6 +6,25 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 export default withMermaid({
   srcDir: 'web',
   cleanUrls: true,
+
+  vite: {
+    plugins: [
+      ViteImageOptimizer({
+        png: {
+          quality: 80,
+        },
+        jpeg: {
+          quality: 80,
+        },
+        webp: {
+          lossless: true,
+        },
+        svg: {
+          multipass: true,
+        },
+      }),
+    ],
+  },
 
   markdown: {
     config(md) {
@@ -81,6 +101,16 @@ export default withMermaid({
         items: [
           { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
+          {
+            text: 'Setting up OAuth',
+            link: '/docs/advanced/oauth',
+            items: [
+              { text: 'GitHub', link: '/docs/advanced/oauth/github' },
+              { text: 'Google', link: '/docs/advanced/oauth/google' },
+              { text: 'Discord', link: '/docs/advanced/oauth/discord' },
+              { text: 'Generic', link: '/docs/advanced/oauth/generic' },
+            ],
+          },
         ],
       },
     ],

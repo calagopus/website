@@ -1,0 +1,19 @@
+name: 'Authentik'
+description: null
+auth_url: 'https://id.example.com/application/o/authorize'
+token_url: 'https://id.example.com/application/o/token'
+info_url: 'https://id.example.com/application/o/userinfo'
+scopes:
+  - 'openid'
+  - 'email'
+  - 'profile'
+identifier_path: '$.sub'
+email_path: '$.email'
+username_path: '$.preferred_username'
+name_first_path: '$.given_name'
+name_last_path: '$.family_name'
+enabled: true
+login_only: false
+link_viewable: true
+user_manageable: true
+basic_auth: false

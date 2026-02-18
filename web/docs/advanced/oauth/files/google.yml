@@ -1,0 +1,19 @@
+name: 'Google'
+description: null
+auth_url: 'https://accounts.google.com/o/oauth2/auth'
+token_url: 'https://oauth2.googleapis.com/token'
+info_url: 'https://openidconnect.googleapis.com/v1/userinfo'
+scopes:
+  - 'openid'
+  - 'email'
+  - 'profile'
+identifier_path: '$.sub'
+email_path: '$.email'
+username_path: null
+name_first_path: '$.given_name'
+name_last_path: '$.family_name'
+enabled: true
+login_only: false
+link_viewable: true
+user_manageable: true
+basic_auth: false
