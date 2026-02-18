@@ -119,4 +119,48 @@ If everything works correctly, you should now be able to see your Google account
 ![List](./files/images/google/list.png)
 
 ### Troubleshooting
-*todo: add troubleshooting guides*
+
+#### Error: "Redirect URI Mismatch" or "Invalid Redirect URI"
+The redirect URL in Google Cloud doesn't match the one provided by Calagopus Panel.
+
+**Solution:**
+1. Go back to your Calagopus Panel OAuth provider configuration page
+2. Copy the exact Redirect URL shown
+3. Go to [Google Cloud Console](https://console.cloud.google.com)
+4. Navigate to APIs & Services → Credentials
+5. Click on your OAuth 2.0 Client ID
+6. Under "Authorized redirect URIs", ensure the URL matches exactly (including `https://`, trailing slashes, etc.)
+7. Click `Save`
+
+#### Error: "Invalid Client" or "Unauthorized Client"
+The Client ID or Client Secret is incorrect.
+
+**Solution:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Navigate to APIs & Services → Credentials
+3. Click on your OAuth 2.0 Client ID
+4. Copy your Client ID
+5. Create a new Client Secret by clicking `Add Secret` under "Client secrets"
+6. Update both values in your Calagopus Panel OAuth provider configuration
+7. Save the changes
+
+#### Error: "Access Blocked: Authorization Error" with message about app not being verified
+**Cause:** Your Google OAuth app is in testing mode or not published.
+
+**Solution:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Navigate to APIs & Services → OAuth consent screen
+3. Go to the `Audience` tab
+4. Click `Publish App` button
+5. Confirm the publishing action
+
+#### Error: "Invalid Domain" or domain-related errors
+**Cause:** Your panel's domain is not added to the authorized domains list.
+
+**Solution:**
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Navigate to APIs & Services → OAuth consent screen
+3. Go to the `Branding` tab
+4. Scroll to "Authorized domains"
+5. Add your top-level domain (e.g., `example.com` if your panel is at `panel.example.com`)
+6. Click `Save`
