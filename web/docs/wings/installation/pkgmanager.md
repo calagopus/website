@@ -47,8 +47,7 @@ calagopus-wings version
 #### Add alias (optional)
 By default, to interact with Wings, you need to add `calagopus-` infront of `wings`, which can be annoying sometimes. You can instead make a symbolic link for Wings to allow using `wings` instead of `calagopus-wings`. To do so, run theses commands:
 ```bash
-whereis calagopus-wings
-ln -s /usr/local/bin/calagopus-wings /usr/local/bin/wings
+ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 ```
 If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replace that to the directory where Wings is installed.
 
@@ -134,8 +133,7 @@ calagopus-wings version
 #### Add alias (optional)
 By default, to interact with Wings, you need to add `calagopus-` infront of `wings`, which can be annoying sometimes. You can instead make a symbolic link for Wings to allow using `wings` instead of `calagopus-wings`. To do so, run theses commands:
 ```bash
-whereis calagopus-wings
-ln -s /usr/local/bin/calagopus-wings /usr/local/bin/wings
+ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 ```
 If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replace that to the directory where Wings is installed.
 
