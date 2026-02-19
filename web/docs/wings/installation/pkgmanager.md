@@ -138,18 +138,16 @@ calagopus-wings version
 ```
 
 #### Add alias (optional)
-By default, to interact with Wings, you need to add `calagopus-` infront of `wings`, which can be annoying sometimes. To add an alias so that `wings` can go to `calagopus-wings`, add the following at the bottom of your `.bashrc` (or `.zshrc` when using ZSH):
+By default, to interact with Wings, you need to add `calagopus-` infront of `wings`, which can be annoying sometimes. You can instead make a symbolic link for Wings to allow using `wings` instead of `calagopus-wings`. To do so, first find where is Wings located:
 ```bash
-alias wings='calagopus-wings'
+whereis calagopus-wings
 ```
-Then, restart your terminal or run one of theses commands:
-```bash
-# If using bash
-source ~/.bashrc
 
-# If using ZSH
-source ~/.zshrc
+Usually, it should be in the `/usr/local/bin/` directory, although it depends on your distribution. Then, run the following command:
+```bash
+ln -s /usr/local/bin/calagopus-wings /usr/local/bin/wings
 ```
+If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replace that to the directory where Wings is installed.
 
 #### Configure Wings
 
