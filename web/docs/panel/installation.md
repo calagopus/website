@@ -12,5 +12,5 @@ Please see the [Package Manager Panel Installation](./installation/pkgmanager.md
 === Binary
 Please see the [Binary Panel Installation](./installation/binary.md) documentation in the Installation part of the documentation.
 === On Windows Bare Metal
-wip docs
+Please see the [Binary Panel Installation](./installation/binary.md) documentation in the Installation part of the documentation.
 ::::
