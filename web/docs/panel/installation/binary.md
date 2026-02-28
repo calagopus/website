@@ -189,7 +189,7 @@ You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random val
 ::::tabs
 === Linux/MacOS
 ```bash
-RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
 ```
 === Windows
@@ -212,7 +212,7 @@ If everything works correctly, the panel should not show any errors and will sta
 #### Install Panel as a Service
 This guide will depend on your operating system. Please select your operating system below:
 ::::tabs
-=== Linux/MacOS
+=== Linux
 To ensure that the panel starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
 ```bash
 calagopus-panel service-install
@@ -224,6 +224,8 @@ systemctl status calagopus-panel
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
 ![Calagopus Panel OOBE](../oobe.png)
+=== MacOS
+*wip: wait for robert to do brew probably*
 === Windows
 To ensure that the panel starts automatically on system boot, you can install it as a NSSM service. First, [download](https://github.com/dkxce/NSSM/releases/download/v2.25/NSSM_v2.25.zip) NSSM and extract the `nssm.exe` file appropriate to your architechture (if x86 use the contents of the win32 folder, if x64 use the contents of win64 folder) to the same path where your Calagopus Panel executable is located at.
 ![](./images/nssm.png)

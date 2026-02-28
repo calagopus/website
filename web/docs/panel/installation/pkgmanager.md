@@ -82,7 +82,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
 
 ```bash
-RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
 ```
 
@@ -196,7 +196,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
 
 ```bash
-RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
 ```
 
