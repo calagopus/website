@@ -77,6 +77,12 @@ export default withMermaid({
             ],
           },
           {
+            text: 'Next Steps',
+            items: [
+              { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' }
+            ]
+          },
+          {
             text: 'Extensions',
             items: [
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
