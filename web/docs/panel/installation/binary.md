@@ -9,7 +9,7 @@ Calagopus Panel comes shipped as a compiled binary file that you can download di
 #### Prerequisites
 This guide assumes you have PostgreSQL and Valkey installed on your server. You can replace Valkey with Redis, although keep in mind that Valkey is much faster than Redis. This guide assume you are using Valkey.
 
-If you do not have PostgreSQL and/or Redis installed on your server, follow the instructions below depending of your package manager:
+If you do not have PostgreSQL and/or Valkey installed on your server, follow the instructions below depending of your package manager:
 ::::tabs
 === Linux (with APT)
 To install PostgreSQL, [click me to view the guide](https://wiki.postgresql.org/wiki/Apt) to add the APT repository, and then install PostgreSQL:
@@ -84,3 +84,4 @@ You can download PostgreSQL using [this guide](https://www.postgresql.org/downlo
 Valkey (or Redis) isn't officially supported on Windows, so you will need to install WSL first. Microsoft provides [detailed instructions for installing WSL](https://docs.microsoft.com/en-us/windows/wsl/install). Follow these instructions, and take note of the default Linux distribution it installs. Then, depending of the default Linux distribution, select the package manager it installed.
 The default is usually Ubuntu, so head to the `Linux (with APT)` tab to install Valkey.
 ::::
+
