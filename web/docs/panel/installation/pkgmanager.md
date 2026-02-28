@@ -7,7 +7,7 @@ With the APT/RPM repository, you can directly install Calagopus from your packag
 ::::tabs
 === With APT
 #### Prerequisites
-This guide assumes you have PostgreSQL and Redis installed on your server.
+This guide assumes you have PostgreSQL and Valkey installed on your server. You can replace Valkey with Redis, although keep in mind that Valkey is much faster than Redis. This guide assume you are using Valkey.
 
 To install PostgreSQL, [click me to view the guide](https://wiki.postgresql.org/wiki/Apt) to add the APT repository, and then install PostgreSQL:
 ```bash
@@ -19,20 +19,16 @@ Then, start PostgreSQL when the server reboots:
 sudo systemctl enable --now postgresql
 ```
 
-To install Redis, run the following commands:
+To install Valkey, run the following commands:
 ```bash
-sudo apt install lsb-release curl gpg
-curl -fsSL https://packages.redis.io/gpg | sudo gpg --dearmor -o /usr/share/keyrings/redis-archive-keyring.gpg
-sudo chmod 644 /usr/share/keyrings/redis-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/redis.list
 sudo apt update
-sudo apt install -y redis
-```
+sudo apt install -y valkey
+``` 
 
-Then, start Redis when the server reboots:
+Then, start Valkey when the server reboots:
 ```bash
-sudo systemctl enable redis-server
-sudo systemctl start redis-server
+sudo systemctl enable valkey-server
+sudo systemctl start valkey-server
 ```
 
 #### Add the repository
@@ -133,65 +129,16 @@ sudo systemctl enable postgresql-18
 sudo systemctl start postgresql-18
 ```
 
-To install Redis, follow the instructions for your specific operating system:
-:::tabs
-== Rocky Linux 9 and AlmaLinux 9
-Create the `/etc/yum.repos.d/redis.repo` file with the following content:
-```ini
-[Redis]
-name=Redis
-baseurl=http://packages.redis.io/rpm/rockylinux9
-enabled=1
-gpgcheck=1
-```
-Then, run the following commands:
+To install Valkey, run the following commands:
 ```bash
-curl -fsSL https://packages.redis.io/gpg > /tmp/redis.key
-sudo rpm --import /tmp/redis.key
-sudo yum install redis
-```
-Then, start Redis when the server reboots:
-```bash
-sudo systemctl enable redis
-sudo systemctl start redis
+sudo yum install valkey
 ```
 
-== Rocky Linux 8 and AlmaLinux 8
-Create the `/etc/yum.repos.d/redis.repo` file with the following content:
-```ini
-[Redis]
-name=Redis
-baseurl=http://packages.redis.io/rpm/rockylinux8
-enabled=1
-gpgcheck=1
-```
-Then, run the following commands:
+Then, start Valkey when the server reboots:
 ```bash
-curl -fsSL https://packages.redis.io/gpg > /tmp/redis.key
-sudo rpm --import /tmp/redis.key
-sudo yum install redis
+sudo systemctl enable valkey-server
+sudo systemctl start valkey-server
 ```
-Then, start Redis when the server reboots:
-```bash
-sudo systemctl enable redis
-sudo systemctl start redis
-```
-
-== Fedora
-Run the following commands:
-```bash
-sudo dnf update
-sudo dnf install redis
-```
-Then, start Redis when the server reboots:
-```bash
-sudo systemctl enable redis
-sudo systemctl start redis
-```
-
-== Others
-If your operating system isn't listed here, you can look up on Google on how to install Redis on your operating system.
-:::
 
 #### Add the repository
 The first step to install Calagopus is to add the Calagopus RPM repository. If the RPM repository is already added, you can skip this step. To do so, on your server run theses commands:

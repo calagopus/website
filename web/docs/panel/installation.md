@@ -9,6 +9,8 @@ Please see the [Minimum Requirements](./overview.md#minimum-requirements) sectio
 Please see the [Docker Panel Installation](./installation/docker.md) documentation in the Installation part of the documentation.
 === On Linux with APT/RPM
 Please see the [Package Manager Panel Installation](./installation/pkgmanager.md) documentation in the Installation part of the documentation.
+=== Binary
+Please see the [Binary Panel Installation](./installation/binary.md) documentation in the Installation part of the documentation.
 === On Windows Bare Metal
 wip docs
 ::::

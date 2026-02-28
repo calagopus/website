@@ -73,6 +73,7 @@ export default withMermaid({
             link: '/docs/panel/installation',
             items: [
               { text: 'Docker', link: '/docs/panel/installation/docker' },
+              { text: 'Binary', link: '/docs/panel/installation/binary' },
               { text: 'Package Manager', link: '/docs/panel/installation/pkgmanager' },
             ],
           },
