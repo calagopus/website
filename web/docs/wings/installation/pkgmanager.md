@@ -53,7 +53,7 @@ If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replac
 
 #### Configure Wings
 
-Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel ((WIP INSERT GUIDE LINK HERE))
+Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
 Then, paste the copied configuration command into your terminal, which will look something like this:
 
 ```bash
@@ -139,7 +139,7 @@ If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replac
 
 #### Configure Wings
 
-Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel ((WIP INSERT GUIDE LINK HERE))
+Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
 Then, paste the copied configuration command into your terminal, which will look something like this:
 
 ```bash
