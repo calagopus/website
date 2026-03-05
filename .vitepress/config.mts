@@ -79,9 +79,7 @@ export default withMermaid({
           },
           {
             text: 'Next Steps',
-            items: [
-              { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' }
-            ]
+            items: [{ text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' }],
           },
           {
             text: 'Extensions',
