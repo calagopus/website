@@ -4,7 +4,7 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 
 ## Getting Started
 
-#### Install Docker
+### Install Docker
 
 The recommended way to install the Calagopus Panel is by using Docker. Ensure you have Docker and Docker Compose installed on your system.
 You can validate your Docker installation by running:
@@ -23,11 +23,13 @@ curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 
 This should automatically install docker compose as well, if not you can follow the [Docker Compose installation instructions](https://docs.docker.com/compose/install).
 
-#### Download the Panel Compose Stack
+### Download the Panel Compose Stack
 
 Now that Docker is installed, you can download the Calagopus Panel Docker Compose stack. You can do this by running the following commands:
 
-```bash
+::: code-group
+
+```bash [Basic]
 mkdir calagopus-panel
 cd calagopus-panel
 
@@ -35,7 +37,17 @@ curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads
 ls -lh # should show you the compose.yml file
 ```
 
-#### Configure Environment Variables
+```bash [With automatic Database Backups]
+mkdir calagopus-panel
+cd calagopus-panel
+
+curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.with-db-backups.yml
+ls -lh # should show you the compose.yml file
+```
+
+:::
+
+### Configure Environment Variables
 
 Before starting the Panel, you need to configure the environment variables. Edit the `compose.yml` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for more details on each variable.
 
@@ -46,7 +58,7 @@ RANDOM_STRING=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
 ```
 
-#### Start the Panel
+### Start the Panel
 
 You almost made it! Now you can start the Calagopus Panel by running:
 

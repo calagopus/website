@@ -64,7 +64,7 @@ const features = [
           {{ feature.details }}
           <a v-if="feature.link" :href="feature.link" class="link">
             <FontAwesomeIcon :icon="faCircleInfo" class="fa-icon" />
-            Learn more &rarr;
+            Learn more
           </a>
         </p>
       </div>

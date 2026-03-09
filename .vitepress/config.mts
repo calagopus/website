@@ -45,7 +45,7 @@ export default withMermaid({
   ],
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: '/icon.svg',
 
     nav: [
       { text: 'Home', link: '/' },
