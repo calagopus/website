@@ -16,6 +16,5 @@ export default {
   },
   enhanceApp({ app, router, siteData }) {
     enhanceAppWithTabs(app);
-    // ...
   },
 } satisfies Theme;
