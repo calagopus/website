@@ -1,3 +1,5 @@
+![Calagopus Logo](/fulllogo.svg)
+
 # What is Calagopus?
 
 Calagopus is a modern, open-source game server management panel built with Rust and React. It provides an intuitive interface for managing game servers, allowing users to easily deploy, monitor, and maintain their game servers with ease. Calagopus aims to be a powerful yet user-friendly solution for game server management, catering to both beginners and experienced users alike.

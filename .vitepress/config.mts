@@ -42,10 +42,22 @@ export default withMermaid({
         href: '/favicon.ico',
       },
     ],
+    [
+      'script',
+      {
+        async: '',
+        src: 'https://cat.rjns.dev/js/pa-UGDhLytrpOd8s1bLYPQQt.js',
+      },
+    ],
+    [
+      'script',
+      {},
+      `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()`,
+    ],
   ],
 
   themeConfig: {
-    logo: '/logo.svg',
+    logo: '/icon.svg',
 
     nav: [
       { text: 'Home', link: '/' },

@@ -4,7 +4,7 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 
 ## Getting Started
 
-#### Install Docker
+### Install Docker
 
 The Calagopus Wings Daemon requires Docker to be installed and running on the host machine to manage game server containers.
 You can validate your Docker installation by running:
@@ -20,7 +20,7 @@ In many cases running Dockers installation script is the easiest way to get star
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 ```
 
-#### Install the Wings Binary
+### Install the Wings Binary
 
 Next, you need to download and install the Wings binary. You can do this by running the following commands:
 
@@ -36,7 +36,7 @@ To test that the installation was successful, you can run:
 wings version
 ```
 
-#### Configure Wings
+### Configure Wings
 
 Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
 Then, paste the copied configuration command into your terminal, which will look something like this:
@@ -53,7 +53,7 @@ wings
 
 This will start Wings in the foreground, and you should see it connecting to the Panel.
 
-#### Install Wings as a Service
+### Install Wings as a Service
 
 To ensure that Wings starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
 

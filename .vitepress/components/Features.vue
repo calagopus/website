@@ -1,5 +1,13 @@
 <script setup lang="ts">
-import { faBolt, faDesktop, faGlobe, faLock, faPuzzlePiece, faRocket } from '@fortawesome/free-solid-svg-icons';
+import {
+  faBolt,
+  faCircleInfo,
+  faDesktop,
+  faGlobe,
+  faLock,
+  faPuzzlePiece,
+  faRocket,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 
 const features = [
@@ -7,7 +15,7 @@ const features = [
     icon: faLock,
     title: 'Security',
     details:
-      "Calagopus is built with security in mind, utilizing Rust's safety features to minimize vulnerabilities and protect your game servers from potential threats. Containers run in isolated Docker Containers, and the panel itself is designed to follow best practices for secure web applications.",
+      "Calagopus is built with security in mind, utilizing Rust's safety features to minimize vulnerabilities and protect your game servers from potential threats. Servers run in isolated Docker Containers, and the panel itself is designed to follow best practices for secure web applications.",
   },
   {
     icon: faBolt,
@@ -54,7 +62,10 @@ const features = [
         <h2 class="title">{{ feature.title }}</h2>
         <p class="details">
           {{ feature.details }}
-          <a v-if="feature.link" :href="feature.link" class="link">Learn more &rarr;</a>
+          <a v-if="feature.link" :href="feature.link" class="link">
+            <FontAwesomeIcon :icon="faCircleInfo" class="fa-icon" />
+            Learn more
+          </a>
         </p>
       </div>
     </div>
@@ -139,13 +150,20 @@ const features = [
 
 .link {
   display: inline-block;
-  margin-left: 4px;
   font-weight: 500;
   color: var(--vp-c-brand-1);
   text-decoration: none;
+
+  .fa-icon {
+    font-size: 12px;
+  }
 }
 
 .link:hover {
   color: var(--vp-c-brand-2);
+
+  .fa-icon {
+    color: var(--vp-c-brand-2);
+  }
 }
 </style>
