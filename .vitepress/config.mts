@@ -128,7 +128,14 @@ export default withMermaid({
       {
         text: 'Advanced',
         items: [
-          { text: 'Migrating from Pterodactyl', link: '/docs/advanced/migrating-from-pterodactyl' },
+          {
+            text: 'Migrating from Pterodactyl',
+            link: '/docs/advanced/migrating-from-pterodactyl',
+            items: [
+              { text: 'Standalone', link: '/docs/advanced/migrating/standalone' },
+              { text: 'Dockerized', link: '/docs/advanced/migrating/dockerized' },
+            ],
+          },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
           {
             text: 'Setting up OAuth',
