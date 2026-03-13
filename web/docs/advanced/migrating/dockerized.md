@@ -87,7 +87,188 @@ export PTERODACTYL_DIRECTORY=/srv/pterodactyl
 Depending of how you installed Calagopus, instructions have been seperated into 2 seperate tabs to adapt to your installation. Please select the installation method you used to install Calagopus.
 ::::tabs
 === Docker
-Dockerized Pterodactyl is weird. https://discord.com/channels/@me/1276895349952352358/1481730295798693908 for more info
+### Making the .env file
+::: warning
+This step requires you to navigate to your Dockerized Pterodactyl folder where it should contain your `docker-compose.yml` file and/or your `.env` file.
+:::
+To import data from Pterodactyl, you need all 6 of theses variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD`. You can find theses variables pretty easily either via your Pterodactyl `docker-compose.yml` file, or via your Pterodactyl's `.env` file.
+
+Open a notepad where you will be storing the variables, you will be needing it later to actually create the `.env` file. It should look similar to this:
+```env
+APP_URL=http://127.0.0.1
+APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
+DB_HOST=172.20.0.4
+DB_PORT=3306
+DB_DATABASE=panel
+DB_USERNAME=pterodactyl
+DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+
+#### APP_URL
+The `APP_URL` is your existing Pterodactyl's domain, setup either in the `docker-compose.yml` file, or in the `.env` file of Pterodactyl.
+An example value could be:
+```env
+APP_URL=https://ptero.local.test
+```
+
+#### APP_KEY
+To find `APP_KEY`, run the following command:
+```bash
+cat $PTERODACTYL_DIRECTORY/var/.env
+```
+Copy the output that the command gave you and paste it to your notepad.
+An example value could be:
+```env
+APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
+```
+
+#### DB_HOST
+To find your `DB_HOST`, run the following command at the directory where your Pterodactyl is located:
+```bash
+# On Linux/MacOS
+echo "DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q database))"
+
+# On Windows, instead run the command below:
+echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $_ })"
+```
+Copy the output that the command gave you and paste it to your notepad.
+An example value could be:
+```env
+DB_HOST=172.29.0.4
+```
+
+#### DB_PORT, DB_DATABASE and DB_USERNAME
+The `DB_PORT` can be set to `3306` if you haven't modified the default compose file, same thing with `DB_DATABASE` that can be set to `panel`, and `DB_USERNAME` that can be set to `pterodactyl`.
+An example value could be:
+```env
+DB_PORT=3306
+DB_DATABASE=panel
+DB_USERNAME=pterodactyl
+```
+
+#### DB_PASSWORD
+To find your `DB_PASSWORD`, locate for an environment variable in either your `docker-compose.yml` file or in your `.env` file named `MARIADB_USER_PASS`, and copy the value.
+For example, you may get something like:
+```env
+MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+Replace `MARIADB_USER_PASS` with `DB_PASSWORD`, and paste it to your notepad.
+An example value could be:
+```env
+DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+
+Once you have all 6 of the environment variables on your notepad, head to the Calagopus directory with the `compose.yml` file, and create a new file using your favorite text editor named `ptero.env`, where you can paste the contents of the notepad.
+
+### Importing data
+Once your `ptero.env` file has been created, check if it exists, then run this command:
+```bash
+docker compose cp ptero.env web:/.env
+```
+
+Then, simply run the migration command:
+```bash
+docker compose exec web panel-rs import pterodactyl --environment /.env
+```
+
+This command will start migrating all of your users, servers, nodes, etc, which may take a while. Once it's done migrating, simply restart the container:
+```bash
+docker compose down
+docker compose up -d
+```
+
+Login with your existing Pterodactyl credentials, and you should be all set!
 === idk
-docker
+### Making the .env file
+::: warning
+This step requires you to navigate to your Dockerized Pterodactyl folder where it should contain your `docker-compose.yml` file and/or your `.env` file.
+:::
+To import data from Pterodactyl, you need all 6 of theses variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD`. You can find theses variables pretty easily either via your Pterodactyl `docker-compose.yml` file, or via your Pterodactyl's `.env` file.
+
+Open a notepad where you will be storing the variables, you will be needing it later to actually create the `.env` file. It should look similar to this:
+```env
+APP_URL=http://127.0.0.1
+APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
+DB_HOST=172.20.0.4
+DB_PORT=3306
+DB_DATABASE=panel
+DB_USERNAME=pterodactyl
+DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+
+#### APP_URL
+The `APP_URL` is your existing Pterodactyl's domain, setup either in the `docker-compose.yml` file, or in the `.env` file of Pterodactyl.
+An example value could be:
+```env
+APP_URL=https://ptero.local.test
+```
+
+#### APP_KEY
+To find `APP_KEY`, run the following command:
+```bash
+cat $PTERODACTYL_DIRECTORY/var/.env
+```
+Copy the output that the command gave you and paste it to your notepad.
+An example value could be:
+```env
+APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
+```
+
+#### DB_HOST
+To find your `DB_HOST`, run the following command at the directory where your Pterodactyl is located:
+```bash
+# On Linux/MacOS
+echo "DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q database))"
+
+# On Windows, instead run the command below:
+echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $_ })"
+```
+Copy the output that the command gave you and paste it to your notepad.
+An example value could be:
+```env
+DB_HOST=172.29.0.4
+```
+
+#### DB_PORT, DB_DATABASE and DB_USERNAME
+The `DB_PORT` can be set to `3306` if you haven't modified the default compose file, same thing with `DB_DATABASE` that can be set to `panel`, and `DB_USERNAME` that can be set to `pterodactyl`.
+An example value could be:
+```env
+DB_PORT=3306
+DB_DATABASE=panel
+DB_USERNAME=pterodactyl
+```
+
+#### DB_PASSWORD
+To find your `DB_PASSWORD`, locate for an environment variable in either your `docker-compose.yml` file or in your `.env` file named `MARIADB_USER_PASS`, and copy the value.
+For example, you may get something like:
+```env
+MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+Replace `MARIADB_USER_PASS` with `DB_PASSWORD`, and paste it to your notepad.
+An example value could be:
+```env
+DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
+```
+
+Once you have all 6 of the environment variables on your notepad, head to the `/etc/calagopus` directory or where your Calagopus's `.env` file is located, and create a new file using your favorite text editor named `ptero.env`, where you can paste the contents of the notepad.
+
+### Importing data
+Once your `ptero.env` file has been created, check if it exists under the `/etc/calagopus` directory or where your Calagopus's `.env` file is located, and then run this command:
+```bash
+calagopus-panel import pterodactyl --environment ptero.env
+```
+
+This command will start migrating all of your users, servers, nodes, etc, which may take a while. Once it's done migrating, simply restart Calagopus:
+```bash
+# Linux
+systemctl restart calagopus-panel
+
+# MacOS
+# soon
+
+# Windows
+nssm restart "Calagopus Panel"
+```
+
+Login with your existing Pterodactyl credentials, and you should be all set!
 ::::
