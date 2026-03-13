@@ -94,7 +94,7 @@ This step requires you to navigate to your Dockerized Pterodactyl folder where i
 To import data from Pterodactyl, you need all 6 of theses variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD`. You can find theses variables pretty easily either via your Pterodactyl `docker-compose.yml` file, or via your Pterodactyl's `.env` file.
 
 Open a notepad where you will be storing the variables, you will be needing it later to actually create the `.env` file. It should look similar to this:
-```env
+```
 APP_URL=http://127.0.0.1
 APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
 DB_HOST=172.20.0.4
@@ -107,7 +107,7 @@ DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 #### APP_URL
 The `APP_URL` is your existing Pterodactyl's domain, setup either in the `docker-compose.yml` file, or in the `.env` file of Pterodactyl.
 An example value could be:
-```env
+```
 APP_URL=https://ptero.local.test
 ```
 
@@ -118,7 +118,7 @@ cat $PTERODACTYL_DIRECTORY/var/.env
 ```
 Copy the output that the command gave you and paste it to your notepad.
 An example value could be:
-```env
+```
 APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
 ```
 
@@ -133,14 +133,14 @@ echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '
 ```
 Copy the output that the command gave you and paste it to your notepad.
 An example value could be:
-```env
+```
 DB_HOST=172.29.0.4
 ```
 
 #### DB_PORT, DB_DATABASE and DB_USERNAME
 The `DB_PORT` can be set to `3306` if you haven't modified the default compose file, same thing with `DB_DATABASE` that can be set to `panel`, and `DB_USERNAME` that can be set to `pterodactyl`.
 An example value could be:
-```env
+```
 DB_PORT=3306
 DB_DATABASE=panel
 DB_USERNAME=pterodactyl
@@ -149,12 +149,12 @@ DB_USERNAME=pterodactyl
 #### DB_PASSWORD
 To find your `DB_PASSWORD`, locate for an environment variable in either your `docker-compose.yml` file or in your `.env` file named `MARIADB_USER_PASS`, and copy the value.
 For example, you may get something like:
-```env
+```
 MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 Replace `MARIADB_USER_PASS` with `DB_PASSWORD`, and paste it to your notepad.
 An example value could be:
-```env
+```
 DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 
@@ -186,7 +186,7 @@ This step requires you to navigate to your Dockerized Pterodactyl folder where i
 To import data from Pterodactyl, you need all 6 of theses variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` and `DB_PASSWORD`. You can find theses variables pretty easily either via your Pterodactyl `docker-compose.yml` file, or via your Pterodactyl's `.env` file.
 
 Open a notepad where you will be storing the variables, you will be needing it later to actually create the `.env` file. It should look similar to this:
-```env
+```
 APP_URL=http://127.0.0.1
 APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
 DB_HOST=172.20.0.4
@@ -199,7 +199,7 @@ DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 #### APP_URL
 The `APP_URL` is your existing Pterodactyl's domain, setup either in the `docker-compose.yml` file, or in the `.env` file of Pterodactyl.
 An example value could be:
-```env
+```
 APP_URL=https://ptero.local.test
 ```
 
@@ -210,7 +210,7 @@ cat $PTERODACTYL_DIRECTORY/var/.env
 ```
 Copy the output that the command gave you and paste it to your notepad.
 An example value could be:
-```env
+```
 APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
 ```
 
@@ -225,14 +225,14 @@ echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '
 ```
 Copy the output that the command gave you and paste it to your notepad.
 An example value could be:
-```env
+```
 DB_HOST=172.29.0.4
 ```
 
 #### DB_PORT, DB_DATABASE and DB_USERNAME
 The `DB_PORT` can be set to `3306` if you haven't modified the default compose file, same thing with `DB_DATABASE` that can be set to `panel`, and `DB_USERNAME` that can be set to `pterodactyl`.
 An example value could be:
-```env
+```
 DB_PORT=3306
 DB_DATABASE=panel
 DB_USERNAME=pterodactyl
@@ -241,12 +241,12 @@ DB_USERNAME=pterodactyl
 #### DB_PASSWORD
 To find your `DB_PASSWORD`, locate for an environment variable in either your `docker-compose.yml` file or in your `.env` file named `MARIADB_USER_PASS`, and copy the value.
 For example, you may get something like:
-```env
+```
 MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 Replace `MARIADB_USER_PASS` with `DB_PASSWORD`, and paste it to your notepad.
 An example value could be:
-```env
+```
 DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 
