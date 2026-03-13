@@ -95,6 +95,7 @@ export default withMermaid({
               { text: 'Package Manager', link: '/docs/panel/installation/pkgmanager' },
             ],
           },
+          { text: 'Updating', link: '/docs/panel/updating' },
           {
             text: 'Next Steps',
             link: '/docs/panel/next-steps',
@@ -124,6 +125,7 @@ export default withMermaid({
               { text: 'Package Manager', link: '/docs/wings/installation/pkgmanager' },
             ],
           },
+          { text: 'Updating', link: '/docs/wings/updating' },
           {
             text: 'Disk Limiters',
             link: '/docs/wings/disk-limiters',
