@@ -29,3 +29,7 @@
   /* Docsearch */
   --docsearch-search-button-background: var(--mantine-color-dark-6) !important;
 }
+
+.label .nodeLabel {
+  color: #37373b !important;
+}
