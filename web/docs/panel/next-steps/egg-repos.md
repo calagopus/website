@@ -35,7 +35,8 @@ You should now see a little green callout saying that the egg repository is sync
 
 ## Importing the eggs
 ::: warning
-It is currently not possible to import all eggs at once. This may be implemented into a later version of Calagopus.
+It is currently not possible to import all eggs at once. However, you can import the eggs by dragging them and clicking on the `Install` button below.
+![alt text](./images/egg-repos/drag.png)
 :::
 
 Click on the Eggs tab, and you should be redirected to a page like this:
@@ -50,3 +51,18 @@ You should now be brought to a popup to select which nest would you like to impo
 ![](./images/egg-repos/install.png)
 
 And you're done! You can now create a server with the egg(s) you imported! If you want to import multiple eggs, just select them, and then click on the Install button below.
+
+## Updating the eggs
+In case an egg has been updated, you can follow this guide to update the egg imported via the repository. You must first resync the egg repository.
+
+To do so, head into the Egg Repositories tab in the admin panel and click on the egg repository you want to update.
+![](./images/egg-repos/updating-eggrepo.png)
+
+Then, simply click on the `Sync` button to sync the updated eggs to the list.
+![](./images/egg-repos/sync.png)
+
+To update an egg, first head to the Nests tab and click on the nest where your egg is located at.
+![](./images/egg-repos/nest-update.png)
+
+Then, 
+![](./images/egg-repos/egg-update.png)
