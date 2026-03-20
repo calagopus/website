@@ -81,11 +81,13 @@ brew services start valkey
 === Windows
 You can download PostgreSQL using [this guide](https://www.postgresql.org/download/windows/) with an interactive installer. Instructions on how to use the installer can be found [here](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/windows/).
 
-Valkey (or Redis) isn't officially supported on Windows, so you will need to install WSL first. Microsoft provides [detailed instructions for installing WSL](https://docs.microsoft.com/en-us/windows/wsl/install). Follow these instructions, and take note of the default Linux distribution it installs. Then, depending of the default Linux distribution, select the package manager it installed.
-The default is usually Ubuntu, so head to the `Linux (with APT)` tab to install Valkey.
+::: info
+**TLDR**: As of 17/03/2026, you no longer need Valkey/Redis installed for Calagopus Panel to work. All you need is PostgreSQL installed on your system.
 
-::: warning
-WSL shuts down the VM once you leave the terminal, which makes Valkey inaccessible once closed. 
+Starting with commit [`1c56627`](https://github.com/calagopus/panel/commit/1c56627ab8026091fdc261bac555a2e29640e92a), you no longer need Valkey installed in your system! This also affects Linux and MacOS, and can be used as a backup option if Valkey/Redis cannot be installed in your system.
+
+For Windows, the old process involved installing WSL2 and keeping the WSL instance open, which can be a hard task for people.
+:::
 ::::
 
 #### Download the binary
@@ -182,7 +184,8 @@ To set the `DATABASE_URL` variable, replace the value below with your own values
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
-`REDIS_URL` can stay to the default value `redis://localhost`, unless Redis is on another server, where you will have to modify this string.
+`REDIS_URL` can stay to the default value `redis://localhost`, unless Redis is on another server, where you will have to modify this string.\
+If you are using Windows or on a server where installing Valkey/Redis is impossible, this value can be left empty.
 
 You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
 
