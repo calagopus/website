@@ -19,6 +19,8 @@ The `REDIS_URL` variable specifies the connection URL for a single Redis instanc
 redis://[:password@]host:port/db_number
 ```
 
+If not set, the Panel will not connect to Redis and cache operations will be done in-memory (see `APP_USE_INTERNAL_CACHE`), which is not recommended for production environments, mainly due to rate-limiting.
+
 ## REDIS_SENTINEL_CLUSTER
 
 The `REDIS_SENTINEL_CLUSTER` variable specifies the name of the Redis Sentinel cluster when `REDIS_MODE` is set to `sentinel`. This is used to identify the master node in the Sentinel setup.
