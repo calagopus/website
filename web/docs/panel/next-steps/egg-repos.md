@@ -67,4 +67,7 @@ To update an egg, first head to the Nests tab and click on the nest where your e
 Then, click on the egg you want to update.
 ![](./images/egg-repos/egg-update.png)
 
+Once in the egg settings, scroll down until you see the Update button, then the `from Repository` button.
+![](./images/egg-repos/update.png)
 
+The egg should now be updated from the repository. Keep in mind you may need to update your servers according to the changes done.
