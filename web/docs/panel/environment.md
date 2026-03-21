@@ -75,7 +75,7 @@ When set, the Panel will use `DATABASE_URL_PRIMARY` for write operations and `DA
 
 ## BIND
 
-The `BIND` variable specifies the IP address that the Panel will bind to for incoming HTTP requests.
+The `BIND` variable specifies the IP address that the Panel will bind to for incoming HTTP requests. This can also be a path to a socket file for binding to Unix Sockets.
 
 Default value:
 
