@@ -64,5 +64,7 @@ Then, simply click on the `Sync` button to sync the updated eggs to the list.
 To update an egg, first head to the Nests tab and click on the nest where your egg is located at.
 ![](./images/egg-repos/nest-update.png)
 
-Then, 
+Then, click on the egg you want to update.
 ![](./images/egg-repos/egg-update.png)
+
+
