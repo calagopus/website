@@ -47,6 +47,9 @@ importers:
       vite-plugin-image-optimizer:
         specifier: ^2.0.3
         version: 2.0.3(sharp@0.34.5)(svgo@4.0.1)(vite@7.3.1)
+      vite-plugin-open-graph:
+        specifier: ^2.0.6
+        version: 2.0.6
       vitepress:
         specifier: 2.0.0-alpha.16
         version: 2.0.0-alpha.16(postcss@8.5.8)
@@ -1486,6 +1489,10 @@ packages:
         optional: true
       svgo:
         optional: true
+
+  vite-plugin-open-graph@2.0.6:
+    resolution: {integrity: sha512-puGPr/V4C0HN3fxtvglulxmkPZiQp6yoASZqyH54LrK/DKiOgjC0V3glWcE6BFto3X3NK50aasE6tWruzAnEMA==}
+    engines: {node: '>=16'}
 
   vite@7.3.1:
     resolution: {integrity: sha512-w+N7Hifpc3gRjZ63vYBXA56dvvRlNWRczTdmCBBa+CotUzAPf5b7YMdMR/8CQoeYE5LX3W4wj6RYTgonm1b9DA==}
@@ -2954,6 +2961,8 @@ snapshots:
     optionalDependencies:
       sharp: 0.34.5
       svgo: 4.0.1
+
+  vite-plugin-open-graph@2.0.6: {}
 
   vite@7.3.1:
     dependencies:

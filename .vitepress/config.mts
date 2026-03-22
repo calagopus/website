@@ -1,4 +1,5 @@
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
+import ogPlugin from 'vite-plugin-open-graph';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 
@@ -21,6 +22,21 @@ export default withMermaid({
         },
         svg: {
           multipass: true,
+        },
+      }),
+      ogPlugin({
+        basic: {
+          type: 'website',
+          title: 'Calagopus',
+          description: 'Game server management - reimagined.',
+          image: 'https://calagopus.com/fulllogo.png',
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: 'Calagopus',
+          description: 'Game server management - reimagined.',
+          image: 'https://calagopus.com/fulllogo.png',
+          imageAlt: 'Calagopus Logo',
         },
       }),
     ],
@@ -59,48 +75,6 @@ export default withMermaid({
       'script',
       {},
       `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()`,
-    ],
-    [
-      'meta',
-      {
-        property: 'og:title',
-        content: 'Calagopus',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:site_name',
-        content: 'Calagopus',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:url',
-        content: 'https://calagopus.com',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:description',
-        content: 'Game server management - reimagined.',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:type',
-        content: 'website',
-      },
-    ],
-    [
-      'meta',
-      {
-        property: 'og:image',
-        content: 'https://calagopus.com/fulllogo.png',
-      },
     ],
   ],
 
@@ -152,6 +126,13 @@ export default withMermaid({
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
               { text: 'Extension File Structure', link: '/docs/panel/extensions/file-structure' },
+              {
+                text: 'Concepts',
+                items: [
+                  { text: 'Events', link: '/docs/panel/extensions/concepts/events' },
+                  { text: 'Settings', link: '/docs/panel/extensions/concepts/settings' },
+                ],
+              },
             ],
           },
         ],

@@ -13,7 +13,7 @@ If you want to save some time, you can use the extension templates to quickly ge
 
 ```bash
 # create a new extension from the template, replace the name with your package name with underscores
-calagopus-panel extensions init dev.0x7d8.test # <-- replace this with your package name
+panel-rs extensions init dev.0x7d8.test # <-- replace this with your package name
 ```
 
 ## Frontend
@@ -146,6 +146,10 @@ database/extension-migrations/
       up.sql # REQUIRED file containing the SQL statements to apply the migration
       down.sql # REQUIRED file containing the SQL statements to rollback the migration
 ```
+
+::: info
+If you want it easy, you can auto-generate the migration files by running `panel-rs database-migrator create <package_name>`, this will create a new migration with the correct timestamp and file structure for you to fill in.
+:::
 
 ### up.sql
 
