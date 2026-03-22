@@ -77,7 +77,7 @@ Then, click on the Create button and a popup should come up:
 To find the IP to be used for the allocation, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
 
 ::: warning
-Do not use `127.0.0.1` for allocations, as this will make your server inaccessible outside your node.
+You can use `127.0.0.1` for allocations if you don't want the server to be exposed via the internet. This is useful for internal services that are hosted locally on the same server.
 :::
 
 The IP Alias can be set to anything, as this value is shown to the user in the console, the network tab, etc. This is useful for people who are behind NAT and/or don't want to show their IP directly.

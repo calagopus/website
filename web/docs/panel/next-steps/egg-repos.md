@@ -71,3 +71,20 @@ Once in the egg settings, scroll down until you see the Update button, then the 
 ![](./images/egg-repos/update.png)
 
 The egg should now be updated from the repository. Keep in mind you may need to update your servers according to the changes done.
+
+## Mass-updating the eggs
+In case you want to update multiple eggs, you can follow this guide to update the eggs imported via the repository. You must first resync the egg repository.
+
+To do so, head into the Egg Repositories tab in the admin panel and click on the egg repository you want to update.
+![](./images/egg-repos/updating-eggrepo.png)
+
+Then, simply click on the `Sync` button to sync the updated eggs to the list.
+![](./images/egg-repos/sync.png)
+
+To update an egg, first head to the Nests tab and click on the nest where your eggs is located at.
+![](./images/egg-repos/nest-update.png)
+
+Then, select the eggs you want to update, by either dragging it or searching for them manually, and then click on the `Update from Repository` button at the action bar.
+![](./images/egg-repos/massupdate.png)
+
+The selected eggs should now be updated from the repository. Keep in mind you may need to update your servers according to the changes done.

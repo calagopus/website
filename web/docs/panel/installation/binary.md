@@ -185,7 +185,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
 `REDIS_URL` can stay to the default value `redis://localhost`, unless Redis is on another server, where you will have to modify this string.\
-If you are using Windows or on a server where installing Valkey/Redis is impossible, this value can be left empty.
+If you are using Windows or on a server where installing Valkey/Redis is impossible, remove the line entirely.
 
 You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
 
