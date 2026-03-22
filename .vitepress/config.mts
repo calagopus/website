@@ -60,6 +60,48 @@ export default withMermaid({
       {},
       `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()`,
     ],
+    [
+      'meta',
+      {
+        property: 'og:title',
+        content: 'Calagopus',
+      },
+    ],
+    [
+      'meta',
+      {
+        property: 'og:site_name',
+        content: 'Calagopus',
+      },
+    ],
+    [
+      'meta',
+      {
+        property: 'og:url',
+        content: 'https://calagopus.com',
+      },
+    ],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content: 'Game server management - reimagined.',
+      },
+    ],
+    [
+      'meta',
+      {
+        property: 'og:type',
+        content: 'website',
+      },
+    ],
+    [
+      'meta',
+      {
+        property: 'og:image',
+        content: 'https://calagopus.com/fulllogo.png',
+      },
+    ],
   ],
 
   themeConfig: {
@@ -107,6 +149,7 @@ export default withMermaid({
           {
             text: 'Extensions',
             items: [
+              { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
               { text: 'Extension File Structure', link: '/docs/panel/extensions/file-structure' },
             ],
