@@ -23,7 +23,7 @@ To setup Google OAuth, you can use the `google.yml` file to import to Calagopus 
 
 To download this file, right click on the link below, and save it locally on your computer.
 
-<a href="./files/google.yml" download>Download <code>google.yml</code> ➚</a>
+<a href="/oauth2/google.yml" download>Download <code>google.yml</code> ➚</a>
 
 ### Import the template config
 Once `google.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.

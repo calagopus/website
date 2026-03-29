@@ -12,7 +12,7 @@ To setup Discord OAuth, you can use the `discord.yml` file to import to Calagopu
 
 To download this file, right click on the link below, and save it locally on your computer.
 
-<a href="./files/discord.yml" download>Download <code>discord.yml</code> ➚</a>
+<a href="/oauth2/discord.yml" download>Download <code>discord.yml</code> ➚</a>
 
 ### Import the template config
 Once `discord.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.

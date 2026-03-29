@@ -6,8 +6,8 @@ This guide will show you first on how to find the required identifiers used by y
 
 ### Example files
 Theses are example files made by the community that you can use as a preset. You will need to replace `id.example.com` with your own OIDC provider.\
-Pocket-ID: <a href="./files/pocket-id.yml" download>Download <code>pocket-id.yml</code> ➚</a>\
-Authentik: <a href="./files/authentik.yml" download>Download <code>authentik.yml</code> ➚</a>
+Pocket-ID: <a href="/oauth2/pocket-id.yml" download>Download <code>pocket-id.yml</code> ➚</a>\
+Authentik: <a href="/oauth2/authentik.yml" download>Download <code>authentik.yml</code> ➚</a>
 
 If your provider isn't listed here, you may have to follow the steps below to adapt to your setup.
 
