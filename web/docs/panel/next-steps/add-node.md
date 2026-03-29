@@ -21,21 +21,18 @@ Then, fill out theses values:
 * **SFTP Port**: Don't change this value if you don't know what are doing, this allows you to set the SFTP port for the SSH/SFTP server.
 * **Memory**: The total amount of RAM the node can allocate, this value should be 90% of your total RAM, leaving 10% for your OS.
 * **Disk**: The total amount of disk space the node can allocate.
+* **IP**: The IP to be used for the allocation, to find it, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
+* **Port Ranges**: A range of ports to assign to servers. It can either be a single port `10000`, or a range `10000-11000`.
 ![](./images/add-node/add-node-oobe.png)
 
 Once you're done, click on the `Create & Continue` button.
-
-Continue progressing to the OOBE until you reach to the main dashboard.
 
 ### Install Calagopus Wings
 At this point in the guide, you will need to install Calagopus Wings on your node. You can install it [here](../../wings/installation.md).
 
 ### Configuring the node
-Head to the admin panel, click on Nodes and then click on the node you recently created.
-![](./images/add-node/node.png)
-
-Then, head to the Configuration tab, copy the auto deploy command below, and then continue following the Wings install proccess via [Binary](../../wings/installation/binary.md#configure-wings) or [Package Manager](../../wings/installation/pkgmanager.md).
-![](./images/add-node/config.png)
+Once you arrive to the Node Configuration page, copy the command that the panel has given you, and run it on your server:
+![](./images/add-node/oobe-nodeconf.png)
 
 ## Via the admin panel
 ### In the admin panel

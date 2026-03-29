@@ -1,6 +1,11 @@
 # Adding egg repositories
 Egg repositories is like the Blueprint extension [Eggify](https://builtbybit.com/resources/eggify-mass-egg-importer-updater.52525/), but integrated into Calagopus Panel. It allows you to install eggs from a Git repository by scraping all the available eggs and making them available in a page for you to download.
 
+::: info
+You can now add egg repositories directly from the OOBE when setting up Calagopus Panel, all you have to do is select the egg repositories you would like to import, then click on the Import button.
+![](./images/egg-repos/oobe.png)
+:::
+
 ## How do egg repositories work?
 An egg repository works by storing lots of eggs on a Git repository. They are often organized by seperating games, softwares, programming languages, etc. into their own Git repository.
 
