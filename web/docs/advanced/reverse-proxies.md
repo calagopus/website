@@ -269,7 +269,12 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
 ```
 :::
 === Caddy 
-*help wanted*
+```caddy
+<domain> {
+  # Make sure this IP matches your Panel container's IP address
+  reverse_proxy 172.18.0.1:8000
+}
+```
 ::::
 
 ## Enabling Configuration
