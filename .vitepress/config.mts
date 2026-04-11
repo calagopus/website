@@ -170,6 +170,14 @@ export default withMermaid({
               { text: 'Dockerized', link: '/docs/advanced/migrating/dockerized' },
             ],
           },
+          {
+            text: 'Migrating from Pelican',
+            link: '/docs/advanced/migrating-from-pelican',
+            items: [
+              { text: 'Standalone', link: '/docs/advanced/migrating/pelican-standalone' },
+              { text: 'Dockerized', link: '/docs/advanced/migrating/pelican-dockerized' },
+            ],
+          },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
           { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
           { text: 'Generating SSL Certificates', link: '/docs/advanced/generate-ssl' },
