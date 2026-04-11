@@ -298,4 +298,4 @@ Visit `https://<domain>` in your browser. You should now see the Panel login pag
 
 After verifying access, go to your Panels Admin page, set your server URL, hit Save and you’re done. This URL is used for links, API calls, and Wings node connections.
 
-![Calagopus Panel URL](./server-url.png)
+![Calagopus Panel URL](./server-url.webp)
