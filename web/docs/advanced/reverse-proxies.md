@@ -94,14 +94,7 @@ server {
         proxy_request_buffering off;
         # Make sure this IP matches your Panel container's IP address
         proxy_pass http://172.18.0.1:8000;
-
-        # Pass headers from internal webserver
-        proxy_pass_header Content-Type;
-        proxy_pass_header Content-Length;
-        proxy_pass_header ETag;
-        proxy_pass_header Last-Modified;
         proxy_pass_header Content-Security-Policy;
-        proxy_pass_header Location;
     }
 
     location ~ /\.ht {
@@ -139,14 +132,7 @@ server {
         proxy_request_buffering off;
         # Make sure this IP matches your Panel container's IP address
         proxy_pass http://172.18.0.1:8000;
-
-        # Pass headers from internal webserver
-        proxy_pass_header Content-Type;
-        proxy_pass_header Content-Length;
-        proxy_pass_header ETag;
-        proxy_pass_header Last-Modified;
         proxy_pass_header Content-Security-Policy;
-        proxy_pass_header Location;
     }
 
     location ~ /\.ht {
@@ -295,7 +281,7 @@ sudo systemctl restart apache2
 ```
 ```bash [Apache]
 # You do not need to run any of these commands on RHEL-based systems.
-sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel http2
+sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel
 sudo a2ensite panel.conf
 sudo systemctl restart apache2
 ```
