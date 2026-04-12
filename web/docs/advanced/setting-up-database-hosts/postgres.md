@@ -159,7 +159,7 @@ CREATE USER calagopus WITH PASSWORD '<strong-password>' CREATEDB CREATEROLE;
 | **Username** | `calagopus` |
 | **Password** | The password you set above |
 
-![](./files/postgres.png)
+![](./files/postgres.webp)
 
 4. Click **Save**. You will be able to verify the connection afterwards.
 
@@ -171,7 +171,7 @@ By default, new database hosts are not visible to any client API endpoints, to f
 2. Click the **Database Hosts** tab at the top.
 3. Click **Add** and select the database host you just created from the dropdown, then submit.
 
-![](./files/location.png)
+![](./files/location.webp)
 
 ::: info
 For further reference on PostgreSQL configuration, see the [official PostgreSQL documentation](https://www.postgresql.org/docs/).

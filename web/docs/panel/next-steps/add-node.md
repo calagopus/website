@@ -9,7 +9,7 @@ The following fields are required to create a location:
 * **Location Name**: This is the location name used to distinguish this location from others. This can be whatever you want, for this example I'm gonna make a `Germany` location.
 * **Backup Configuration Name**: This is the name of your backup storage configuration, incase you have multiple backup methods for your nodes, this helps distinguish it from others.
 * **Backup Disk**: This is where your backups are gonna be stored. Depending of your node, select the backup method that's more adapted to your setup. If you don't know what this is, leave it as `Local`.
-![](./images/add-node/location-oobe.png)
+![](./images/add-node/location-oobe.webp)
 
 Once you're done, click on the `Create & Continue` button.
 
@@ -23,7 +23,7 @@ Then, fill out theses values:
 * **Disk**: The total amount of disk space the node can allocate.
 * **IP**: The IP to be used for the allocation, to find it, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
 * **Port Ranges**: A range of ports to assign to servers. It can either be a single port `10000`, or a range `10000-11000`.
-![](./images/add-node/add-node-oobe.png)
+![](./images/add-node/add-node-oobe.webp)
 
 Once you're done, click on the `Create & Continue` button.
 
@@ -32,26 +32,26 @@ At this point in the guide, you will need to install Calagopus Wings on your nod
 
 ### Configuring the node
 Once you arrive to the Node Configuration page, copy the command that the panel has given you, and run it on your server:
-![](./images/add-node/oobe-nodeconf.png)
+![](./images/add-node/oobe-nodeconf.webp)
 
 ## Via the admin panel
 ### In the admin panel
 This guide assumes you have created a location, if you haven't open this dropdown below:
 ::: details How do you create a location?
 Head to the admin panel, go to the Locations tab, and create a new location.
-![](./images/add-node/create-location.png)
+![](./images/add-node/create-location.webp)
 
 Then, fill out theses values:
 * **Location Name**: This is the location name used to distinguish this location from others. This can be whatever you want, for this example I'm gonna make a `Germany` location.
 * **Backup Configuration Name**: This is the name of your backup storage configuration, incase you have multiple backup methods for your nodes, this helps distinguish it from others.
 * **Description**: This is a long description used to identify your location.
-![](./images/add-node/location-field.png)
+![](./images/add-node/location-field.webp)
 
 Once you're done, click on the `Save` button.
 :::
 
 Head to the admin panel, go to the Nodes tab, and create a new node.
-![](./images/add-node/create-node.png)
+![](./images/add-node/create-node.webp)
 
 Then, fill out theses fields:
 * **Name**: A quick identifiable name for the node.
@@ -66,7 +66,7 @@ Then, fill out theses fields:
 * **Description**: This is a long description that is used to identify the node.
 * **Deployment Enabled**: Allow deployment to this node. If this is disabled, you won't be able to create servers from the panel.
 * **Maintenance Enabled**: If this is enabled, allows you to block non-admins from accessing the node. 
-![](./images/add-node/node-field.png)
+![](./images/add-node/node-field.webp)
 
 Once you're done, click on the `Save` button.
 
@@ -75,7 +75,7 @@ At this point in the guide, you will need to install Calagopus Wings on your nod
 
 ### Configuring the node
 Head to the admin panel, click on Nodes and then click on the node you recently created.
-![](./images/add-node/node.png)
+![](./images/add-node/node.webp)
 
 Then, head to the Configuration tab, copy the auto deploy command below, and then continue following the Wings install proccess via [Binary](../../wings/installation/binary.md#configure-wings) or [Package Manager](../../wings/installation/pkgmanager.md).
-![](./images/add-node/config.png)
+![](./images/add-node/config.webp)

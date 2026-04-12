@@ -106,7 +106,7 @@ systemctl status calagopus-panel
 ```
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
-![Calagopus Panel OOBE](../oobe.png)
+![Calagopus Panel OOBE](../oobe.webp)
 
 === With RPM
 #### Prerequisites
@@ -220,6 +220,6 @@ systemctl status calagopus-panel
 ```
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
-![Calagopus Panel OOBE](../oobe.png)
+![Calagopus Panel OOBE](../oobe.webp)
 
 ::::

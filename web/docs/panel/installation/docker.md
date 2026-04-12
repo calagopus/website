@@ -106,4 +106,4 @@ docker compose up -d
 This command will download the necessary Docker images and start the Panel in detached mode.
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
-![Calagopus Panel OOBE](../oobe.png)
+![Calagopus Panel OOBE](../oobe.webp)

@@ -67,10 +67,10 @@ nssm stop "Calagopus Panel"
 Then, grab the latest executable by downloading it [here](https://github.com/calagopus/panel/releases/latest/download/panel-rs-x86_64-windows.exe), and add it to the same directory as the old `calagopus-panel.exe` executable.
 
 It can be `C:\bin`, `C:\Tools` or anything. For this example, we will use `C:\bin`.
-![Placing executable to C:\bin](./installation/images/bin.png)
+![Placing executable to C:\bin](./installation/images/bin.webp)
 
 Then, delete the old executable, and rename the executable to `calagopus-panel` so that you don't have to manually type out the file name:
-![Renaming executable](./installation/images/rename.png)
+![Renaming executable](./installation/images/rename.webp)
 
 Once that's done, start Calagopus again:
 ```powershell

@@ -16,13 +16,13 @@ To download this file, right click on the link below, and save it locally on you
 
 ### Import the template config
 Once `github.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
-![OAuth Providers tab](./files/images/oauth-providers.png)
+![OAuth Providers tab](./files/images/oauth-providers.webp)
 
 Then, click on the Import button and import the `github.yml` file.
-![Import OAuth Button](./files/images/import.png)
+![Import OAuth Button](./files/images/import.webp)
 
 Once imported, click on the newly created GitHub provider's ID and you should arrive to a page similar to this:
-![GitHub OAuth page](./files/images/github/page.png)
+![GitHub OAuth page](./files/images/github/page.webp)
 
 Copy the Redirect URL provided by the panel and proceed to the next step.
 
@@ -37,7 +37,7 @@ Once on the page, fill out theses values:
 * `Enable Device Flow`: Do not tick this checkbox as it will not work with Calagopus.
 
 With the required fields filled out, it should look something similar to this:
-![Example of what could be the setup with fields filled out](./files/images/github/example.png)
+![Example of what could be the setup with fields filled out](./files/images/github/example.webp)
 Once done, you can click on the `Register Application` button, add a logo if you want, and proceed to the next step.
 
 ### Generate a client secret
@@ -49,16 +49,16 @@ Back to the panel, change the Client ID and the Client secret to the ones GitHub
 On the switches below, choose if you want to enable GitHub OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
 
 It should normally look like this:
-![GitHub Config](./files/images/github/page.png)
+![GitHub Config](./files/images/github/page.webp)
 
 Finally, save your changes, and you should be done!
 
 ### Test the configuration
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your GitHub account.
-![Testing GitHub](./files/images/github/test.png)
+![Testing GitHub](./files/images/github/test.webp)
 
 If everything works correctly, you should now be able to see your GitHub account in your list.
-![List](./files/images/github/list.png)
+![List](./files/images/github/list.webp)
 
 ### Troubleshooting
 

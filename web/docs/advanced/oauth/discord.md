@@ -16,40 +16,40 @@ To download this file, right click on the link below, and save it locally on you
 
 ### Import the template config
 Once `discord.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
-![OAuth Providers tab](./files/images/oauth-providers.png)
+![OAuth Providers tab](./files/images/oauth-providers.webp)
 
 Then, click on the Import button and import the `discord.yml` file.
-![Import OAuth Button](./files/images/import.png)
+![Import OAuth Button](./files/images/import.webp)
 
 Once imported, click on the newly created Discord provider's ID and you should arrive to a page similar to this:
-![Discord OAuth page](./files/images/discord/page.png)
+![Discord OAuth page](./files/images/discord/page.webp)
 
 Copy the Redirect URL provided by the panel and proceed to the next step.
 
 ### Setting up Discord OAuth
 #### Creating the application
 Go to [Discord's Developer Portal](https://discord.com/developers/applications), and create an application.
-![](./files/images/discord/image-1.png)
+![](./files/images/discord/image-1.webp)
 
 In the popup, type the name of your application, which will be shown on the Discord login page. Select a team if you have one and then click on `Create`.
-![](./files/images/discord/image-2.png)
+![](./files/images/discord/image-2.webp)
 
 In the General Information page (the page you get redirected to once you click `Create`), set an icon and/or a description if you'll like, for this guide we're not gonna cover this step.
 
 #### Add your Redirect URL to Discord OAuth
 On the left sidebar, click on `OAuth2`.
-![](./files/images/discord/image-3.png)
+![](./files/images/discord/image-3.webp)
 
 On the Redirects section, click on `Add Redirect` and paste the redirect URL Calagopus Panel has given you.
-![](./files/images/discord/image-4.png)
+![](./files/images/discord/image-4.webp)
 
 At the bottom, you should see the warning below:
-![](./files/images/discord/image-5.png)
+![](./files/images/discord/image-5.webp)
 Click on the `Save Changes` button below.
 
 #### Issue a OAuth Client ID and Secret
 On the same `OAuth2` page, look for the Client information section. Reset your Client Secret by clicking on the `Reset Secret` button.
-![](./files/images/discord/image-6.png)
+![](./files/images/discord/image-6.webp)
 
 Once you reset your Client Secret, copy both your Client ID and Client Secret. You will need thoses for the next step.
 
@@ -59,16 +59,16 @@ Back to the panel, change the Client ID and the Client secret to the ones Discor
 On the switches below, choose if you want to enable Discord OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
 
 It should normally look like this:
-![Discord Config](./files/images/discord/page.png)
+![Discord Config](./files/images/discord/page.webp)
 
 Finally, save your changes, and you should be done!
 
 ### Test the configuration
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Discord account.
-![Testing Discord](./files/images/discord/test.png)
+![Testing Discord](./files/images/discord/test.webp)
 
 If everything works correctly, you should now be able to see your Discord account in your list.
-![List](./files/images/discord/list.png)
+![List](./files/images/discord/list.webp)
 
 ### Troubleshooting
 #### Error: "Invalid OAuth2 redirect_uri"

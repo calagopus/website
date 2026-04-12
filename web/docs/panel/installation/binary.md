@@ -113,19 +113,19 @@ calagopus-panel version
 Grab the latest executable by downloading it [here](https://github.com/calagopus/panel/releases/latest/download/panel-rs-x86_64-windows.exe), and add it to PATH.
 
 To add the executable to PATH, first move the executable to a folder you would keep all the CLI tools. It can be `C:\bin`, `C:\Tools` or anything. For this example, we will use `C:\bin`.
-![Placing executable to C:\bin](./images/bin.png)
+![Placing executable to C:\bin](./images/bin.webp)
 
 Rename the executable to `calagopus-panel` so that you don't have to manually type out the file name:
-![Renaming executable](./images/rename.png)
+![Renaming executable](./images/rename.webp)
 
 Then, press `Win + R` and type `rundll32.exe sysdm.cpl,EditEnvironmentVariables`, and click on `OK` like shown:
-![Open the Run dialog](./images/winr.png)
+![Open the Run dialog](./images/winr.webp)
 
 Then, under the `System variables` section (the bottom half), find the variable `Path`, select it and then click on `Edit`.
-![Show ENVs](./images/env.png)
+![Show ENVs](./images/env.webp)
 
 Click on `New` and put the full path of the folder where you moved the panel executable. In this guide we used `C:\bin`, and then press on `Enter`.
-![Add PATH](./images/path.png)
+![Add PATH](./images/path.webp)
 
 Finally, click on `OK` on the `Edit environment variable` window, and `OK` again on the `Environment Variables` window. You can now open a new terminal window, and run this command:
 ```powershell
@@ -143,10 +143,10 @@ sudo -u postgres psql
 ```
 === Windows
 Enter the SQL Shell by typing `sql` on the search bar, and find this application:
-![psql Shell](./images/psqlshell.png)
+![psql Shell](./images/psqlshell.webp)
 
 Once on the psql shell, you will be prompted on which server you want to connect to, the port, the username and the database. Theses can be skipped if you are hosting PostgreSQL locally by pressing enter, until you will reach the password prompt where you set during the setup process:
-![](./images/auth.png)
+![](./images/auth.webp)
 ::::
 
 Then, create the user and database and grant the user all permissions:
@@ -171,10 +171,10 @@ ls -lha # should show you the .env file
 ```
 === Windows
 Windows does not come with an `/etc` folder, so you will need to create your `.env` file at the same directory the executable is. For example, if the executable is located at `C:\bin\calagopus-panel.exe`, the `.env` file would be located at `C:\bin\.env`
-![](./images/dotenv.png)
+![](./images/dotenv.webp)
 
 Inside your newly created `.env` file, paste the contents of [this file](https://github.com/calagopus/panel/blob/main/.env.example) inside.
-![](./images/contents.png)
+![](./images/contents.webp)
 ::::
 
 Edit the `.env` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for more details on each variable. Make sure to configure PostgreSQL/Redis and your app encryption keys in the `.env` file.
@@ -226,12 +226,12 @@ systemctl status calagopus-panel
 ```
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
-![Calagopus Panel OOBE](../oobe.png)
+![Calagopus Panel OOBE](../oobe.webp)
 === MacOS
 *wip: wait for robert to do brew probably*
 === Windows
 To ensure that the panel starts automatically on system boot, you can install it as a NSSM service. First, [download](https://github.com/dkxce/NSSM/releases/download/v2.25/NSSM_v2.25.zip) NSSM and extract the `nssm.exe` file appropriate to your architechture (if x86 use the contents of the win32 folder, if x64 use the contents of win64 folder) to the same path where your Calagopus Panel executable is located at.
-![](./images/nssm.png)
+![](./images/nssm.webp)
 
 Then, open a terminal, and run theses 2 commands:
 ```powershell
@@ -242,9 +242,9 @@ nssm install "Calagopus Panel" "C:\bin\calagopus-panel.exe"
 nssm start "Calagopus Panel"
 ```
 It should normally look like this:
-![](./images/nssmcli.png)
+![](./images/nssmcli.webp)
 
 If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
 
-![Calagopus Panel OOBE](../oobe.png)
+![Calagopus Panel OOBE](../oobe.webp)
 ::::

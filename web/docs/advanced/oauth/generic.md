@@ -44,10 +44,10 @@ Then, on your provider, setup Client ID and Client Secrets for Calagopus to use.
 
 ### Configuring the OAuth Provider
 Once you got your URL's, your claims and your scopes, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
-![OAuth Providers tab](./files/images/oauth-providers.png)
+![OAuth Providers tab](./files/images/oauth-providers.webp)
 
 Then, click on the Create button and you should arrive to a page similar to this:
-![Create OAuth provider page](./files/images/create.png)
+![Create OAuth provider page](./files/images/create.webp)
 
 On that page, fill out theses fields according to the guide below. It will explain what each field represents and give you some examples for [Pocket-ID](./files/pocket-id.yml).
 
