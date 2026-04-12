@@ -178,7 +178,7 @@ docker compose up -d
 ```
 
 Login with your existing Pterodactyl credentials, and you should be all set!
-=== idk
+
 ### Making the .env file
 ::: warning
 This step requires you to navigate to your Dockerized Pterodactyl folder where it should contain your `docker-compose.yml` file and/or your `.env` file.
