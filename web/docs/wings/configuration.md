@@ -42,7 +42,7 @@ Enables debug mode for Wings. When enabled, detailed logs are printed for troubl
 
 Default value:
 ```yaml
-test
+debug: false
 ```
 
 ### app_name
@@ -50,7 +50,7 @@ Human-readable name of this Wings instance, shown in logs.
 
 Default value:
 ```yaml
-test
+app_name: Pterodactyl
 ```
 
 ### uuid
@@ -58,7 +58,7 @@ Unique identifier for this Wings node.
 
 Default value:
 ```yaml
-test
+uuid: UUID
 ```
 
 ### token_id / token
@@ -66,7 +66,8 @@ Authentication credentials used by Wings to validate requests from the Panel. Mu
 
 Default value:
 ```yaml
-test
+token_id: TOKEN_ID
+token: TOKEN
 ```
 
 
@@ -76,7 +77,7 @@ The IP address Wings binds its internal API to.
 
 Default value:
 ```yaml
-test
+host: 0.0.0.0
 ```
 
 ### api.port
@@ -92,7 +93,7 @@ Enables HTTPS for the Wings API.
 
 Default value:
 ```yaml
-test
+enabled: false
 ```
 
 ### api.ssl.cert
@@ -100,7 +101,7 @@ Path to the SSL certificate file.
 
 Default value:
 ```yaml
-test
+cert: ''
 ```
 
 ### api.ssl.key
@@ -108,7 +109,7 @@ Path to the SSL private key file.
 
 Default value:
 ```yaml
-test
+key: ''
 ```
 
 ### api.redirects
@@ -116,7 +117,7 @@ Custom HTTP redirects for the API server (e.g. `/ → Panel URL`).
 
 Default value:
 ```yaml
-test
+redirects: {}
 ```
 
 ### api.disable_openapi_docs
@@ -124,7 +125,7 @@ Disables or enables the `/openapi.json` endpoint.
 
 Default value:
 ```yaml
-test
+disable_openapi_docs: true
 ```
 
 ### api.disable_remote_download
@@ -132,7 +133,7 @@ Prevents servers from downloading files via remote URLs.
 
 Default value:
 ```yaml
-test
+disable_remote_download: false
 ```
 
 ### api.server_remote_download_limit
@@ -140,7 +141,7 @@ Maximum number of concurrent remote file downloads per server.
 
 Default value:
 ```yaml
-test
+server_remote_download_limit: 3
 ```
 
 ### api.remote_download_blocked_cidrs
@@ -148,7 +149,15 @@ List of blocked CIDR ranges for remote downloads to prevent SSRF attacks.
 
 Default value:
 ```yaml
-test
+remote_download_blocked_cidrs:
+- 127.0.0.0/8
+- 10.0.0.0/8
+- 172.16.0.0/12
+- 192.168.0.0/16
+- 169.254.0.0/16
+- ::1
+- fe80::/10
+- fc00::/7
 ```
 
 ### api.disable_directory_size
@@ -156,7 +165,7 @@ Disables directory size calculation in file listings.
 
 Default value:
 ```yaml
-test
+disable_directory_size: false
 ```
 
 ### api.directory_entry_limit
@@ -164,7 +173,7 @@ Maximum number of entries returned per directory listing request.
 
 Default value:
 ```yaml
-test
+directory_entry_limit: 10000
 ```
 
 ### api.send_offline_server_logs
@@ -172,7 +181,7 @@ If enabled, cached logs from offline servers are sent when connecting via websoc
 
 Default value:
 ```yaml
-test
+send_offline_server_logs: false
 ```
 
 ### api.file_search_threads
@@ -180,7 +189,7 @@ Number of threads used for file search operations.
 
 Default value:
 ```yaml
-test
+file_search_threads: 4
 ```
 
 ### api.file_copy_threads
@@ -188,7 +197,7 @@ Number of threads used for copying files and directories.
 
 Default value:
 ```yaml
-test
+file_copy_threads: 4
 ```
 
 ### api.file_decompression_threads
@@ -196,7 +205,7 @@ Number of threads used for decompressing archives (zip, 7z, etc).
 
 Default value:
 ```yaml
-test
+file_decompression_threads: 2
 ```
 
 ### api.file_compression_threads
@@ -204,15 +213,15 @@ Number of threads used for compressing archives (gz, xz, etc).
 
 Default value:
 ```yaml
-test
+file_compression_threads: 2
 ```
 
 ### api.upload_limit
-Maximum upload size in MB for the web file manager.
+Maximum upload size in `MB` for the web file manager.
 
 Default value:
 ```yaml
-test
+upload_limit: 10240
 ```
 
 ### api.max_jwt_uses
@@ -220,7 +229,7 @@ Number of times a JWT token can be used for downloads before expiring.
 
 Default value:
 ```yaml
-test
+max_jwt_uses: 5
 ```
 
 ### api.trusted_proxies
@@ -228,7 +237,7 @@ List of trusted proxy IPs used for real IP resolution.
 
 Default value:
 ```yaml
-test
+trusted_proxies: []
 ```
 
 ## System Configuration
@@ -237,7 +246,7 @@ Base directory where all Wings server data is stored.
 
 Default value:
 ```yaml
-test
+root_directory: /var/lib/pterodactyl
 ```
 
 ### system.log_directory
@@ -245,7 +254,7 @@ Directory where Wings logs are written.
 
 Default value:
 ```yaml
-test
+log_directory: /var/log/pterodactyl
 ```
 
 ### system.vmount_directory
@@ -253,7 +262,7 @@ Directory used for virtual mount points.
 
 Default value:
 ```yaml
-test
+vmount_directory: /var/lib/pterodactyl/vmounts
 ```
 
 ### system.data
@@ -261,7 +270,7 @@ Directory containing server volume data.
 
 Default value:
 ```yaml
-test
+data: /var/lib/pterodactyl/volumes
 ```
 
 ### system.archive_directory
@@ -269,7 +278,7 @@ Temporary directory used for archives.
 
 Default value:
 ```yaml
-test
+archive_directory: /var/lib/pterodactyl/archives
 ```
 
 ### system.backup_directory
@@ -277,7 +286,7 @@ Directory where backups are stored.
 
 Default value:
 ```yaml
-test
+backup_directory: /var/lib/pterodactyl/backups
 ```
 
 ### system.tmp_directory
@@ -285,7 +294,7 @@ Temporary working directory for Wings.
 
 Default value:
 ```yaml
-test
+tmp_directory: /tmp/pterodactyl
 ```
 
 ### system.username
@@ -293,7 +302,7 @@ System user that Wings runs under.
 
 Default value:
 ```yaml
-test
+username: pterodactyl
 ```
 
 ### system.timezone
@@ -301,7 +310,7 @@ Timezone used by Wings (e.g. `+00:00`).
 
 Default value:
 ```yaml
-test
+timezone: +00:00
 ```
 
 ### system.user.rootless.enabled
@@ -309,7 +318,7 @@ Enables rootless container execution.
 
 Default value:
 ```yaml
-test
+enabled: false
 ```
 
 ### system.user.rootless.container_uid
@@ -317,7 +326,7 @@ UID used inside rootless containers.
 
 Default value:
 ```yaml
-test
+container_uid: 0
 ```
 
 ### system.user.rootless.container_gid
@@ -325,7 +334,7 @@ GID used inside rootless containers.
 
 Default value:
 ```yaml
-test
+container_gid: 0
 ```
 
 ### system.user.uid
@@ -333,7 +342,7 @@ Host system UID used by Wings.
 
 Default value:
 ```yaml
-test
+uid: 995
 ```
 
 ### system.user.gid
@@ -341,7 +350,7 @@ Host system GID used by Wings.
 
 Default value:
 ```yaml
-test
+gid: 985
 ```
 
 ### system.passwd.enabled
@@ -349,7 +358,7 @@ Enables dynamic passwd generation for containers.
 
 Default value:
 ```yaml
-test
+enabled: false
 ```
 
 ### system.passwd.directory
@@ -357,7 +366,7 @@ Directory where passwd files are generated.
 
 Default value:
 ```yaml
-test
+directory: /run/wings/etc
 ```
 
 ### system.disk_check_interval
@@ -365,7 +374,7 @@ Interval (in seconds) between disk usage checks.
 
 Default value:
 ```yaml
-test
+disk_check_interval: 150
 ```
 
 ### system.disk_check_use_inotify
@@ -373,7 +382,7 @@ Uses inotify to track filesystem changes for disk usage.
 
 Default value:
 ```yaml
-test
+disk_check_use_inotify: true
 ```
 
 ### system.disk_limiter_mode
@@ -385,7 +394,7 @@ Disk quota backend mode:
 
 Default value:
 ```yaml
-test
+disk_limiter_mode: none
 ```
 
 ### system.activity_send_interval
@@ -393,7 +402,7 @@ Interval (seconds) between sending activity updates to Panel.
 
 Default value:
 ```yaml
-test
+activity_send_interval: 60
 ```
 
 ### system.activity_send_count
@@ -401,7 +410,7 @@ Maximum number of activity events sent per interval.
 
 Default value:
 ```yaml
-test
+activity_send_count: 100
 ```
 
 ### system.check_permissions_on_boot
@@ -409,7 +418,7 @@ Runs permission correction on startup.
 
 Default value:
 ```yaml
-test
+check_permissions_on_boot: true
 ```
 
 ### system.check_permissions_on_boot_threads
@@ -417,7 +426,7 @@ Number of threads used for permission fixing.
 
 Default value:
 ```yaml
-test
+check_permissions_on_boot_threads: 4
 ```
 
 ### system.websocket_log_count
@@ -425,7 +434,7 @@ Number of log lines kept for websocket streaming.
 
 Default value:
 ```yaml
-test
+websocket_log_count: 150
 ```
 
 
@@ -435,7 +444,7 @@ Enables built-in SFTP server.
 
 Default value:
 ```yaml
-test
+enabled: true
 ```
 
 ### system.sftp.bind_address
@@ -443,7 +452,7 @@ IP address the SFTP server binds to.
 
 Default value:
 ```yaml
-test
+bind_address: 0.0.0.0
 ```
 
 ### system.sftp.bind_port
@@ -451,7 +460,7 @@ Port used for SFTP connections.
 
 Default value:
 ```yaml
-test
+bind_port: 2022
 ```
 
 ### system.sftp.read_only
@@ -459,7 +468,7 @@ Makes SFTP access read-only.
 
 Default value:
 ```yaml
-test
+read_only: false
 ```
 
 ### system.sftp.key_algorithm
@@ -467,7 +476,7 @@ SSH host key algorithm used.
 
 Default value:
 ```yaml
-test
+key_algorithm: ssh-ed25519
 ```
 
 ### system.sftp.disable_password_auth
@@ -475,7 +484,7 @@ Disables password authentication for SFTP.
 
 Default value:
 ```yaml
-test
+disable_password_auth: false
 ```
 
 ### system.sftp.directory_entry_limit
@@ -483,7 +492,7 @@ Maximum directory entries returned.
 
 Default value:
 ```yaml
-test
+directory_entry_limit: 20000
 ```
 
 ### system.sftp.directory_entry_send_amount
@@ -491,7 +500,7 @@ Number of entries sent per response chunk.
 
 Default value:
 ```yaml
-test
+directory_entry_send_amount: 500
 ```
 
 ### system.sftp.limits.authentication_password_attempts
@@ -499,7 +508,7 @@ Maximum failed password attempts before cooldown.
 
 Default value:
 ```yaml
-test
+authentication_password_attempts: 3
 ```
 
 ### system.sftp.limits.authentication_pubkey_attempts
@@ -507,7 +516,7 @@ Maximum failed SSH key attempts before cooldown.
 
 Default value:
 ```yaml
-test
+authentication_pubkey_attempts: 20
 ```
 
 ### system.sftp.limits.authentication_cooldown
@@ -515,7 +524,7 @@ Cooldown time (seconds) after exceeding login attempts.
 
 Default value:
 ```yaml
-test
+authentication_cooldown: 60
 ```
 
 ### system.sftp.shell.enabled
@@ -523,7 +532,7 @@ Enables Wings remote shell access.
 
 Default value:
 ```yaml
-test
+enabled: true
 ```
 
 ### system.sftp.shell.cli.name
@@ -531,18 +540,23 @@ Command name for the internal Wings CLI (e.g. `.wings`).
 
 Default value:
 ```yaml
-test
+name: .wings
 ```
 
 ### system.sftp.activity.log_logins
 Logs SFTP login events.
+
+Default value:
+```yaml
+log_logins: false
+```
 
 ### system.sftp.activity.log_file_reads
 Logs file read actions via SFTP.
 
 Default value:
 ```yaml
-test
+log_file_reads: false
 ```
 
 ## Crash Detection
@@ -551,7 +565,7 @@ Enables crash detection for servers.
 
 Default value:
 ```yaml
-test
+enabled: true
 ```
 
 ### system.crash_detection.detect_clean_exit_as_crash
@@ -559,7 +573,7 @@ Treats clean exits as crashes if enabled.
 
 Default value:
 ```yaml
-test
+detect_clean_exit_as_crash: true
 ```
 
 ### system.crash_detection.timeout
@@ -567,7 +581,7 @@ Time (seconds) before a server is considered crashed.
 
 Default value:
 ```yaml
-test
+timeout: 60
 ```
 
 
@@ -577,7 +591,7 @@ Write speed limit for backups (0 = unlimited).
 
 Default value:
 ```yaml
-test
+write_limit: 0
 ```
 
 ### system.backups.read_limit
@@ -585,15 +599,15 @@ Read speed limit for backups (0 = unlimited).
 
 Default value:
 ```yaml
-test
+read_limit: 0
 ```
 
 ### system.backups.compression_level
-Backup compression level (best_speed, best_compression, etc).
+Backup compression level to use. Available options: `best_speed`, `good_speed`, `good_compression`, `best_compression`
 
 Default value:
 ```yaml
-test
+compression_level: best_speed
 ```
 
 ### system.backups.mounting.enabled
@@ -601,7 +615,7 @@ Enables backup browsing via file manager.
 
 Default value:
 ```yaml
-test
+enabled: true
 ```
 
 ### system.backups.mounting.path
@@ -609,7 +623,7 @@ Path prefix used when mounting backups.
 
 Default value:
 ```yaml
-test
+path: .backups
 ```
 
 ### system.backups.wings.create_threads
@@ -617,7 +631,7 @@ Threads used for creating backups.
 
 Default value:
 ```yaml
-test
+create_threads: 4
 ```
 
 ### system.backups.wings.restore_threads
@@ -625,16 +639,15 @@ Threads used for restoring backups.
 
 Default value:
 ```yaml
-test
+restore_threads: 4
 ```
 
 ### system.backups.wings.archive_format
-Backup archive format
-Available options: `best_speed`, `good_speed`, `good_compression`, `best_compression`
+What Backup archive format to use for Local Backups. Available options: `tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
 
 Default value:
 ```yaml
-test
+archive_format: tar_gz
 ```
 
 ### system.backups.s3.create_threads
@@ -642,7 +655,7 @@ Threads used for S3 backup creation.
 
 Default value:
 ```yaml
-test
+create_threads: 4
 ```
 
 ### system.backups.s3.part_upload_timeout
@@ -650,7 +663,7 @@ Timeout (seconds) for S3 multipart uploads.
 
 Default value:
 ```yaml
-test
+part_upload_timeout: 7200
 ```
 
 ### system.backups.s3.retry_limit
@@ -658,7 +671,7 @@ Number of retries per failed upload part.
 
 Default value:
 ```yaml
-test
+retry_limit: 10
 ```
 
 ### system.backups.ddup_bak.create_threads
@@ -666,7 +679,7 @@ Threads used for ddup-bak backup creation.
 
 Default value:
 ```yaml
-test
+create_threads: 4
 ```
 
 ### system.backups.ddup_bak.compression_format
@@ -678,7 +691,7 @@ Compression format used for ddup-bak:
 
 Default value:
 ```yaml
-test
+compression_format: deflate
 ```
 
 ### system.backups.restic.repository
@@ -686,7 +699,7 @@ Path to restic repository.
 
 Default value:
 ```yaml
-test
+repository: /var/lib/pterodactyl/backups/restic
 ```
 
 ### system.backups.restic.password_file
@@ -694,7 +707,7 @@ Path to restic password file.
 
 Default value:
 ```yaml
-test
+password_file: /var/lib/pterodactyl/backups/restic_password
 ```
 
 ### system.backups.restic.retry_lock_seconds
@@ -702,7 +715,7 @@ Wait time for repository lock.
 
 Default value:
 ```yaml
-test
+retry_lock_seconds: 60
 ```
 
 ### system.backups.restic.environment
@@ -710,7 +723,7 @@ Environment variables passed to restic.
 
 Default value:
 ```yaml
-test
+environment: {}
 ```
 
 ### system.backups.btrfs.restore_threads
@@ -718,7 +731,7 @@ Threads used for restoring BTRFS snapshots.
 
 Default value:
 ```yaml
-test
+restore_threads: 4
 ```
 
 ### system.backups.btrfs.create_read_only
@@ -726,7 +739,7 @@ Creates read-only snapshots.
 
 Default value:
 ```yaml
-test
+create_read_only: true
 ```
 
 ### system.backups.zfs.restore_threads
@@ -734,7 +747,7 @@ Threads used for restoring ZFS snapshots.
 
 Default value:
 ```yaml
-test
+restore_threads: 4
 ```
 
 ## Transfers
@@ -743,7 +756,7 @@ Download rate limit for transfers (0 = unlimited).
 
 Default value:
 ```yaml
-test
+download_limit: 0
 ```
 
 ## Docker Configuration
@@ -752,7 +765,7 @@ Path to Docker socket used by Wings.
 
 Default value:
 ```yaml
-test
+socket: /var/run/docker.sock
 ```
 
 ### docker.server_name_in_container_name
@@ -760,7 +773,7 @@ Includes server name in container names.
 
 Default value:
 ```yaml
-test
+server_name_in_container_name: false
 ```
 
 ### docker.delete_container_on_stop
@@ -768,7 +781,7 @@ Removes containers immediately when a server stops.
 
 Default value:
 ```yaml
-test
+delete_container_on_stop: true
 ```
 
 ### docker.network.interface
@@ -776,7 +789,7 @@ IP interface used for Docker network bridge.
 
 Default value:
 ```yaml
-test
+interface: 172.18.0.1
 ```
 
 ### docker.network.disable_interface_binding
@@ -784,7 +797,7 @@ Disables binding containers to a specific interface.
 
 Default value:
 ```yaml
-test
+disable_interface_binding: false
 ```
 
 ### docker.network.dns
@@ -792,7 +805,9 @@ DNS servers used inside containers.
 
 Default value:
 ```yaml
-test
+dns:
+- 1.1.1.1
+- 1.0.0.1
 ```
 
 ### docker.network.name
@@ -800,7 +815,7 @@ Name of the Docker network used by Wings.
 
 Default value:
 ```yaml
-test
+name: pterodactyl_nw
 ```
 
 ### docker.network.ispn
@@ -808,7 +823,7 @@ Internal network flag used by Wings.
 
 Default value:
 ```yaml
-test
+ispn: false
 ```
 
 ### docker.network.driver
@@ -816,7 +831,7 @@ Docker network driver (e.g. bridge).
 
 Default value:
 ```yaml
-test
+driver: bridge
 ```
 
 ### docker.network.mode
@@ -824,7 +839,7 @@ Internal network mode identifier.
 
 Default value:
 ```yaml
-test
+mode: pterodactyl_nw
 ```
 
 ### docker.network.is_internal
@@ -832,7 +847,7 @@ Marks network as internal-only.
 
 Default value:
 ```yaml
-test
+is_internal: false
 ```
 
 ### docker.network.enable_icc
@@ -840,7 +855,7 @@ Enables inter-container communication.
 
 Default value:
 ```yaml
-test
+enable_icc: true
 ```
 
 ### docker.network.network_mtu
@@ -848,7 +863,7 @@ Sets MTU size for container network.
 
 Default value:
 ```yaml
-test
+network_mtu: 1500
 ```
 
 ### docker.network.interfaces.v4.subnet
@@ -856,7 +871,7 @@ IPv4 subnet used by Docker network.
 
 Default value:
 ```yaml
-test
+subnet: 172.18.0.0/16
 ```
 
 ### docker.network.interfaces.v4.gateway
@@ -864,7 +879,7 @@ IPv4 gateway address.
 
 Default value:
 ```yaml
-test
+gateway: 172.18.0.1
 ```
 
 ### docker.network.interfaces.v6.subnet
@@ -872,7 +887,7 @@ IPv6 subnet used by Docker network.
 
 Default value:
 ```yaml
-test
+subnet: fdba:17c8:6c94::/64
 ```
 
 ### docker.network.interfaces.v6.gateway
@@ -880,7 +895,7 @@ IPv6 gateway address.
 
 Default value:
 ```yaml
-test
+gateway: fdba:17c8:6c94::1011
 ```
 
 ### docker.domainname
@@ -888,7 +903,7 @@ Domain name assigned to containers.
 
 Default value:
 ```yaml
-test
+domainname: ''
 ```
 
 ### docker.registries
@@ -896,15 +911,15 @@ Docker registry authentication configurations.
 
 Default value:
 ```yaml
-test
+registries: {}
 ```
 
 ### docker.tmpfs_size
-Size (MB) of /tmp mounted in containers.
+Size (MB) of `/tmp` mounted in containers.
 
 Default value:
 ```yaml
-test
+tmpfs_size: 100
 ```
 
 ### docker.container_pid_limit
@@ -912,7 +927,7 @@ Maximum number of processes allowed per container.
 
 Default value:
 ```yaml
-test
+container_pid_limit: 5120
 ```
 
 ### docker.installer_limits.timeout
@@ -920,7 +935,7 @@ Timeout (seconds) before installer container is considered failed.
 
 Default value:
 ```yaml
-test
+timeout: 1800
 ```
 
 ### docker.installer_limits.memory
@@ -928,7 +943,7 @@ Memory limit (MB) for installer containers.
 
 Default value:
 ```yaml
-test
+memory: 1024
 ```
 
 ### docker.installer_limits.cpu
@@ -936,7 +951,7 @@ CPU limit (%) for installer containers.
 
 Default value:
 ```yaml
-test
+cpu: 100
 ```
 
 ### docker.overhead.override
@@ -944,7 +959,7 @@ Enables custom memory overhead multipliers.
 
 Default value:
 ```yaml
-test
+override: false
 ```
 
 ### docker.overhead.default_multiplier
@@ -952,7 +967,7 @@ Default memory overhead multiplier.
 
 Default value:
 ```yaml
-test
+default_multiplier: 1.05
 ```
 
 ### docker.overhead.multipliers
@@ -960,7 +975,7 @@ Map of memory thresholds to multipliers.
 
 Default value:
 ```yaml
-test
+multipliers: {}
 ```
 
 ### docker.userns_mode
@@ -968,7 +983,7 @@ User namespace mode for containers.
 
 Default value:
 ```yaml
-test
+userns_mode: ''
 ```
 
 ### docker.log_config.type
@@ -976,7 +991,7 @@ Docker logging driver type.
 
 Default value:
 ```yaml
-test
+type: local
 ```
 
 ### docker.log_config.config.compress
@@ -984,7 +999,7 @@ Enables log compression.
 
 Default value:
 ```yaml
-test
+compress: 'false'
 ```
 
 ### docker.log_config.config.max-file
@@ -992,7 +1007,7 @@ Maximum number of log files.
 
 Default value:
 ```yaml
-test
+max-file: '1'
 ```
 
 ### docker.log_config.config.max-size
@@ -1000,7 +1015,7 @@ Maximum size per log file.
 
 Default value:
 ```yaml
-test
+max-size: 5m
 ```
 
 ### docker.log_config.config.mode
@@ -1008,7 +1023,7 @@ Log mode (e.g. non-blocking).
 
 Default value:
 ```yaml
-test
+mode: non-blocking
 ```
 
 ## Backups & Throttles
@@ -1017,7 +1032,7 @@ Enables console output throttling.
 
 Default value:
 ```yaml
-test
+enabled: true
 ```
 
 ### throttles.lines
@@ -1025,7 +1040,7 @@ Maximum number of console lines stored.
 
 Default value:
 ```yaml
-test
+lines: 2000
 ```
 
 ### throttles.line_reset_interval
@@ -1033,7 +1048,7 @@ Interval (seconds) for resetting throttle counters.
 
 Default value:
 ```yaml
-test
+line_reset_interval: 100
 ```
 
 ## Remote Configuration
@@ -1042,7 +1057,7 @@ URL of the Panel instance Wings connects to.
 
 Default value:
 ```yaml
-test
+remote: https://panel.example.com
 ```
 
 ### remote_headers
@@ -1050,7 +1065,7 @@ Custom HTTP headers for Panel requests.
 
 Default value:
 ```yaml
-test
+remote_headers: {}
 ```
 
 ### remote_query.timeout
@@ -1058,7 +1073,7 @@ Request timeout in seconds.
 
 Default value:
 ```yaml
-test
+timeout: 30
 ```
 
 ### remote_query.boot_servers_per_page
@@ -1066,7 +1081,7 @@ Number of servers loaded per request.
 
 Default value:
 ```yaml
-test
+boot_servers_per_page: 50
 ```
 
 ### remote_query.retry_limit
@@ -1074,7 +1089,7 @@ Number of retries for failed requests.
 
 Default value:
 ```yaml
-test
+retry_limit: 10
 ```
 
 ## Security / Behaviour Flags
@@ -1083,7 +1098,7 @@ List of allowed filesystem mounts for servers.
 
 Default value:
 ```yaml
-test
+allowed_mounts: []
 ```
 
 ### allowed_origins
@@ -1091,7 +1106,7 @@ Allowed CORS origins for API access.
 
 Default value:
 ```yaml
-test
+allowed_origins: []
 ```
 
 ### allow_cors_private_network
@@ -1099,7 +1114,7 @@ Allows CORS requests from private networks.
 
 Default value:
 ```yaml
-test
+allow_cors_private_network: false
 ```
 
 ### ignore_panel_config_updates
@@ -1107,7 +1122,7 @@ If true, ignores configuration updates from Panel.
 
 Default value:
 ```yaml
-test
+ignore_panel_config_updates: false
 ```
 
 ### ignore_panel_wings_upgrades
@@ -1115,7 +1130,7 @@ If true, ignores upgrade requests from Panel.
 
 Default value:
 ```yaml
-test
+ignore_panel_wings_upgrades: false
 ```
 
 
@@ -1248,10 +1263,8 @@ docker:
     interface: 172.18.0.1
     disable_interface_binding: false
     dns:
-    - 8.8.8.8
     - 1.1.1.1
-    - 2001:4860:4860::8888
-    - 2606:4700:4700::1111
+    - 1.0.0.1
     name: pterodactyl_nw
     ispn: false
     driver: bridge
