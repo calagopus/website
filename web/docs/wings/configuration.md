@@ -575,7 +575,9 @@ read_limit: 0
 ```
 
 ### system.backups.compression_level
-Backup compression level to use. Available options: `best_speed`, `good_speed`, `good_compression`, `best_compression`
+Backup compression level to use. Available options:
+
+`best_speed`, `good_speed`, `good_compression`, `best_compression`
 
 Default value:
 ```yaml
@@ -615,7 +617,9 @@ restore_threads: 4
 ```
 
 ### system.backups.wings.archive_format
-What Backup archive format to use for Local Backups. Available options: `tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
+What Backup archive format to use for Local Backups. Available options: 
+
+`tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
 
 Default value:
 ```yaml
@@ -655,11 +659,9 @@ create_threads: 4
 ```
 
 ### system.backups.ddup_bak.compression_format
-Compression format used for `ddup-bak`:
-- `none`
-- `deflate`
-- `gzip`
-- `brotli`
+Compression format used for each `ddup-bak` chunk. Available Options:
+
+`none`, `deflate`, `gzip`, `brotli`
 
 Default value:
 ```yaml
@@ -724,7 +726,7 @@ restore_threads: 4
 
 ## Transfers
 ### system.transfers.download_limit
-Download rate limit for transfers (0 = unlimited).
+Download rate limit for transfers (`0` = unlimited).
 
 Default value:
 ```yaml
