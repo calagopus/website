@@ -1,5 +1,5 @@
 
-::: warning
+::: info
 ⚠️ **PAGE UNDER CONSTRUCTION** ⚠️
 
 This section is currently being drafted. Some configuration options and troubleshooting steps may be missing or incomplete.
@@ -7,34 +7,6 @@ This section is currently being drafted. Some configuration options and troubles
 
 # Configuration
 This page covers all the configuration options for the Calagopus Wings Daemon, including how to set up and manage these configurations. It also includes troubleshooting tips for common configuration issues.
-
-## SSL Configuration
-The Wings configuration file is located at `/etc/pterodactyl/config.yml`. To enable SSL for your node, you will need to modify the api section, specifically lines `10`, `11`, and `12`.
-
-::: info
-This guide assumes you have already generated your certificates using Certbot. Replacing `<domain>` with your actual node domain will point Wings to the correct Let's Encrypt directory.
-:::
-
-### Enabling SSL
-By default, the SSL setting is disabled. To secure your Wings communication, change `enabled: false` to `true` and provide the paths to your certificate files.
-
-If you are using Let's Encrypt, your configuration block should be updated to look like this:
-```yaml
-api:
-  host: 0.0.0.0
-  port: 8080
-  ssl:
-    enabled: true
-    cert: /etc/letsencrypt/live/<domain>/fullchain.pem
-    key: /etc/letsencrypt/live/<domain>/privkey.pem
-```
-
-### Applying Changes
-After saving your changes to `config.yml`, you must restart the Wings service for the new SSL configuration to take effect:
-```bash
-sudo systemctl restart wings
-```
-
 
 ## Core Configuration
 ### debug
@@ -675,7 +647,7 @@ retry_limit: 10
 ```
 
 ### system.backups.ddup_bak.create_threads
-Threads used for ddup-bak backup creation.
+Threads used for `ddup-bak` backup creation.
 
 Default value:
 ```yaml
@@ -683,7 +655,7 @@ create_threads: 4
 ```
 
 ### system.backups.ddup_bak.compression_format
-Compression format used for ddup-bak:
+Compression format used for `ddup-bak`:
 - `none`
 - `deflate`
 - `gzip`
@@ -1118,7 +1090,7 @@ allow_cors_private_network: false
 ```
 
 ### ignore_panel_config_updates
-If true, ignores configuration updates from Panel.
+If `true`, ignores configuration updates from Panel.
 
 Default value:
 ```yaml
@@ -1126,11 +1098,39 @@ ignore_panel_config_updates: false
 ```
 
 ### ignore_panel_wings_upgrades
-If true, ignores upgrade requests from Panel.
+If `true`, ignores upgrade requests from Panel.
 
 Default value:
 ```yaml
 ignore_panel_wings_upgrades: false
+```
+
+
+## SSL Configuration
+The Wings configuration file is located at `/etc/pterodactyl/config.yml`. To enable SSL for your node, you will need to modify the api section, specifically lines `10`, `11`, and `12`.
+
+::: info
+This guide assumes you have already generated your certificates using Certbot. Replacing `<domain>` with your actual node domain will point Wings to the correct Let's Encrypt directory.
+:::
+
+### Enabling SSL
+By default, the SSL setting is disabled. To secure your Wings communication, change `enabled: false` to `true` and provide the paths to your certificate files.
+
+If you are using Let's Encrypt, your configuration block should be updated to look like this:
+```yaml
+api:
+  host: 0.0.0.0
+  port: 8080
+  ssl:
+    enabled: true
+    cert: /etc/letsencrypt/live/<domain>/fullchain.pem
+    key: /etc/letsencrypt/live/<domain>/privkey.pem
+```
+
+### Applying Changes
+After saving your changes to `config.yml`, you must restart the Wings service for the new SSL configuration to take effect:
+```bash
+sudo systemctl restart wings
 ```
 
 
@@ -1316,3 +1316,9 @@ ignore_panel_config_updates: false
 ignore_panel_wings_upgrades: false
 ```
 
+## Troubleshooting
+::: info
+⚠️ **PAGE UNDER CONSTRUCTION** ⚠️
+
+This section is currently being drafted. Some configuration options and troubleshooting steps may be missing or incomplete.
+:::
