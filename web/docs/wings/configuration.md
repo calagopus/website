@@ -31,7 +31,7 @@ api:
 
 ### Applying Changes
 After saving your changes to `config.yml`, you must restart the Wings service for the new SSL configuration to take effect:
-```yaml
+```bash
 sudo systemctl restart wings
 ```
 
