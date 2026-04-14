@@ -1134,7 +1134,7 @@ ignore_panel_wings_upgrades: false
 ```
 
 
-# Example Config
+## Example Config
 The following is an example of a standard generated `config.yml` for Wings with standard values:
 
 ```yaml
