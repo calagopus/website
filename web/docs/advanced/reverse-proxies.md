@@ -59,6 +59,7 @@ server {
     error_log  /var/log/nginx/calagopus.app-error.log error;
 
     sendfile off;
+    client_max_body_size 100M;
 
     ssl_certificate /etc/letsencrypt/live/<domain>/fullchain.pem;
     ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
@@ -112,6 +113,7 @@ server {
     error_log  /var/log/nginx/calagopus.app-error.log error;
 
     sendfile off;
+    client_max_body_size 100M;
 
     add_header X-XSS-Protection "1; mode=block";
     # Prevent search engines from indexing or following links
@@ -170,6 +172,7 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
     CustomLog /var/log/apache2/calagopus.app-access.log combined
 
     EnableSendfile Off
+    LimitRequestBody 104857600
 
     SSLEngine on
     SSLCertificateFile      /etc/letsencrypt/live/<domain>/fullchain.pem
@@ -224,6 +227,7 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
     CustomLog /var/log/apache2/calagopus.app-access.log combined
 
     EnableSendfile Off
+    LimitRequestBody 104857600
 
     # Security headers (still optional for HTTP)
     Header always set X-XSS-Protection "1; mode=block"
@@ -257,6 +261,7 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
 === Caddy 
 ```caddy
 <domain> {
+  request_body max_size 100MB
   # Make sure this IP matches your Panel container's IP address
   reverse_proxy 172.18.0.1:8000
 }
