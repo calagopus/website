@@ -214,7 +214,7 @@ trusted_proxies: []
 
 ## System Configuration
 ### system.root_directory
-Base directory where all Wings server data is stored.
+This is the root directory where Wings stores its own persistent data (mainly state of servers so it can restore them on restart).
 
 Default value:
 ```yaml
@@ -222,7 +222,7 @@ root_directory: /var/lib/pterodactyl
 ```
 
 ### system.log_directory
-Directory where Wings logs are written.
+This is the directory where Wings stores its logs.
 
 Default value:
 ```yaml
@@ -230,7 +230,7 @@ log_directory: /var/log/pterodactyl
 ```
 
 ### system.vmount_directory
-The local path used for temporary virtual mountpoints for servers.
+This is the directory where Wings stores virtual mounts for servers. Currently mainly used for spoofing hardware UUIDs for containers.
 
 Default value:
 ```yaml
@@ -238,7 +238,7 @@ vmount_directory: /var/lib/pterodactyl/vmounts
 ```
 
 ### system.data
-Directory containing server volume data.
+This is the directory where Wings stores server data. This is the directory that gets bind-mounted to server containers and is where all server files are stored.
 
 Default value:
 ```yaml
@@ -246,7 +246,7 @@ data: /var/lib/pterodactyl/volumes
 ```
 
 ### system.archive_directory
-Temporary directory used for archives.
+This is the directory where Wings stores server archives. This is 100% unused in current code and is simply there for compatibility with Pterodactyl's codebase; it may be used in the future.
 
 Default value:
 ```yaml
@@ -254,7 +254,7 @@ archive_directory: /var/lib/pterodactyl/archives
 ```
 
 ### system.backup_directory
-Directory where backups are stored.
+This is the directory where Wings stores server backups. This applies to backups using the `Wings` backup driver; `btrfs` and `zfs` backups also use this directory for snapshots.
 
 Default value:
 ```yaml
@@ -262,7 +262,7 @@ backup_directory: /var/lib/pterodactyl/backups
 ```
 
 ### system.tmp_directory
-Temporary working directory for Wings.
+This is the directory where Wings stores temporary files. This is used for various temporary files that Wings needs to create during its operation.
 
 Default value:
 ```yaml
