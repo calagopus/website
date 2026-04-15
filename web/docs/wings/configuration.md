@@ -93,7 +93,7 @@ redirects: {}
 ```
 
 ### api.disable_openapi_docs
-Disables or enables the `/openapi.json` endpoint.
+Controls the availability of the `/openapi.json` endpoint.
 
 Default value:
 ```yaml
@@ -109,7 +109,7 @@ disable_remote_download: false
 ```
 
 ### api.server_remote_download_limit
-Maximum number of concurrent remote file downloads per server.
+The maximum number of concurrent remote file pulls (downloads via URL) allowed for a single server.
 
 Default value:
 ```yaml
@@ -117,7 +117,7 @@ server_remote_download_limit: 3
 ```
 
 ### api.remote_download_blocked_cidrs
-List of blocked CIDR ranges for remote downloads to prevent SSRF attacks.
+A security list of CIDR ranges blocked for remote downloads to prevent SSRF (Server-Side Request Forgery) attacks.
 
 Default value:
 ```yaml
@@ -141,7 +141,7 @@ disable_directory_size: false
 ```
 
 ### api.directory_entry_limit
-Maximum number of entries returned per directory listing request.
+The maximum number of files/folders returned in a single `/list-directory` API call (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -149,7 +149,7 @@ directory_entry_limit: 10000
 ```
 
 ### api.send_offline_server_logs
-If enabled, cached logs from offline servers are sent when connecting via websocket.
+When enabled, Wings will transmit cached logs from an offline server immediately upon a websocket connection.
 
 Default value:
 ```yaml
@@ -158,14 +158,14 @@ send_offline_server_logs: false
 
 ### api.file_search_threads
 Number of threads used for file search operations.
-
 Default value:
+
 ```yaml
 file_search_threads: 4
 ```
 
 ### api.file_copy_threads
-Number of threads used for copying files and directories.
+Number of Threads used for directory and file duplication.
 
 Default value:
 ```yaml
@@ -173,7 +173,7 @@ file_copy_threads: 4
 ```
 
 ### api.file_decompression_threads
-Number of threads used for decompressing archives (zip, 7z, etc).
+Number of threads used for decompressing archives (`.zip`, `.7z`, `.ddup` etc.).
 
 Default value:
 ```yaml
@@ -181,7 +181,7 @@ file_decompression_threads: 2
 ```
 
 ### api.file_compression_threads
-Number of threads used for compressing archives (gz, xz, etc).
+Number of threads used for compressing archives (`.zip`, `.7z`, `.ddup` etc.)
 
 Default value:
 ```yaml
@@ -197,7 +197,7 @@ upload_limit: 10240
 ```
 
 ### api.max_jwt_uses
-Number of times a JWT token can be used for downloads before expiring.
+The number of times a single JWT can be used for a download/backup before it expires.
 
 Default value:
 ```yaml
@@ -230,7 +230,7 @@ log_directory: /var/log/pterodactyl
 ```
 
 ### system.vmount_directory
-Directory used for virtual mount points.
+The local path used for temporary virtual mountpoints for servers.
 
 Default value:
 ```yaml
@@ -342,7 +342,7 @@ directory: /run/wings/etc
 ```
 
 ### system.disk_check_interval
-Interval (in seconds) between disk usage checks.
+Interval for inotify disk checks. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 6 = 900s / 15 min).
 
 Default value:
 ```yaml
@@ -350,7 +350,7 @@ disk_check_interval: 150
 ```
 
 ### system.disk_check_use_inotify
-Uses inotify to track filesystem changes for disk usage.
+Uses inotify for selective scanning to reduce overhead.
 
 Default value:
 ```yaml
@@ -358,11 +358,9 @@ disk_check_use_inotify: true
 ```
 
 ### system.disk_limiter_mode
-Disk quota backend mode:
-- `none`
-- `btrfs_subvolume`
-- `zfs_dataset`
-- `xfs_quota`
+The backend driver for enforcing storage quotas. Available Options:
+
+`none`, `btrfs_subvolume`, `zfs_dataset`, `xfs_quota` or the experimental `fuse_quota`
 
 Default value:
 ```yaml
@@ -394,7 +392,7 @@ check_permissions_on_boot: true
 ```
 
 ### system.check_permissions_on_boot_threads
-Number of threads used for permission fixing.
+The number of concurrent threads used to verify and correct file permissions (chown) during the server startup process.
 
 Default value:
 ```yaml
@@ -412,7 +410,7 @@ websocket_log_count: 150
 
 ## SFTP Configuration
 ### system.sftp.enabled
-Enables built-in SFTP server.
+Whether to enable the integrated SFTP (SSH) server.
 
 Default value:
 ```yaml
@@ -444,7 +442,7 @@ read_only: false
 ```
 
 ### system.sftp.key_algorithm
-SSH host key algorithm used.
+The cryptographic algorithm used for generating the SSH host key.
 
 Default value:
 ```yaml
@@ -452,7 +450,7 @@ key_algorithm: ssh-ed25519
 ```
 
 ### system.sftp.disable_password_auth
-Disables password authentication for SFTP.
+If enabled, only SSH key authentication is permitted for SFTP/SSH.
 
 Default value:
 ```yaml
@@ -476,7 +474,7 @@ directory_entry_send_amount: 500
 ```
 
 ### system.sftp.limits.authentication_password_attempts
-Maximum failed password attempts before cooldown.
+Maximum failed password tries within the cooldown window.
 
 Default value:
 ```yaml
@@ -484,7 +482,7 @@ authentication_password_attempts: 3
 ```
 
 ### system.sftp.limits.authentication_pubkey_attempts
-Maximum failed SSH key attempts before cooldown.
+Maximum failed key-based tries within the cooldown window.
 
 Default value:
 ```yaml
@@ -492,7 +490,7 @@ authentication_pubkey_attempts: 20
 ```
 
 ### system.sftp.limits.authentication_cooldown
-Cooldown time (seconds) after exceeding login attempts.
+Cooldown period in seconds once attempts are exceeded. This is a sliding window based on the most recent attempt. (3 failed attempts in 1min = 60s wait time from the last attempt)
 
 Default value:
 ```yaml
@@ -500,7 +498,7 @@ authentication_cooldown: 60
 ```
 
 ### system.sftp.shell.enabled
-Enables Wings remote shell access.
+Allows server management via the Wings remote shell over SSH.
 
 Default value:
 ```yaml
@@ -508,7 +506,7 @@ enabled: true
 ```
 
 ### system.sftp.shell.cli.name
-Command name for the internal Wings CLI (e.g. `.wings`).
+The name of the internal CLI tool used within the shell (e.g., `.wings help`)
 
 Default value:
 ```yaml
@@ -516,7 +514,7 @@ name: .wings
 ```
 
 ### system.sftp.activity.log_logins
-Logs SFTP login events.
+Whether successful SFTP logins appear in the server activity log.
 
 Default value:
 ```yaml
@@ -524,7 +522,7 @@ log_logins: false
 ```
 
 ### system.sftp.activity.log_file_reads
-Logs file read actions via SFTP.
+Whether reading files via SFTP is logged in activity.
 
 Default value:
 ```yaml
@@ -559,7 +557,7 @@ timeout: 60
 
 ## Backups Configuration
 ### system.backups.write_limit
-Write speed limit for backups (0 = unlimited).
+Write speed limit for backups (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -567,7 +565,7 @@ write_limit: 0
 ```
 
 ### system.backups.read_limit
-Read speed limit for backups (0 = unlimited).
+Read speed limit for backups (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -575,7 +573,7 @@ read_limit: 0
 ```
 
 ### system.backups.compression_level
-Backup compression level to use. Available options:
+Defines the CPU vs. Compression ratio. Available options:
 
 `best_speed`, `good_speed`, `good_compression`, `best_compression`
 
@@ -585,7 +583,7 @@ compression_level: best_speed
 ```
 
 ### system.backups.mounting.enabled
-Enables backup browsing via file manager.
+Allows users to browse and interact with backup contents via the File Manager.
 
 Default value:
 ```yaml
@@ -593,7 +591,7 @@ enabled: true
 ```
 
 ### system.backups.mounting.path
-Path prefix used when mounting backups.
+The path prefix used for the virtual backup mount (e.g., `.backups/<uuid>`).
 
 Default value:
 ```yaml
@@ -601,7 +599,7 @@ path: .backups
 ```
 
 ### system.backups.wings.create_threads
-Threads used for creating backups.
+Threads used for creating local backups (`.gz`, `.xz`, `.7z` etc.)
 
 Default value:
 ```yaml
@@ -609,7 +607,7 @@ create_threads: 4
 ```
 
 ### system.backups.wings.restore_threads
-Threads used for restoring backups.
+Threads used for extracting local zip backups.
 
 Default value:
 ```yaml
@@ -617,7 +615,7 @@ restore_threads: 4
 ```
 
 ### system.backups.wings.archive_format
-What Backup archive format to use for Local Backups. Available options: 
+The compression format used for local backups. Available options:
 
 `tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
 
@@ -627,7 +625,7 @@ archive_format: tar_gz
 ```
 
 ### system.backups.s3.create_threads
-Threads used for S3 backup creation.
+The amount of Threads used when creating a `.gz` S3 backup.
 
 Default value:
 ```yaml
@@ -635,7 +633,7 @@ create_threads: 4
 ```
 
 ### system.backups.s3.part_upload_timeout
-Timeout (seconds) for S3 multipart uploads.
+Maximum time (seconds) to wait for a single part of a multipart upload.
 
 Default value:
 ```yaml
@@ -643,7 +641,7 @@ part_upload_timeout: 7200
 ```
 
 ### system.backups.s3.retry_limit
-Number of retries per failed upload part.
+Number of retry attempts for failed upload parts.
 
 Default value:
 ```yaml
@@ -669,7 +667,7 @@ compression_format: deflate
 ```
 
 ### system.backups.restic.repository
-Path to restic repository.
+The Restic repository path used for backups. Must already be initialized and can be overridden by the panel.
 
 Default value:
 ```yaml
@@ -677,7 +675,7 @@ repository: /var/lib/pterodactyl/backups/restic
 ```
 
 ### system.backups.restic.password_file
-Path to restic password file.
+Path to the Restic repository password file used for authentication (can be overridden by the panel).
 
 Default value:
 ```yaml
@@ -685,7 +683,7 @@ password_file: /var/lib/pterodactyl/backups/restic_password
 ```
 
 ### system.backups.restic.retry_lock_seconds
-Wait time for repository lock.
+Time to wait if the repository is currently locked by another process (can be overridden by the panel).
 
 Default value:
 ```yaml
@@ -735,7 +733,7 @@ download_limit: 0
 
 ## Docker Configuration
 ### docker.socket
-Path to Docker socket used by Wings.
+The path to the Docker daemon socket or HTTP address.
 
 Default value:
 ```yaml
@@ -751,7 +749,7 @@ server_name_in_container_name: false
 ```
 
 ### docker.delete_container_on_stop
-Removes containers immediately when a server stops.
+When enabled, containers are deleted as soon as a server is stops, is killed, or crashes. This significantly reduces long-term CPU/resource overhead.
 
 Default value:
 ```yaml
@@ -905,7 +903,7 @@ container_pid_limit: 5120
 ```
 
 ### docker.installer_limits.timeout
-Timeout (seconds) before installer container is considered failed.
+Maximum time (seconds) allowed for an installation container to run before it is considered failed. (`0` = no limit)
 
 Default value:
 ```yaml
@@ -1035,7 +1033,7 @@ remote: https://panel.example.com
 ```
 
 ### remote_headers
-Custom HTTP headers for Panel requests.
+Custom HTTP headers included in requests sent from Wings to the Panel.
 
 Default value:
 ```yaml
@@ -1044,6 +1042,7 @@ remote_headers: {}
 
 ### remote_query.timeout
 Request timeout in seconds.
+The maximum number of retries for critical API requests. This uses an exponential backoff strategy.
 
 Default value:
 ```yaml
@@ -1068,7 +1067,7 @@ retry_limit: 10
 
 ## Security / Behaviour Flags
 ### allowed_mounts
-List of allowed filesystem mounts for servers.
+A security whitelist defining which specific directories or files on the host system are permitted to be mounted into a server's Docker container.
 
 Default value:
 ```yaml
@@ -1076,7 +1075,7 @@ allowed_mounts: []
 ```
 
 ### allowed_origins
-Allowed CORS origins for API access.
+A list of specific URLs (origins) that are permitted to make cross-origin requests to the Wings API.
 
 Default value:
 ```yaml
@@ -1084,7 +1083,7 @@ allowed_origins: []
 ```
 
 ### allow_cors_private_network
-Allows CORS requests from private networks.
+Determines whether Wings permits Cross-Origin Resource Sharing (CORS) requests originating from private network addresses.
 
 Default value:
 ```yaml
@@ -1092,7 +1091,7 @@ allow_cors_private_network: false
 ```
 
 ### ignore_panel_config_updates
-If `true`, ignores configuration updates from Panel.
+When set to `true`, Wings will ignore configuration update commands sent by the Panel.
 
 Default value:
 ```yaml
@@ -1100,7 +1099,7 @@ ignore_panel_config_updates: false
 ```
 
 ### ignore_panel_wings_upgrades
-If `true`, ignores upgrade requests from Panel.
+When set to `true`, Wings will ignore remote upgrade commands sent by the Panel.
 
 Default value:
 ```yaml
