@@ -95,7 +95,7 @@ listen_addresses = '*'
 
 Edit `pg_hba.conf` and add the following line to allow password authentication from any host:
 
-```conf
+```text
 host    all             all             0.0.0.0/0               scram-sha-256
 ```
 
@@ -117,7 +117,7 @@ listen_addresses = '*'
 
 Edit `pg_hba.conf` and add:
 
-```conf
+```text
 host    all             all             0.0.0.0/0               scram-sha-256
 ```
 
