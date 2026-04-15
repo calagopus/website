@@ -342,11 +342,19 @@ directory: /run/wings/etc
 ```
 
 ### system.disk_check_interval
-Interval for inotify disk checks. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 6 = 900s / 15 min).
+Defines how often (in seconds) Wings performs incremental disk usage checks using inotify. These checks are lightweight and rely on filesystem events rather than scanning the entire disk.
 
 Default value:
 ```yaml
 disk_check_interval: 150
+```
+
+### system.full_disk_check_every
+Number of inotify disk check intervals before performing a full disk scan. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 6 = 900s / 15 min).
+
+Default value:
+```yaml
+full_disk_check_every: 6
 ```
 
 ### system.disk_check_use_inotify
@@ -1195,6 +1203,7 @@ system:
     enabled: false
     directory: /run/wings/etc
   disk_check_interval: 150
+  full_disk_check_every: 6
   disk_check_use_inotify: true
   disk_limiter_mode: none
   activity_send_interval: 60
