@@ -18,7 +18,7 @@ debug: false
 ```
 
 ### app_name
-Human-readable name of this Wings instance, shown in logs.
+A human-readable name for this Wings instance used to identify the node in log outputs.
 
 Default value:
 ```yaml
@@ -45,7 +45,7 @@ token: TOKEN
 
 ## API Settings
 ### api.host
-The IP address Wings binds its internal API to.
+The IP address Wings binds its internal API to. Alternatively, a Unix socket path can be specified here.
 
 Default value:
 ```yaml
@@ -61,7 +61,7 @@ test
 ```
 
 ### api.ssl.enabled
-Enables HTTPS for the Wings API.
+Determines whether HTTPS is enabled for the Wings API to ensure encrypted communication.
 
 Default value:
 ```yaml
@@ -69,7 +69,7 @@ enabled: false
 ```
 
 ### api.ssl.cert
-Path to the SSL certificate file.
+The absolute filesystem path to the SSL certificate file used for API encryption.
 
 Default value:
 ```yaml
@@ -77,7 +77,7 @@ cert: ''
 ```
 
 ### api.ssl.key
-Path to the SSL private key file.
+The absolute filesystem path to the SSL private key file corresponding to the certificate.
 
 Default value:
 ```yaml
@@ -101,7 +101,7 @@ disable_openapi_docs: true
 ```
 
 ### api.disable_remote_download
-Prevents servers from downloading files via remote URLs.
+Whether to prevent servers from downloading files directly through remote URLs via the file manager or API.
 
 Default value:
 ```yaml
@@ -133,7 +133,7 @@ remote_download_blocked_cidrs:
 ```
 
 ### api.disable_directory_size
-Disables directory size calculation in file listings.
+Whether to disable the calculation of total directory sizes in file listings. Disabling this *can* improve performance and reduce disk I/O when viewing directories with a large number of files.
 
 Default value:
 ```yaml
@@ -157,7 +157,8 @@ send_offline_server_logs: false
 ```
 
 ### api.file_search_threads
-Number of threads used for file search operations.
+The number of concurrent threads Wings utilizes when searching through server files.
+
 Default value:
 
 ```yaml
@@ -165,7 +166,7 @@ file_search_threads: 4
 ```
 
 ### api.file_copy_threads
-Number of Threads used for directory and file duplication.
+The number of concurrent threads allocated for duplicating files and directories.
 
 Default value:
 ```yaml
@@ -173,7 +174,7 @@ file_copy_threads: 4
 ```
 
 ### api.file_decompression_threads
-Number of threads used for decompressing archives (`.zip`, `.7z`, `.ddup` etc.).
+The number of threads used for extracting archives like `.zip`, `.7z`, `.ddup` etc.
 
 Default value:
 ```yaml
@@ -181,7 +182,8 @@ file_decompression_threads: 2
 ```
 
 ### api.file_compression_threads
-Number of threads used for compressing archives (`.zip`, `.7z`, `.ddup` etc.)
+Number of threads used for compressing archives
+The number of threads used for creating archives such as `.zip`, `.7z`, `.ddup` etc.
 
 Default value:
 ```yaml
@@ -189,7 +191,7 @@ file_compression_threads: 2
 ```
 
 ### api.upload_limit
-Maximum upload size in `MB` for the web file manager.
+The maximum file size defined in `MB`, that can be uploaded through the web-based file manager.
 
 Default value:
 ```yaml
@@ -205,7 +207,7 @@ max_jwt_uses: 5
 ```
 
 ### api.trusted_proxies
-List of trusted proxy IPs used for real IP resolution.
+A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user.
 
 Default value:
 ```yaml
@@ -271,6 +273,7 @@ tmp_directory: /tmp/pterodactyl
 
 ### system.username
 System user that Wings runs under.
+The operating system user account that the Wings process runs under on the host.
 
 Default value:
 ```yaml
@@ -278,7 +281,7 @@ username: pterodactyl
 ```
 
 ### system.timezone
-Timezone used by Wings (e.g. `+00:00`).
+The timezone used by Wings (e.g., `+00:00`) for logs and containers. It is auto-detected from the host, falls back to UTC if detection fails, and is passed into all created containers.
 
 Default value:
 ```yaml
@@ -286,7 +289,7 @@ timezone: +00:00
 ```
 
 ### system.user.rootless.enabled
-Enables rootless container execution.
+Enables rootless container execution, allowing Wings to run containers without requiring root privileges on the host.
 
 Default value:
 ```yaml
@@ -294,7 +297,7 @@ enabled: false
 ```
 
 ### system.user.rootless.container_uid
-UID used inside rootless containers.
+The UID used inside rootless containers. This is typically set to `0` so the internal container user maps correctly to the user running Wings.
 
 Default value:
 ```yaml
@@ -302,7 +305,7 @@ container_uid: 0
 ```
 
 ### system.user.rootless.container_gid
-GID used inside rootless containers.
+The GID used inside rootless containers. This is typically set to `0` so the internal container group maps correctly to the group running Wings.
 
 Default value:
 ```yaml
@@ -310,7 +313,7 @@ container_gid: 0
 ```
 
 ### system.user.uid
-Host system UID used by Wings.
+The Iser ID (UID) on the host system that Wings uses when managing server files.
 
 Default value:
 ```yaml
@@ -318,7 +321,7 @@ uid: 995
 ```
 
 ### system.user.gid
-Host system GID used by Wings.
+The Group ID (GID) on the host system that Wings uses when managing server files.
 
 Default value:
 ```yaml
@@ -326,7 +329,7 @@ gid: 985
 ```
 
 ### system.passwd.enabled
-Enables dynamic passwd generation for containers.
+Whether to enable dynamic generation of `/etc/passwd` files inside containers to ensure proper username resolution.
 
 Default value:
 ```yaml
@@ -334,7 +337,7 @@ enabled: false
 ```
 
 ### system.passwd.directory
-Directory where passwd files are generated.
+The absolute filesystem path where Wings generates and stores the dynamic passwd files.
 
 Default value:
 ```yaml
@@ -366,7 +369,7 @@ disk_check_use_inotify: true
 ```
 
 ### system.disk_limiter_mode
-The backend driver for enforcing storage quotas. Available Options:
+The backend driver used to enforce storage quotas on servers. Available Options:
 
 `none`, `btrfs_subvolume`, `zfs_dataset`, `xfs_quota` or the experimental `fuse_quota`
 
@@ -376,7 +379,7 @@ disk_limiter_mode: none
 ```
 
 ### system.activity_send_interval
-Interval (seconds) between sending activity updates to Panel.
+The amount of time (in seconds) that elapses between sending aggregated server activity to the Panel. Wings collects activity over this period and sends it in a single batch.
 
 Default value:
 ```yaml
@@ -384,7 +387,7 @@ activity_send_interval: 60
 ```
 
 ### system.activity_send_count
-Maximum number of activity events sent per interval.
+The number of activity events to send per batch to the Panel. This limits how many collected events are transmitted during each interval.
 
 Default value:
 ```yaml
@@ -392,7 +395,7 @@ activity_send_count: 100
 ```
 
 ### system.check_permissions_on_boot
-Runs permission correction on startup.
+Whether to check and correct file permissions for a server whenever its process is booted. This can cause boot delays if the server has a large amount of files.
 
 Default value:
 ```yaml
@@ -408,7 +411,7 @@ check_permissions_on_boot_threads: 4
 ```
 
 ### system.websocket_log_count
-Number of log lines kept for websocket streaming.
+The number of lines to send when a user connects to the server websocket. This provides the initial "backlog" of console history visible in the Panel.
 
 Default value:
 ```yaml
@@ -426,7 +429,7 @@ enabled: true
 ```
 
 ### system.sftp.bind_address
-IP address the SFTP server binds to.
+The IP address that the internal SFTP/SSH server binds to.
 
 Default value:
 ```yaml
@@ -434,7 +437,7 @@ bind_address: 0.0.0.0
 ```
 
 ### system.sftp.bind_port
-Port used for SFTP connections.
+The port that the internal SFTP/SSH server binds to for incoming connections.
 
 Default value:
 ```yaml
@@ -442,7 +445,7 @@ bind_port: 2022
 ```
 
 ### system.sftp.read_only
-Makes SFTP access read-only.
+Whether the SFTP server should operate in read-only mode. If enabled, users can view and download files, but cannot upload, delete, or modify any content.
 
 Default value:
 ```yaml
@@ -466,7 +469,7 @@ disable_password_auth: false
 ```
 
 ### system.sftp.directory_entry_limit
-Maximum directory entries returned.
+The maximum number of files and folders returned in a single directory listing. This prevents the SFTP server from hanging when opening folders with massive amounts of data.
 
 Default value:
 ```yaml
@@ -474,7 +477,7 @@ directory_entry_limit: 20000
 ```
 
 ### system.sftp.directory_entry_send_amount
-Number of entries sent per response chunk.
+The number of directory entries to send in each response chunk to the SFTP client.
 
 Default value:
 ```yaml
@@ -482,7 +485,7 @@ directory_entry_send_amount: 500
 ```
 
 ### system.sftp.limits.authentication_password_attempts
-Maximum failed password tries within the cooldown window.
+The maximum number of failed password attempts allowed within the cooldown window before the connection is dropped.
 
 Default value:
 ```yaml
@@ -490,7 +493,7 @@ authentication_password_attempts: 3
 ```
 
 ### system.sftp.limits.authentication_pubkey_attempts
-Maximum failed key-based tries within the cooldown window.
+The maximum number of failed public key authentication attempts allowed within the cooldown window before the connection is dropped.
 
 Default value:
 ```yaml
@@ -506,7 +509,7 @@ authentication_cooldown: 60
 ```
 
 ### system.sftp.shell.enabled
-Allows server management via the Wings remote shell over SSH.
+Determines whether to allow server management and command-line access via the Wings remote shell over SSH.
 
 Default value:
 ```yaml
@@ -514,7 +517,7 @@ enabled: true
 ```
 
 ### system.sftp.shell.cli.name
-The name of the internal CLI tool used within the shell (e.g., `.wings help`)
+The name used for the internal CLI tool when accessing a server via the remote shell. This is the command users type (e.g., `.wings help`) to interact with the Wings shell helper.
 
 Default value:
 ```yaml
@@ -522,7 +525,7 @@ name: .wings
 ```
 
 ### system.sftp.activity.log_logins
-Whether successful SFTP logins appear in the server activity log.
+Whether successful SFTP logins are recorded and displayed in the server's activity log.
 
 Default value:
 ```yaml
@@ -530,7 +533,7 @@ log_logins: false
 ```
 
 ### system.sftp.activity.log_file_reads
-Whether reading files via SFTP is logged in activity.
+Whether reading or downloading files via SFTP is recorded in the server's activity log.
 
 Default value:
 ```yaml
@@ -539,7 +542,7 @@ log_file_reads: false
 
 ## Crash Detection
 ### system.crash_detection.enabled
-Enables crash detection for servers.
+Enables or disables the automatic crash detection system for all servers on the node.
 
 Default value:
 ```yaml
@@ -547,7 +550,7 @@ enabled: true
 ```
 
 ### system.crash_detection.detect_clean_exit_as_crash
-Treats clean exits as crashes if enabled.
+Whether to treat a "clean" exit (an exit code of `0`) as a server crash.
 
 Default value:
 ```yaml
@@ -555,7 +558,7 @@ detect_clean_exit_as_crash: true
 ```
 
 ### system.crash_detection.timeout
-Time (seconds) before a server is considered crashed.
+The amount of time in seconds, that Wings waits after a server process stops before determining it has crashed and attempting a restart.
 
 Default value:
 ```yaml
@@ -565,7 +568,7 @@ timeout: 60
 
 ## Backups Configuration
 ### system.backups.write_limit
-Write speed limit for backups (`0` = unlimited).
+The maximum disk write speed (in `MiB/s`) for creating backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -573,7 +576,7 @@ write_limit: 0
 ```
 
 ### system.backups.read_limit
-Read speed limit for backups (`0` = unlimited).
+The maximum disk read speed (in `MiB/s`) for creating backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -581,7 +584,7 @@ read_limit: 0
 ```
 
 ### system.backups.compression_level
-Defines the CPU vs. Compression ratio. Available options:
+Defines the CPU vs. compression ratio. Higher compression saves disk space but uses more CPU (`best_speed` = fastest, `best_compression` = smallest file). Available options:
 
 `best_speed`, `good_speed`, `good_compression`, `best_compression`
 
@@ -591,7 +594,7 @@ compression_level: best_speed
 ```
 
 ### system.backups.mounting.enabled
-Allows users to browse and interact with backup contents via the File Manager.
+Allows users to browse and interact with backup contents directly via the File Manager without needing to download them first.
 
 Default value:
 ```yaml
@@ -607,7 +610,7 @@ path: .backups
 ```
 
 ### system.backups.wings.create_threads
-Threads used for creating local backups (`.gz`, `.xz`, `.7z` etc.)
+The number of CPU threads used when compressing local backups (e.g., `.gz`, `.xz`, `.7z` etc.).
 
 Default value:
 ```yaml
@@ -615,7 +618,7 @@ create_threads: 4
 ```
 
 ### system.backups.wings.restore_threads
-Threads used for extracting local zip backups.
+The number of CPU threads used for extracting local backup archives (e.g., `.gz`, `.xz`, `.7z` etc.).
 
 Default value:
 ```yaml
@@ -641,15 +644,14 @@ create_threads: 4
 ```
 
 ### system.backups.s3.part_upload_timeout
-Maximum time (seconds) to wait for a single part of a multipart upload.
-
+The maximum time (in seconds) to wait for a single part of a multipart upload.
 Default value:
 ```yaml
 part_upload_timeout: 7200
 ```
 
 ### system.backups.s3.retry_limit
-Number of retry attempts for failed upload parts.
+The number of retry attempts for failed upload parts.
 
 Default value:
 ```yaml
@@ -657,7 +659,7 @@ retry_limit: 10
 ```
 
 ### system.backups.ddup_bak.create_threads
-Threads used for `ddup-bak` backup creation.
+The number of threads used for `ddup-bak` backup creation.
 
 Default value:
 ```yaml
@@ -665,7 +667,7 @@ create_threads: 4
 ```
 
 ### system.backups.ddup_bak.compression_format
-Compression format used for each `ddup-bak` chunk. Available Options:
+The compression format used for each `ddup-bak` chunk. Available Options:
 
 `none`, `deflate`, `gzip`, `brotli`
 
@@ -699,7 +701,7 @@ retry_lock_seconds: 60
 ```
 
 ### system.backups.restic.environment
-Environment variables passed to restic.
+The environment variables passed to the restic process for authentication and configuration.
 
 Default value:
 ```yaml
@@ -707,7 +709,7 @@ environment: {}
 ```
 
 ### system.backups.btrfs.restore_threads
-Threads used for restoring BTRFS snapshots.
+The number of threads used for restoring BTRFS snapshots.
 
 Default value:
 ```yaml
@@ -715,7 +717,7 @@ restore_threads: 4
 ```
 
 ### system.backups.btrfs.create_read_only
-Creates read-only snapshots.
+Whether to create read-only snapshots to prevent data modification after the backup is taken.
 
 Default value:
 ```yaml
@@ -723,7 +725,7 @@ create_read_only: true
 ```
 
 ### system.backups.zfs.restore_threads
-Threads used for restoring ZFS snapshots.
+The number of threads used for restoring ZFS snapshots.
 
 Default value:
 ```yaml
@@ -732,7 +734,7 @@ restore_threads: 4
 
 ## Transfers
 ### system.transfers.download_limit
-Download rate limit for transfers (`0` = unlimited).
+The download rate limit for transfers in MiB/s (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -749,7 +751,7 @@ socket: /var/run/docker.sock
 ```
 
 ### docker.server_name_in_container_name
-Includes server name in container names.
+Whether to include the server's name within the Docker container name for easier identification in tools like `docker ps`.
 
 Default value:
 ```yaml
@@ -765,7 +767,7 @@ delete_container_on_stop: true
 ```
 
 ### docker.network.interface
-IP interface used for Docker network bridge.
+The specific IP interface used for the Docker network bridge.
 
 Default value:
 ```yaml
@@ -773,7 +775,7 @@ interface: 172.18.0.1
 ```
 
 ### docker.network.disable_interface_binding
-Disables binding containers to a specific interface.
+Whether to disable binding containers to a specific network interface on the host.
 
 Default value:
 ```yaml
@@ -781,7 +783,7 @@ disable_interface_binding: false
 ```
 
 ### docker.network.dns
-DNS servers used inside containers.
+The list of DNS servers used by containers for name resolution.
 
 Default value:
 ```yaml
@@ -791,7 +793,7 @@ dns:
 ```
 
 ### docker.network.name
-Name of the Docker network used by Wings.
+The name of the Docker network used by Wings to manage container communication.
 
 Default value:
 ```yaml
@@ -799,7 +801,7 @@ name: pterodactyl_nw
 ```
 
 ### docker.network.ispn
-Internal network flag used by Wings.
+The internal network flag used by Wings to identify its managed network.
 
 Default value:
 ```yaml
@@ -807,7 +809,7 @@ ispn: false
 ```
 
 ### docker.network.driver
-Docker network driver (e.g. bridge).
+The Docker network driver used for the container network (e.g. `bridge`). 
 
 Default value:
 ```yaml
@@ -815,7 +817,7 @@ driver: bridge
 ```
 
 ### docker.network.mode
-Internal network mode identifier.
+The internal network mode identifier used by the Docker daemon.
 
 Default value:
 ```yaml
@@ -823,7 +825,7 @@ mode: pterodactyl_nw
 ```
 
 ### docker.network.is_internal
-Marks network as internal-only.
+Whether to mark the network as internal-only, restricting containers from accessing the outside internet.
 
 Default value:
 ```yaml
@@ -831,7 +833,7 @@ is_internal: false
 ```
 
 ### docker.network.enable_icc
-Enables inter-container communication.
+Enables Inter-Container Communication, allowing containers on the same network to talk to one another.
 
 Default value:
 ```yaml
@@ -839,7 +841,7 @@ enable_icc: true
 ```
 
 ### docker.network.network_mtu
-Sets MTU size for container network.
+Sets the Maximum Transmission Unit (MTU) size for the container network.
 
 Default value:
 ```yaml
@@ -847,7 +849,7 @@ network_mtu: 1500
 ```
 
 ### docker.network.interfaces.v4.subnet
-IPv4 subnet used by Docker network.
+The IPv4 subnet range used by the Docker network.
 
 Default value:
 ```yaml
@@ -855,7 +857,7 @@ subnet: 172.18.0.0/16
 ```
 
 ### docker.network.interfaces.v4.gateway
-IPv4 gateway address.
+The IPv4 gateway address for the Docker network.
 
 Default value:
 ```yaml
@@ -863,7 +865,7 @@ gateway: 172.18.0.1
 ```
 
 ### docker.network.interfaces.v6.subnet
-IPv6 subnet used by Docker network.
+The IPv6 subnet range used by the Docker network.
 
 Default value:
 ```yaml
@@ -871,7 +873,7 @@ subnet: fdba:17c8:6c94::/64
 ```
 
 ### docker.network.interfaces.v6.gateway
-IPv6 gateway address.
+The IPv6 gateway address for the Docker network.
 
 Default value:
 ```yaml
@@ -879,7 +881,7 @@ gateway: fdba:17c8:6c94::1011
 ```
 
 ### docker.domainname
-Domain name assigned to containers.
+The domain name assigned to containers, useful for internal networking resolution.
 
 Default value:
 ```yaml
@@ -887,7 +889,7 @@ domainname: ''
 ```
 
 ### docker.registries
-Docker registry authentication configurations.
+The Docker registry authentication configurations used for pulling private images.
 
 Default value:
 ```yaml
@@ -895,7 +897,7 @@ registries: {}
 ```
 
 ### docker.tmpfs_size
-Size (MB) of `/tmp` mounted in containers.
+The size (in `MiB`) of the `/tmp` directory mounted as a tmpfs in containers.
 
 Default value:
 ```yaml
@@ -903,7 +905,7 @@ tmpfs_size: 100
 ```
 
 ### docker.container_pid_limit
-Maximum number of processes allowed per container.
+The maximum number of processes (PIDs) allowed to run simultaneously within a single container.
 
 Default value:
 ```yaml
@@ -911,7 +913,7 @@ container_pid_limit: 5120
 ```
 
 ### docker.installer_limits.timeout
-Maximum time (seconds) allowed for an installation container to run before it is considered failed. (`0` = no limit)
+The maximum time (in seconds) allowed for an installation container to run before it is considered failed (`0` = no limit).
 
 Default value:
 ```yaml
@@ -919,7 +921,7 @@ timeout: 1800
 ```
 
 ### docker.installer_limits.memory
-Memory limit (MB) for installer containers.
+The memory limit (in `MiB`) for installer containers.
 
 Default value:
 ```yaml
@@ -927,7 +929,7 @@ memory: 1024
 ```
 
 ### docker.installer_limits.cpu
-CPU limit (%) for installer containers.
+The CPU limit (%) for installer containers.
 
 Default value:
 ```yaml
@@ -935,7 +937,7 @@ cpu: 100
 ```
 
 ### docker.overhead.override
-Enables custom memory overhead multipliers.
+The toggle to enable or disable custom memory overhead multipliers.
 
 Default value:
 ```yaml
@@ -943,7 +945,7 @@ override: false
 ```
 
 ### docker.overhead.default_multiplier
-Default memory overhead multiplier.
+The default multiplier applied to a server's memory limit to account for Docker container overhead.
 
 Default value:
 ```yaml
@@ -952,6 +954,7 @@ default_multiplier: 1.05
 
 ### docker.overhead.multipliers
 Map of memory thresholds to multipliers.
+A map of specific memory thresholds to custom multipliers, allowing for granular overhead control based on server size.
 
 Default value:
 ```yaml
@@ -959,7 +962,7 @@ multipliers: {}
 ```
 
 ### docker.userns_mode
-User namespace mode for containers.
+The user namespace mode for containers, used to isolate container users from host users for enhanced security.
 
 Default value:
 ```yaml
@@ -967,7 +970,7 @@ userns_mode: ''
 ```
 
 ### docker.log_config.type
-Docker logging driver type.
+The Docker logging driver type used to capture and store container output.
 
 Default value:
 ```yaml
@@ -975,7 +978,7 @@ type: local
 ```
 
 ### docker.log_config.config.compress
-Enables log compression.
+Whether to enable compression for stored log files to save disk space.
 
 Default value:
 ```yaml
@@ -983,7 +986,7 @@ compress: 'false'
 ```
 
 ### docker.log_config.config.max-file
-Maximum number of log files.
+The maximum number of log files to retain before the oldest ones are rotated out.
 
 Default value:
 ```yaml
@@ -991,7 +994,7 @@ max-file: '1'
 ```
 
 ### docker.log_config.config.max-size
-Maximum size per log file.
+The maximum size allowed for a single log file before it is rotated.
 
 Default value:
 ```yaml
@@ -999,7 +1002,7 @@ max-size: 5m
 ```
 
 ### docker.log_config.config.mode
-Log mode (e.g. non-blocking).
+The delivery mode for logs (e.g. `non-blocking`), determining how Docker handles log data when the buffer is full. 
 
 Default value:
 ```yaml
@@ -1008,7 +1011,7 @@ mode: non-blocking
 
 ## Backups & Throttles
 ### throttles.enabled
-Enables console output throttling.
+The toggle to enable or disable console output throttling for all containers.
 
 Default value:
 ```yaml
@@ -1016,7 +1019,7 @@ enabled: true
 ```
 
 ### throttles.lines
-Maximum number of console lines stored.
+The maximum number of console lines stored in the buffer for each server.
 
 Default value:
 ```yaml
@@ -1024,7 +1027,7 @@ lines: 2000
 ```
 
 ### throttles.line_reset_interval
-Interval (seconds) for resetting throttle counters.
+The interval (in seconds) at which the console line counters are reset.
 
 Default value:
 ```yaml
@@ -1033,7 +1036,7 @@ line_reset_interval: 100
 
 ## Remote Configuration
 ### remote
-URL of the Panel instance Wings connects to.
+The URL of the Panel instance that this Wings node communicates with.
 
 Default value:
 ```yaml
@@ -1041,7 +1044,7 @@ remote: https://panel.example.com
 ```
 
 ### remote_headers
-Custom HTTP headers included in requests sent from Wings to the Panel.
+Custom HTTP headers that Wings includes in every outgoing HTTP request to the Panel.
 
 Default value:
 ```yaml
@@ -1049,7 +1052,6 @@ remote_headers: {}
 ```
 
 ### remote_query.timeout
-Request timeout in seconds.
 The maximum number of retries for critical API requests. This uses an exponential backoff strategy.
 
 Default value:
@@ -1058,7 +1060,7 @@ timeout: 30
 ```
 
 ### remote_query.boot_servers_per_page
-Number of servers loaded per request.
+The number of servers Wings requests from the Panel API in a single batch during the initial boot sequence.
 
 Default value:
 ```yaml
@@ -1066,7 +1068,7 @@ boot_servers_per_page: 50
 ```
 
 ### remote_query.retry_limit
-Number of retries for failed requests.
+The maximum number of times Wings will attempt to re-send a failed request to the Panel before giving up.
 
 Default value:
 ```yaml
