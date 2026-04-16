@@ -925,7 +925,7 @@ timeout: 1800
 ```
 
 ### docker.installer_limits.memory
-The memory limit (in `MiB`) for installer containers. This will be overwritten with the server's CPU limits **if they are higher**.
+The memory limit (in `MiB`) for installer containers. This will be overwritten with the server limits **if they are higher**.
 
 Default value:
 ```yaml
@@ -933,7 +933,7 @@ memory: 1024
 ```
 
 ### docker.installer_limits.cpu
-The CPU limit (`%`) for installer containers. This will be overwritten with the server's CPU limits **if they are higher**.
+The CPU limit (`%`) for installer containers. This will be overwritten with the server limits **if they are higher**.
 
 Default value:
 ```yaml
