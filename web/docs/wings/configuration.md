@@ -133,7 +133,7 @@ remote_download_blocked_cidrs:
 ```
 
 ### api.disable_directory_size
-Whether to disable the calculation of total directory sizes in file listings. Disabling this *can* improve performance and reduce disk I/O when viewing directories with a large number of files.
+Whether to disable the calculation of total directory sizes in the file manager.
 
 Default value:
 ```yaml
@@ -157,7 +157,7 @@ send_offline_server_logs: false
 ```
 
 ### api.file_search_threads
-The number of concurrent threads Wings utilizes when searching through server files.
+The number of concurrent worker threads Wings spawns to crawl and scan through server files during a search request.
 
 Default value:
 
@@ -166,7 +166,7 @@ file_search_threads: 4
 ```
 
 ### api.file_copy_threads
-The number of concurrent threads allocated for duplicating files and directories.
+The number of concurrent worker threads allocated for duplicating files and directories within the file manager.
 
 Default value:
 ```yaml
@@ -174,7 +174,7 @@ file_copy_threads: 4
 ```
 
 ### api.file_decompression_threads
-The number of threads used for extracting archives like `.zip`, `.7z`, `.ddup` etc.
+The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.
 
 Default value:
 ```yaml
@@ -182,8 +182,7 @@ file_decompression_threads: 2
 ```
 
 ### api.file_compression_threads
-Number of threads used for compressing archives
-The number of threads used for creating archives such as `.zip`, `.7z`, `.ddup` etc.
+The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.
 
 Default value:
 ```yaml
@@ -191,7 +190,7 @@ file_compression_threads: 2
 ```
 
 ### api.upload_limit
-The maximum file size defined in `MB`, that can be uploaded through the web-based file manager.
+The maximum file size defined in `MiB`, that can be uploaded through the web-based file manager.
 
 Default value:
 ```yaml
@@ -369,6 +368,10 @@ disk_check_use_inotify: true
 ```
 
 ### system.disk_limiter_mode
+::: info
+**Switching between drivers may require additional manual work**. Enabling the quota driver requires specific filesystem support (like `prjquota` on `XFS` or `ext4`) and manual mounting configurations on the host machine. If not configured correctly at the OS level, Wings will fail to start or manage disk limits.
+:::
+
 The backend driver used to enforce storage quotas on servers. Available Options:
 
 `none`, `btrfs_subvolume`, `zfs_dataset`, `xfs_quota` or the experimental `fuse_quota`
@@ -568,7 +571,7 @@ timeout: 60
 
 ## Backups Configuration
 ### system.backups.write_limit
-The maximum disk write speed (in `MiB/s`) for creating backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
+The maximum disk write speed (in `MiB/s`) for creating backups. This prevents restoration processes from saturating the disk I/O and slowing down the rest of the node (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -576,7 +579,7 @@ write_limit: 0
 ```
 
 ### system.backups.read_limit
-The maximum disk read speed (in `MiB/s`) for creating backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
+The maximum disk read speed (in `MiB/s`) when restoring backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
 
 Default value:
 ```yaml
@@ -610,7 +613,7 @@ path: .backups
 ```
 
 ### system.backups.wings.create_threads
-The number of CPU threads used when compressing local backups (e.g., `.gz`, `.xz`, `.7z` etc.).
+The number of CPU threads used when compressing local backups. This applies specifically to `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.zst`, and `.7z`.
 
 Default value:
 ```yaml
@@ -618,7 +621,7 @@ create_threads: 4
 ```
 
 ### system.backups.wings.restore_threads
-The number of CPU threads used for extracting local backup archives (e.g., `.gz`, `.xz`, `.7z` etc.).
+The number of CPU threads used for extracting local backup archives. This applies specifically to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup` and `.7z`.
 
 Default value:
 ```yaml
@@ -710,6 +713,7 @@ environment: {}
 
 ### system.backups.btrfs.restore_threads
 The number of threads used for restoring BTRFS snapshots.
+The number of threads used for restoring BTRFS snapshots. 1 thread will be used per file, so 4 threads in `restore_threads` = a snapshot restore can process 4 files at once.
 
 Default value:
 ```yaml
@@ -725,7 +729,7 @@ create_read_only: true
 ```
 
 ### system.backups.zfs.restore_threads
-The number of threads used for restoring ZFS snapshots.
+The number of threads used for restoring ZFS snapshots. 1 thread will be used per file, so 4 threads in `restore_threads` = a snapshot restore can process 4 files at once.
 
 Default value:
 ```yaml
@@ -921,7 +925,7 @@ timeout: 1800
 ```
 
 ### docker.installer_limits.memory
-The memory limit (in `MiB`) for installer containers.
+The memory limit (in `MiB`) for installer containers. This will be overwritten with the server's CPU limits **if they are higher**.
 
 Default value:
 ```yaml
@@ -929,7 +933,7 @@ memory: 1024
 ```
 
 ### docker.installer_limits.cpu
-The CPU limit (%) for installer containers.
+The CPU limit (`%`) for installer containers. This will be overwritten with the server's CPU limits **if they are higher**.
 
 Default value:
 ```yaml
