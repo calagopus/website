@@ -142,7 +142,7 @@ directory_entry_limit: 10000
 ```
 
 ### api.send_offline_server_logs
-When enabled, Wings will transmit cached logs from an offline server immediately upon a websocket connection.
+When enabled, Wings will transmit cached logs from an offline server immediately upon a websocket connection. This only works when containers are not removed on stop.
 
 Default value:
 ```yaml
@@ -191,7 +191,7 @@ upload_limit: 10240
 ```
 
 ### api.max_jwt_uses
-The number of times a single JWT can be used for a download/backup before it expires.
+The number of times a single JWT can be used for a download or backup before it is invalidated. This provides a security layer to prevent the reuse of temporary access tokens for file and backup downloads.
 
 Default value:
 ```yaml
@@ -199,7 +199,7 @@ max_jwt_uses: 5
 ```
 
 ### api.trusted_proxies
-A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user.
+A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user using the `X-Forwarded-For` or `X-Real-IP header`.
 
 Default value:
 ```yaml
@@ -224,7 +224,8 @@ log_directory: /var/log/pterodactyl
 ```
 
 ### system.vmount_directory
-This is the directory where Wings stores virtual mounts for servers. Currently mainly used for spoofing hardware UUIDs for containers.
+This is the directory where Wings stores virtual mounts for servers. Currently mainly used for spoofing hardware UUIDs for containers. This directory **should not** be located on a tmpfs (temporary filesystem).
+
 
 Default value:
 ```yaml
@@ -647,7 +648,7 @@ part_upload_timeout: 7200
 ```
 
 ### system.backups.s3.retry_limit
-The number of retry attempts for failed upload parts.
+The number of retry attempts for each failed upload part.
 
 Default value:
 ```yaml
@@ -673,7 +674,11 @@ compression_format: deflate
 ```
 
 ### system.backups.restic.repository
-The Restic repository path used for backups. Must already be initialized and can be overridden by the panel.
+::: info
+All restic options only apply when using Pterodactyl. On Calagopus, restic is fully managed by the panel, and these local configuration settings are ignored.
+:::
+
+The Restic repository path used for backups. This must already be initialized and can be overridden by the panel.
 
 Default value:
 ```yaml
@@ -681,7 +686,7 @@ repository: /var/lib/pterodactyl/backups/restic
 ```
 
 ### system.backups.restic.password_file
-Path to the Restic repository password file used for authentication (can be overridden by the panel).
+The local path to the file containing the Restic repository password used for authentication. This can be overridden by the panel.
 
 Default value:
 ```yaml
@@ -689,7 +694,7 @@ password_file: /var/lib/pterodactyl/backups/restic_password
 ```
 
 ### system.backups.restic.retry_lock_seconds
-Time to wait if the repository is currently locked by another process (can be overridden by the panel).
+The amount of time (in seconds) Wings will wait if the Restic repository is locked by another process before failing the backup task. This can be overridden by the panel.
 
 Default value:
 ```yaml
@@ -697,7 +702,7 @@ retry_lock_seconds: 60
 ```
 
 ### system.backups.restic.environment
-The environment variables passed to the restic process for authentication and configuration.
+The environment variables passed to the restic process for authentication and configuration. This can be overridden by the panel.
 
 Default value:
 ```yaml
@@ -798,7 +803,7 @@ name: pterodactyl_nw
 ```
 
 ### docker.network.ispn
-The internal network flag used by Wings to identify its managed network.
+The flag that determines if the Docker network used by Wings is "internal", meaning it has no access to the external internet.
 
 Default value:
 ```yaml
@@ -854,7 +859,7 @@ subnet: 172.18.0.0/16
 ```
 
 ### docker.network.interfaces.v4.gateway
-The IPv4 gateway address for the Docker network.
+The IPv4 gateway address for the Docker network. This will automatically be incremented if the address is already in use by another network on the host.
 
 Default value:
 ```yaml
@@ -1082,7 +1087,7 @@ allowed_mounts: []
 ```
 
 ### allowed_origins
-A list of specific URLs (origins) that are permitted to make cross-origin requests to the Wings API.
+A list of specific URLs (origins) that are permitted to make cross-origin requests to the Wings API. By default, the URL defined in the `remote:` setting is the only allowed origin.
 
 Default value:
 ```yaml
