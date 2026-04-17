@@ -1,10 +1,3 @@
-
-::: info
-⚠️ **PAGE UNDER CONSTRUCTION** ⚠️
-
-This section is currently being drafted. Some configuration options and troubleshooting steps may be missing or incomplete.
-:::
-
 # Configuration
 This page covers all the configuration options for the Calagopus Wings Daemon, including how to set up and manage these configurations. It also includes troubleshooting tips for common configuration issues.
 
@@ -925,7 +918,7 @@ timeout: 1800
 ```
 
 ### docker.installer_limits.memory
-The memory limit (in `MiB`) for installer containers. This will be overwritten with the server limits **if they are higher**.
+The memory limit (in `MiB`) for installer containers. This will be overwritten with the server's memory limit **if it is higher**.
 
 Default value:
 ```yaml
@@ -933,7 +926,7 @@ memory: 1024
 ```
 
 ### docker.installer_limits.cpu
-The CPU limit (`%`) for installer containers. This will be overwritten with the server limits **if they are higher**.
+The CPU limit (`%`) for installer containers. This will be overwritten with the server's CPU limit **if it is higher**.
 
 Default value:
 ```yaml
@@ -1331,10 +1324,3 @@ allow_cors_private_network: false
 ignore_panel_config_updates: false
 ignore_panel_wings_upgrades: false
 ```
-
-## Troubleshooting
-::: info
-⚠️ **PAGE UNDER CONSTRUCTION** ⚠️
-
-This section is currently being drafted. Some configuration options and troubleshooting steps may be missing or incomplete.
-:::
