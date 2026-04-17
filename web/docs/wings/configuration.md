@@ -337,6 +337,22 @@ Default value:
 directory: /run/wings/etc
 ```
 
+### system.machine_id.enabled
+Controls whether a unique, generated `machine-id` file should be mounted into each server container.
+
+Default value:
+```yaml
+enabled: true
+```
+
+### system.machine_id.directory
+The directory on the host disk where Wings stores the generated `machine-id` files.
+
+Default value:
+```yaml
+directory: /run/wings/machine-id
+```
+
 ### system.disk_check_interval
 Defines how often (in seconds) Wings performs incremental disk usage checks using inotify. These checks are lightweight and rely on filesystem events rather than scanning the entire disk.
 
@@ -1206,6 +1222,9 @@ system:
   passwd:
     enabled: false
     directory: /run/wings/etc
+  machine_id:
+    enabled: true
+    directory: /run/wings/machine-id
   disk_check_interval: 150
   full_disk_check_every: 6
   disk_check_use_inotify: true
