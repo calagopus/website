@@ -105,6 +105,7 @@ export default withMermaid({
           {
             text: 'Installation',
             link: '/docs/panel/installation',
+            collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/panel/installation/docker' },
               { text: 'Binary', link: '/docs/panel/installation/binary' },
@@ -115,6 +116,7 @@ export default withMermaid({
           {
             text: 'Next Steps',
             link: '/docs/panel/next-steps',
+            collapsed: true,
             items: [
               { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' },
               { text: 'Adding egg repositories', link: '/docs/panel/next-steps/egg-repos' },
@@ -122,12 +124,14 @@ export default withMermaid({
           },
           {
             text: 'Extensions',
+            collapsed: true,
             items: [
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
               { text: 'Extension File Structure', link: '/docs/panel/extensions/file-structure' },
               {
                 text: 'Concepts',
+                collapsed: true,
                 items: [
                   { text: 'Events', link: '/docs/panel/extensions/concepts/events' },
                   { text: 'Settings', link: '/docs/panel/extensions/concepts/settings' },
@@ -160,6 +164,7 @@ export default withMermaid({
           {
             text: 'Installation',
             link: '/docs/wings/installation',
+            collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/wings/installation/docker' },
               { text: 'Binary', link: '/docs/wings/installation/binary' },
@@ -170,6 +175,7 @@ export default withMermaid({
           {
             text: 'Disk Limiters',
             link: '/docs/wings/disk-limiters',
+            collapsed: true,
             items: [{ text: 'Fusequota', link: '/docs/wings/disk-limiters/fusequota' }],
           },
         ],
@@ -180,6 +186,7 @@ export default withMermaid({
           {
             text: 'Migrating from Pterodactyl',
             link: '/docs/advanced/migrating-from-pterodactyl',
+            collapsed: true,
             items: [
               { text: 'Standalone', link: '/docs/advanced/migrating/standalone' },
               { text: 'Dockerized', link: '/docs/advanced/migrating/dockerized' },
@@ -191,6 +198,7 @@ export default withMermaid({
           {
             text: 'Setting up Database Hosts',
             link: '/docs/advanced/setting-up-database-hosts',
+            collapsed: true,
             items: [
               { text: 'MySQL (MariaDB)', link: '/docs/advanced/setting-up-database-hosts/mysql' },
               { text: 'PostgreSQL', link: '/docs/advanced/setting-up-database-hosts/postgres' },
@@ -200,6 +208,7 @@ export default withMermaid({
           {
             text: 'Setting up OAuth',
             link: '/docs/advanced/oauth',
+            collapsed: true,
             items: [
               { text: 'GitHub', link: '/docs/advanced/oauth/github' },
               { text: 'Google', link: '/docs/advanced/oauth/google' },
