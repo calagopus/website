@@ -259,7 +259,7 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
 ```
 :::
 === Caddy 
-```caddy
+```text
 <domain> {
   request_body max_size 100MB
   # Make sure this IP matches your Panel container's IP address
