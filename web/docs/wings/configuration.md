@@ -1,5 +1,5 @@
 # Configuration
-This page covers all the configuration options for the Calagopus Wings Daemon, including how to set up and manage these configurations. It also includes troubleshooting tips for common configuration issues.
+This page covers all the configuration options for the Calagopus Wings Daemon, including how to set up and manage these configurations.
 
 ## Core Configuration
 ### debug
@@ -90,7 +90,7 @@ Controls the availability of the `/openapi.json` endpoint.
 
 Default value:
 ```yaml
-disable_openapi_docs: true
+disable_openapi_docs: false
 ```
 
 ### api.disable_remote_download
@@ -1180,7 +1180,7 @@ api:
     cert: ''
     key: ''
   redirects: {}
-  disable_openapi_docs: true
+  disable_openapi_docs: false
   disable_remote_download: false
   server_remote_download_limit: 3
   remote_download_blocked_cidrs:
