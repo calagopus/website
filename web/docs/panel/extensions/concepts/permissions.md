@@ -68,12 +68,52 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-The builder exposes three `add_*_permission_group` methods (one per scope), each taking a group name and a `PermissionGroup`. All three return `Self`, so you can chain as many as you need. Once registered, your permissions show up in the UI automatically - no frontend work required - and you can check them from your handlers:
+The builder exposes three `add_*_permission_group` methods (one per scope), each taking a group name and a `PermissionGroup`. All three return `Self`, so you can chain as many as you need. Once registered, your permissions show up in the UI automatically, and you can check them from your handlers:
 
 ```rs
 permissions.has_server_permission("my-feature.read")?;
 permissions.has_server_permission("my-feature.update")?;
 ```
+
+## Giving a Group an Icon
+
+New groups you register show up in the permission-picker UI with no icon by default, which looks a bit bare next to the core Panel's groups. Giving your group an icon is optional but recommended - it makes the picker scannable and signals to users at a glance what the group is for.
+
+Icons are attached **from the frontend**, not the backend. This is a presentation concern and lives on the extension registry, not the permission builder:
+
+```tsx
+import { Extension, ExtensionContext } from 'shared';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCube } from '@fortawesome/free-solid-svg-icons';
+
+class MyExtension extends Extension {
+  public cardConfigurationPage: React.FC | null = null;
+  public cardComponent: React.FC | null = null;
+
+  public initialize(ctx: ExtensionContext): void {
+    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon(
+      'my-feature',
+      <FontAwesomeIcon icon={faCube} />,
+    );
+  }
+}
+
+export default new MyExtension();
+```
+
+The registry exposes one method per scope, matching the three on the backend builder:
+
+- `addUserPermissionIcon(groupName, icon)`
+- `addAdminPermissionIcon(groupName, icon)`
+- `addServerPermissionIcon(groupName, icon)`
+
+Each takes the **group name** (not a permission node - icons are per-group, not per-permission) and a `ReactNode`. The `ReactNode` is usually a `<FontAwesomeIcon>` to match the rest of the Panel's visual style, but technically any React element works.
+
+::: info
+Registering an icon for a group name that doesn't exist is harmless - the icon is simply never rendered. This means you can safely register icons for groups you've only *mutated* rather than created, and it means adding icons before you've finalized the group name won't crash anything. But in the typical case, add the icon for the same group name you registered in `initialize_permissions` on the backend.
+:::
+
+This also works for core groups you've mutated - if you add a new permission to the existing `settings` group on the backend (see the next section), you usually *don't* want to also replace the core icon, but the capability exists if you really need to.
 
 ## Mutating Core Permission Groups
 

@@ -44,12 +44,10 @@ export type Item = {
 };
 
 export default async (serverUuid: string, itemType: string): Promise<Item[]> => {
-  return new Promise((resolve, reject) => {
-    axiosInstance
-      .get(`/api/client/servers/${serverUuid}/my-feature/items/${itemType}`)
-      .then(({ data }) => resolve(data.items))
-      .catch(reject);
-  });
+  const { data } = await axiosInstance.get(
+    `/api/client/servers/${serverUuid}/my-feature/items/${itemType}`,
+  );
+  return data.items;
 };
 ```
 
@@ -65,24 +63,46 @@ export type UpdateItemData = {
 };
 
 export default async (serverUuid: string, itemId: string, data: UpdateItemData): Promise<void> => {
-  return new Promise((resolve, reject) => {
-    axiosInstance
-      .put(
-        `/api/client/servers/${serverUuid}/my-feature/items/${itemId}`,
-        transformKeysToSnakeCase(data),
-      )
-      .then(() => resolve())
-      .catch(reject);
+  await axiosInstance.put(
+    `/api/client/servers/${serverUuid}/my-feature/items/${itemId}`,
+    transformKeysToSnakeCase(data),
+  );
+};
+```
+
+### Excluding keys from the transform
+
+Sometimes a field in your payload shouldn't be transformed - typically because it's a map whose *keys* are data (the same pitfall as [the map-keyed-by-user-input trap](#prefer-arrays-over-maps-keyed-by-user-input)), and you don't want `transformKeysToSnakeCase` recursing into those keys. Pull that field out before the transform and re-add it afterward via object spread:
+
+```ts
+import { axiosInstance } from '@/api/axios.ts';
+import { transformKeysToSnakeCase } from '@/lib/transformers.ts';
+
+export type UpdateSettingsData = {
+  apiUrl: string;
+  typeOrder: Record<string, string[]>; // keys are user-defined category names
+};
+
+export default async (data: UpdateSettingsData): Promise<void> => {
+  const { typeOrder, ...rest } = data;
+
+  await axiosInstance.put('/api/admin/extensions/dev.yourname.test/settings', {
+    ...transformKeysToSnakeCase(rest),
+    type_order: typeOrder,
   });
 };
 ```
+
+Destructuring pulls `typeOrder` out so only the rest of the payload goes through the transform. Then you re-add it under the snake_case name the backend expects, passing the value straight through untouched. This keeps the rest of your request body ergonomic to write in camelCase while preserving whatever keys were in the map-shaped field verbatim.
+
+The same pattern works for any number of excluded keys - destructure them all out, transform the rest, re-add them manually.
 
 A few things worth noticing:
 
 - **URLs are hardcoded.** There's no path helper - you just interpolate the server UUID (and any other path params) directly into the string. The `/api/admin/...`, `/api/client/...`, `/api/client/servers/{uuid}/...` prefixes match the router type you registered the route under on the backend (see [Routing](./routing.md)).
 - **The function takes path/query params as arguments and the request body as the last argument.** This is a convention, not a rule, but it keeps call sites predictable.
 - **Types are colocated.** Request/response types live in the same file as the function that uses them and are re-exported from there. For shapes shared across multiple endpoints, put them in `src/api/types.d.ts`.
-- **The `.then/.catch` wrapped in `new Promise`** looks redundant, but the outer wrapper gives you a clean spot to reshape the response (`resolve(data.items)` vs `resolve(data)`) without confusing `async/await` control flow. You can absolutely use `async/await` instead if you prefer; both are fine.
+- **Destructure `data` off the axios response.** `axiosInstance.get(...)` returns an object with `data`, `status`, `headers`, and so on - you almost always only care about `data`. Destructuring at the call site (`const { data } = await ...`) keeps the function short and makes the response shape obvious.
 
 ## Handling Errors
 

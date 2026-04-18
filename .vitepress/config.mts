@@ -133,6 +133,15 @@ export default withMermaid({
                   { text: 'Settings', link: '/docs/panel/extensions/concepts/settings' },
                   { text: 'Routing', link: '/docs/panel/extensions/concepts/routing' },
                   { text: 'Permissions', link: '/docs/panel/extensions/concepts/permissions' },
+                  { text: 'CLI Commands', link: '/docs/panel/extensions/concepts/cli-commands' },
+                  {
+                    text: 'Background Tasks and Shutdown Handlers',
+                    link: '/docs/panel/extensions/concepts/background-tasks-and-shutdown-handlers',
+                  },
+                  {
+                    text: 'Update Checks and Extension Calls',
+                    link: '/docs/panel/extensions/concepts/update-checks-and-extension-calls',
+                  },
                   { text: 'Frontend API Calls', link: '/docs/panel/extensions/concepts/frontend-api' },
                   { text: 'Activity Logging', link: '/docs/panel/extensions/concepts/activity-logging' },
                   { text: 'Translations', link: '/docs/panel/extensions/concepts/translations' },
