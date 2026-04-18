@@ -26,7 +26,8 @@ frontend/extensions/
       file1.jpg # this file would be available at <url>/file1.jpg
     src/ # REQUIRED directory for typescript src
       app.css # optional css file that will be bundled into the main panel css
-      index.ts # REQUIRED file containing extension entrypoint
+      index.(ts|tsx) # REQUIRED file containing extension entrypoint
+      translations.ts # optional file containing extension translations
 ```
 
 ### package.json

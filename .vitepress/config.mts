@@ -131,6 +131,12 @@ export default withMermaid({
                 items: [
                   { text: 'Events', link: '/docs/panel/extensions/concepts/events' },
                   { text: 'Settings', link: '/docs/panel/extensions/concepts/settings' },
+                  { text: 'Routing', link: '/docs/panel/extensions/concepts/routing' },
+                  { text: 'Permissions', link: '/docs/panel/extensions/concepts/permissions' },
+                  { text: 'Frontend API Calls', link: '/docs/panel/extensions/concepts/frontend-api' },
+                  { text: 'Activity Logging', link: '/docs/panel/extensions/concepts/activity-logging' },
+                  { text: 'Translations', link: '/docs/panel/extensions/concepts/translations' },
+                  { text: 'Mounting UI', link: '/docs/panel/extensions/concepts/mounting-ui' },
                 ],
               },
             ],
