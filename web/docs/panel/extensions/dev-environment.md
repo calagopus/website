@@ -14,7 +14,9 @@ Before you begin, ensure you have the following installed on your machine:
 - A PostgreSQL server (version 16 or higher) for the database
 - A Redis server (version 7 or higher) for caching
 
-## Step 1: Clone the Repository
+## Installing the Panel Locally
+
+### Step 1: Clone the Repository
 
 Start by cloning the Calagopus Panel repository to your local machine:
 
@@ -23,7 +25,7 @@ git clone https://github.com/calagopus/panel.git calagopus-panel
 cd calagopus-panel
 ```
 
-## Step 2: Install Dependencies
+### Step 2: Install Dependencies
 
 Next, install the necessary dependencies using pnpm:
 
@@ -39,7 +41,7 @@ pnpm install
 cd ..
 ```
 
-## Step 3: Set Up Environment Variables
+### Step 3: Set Up Environment Variables
 
 Copy the `.env.example` file to `.env` and modify it as needed:
 
@@ -49,7 +51,7 @@ cp .env.example .env
 
 Make sure to configure PostgreSQL/Redis and your app encryption keys in the `.env` file.
 
-## Step 4: Build the Project
+### Step 4: Build the Project
 
 To build the project, run the following command from the root directory:
 
@@ -68,7 +70,7 @@ SQLX_OFFLINE=true cargo run
 
 This will compile the frontend and backend components of the Calagopus Panel.
 
-## Step 5: Running the Development Server
+### Step 5: Running the Development Server
 
 Now that you have a working backend, hopefully, you can run the frontend development server:
 
@@ -84,3 +86,28 @@ pnpm dev
 ```
 
 By default, the frontend will be available at `http://localhost:5173`, the dev server automatically proxies API requests to the backend server running at `http://localhost:8000`. If you use a different port for the backend, you can set the `BACKEND_PORT` environment variable.
+
+## Updating the Development Environment
+
+To keep your development environment up to date with the latest changes from the main repository, you can pull the latest changes and rebuild the project:
+
+```bash
+rm Cargo.lock frontend/pnpm-lock.yaml # remove lockfiles to avoid git conflicts
+git pull
+```
+
+And you are essentially almost done, just rebuild the project:
+
+```bash
+# build frontend, required to build the backend
+cd frontend
+pnpm install # install any new dependencies
+pnpm build
+cd ..
+
+# migrate database
+SQLX_OFFLINE=true cargo run -p database-migrator -- migrate
+
+# build & run backend
+SQLX_OFFLINE=true cargo run
+```

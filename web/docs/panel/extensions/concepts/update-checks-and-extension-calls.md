@@ -4,7 +4,7 @@ The `Extension` trait has a couple of methods that don't fit the "register stuff
 
 ## Update Checks
 
-`check_for_updates` is how your extension tells the Panel "a newer version of me exists." The Panel calls it on startup and every 24 hours after that, and whatever you return surfaces in the Panel's unified updates page alongside panel-core and node updates.
+`check_for_updates` is how your extension tells the Panel "a newer version of me exists." The Panel calls it on startup and every 12 hours after that, and whatever you return surfaces in the Panel's unified updates page alongside panel-core and node updates.
 
 You implement it on your `Extension` trait:
 
@@ -30,8 +30,8 @@ impl Extension for ExtensionStruct {
             Ok(Some(ExtensionUpdateInfo {
                 version: latest,
                 changes: vec![
-                    format!("{latest}: fixed the thing that was broken"),
-                    format!("{latest}: added a new feature"),
+                    compact_str::format_compact!("{latest}: fixed the thing that was broken"),
+                    compact_str::format_compact!("{latest}: added a new feature"),
                 ],
             }))
         } else {
@@ -72,7 +72,7 @@ async fn check_for_updates(
     if latest > *current_version {
         Ok(Some(ExtensionUpdateInfo {
             version: latest,
-            changes: release_info.body.lines().map(String::from).collect(),
+            changes: release_info.body.lines().map(compact_str::CompactString::from).collect(),
         }))
     } else {
         Ok(None)
@@ -84,7 +84,7 @@ Use `state.client` (the Panel's shared reqwest client) rather than instantiating
 
 ### Caching
 
-`check_for_updates` runs on every Panel startup and every 24 hours. If your update source is rate-limited (GitHub's unauthenticated API, for example, allows 60 requests/hour per IP), wrap the fetch in `state.cache.cached(...)` so repeated calls during development or after restart storms don't burn through your quota:
+`check_for_updates` runs on every Panel startup and every 12 hours. If your update source is rate-limited (GitHub's unauthenticated API, for example, allows 60 requests/hour per IP), wrap the fetch in `state.cache.cached(...)` so repeated calls during development or after restart storms don't burn through your quota:
 
 ```rs
 let release_info: ReleaseInfo = state
@@ -101,7 +101,7 @@ let release_info: ReleaseInfo = state
     .await?;
 ```
 
-The cache key should be scoped to your extension (prefix with your package name) and the TTL should be long enough to matter - an hour is usually fine since the Panel only calls this every 24 hours anyway.
+The cache key should be scoped to your extension (prefix with your package name) and the TTL should be long enough to matter - an hour is usually fine since the Panel only calls this every 12 hours anyway.
 
 ### Not Implementing It
 
@@ -161,6 +161,10 @@ This has two big implications.
 **You can pass any Rust type that's `Send + Sync + 'static`.** Strings, numbers, your own structs, `Vec<T>`, `HashMap<K, V>`, whatever. No `serde::Serialize` bound, no JSON round-trip, no field renames. The value goes from caller to callee as a pointer.
 
 **Both sides must agree on the concrete type at the downcast site.** The caller boxes up a `String`; the callee does `.downcast_ref::<String>()`. If the callee asks for `.downcast_ref::<&str>()` instead, the downcast returns `None` - even though the data is "really" a string, the type tag doesn't match. There's no structural matching, no coercion, no "well it's close enough." The types have to match exactly.
+
+::: warning
+A common mistake is to forget that even same-shaped types with different names are different - `MyStruct` and `OtherStruct` with the same fields are still different types as far as `Box<dyn Any>` is concerned. If you want to share complex data structures across extensions, serialize them into an Intermediate Representation (IR) - a `serde_json::Value`, for example - and pass the IR through the call. That way both sides just need to agree on the IR schema, not the Rust type.
+:::
 
 This makes extension calls fast (no serialization) and flexible (any type works), but it also means the contract between two extensions is an unwritten agreement about the exact type of each positional argument and the return. Document that contract somewhere both extensions can see, or it's going to break mysteriously when one side changes.
 

@@ -133,7 +133,7 @@ async fn initialize_permissions(
 }
 ```
 
-Your check then reads `permissions.has_server_permission("settings.egg-changer")?` — it looks exactly like a core permission to the rest of the codebase, because as far as the permission system is concerned, it is one.
+Your check then reads `permissions.has_server_permission("settings.egg-changer")?` - it looks exactly like a core permission to the rest of the codebase, because as far as the permission system is concerned, it is one.
 
 **When to pick which:**
 

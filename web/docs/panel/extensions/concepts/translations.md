@@ -133,8 +133,10 @@ You will then see the file in `public/translations/en/dev.yourname.extension.jso
 You can check for missing translations by running the following command in the frontend directory:
 
 ```bash
-pnpm diff:translations
+pnpm diff:translations public/translations/es/dev.yourname.extension.json
 ```
+
+This will compare the English translations with the Spanish translations and show you any missing keys.
 :::
 
 ## Sample Generated JSON Translation File
