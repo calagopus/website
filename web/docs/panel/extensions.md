@@ -44,18 +44,3 @@ Extensions follow a standardized multi-part structure consisting of:
 This structure defines how extensions are loaded, initialized, and integrated into the Panel.
 
 For a complete breakdown of directories, required files, package naming, and extension entrypoints, see [Extension File Structure](./extensions/file-structure.md).
-
-## Next Steps
-Once you're familiar with the basics, continue with the Concepts section:
-
-- [Events](./extensions/concepts/events.md)
-- [Settings](./extensions/concepts/settings.md)
-- [Routing](./extensions/concepts/routing.md)
-- [Permissions](./extensions/concepts/permissions.md)
-- [CLI Commands](./extensions/concepts/cli-commands.md)
-- [Background Tasks and Shutdown Handlers](./extensions/concepts/background-tasks-and-shutdown-handlers.md)
-- [Update Checks and Extension Calls](./extensions/concepts/update-checks-and-extension-calls.md)
-- [Frontend API Calls](./extensions/concepts/frontend-api.md)
-- [Activity Logging](./extensions/concepts/activity-logging.md)
-- [Translations](./extensions/concepts/translations.md)
-- [Mounting UI](./extensions/concepts/mounting-ui.md)
