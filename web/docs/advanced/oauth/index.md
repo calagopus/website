@@ -13,11 +13,11 @@ Some usecases include:
 
 ::::tabs
 === GitHub OAuth
-Please see the [GitHub OAuth](./oauth/github.md) documentation in the OAuth part of the documentation.
+Please see the [GitHub OAuth](./github.md) documentation in the OAuth part of the documentation.
 === Google OAuth
-Please see the [Google OAuth](./oauth/google.md) documentation in the OAuth part of the documentation.
+Please see the [Google OAuth](./google.md) documentation in the OAuth part of the documentation.
 === Discord OAuth
-Please see the [Discord OAuth](./oauth/discord.md) documentation in the OAuth part of the documentation.
+Please see the [Discord OAuth](./discord.md) documentation in the OAuth part of the documentation.
 === Generic (Custom OIDC Provider)
-Please see the [Generic OAuth](./oauth/generic.md) documentation in the OAuth part of the documentation.
+Please see the [Generic OAuth](./generic.md) documentation in the OAuth part of the documentation.
 ::::

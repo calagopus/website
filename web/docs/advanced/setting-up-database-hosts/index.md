@@ -8,9 +8,9 @@ The Main usecases for this feature are when hosting game servers and e.g. plugin
 
 ::::tabs
 === MySQL (MariaDB)
-Please see the [MySQL (MariaDB)](./setting-up-database-hosts/mysql.md) documentation in the Setting up Database Hosts part of the documentation.
+Please see the [MySQL (MariaDB)](./mysql.md) documentation in the Setting up Database Hosts part of the documentation.
 === PostgreSQL
-Please see the [PostgreSQL](./setting-up-database-hosts/postgres.md) documentation in the Setting up Database Hosts part of the documentation.
+Please see the [PostgreSQL](./postgres.md) documentation in the Setting up Database Hosts part of the documentation.
 === MongoDB
-Please see the [MongoDB](./setting-up-database-hosts/mongodb.md) documentation in the Setting up Database Hosts part of the documentation.
+Please see the [MongoDB](./mongodb.md) documentation in the Setting up Database Hosts part of the documentation.
 ::::
