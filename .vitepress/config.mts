@@ -124,6 +124,7 @@ export default withMermaid({
           },
           {
             text: 'Extensions',
+            link: '/docs/panel/extensions',
             collapsed: true,
             items: [
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },

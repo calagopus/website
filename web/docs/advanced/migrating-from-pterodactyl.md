@@ -1,8 +1,3 @@
----
-prev: false
-next: false
----
-
 # Migrating from Pterodactyl
 This guide will show you how to migrate from your old Pterodactyl Panel, to your new Calagopus Panel.
 
