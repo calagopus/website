@@ -4,6 +4,10 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 
 With the APT/RPM repository, you can directly install Calagopus from your package manager. Select your package manager below:
 
+::: warning
+The binary installation method is generally not recommended for production environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
+:::
+
 ::::tabs
 === With APT
 #### Prerequisites

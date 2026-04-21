@@ -6,6 +6,10 @@ Calagopus Panel comes shipped as a compiled binary file that you can download di
 
 ## Getting Started
 
+::: warning
+The binary installation method is generally not recommended for production environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
+:::
+
 #### Prerequisites
 This guide assumes you have PostgreSQL and Valkey installed on your server. You can replace Valkey with Redis, although keep in mind that Valkey is much faster than Redis. This guide assume you are using Valkey.
 
