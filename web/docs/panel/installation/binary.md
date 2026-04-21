@@ -4,13 +4,13 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 
 Calagopus Panel comes shipped as a compiled binary file that you can download directly from [GitHub](https://github.com/calagopus/panel/releases/latest).
 
-## Getting Started
-
 ::: warning
 The binary installation method is generally not recommended for production environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
 :::
 
-#### Prerequisites
+## Getting Started
+
+### Prerequisites
 This guide assumes you have PostgreSQL and Valkey installed on your server. You can replace Valkey with Redis, although keep in mind that Valkey is much faster than Redis. This guide assume you are using Valkey.
 
 If you do not have PostgreSQL and/or Valkey installed on your server, follow the instructions below depending of your package manager:
@@ -94,7 +94,7 @@ For Windows, the old process involved installing WSL2 and keeping the WSL instan
 :::
 ::::
 
-#### Download the binary
+### Download the binary
 Depending on your operating system, select your operating system here:
 ::::tabs
 === Linux
@@ -137,7 +137,7 @@ calagopus-panel version
 ```
 ::::
 
-#### Database Configuration
+### Database Configuration
 You will need a database setup and a user with the correct permissions created for that database before continuing any further. To do so, first login to PostgreSQL:
 ::::tabs
 === Linux/MacOS
@@ -161,7 +161,7 @@ GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
 exit
 ```
 
-#### Configure Environment Variables 
+### Configure Environment Variables 
 
 Before starting the Panel, you need to configure the environment variables. By default, the `.env` is not included in the package, you can download it manually by running the following commands:
 ::::tabs
@@ -207,7 +207,7 @@ $RandomString = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 16 | 
 ```
 ::::
 
-#### Test the configuration
+### Test the configuration
 
 To test the configuration, you can run:
 ```bash
@@ -216,7 +216,7 @@ calagopus-panel
 
 If everything works correctly, the panel should not show any errors and will start the HTTP server, in which case you can kill the panel with Ctrl-C.
 
-#### Install Panel as a Service
+### Install Panel as a Service
 This guide will depend on your operating system. Please select your operating system below:
 ::::tabs
 === Linux
