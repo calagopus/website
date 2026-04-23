@@ -19,7 +19,7 @@ If you haven't already so, install Calagopus Panel first using [this guide](../.
 
 ::: warning DO NOT PROGRESS THROUGH THE OOBE!
 This guide requires a fresh database because we need to replace it with our old data. If you finished the OOBE, you will need to delete the database. Once you arrived to the following image below, close the tab and continue following this tab.
-![Calagopus Panel OOBE](../../panel/oobe.png)
+![Calagopus Panel OOBE](../../panel/oobe.webp)
 
 ::: details How to delete the database?
 ::::tabs
