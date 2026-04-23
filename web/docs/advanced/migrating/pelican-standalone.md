@@ -20,6 +20,7 @@ If you have not already done so, install Calagopus Panel first using [this guide
 
 ::: warning DO NOT PROGRESS THROUGH THE OOBE!
 This guide assumes a fresh Calagopus database because we need to replace it with your Pelican data. If you already completed the OOBE, delete and recreate the database first.
+![Calagopus Panel OOBE](../../panel/oobe.webp)
 :::
 
 ## Supported Pelican databases
