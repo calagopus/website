@@ -213,6 +213,7 @@ export default withMermaid({
               { text: 'MongoDB', link: '/docs/advanced/setting-up-database-hosts/mongodb' },
             ],
           },
+          { text: 'Setting up Backup Configurations', link: '/docs/advanced/setting-up-backup-configurations' },
           {
             text: 'Setting up OAuth',
             link: '/docs/advanced/oauth',
