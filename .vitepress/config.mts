@@ -131,6 +131,7 @@ export default withMermaid({
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
               { text: 'Extension File Structure', link: '/docs/panel/extensions/file-structure' },
+              { text: 'Getting your Extension ready', link: '/docs/panel/extensions/getting-your-extension-ready' },
               {
                 text: 'Concepts',
                 collapsed: true,
