@@ -1,40 +1,52 @@
 # Fusequota
 
-## What is Fusequota?
+## What is it?
 
-[Fusequota](https://github.com/calagopus/fusequota) is a tool that allows you to set disk quotas for individual game servers, preventing them from consuming all available disk space and affecting other servers on the same node. It works by creating a virtual filesystem using FUSE (Filesystem in Userspace) that enforces the specified disk quotas for each server. This way, even if a malicious user tries to fill up the disk, they will only be able to consume the amount of space allocated to their server, and other servers on the same node will not be affected.
+The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on *any* underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount, whatever. This makes it the fallback option when no native limiter is available.
 
-> This sounds great, how do I use it?
+Wings spawns a dedicated `fusequota` daemon process per server on startup. The daemon mounts a FUSE filesystem over the server's volume directory, enforces the configured quota, and exposes a local Unix socket for Wings to query and update usage. Wings batches usage deltas and syncs them to the daemon every 10 seconds.
 
-Slow down there! This is not something you should use without knowing the downsides. While Fusequota can be a great tool to prevent disk space abuse, it does come with some downsides. Since FUSE is in User-space, it can have performance implications, especially for disk-intensive games. Additionally, it may not be compatible with all games (though rarely any game should have issues with it), and it can add complexity to your setup. It's important to weigh the benefits against the potential downsides before deciding to use Fusequota in your setup. If you do decide to use it, make sure to thoroughly test it with your specific games and workloads to ensure that it works well for your use case.
+::: warning
+Fusequota is **not** a true quota system. It is a workaround that enforces limits from user-space, and it is the slowest, least stable, and least compatible of the available options. Only use it if none of the native limiters ([Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), [XFS](./xfs-quota.md)) are viable on your host.
+:::
+
+## Requirements
+
+- The host kernel must support FUSE (the `fuse` module) and `allow_other` mounts (which is the default on most distros, but some hardened kernels disable it - check `/etc/fuse.conf` for `user_allow_other`).
+- Wings must be able to mount FUSE filesystems. In practice this means running Wings as root (normal setup).
+
+Fusequota tries to minimize its user-space overhead by using aggressive write caching and - for read-only file descriptors - bypassing the FUSE layer entirely and reading directly from the backing filesystem. This helps, but does not eliminate, the performance cost.
 
 ## Downsides
 
-- Performance: Since FUSE operates in user-space, it can introduce performance overhead, especially for disk-intensive games. This may lead to increased latency and reduced performance for affected servers. We do try to minimize this by using high write-caches and - for fds that are read-only - the backing fs system to completely bypass the fuse layer for pure-reads, but it is still something to be aware of.
-- Compatibility: While Fusequota should work with most games, there may be some compatibility issues with certain games or workloads. It's important to thoroughly test it with your specific games and workloads to ensure that it works well for your use case.
-- Complexity: Using Fusequota adds an additional layer of complexity to your setup, which may require additional maintenance and troubleshooting. It's important to be comfortable with managing and troubleshooting FUSE filesystems before implementing Fusequota in your setup.
-- Stability: While we have tested Fusequota extensively, there may still be edge cases or bugs that could lead to instability or crashes. It's important to monitor your servers closely after implementing Fusequota and be prepared to troubleshoot any issues that may arise. In general, FUSE is not the most stable technology, and while we have done our best to make it as stable as possible, it is still something to be aware of.
-- Not a true quota system: Fusequota is not a true quota system, it is a workaround that allows you to set disk quotas for individual game servers. It may not be as robust or reliable as a true quota system (like the available btrfs, zfs and xfs options), and it may not be suitable for all use cases.
+- **Performance.** FUSE operates in user-space, which introduces overhead on every filesystem operation that can't be served from cache. For disk-intensive workloads this means increased latency and reduced throughput. The read-bypass and write-cache optimizations help, but a native limiter will always be faster.
+- **Compatibility.** Fusequota works with the vast majority of games, but not all. A small number of games or mods make assumptions about the underlying filesystem that don't hold under FUSE. Test with your specific workload before committing.
+- **Stability.** FUSE as a technology has a reputation for occasional instability (stuck mounts, kernel/user-space sync issues under load). We've done what we can to make Fusequota robust, but it is fundamentally less stable than a kernel-level filesystem. Monitor your servers after rolling it out.
+- **Complexity.** Fusequota adds a per-server daemon, a Unix socket, and a FUSE mount on top of your normal setup. If something goes wrong, you'll need to be comfortable inspecting mounts, daemons, and sockets to diagnose it.
+- **Not a true quota system.** Fusequota tracks usage inside the FUSE layer rather than at the filesystem level. If a server finds a way to write outside the FUSE mount (which shouldn't happen under normal Wings operation, but is worth mentioning), that data won't count against its quota.
 
-## So, when should I use it?
+## Migrating existing servers
 
-Well, it highly depends. Do only you and some friends use you panel? Fusequota is not worth the hassle and speed decrease.
+Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), Fusequota does not need to convert server directories into subvolumes or datasets - it simply mounts a FUSE layer over whatever directory already exists. Flipping `disk_limiter_mode` to `fuse_quota` and restarting Wings will bring existing servers under the limiter as they start up. No data movement is required.
 
-Do you have literally any other native quota system available? Then dont use fusequota, the native quota systems are much more efficient and stable than fusequota, and they do not have the same downsides.
+## When should I use it?
 
-Do you host free servers? Then it might be worth it, as you can have a lot of malicious users that try to fill up the disk, and it's better to have a slow server than no server at all.
+Use `fuse_quota` if, and generally **only if**, you have no other option:
 
-Do you host high-performance servers? Then it might not be worth it, as the performance decrease might be too much for your users. But it **depends**! Do not make decisions purely on this guide, do your testing and due diligence before making a decision. If you are unsure, you can always ask for help in our [Discord](https://discord.gg/uSM8tvTxBV), we are happy to help you make the best decision for your use case!
+- **If you run any kind of production or public hosting**, you should be using a native limiter. [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md) are all substantially better across every axis that matters (performance, stability, simplicity).
+- **If you run a small private panel for yourself and a few friends**, you probably don't need a disk limiter at all. The threat model Fusequota exists to counter ("Pterodactyl-Destroyer"-style attacks where a malicious user fills the disk) mostly doesn't apply to trusted users.
+- **If you host free or low-trust servers** on a filesystem where no native limiter is available, Fusequota can be worth the trade-off - having a slow-but-protected server is better than having no protection at all.
+- **If you host high-performance servers**, Fusequota's overhead may be unacceptable. Move the volumes to a filesystem that supports a native limiter instead.
+
+If you're unsure which limiter is right for your setup, ask in our [Discord](https://discord.gg/uSM8tvTxBV) - we're happy to help you think it through.
 
 ## How do I use it?
 
-Using Fusequota is relatively straightforward, it does not require any additional software or similar.
-
-To use Fusequota, simply set the `disk_limiter_mode` option in your wings configuration to `fuse_quota`:
+Set `disk_limiter_mode` to `fuse_quota` in your wings configuration:
 
 ```yaml
 system:
   disk_limiter_mode: fuse_quota
 ```
 
-Then, simply restart wings and fusequota will be used when a server restarts.
+Then restart Wings. Fusequota will be activated for each server the next time that server starts.

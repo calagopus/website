@@ -179,7 +179,12 @@ export default withMermaid({
             text: 'Disk Limiters',
             link: '/docs/wings/disk-limiters',
             collapsed: true,
-            items: [{ text: 'Fusequota', link: '/docs/wings/disk-limiters/fusequota' }],
+            items: [
+              { text: 'Fusequota', link: '/docs/wings/disk-limiters/fusequota' },
+              { text: 'Btrfs Subvolume', link: '/docs/wings/disk-limiters/btrfs-subvolume' },
+              { text: 'ZFS Dataset', link: '/docs/wings/disk-limiters/zfs-dataset' },
+              { text: 'XFS Project Quota', link: '/docs/wings/disk-limiters/xfs-quota' },
+            ],
           },
         ],
       },

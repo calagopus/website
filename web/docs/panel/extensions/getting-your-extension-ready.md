@@ -21,10 +21,6 @@ cargo clippy
 
 `cargo clippy` runs Rust's linter against your code. Clippy warnings often point at real correctness issues (misuse of `unwrap`, unnecessary clones, suspicious patterns), not just style - read them rather than silencing them. Your extension should produce no new warnings before you export.
 
-::: tip
-If you want clippy to fail loudly on any warning, run `cargo clippy -- -D warnings`. This is what CI does for the main Panel codebase, so it's a good habit for extensions too.
-:::
-
 ### Frontend: format, lint, and build check
 
 Run these from the `frontend/` directory.
