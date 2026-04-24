@@ -95,6 +95,7 @@ export default withMermaid({
           { text: 'Feature Reference', link: '/docs/about/features' },
           { text: 'Benchmarks', link: '/docs/about/benchmarks' },
           { text: 'Architecture', link: '/docs/about/architecture' },
+          { text: 'Branding', link: '/docs/about/branding' },
         ],
       },
       {
