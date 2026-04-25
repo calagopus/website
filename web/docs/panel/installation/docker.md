@@ -79,7 +79,7 @@ This step is **mandatory before the first `docker compose up`**. The compose fil
 :::
 
 ```bash
-touch wings-config.yml
+echo 'app_name: Calagopus' > wings-config.yml
 ```
 
 You can leave the file empty - the AIO container will populate it on first startup. You only need to make sure the file exists so the bind mount attaches correctly.

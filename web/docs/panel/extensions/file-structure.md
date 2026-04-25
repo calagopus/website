@@ -117,7 +117,7 @@ tracing = { workspace = true }
 ```toml
 package_name = "dev.0x7d8.test" # package name without underscores
 name = "0x7d8 Extension Test" # human-readable name of your extension
-panel_version = ">=0.18.1" # panel version requirement of your extension, must be a valid semver comparator
+panel_version = ">=1.0.3" # panel version requirement of your extension, must be a valid semver comparator
 ```
 
 ### src/lib.rs

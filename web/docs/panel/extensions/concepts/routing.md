@@ -58,7 +58,7 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-A couple of things to notice. First, **always make sure your routes do not collide with other extensions or the panel itself**. The Panel doesn't do anything to prevent collisions, so if two extensions both register a route at `/api/client/servers/{server}/foo`, utoipa will panic on startup and the process exits. That's a pretty hard failure mode, so just be considerate and pick paths that are unlikely to clash.
+A couple of things to notice. First, **always make sure your routes do not collide with other extensions or the panel itself**. The Panel doesn't do anything to prevent collisions, so if two extensions both register a route at `/api/client/servers/{server}/foo`, utoipa will panic on startup and the process exits. That's a pretty hard failure mode, so just be considerate and pick paths that are unlikely to clash. Calling your routes `/config` is really just asking for trouble, but `/extensions/dev.yourname.test/config` is perfectly reasonable.
 
 How pretty those paths need to be is up to you and depends on who's going to call them. For an admin API that only your extension's own frontend talks to, a namespace like `/extensions/dev.yourname.test/settings` is fine - it's ugly, but it's guaranteed not to collide, and nobody's typing it by hand. For a client API that end users might call with their API key, a cleaner path like `/my-feature` makes for a much nicer public surface. Both are valid choices, pick the one that fits your use case.
 
