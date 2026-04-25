@@ -1216,8 +1216,8 @@ packages:
       picomatch:
         optional: true
 
-  focus-trap@8.0.1:
-    resolution: {integrity: sha512-9ptSG6z51YQOstI/oN4XuVGP/03u2nh0g//qz7L6zX0i6PZiPnkcf3GenXq7N2hZnASXaMxTPpbKwdI+PFvxlw==}
+  focus-trap@8.1.0:
+    resolution: {integrity: sha512-T65crff26CKV2CZ3csg5y05r+560srp0b8EbAif35euW58hzklVf/Gb4Q+/HCtB8e9III3QFEyk5BWV5XJuOyw==}
 
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
@@ -2244,13 +2244,13 @@ snapshots:
       '@vueuse/shared': 14.2.1(vue@3.5.33)
       vue: 3.5.33
 
-  '@vueuse/integrations@14.2.1(focus-trap@8.0.1)(vue@3.5.33)':
+  '@vueuse/integrations@14.2.1(focus-trap@8.1.0)(vue@3.5.33)':
     dependencies:
       '@vueuse/core': 14.2.1(vue@3.5.33)
       '@vueuse/shared': 14.2.1(vue@3.5.33)
       vue: 3.5.33
     optionalDependencies:
-      focus-trap: 8.0.1
+      focus-trap: 8.1.0
 
   '@vueuse/metadata@14.2.1': {}
 
@@ -2592,7 +2592,7 @@ snapshots:
     optionalDependencies:
       picomatch: 4.0.4
 
-  focus-trap@8.0.1:
+  focus-trap@8.1.0:
     dependencies:
       tabbable: 6.4.0
 
@@ -3000,8 +3000,8 @@ snapshots:
       '@vue/devtools-api': 8.1.1
       '@vue/shared': 3.5.33
       '@vueuse/core': 14.2.1(vue@3.5.33)
-      '@vueuse/integrations': 14.2.1(focus-trap@8.0.1)(vue@3.5.33)
-      focus-trap: 8.0.1
+      '@vueuse/integrations': 14.2.1(focus-trap@8.1.0)(vue@3.5.33)
+      focus-trap: 8.1.0
       mark.js: 8.11.1
       minisearch: 7.2.0
       shiki: 3.23.0

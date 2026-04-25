@@ -153,6 +153,7 @@ export default withMermaid({
                   { text: 'Activity Logging', link: '/docs/panel/extensions/concepts/activity-logging' },
                   { text: 'Translations', link: '/docs/panel/extensions/concepts/translations' },
                   { text: 'Mounting UI', link: '/docs/panel/extensions/concepts/mounting-ui' },
+                  { text: 'Extending Models', link: '/docs/panel/extensions/concepts/extending-models' },
                 ],
               },
             ],
