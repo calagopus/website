@@ -90,13 +90,21 @@ The exact import command depends on how Calagopus itself is installed. Pick the 
 ::::tabs
 === Docker
 
-Copy Pterodactyl's `.env` file into the Calagopus container. Assuming Pterodactyl is at `/var/www/pterodactyl`:
+Make a working copy of Pterodactyl's `.env` and edit `DB_HOST` to point at the host from inside the Calagopus container. The `web` service ships with `host.docker.internal` mapped to the host's gateway, so that's the value to use:
 
 ```bash
-docker compose cp /var/www/pterodactyl/.env web:/.env
+cp /var/www/pterodactyl/.env /tmp/pterodactyl.env
+# Open /tmp/pterodactyl.env in your editor and change:
+#   DB_HOST=127.0.0.1   →   DB_HOST=host.docker.internal
 ```
 
-Then run the importer:
+Then copy it into the Calagopus container:
+
+```bash
+docker compose cp /tmp/pterodactyl.env web:/.env
+```
+
+Now run the importer:
 
 ```bash
 docker compose exec web calagopus-panel import pterodactyl --environment /.env
@@ -104,8 +112,10 @@ docker compose exec web calagopus-panel import pterodactyl --environment /.env
 
 This walks through users, servers, nodes, allocations, eggs, and so on. Larger Pterodactyl installs take longer; small ones finish in seconds. Progress is logged to stdout.
 
-::: warning If the import errors out
-Treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres data (the steps in the OOBE warning callout above), let Calagopus recreate it empty, and re-run the import.
+::: warning If the import errors out with a connection or auth error
+If the importer fails immediately with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, you've hit MySQL/MariaDB's host-based access control. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
+
+If it fails partway through with a different error, treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres data (the steps in the OOBE warning callout above), let Calagopus recreate it empty, and re-run the import.
 :::
 
 When the import finishes, restart the stack:
@@ -116,6 +126,39 @@ docker compose up -d
 ```
 
 Log in with your existing Pterodactyl credentials.
+
+#### Allowing the Database User to Connect from Docker
+
+If you're only seeing this section because the import failed with a host or auth error: the cause is that Pterodactyl's MySQL/MariaDB user is restricted to specific source hosts (typically `localhost` or `127.0.0.1`), and the Calagopus container connects from a *different* IP - the Docker bridge gateway. From MySQL's perspective, `pterodactyl@'localhost'` and `pterodactyl@'172.17.0.1'` are different users, and only the first one exists.
+
+The fix is to grant the same user access from any host (`'%'`), run the import, then revoke that broad grant once you're done.
+
+Connect to your MySQL/MariaDB server (substituting the actual user, password, and database name from Pterodactyl's `.env`):
+
+```bash
+mysql -u root -p
+```
+
+Grant the user access from anywhere:
+
+```sql
+GRANT ALL PRIVILEGES ON panel.* TO 'pterodactyl'@'%' IDENTIFIED BY 'your-pterodactyl-password';
+FLUSH PRIVILEGES;
+```
+
+Then go back and re-run the import.
+
+::: warning Revoke this after the migration
+A grant from `'%'` lets the user connect from anywhere on any network the database is reachable on, which is far broader than you want for normal operation. Revert it as soon as the import finishes:
+
+```sql
+REVOKE ALL PRIVILEGES ON panel.* FROM 'pterodactyl'@'%';
+DROP USER 'pterodactyl'@'%';
+FLUSH PRIVILEGES;
+```
+
+This leaves the original `pterodactyl@'localhost'` (or wherever) untouched, so Pterodactyl itself keeps working if you're keeping it running side-by-side. After Pterodactyl is fully decommissioned, you can drop that user too.
+:::
 
 === APT/RPM, Binary
 
