@@ -193,20 +193,11 @@ export default withMermaid({
         text: 'Advanced',
         items: [
           {
-            text: 'Migrating from Pterodactyl',
-            link: '/docs/advanced/migrating-from-pterodactyl',
+            text: 'Migrating from another Panel',
             collapsed: true,
             items: [
-              { text: 'Standalone', link: '/docs/advanced/migrating/standalone' },
-              { text: 'Dockerized', link: '/docs/advanced/migrating/dockerized' },
-            ],
-          },
-          {
-            text: 'Migrating from Pelican',
-            link: '/docs/advanced/migrating-from-pelican',
-            items: [
-              { text: 'Standalone', link: '/docs/advanced/migrating/pelican-standalone' },
-              { text: 'Dockerized', link: '/docs/advanced/migrating/pelican-dockerized' },
+              { text: 'Pterodactyl', link: '/docs/advanced/migrating/pterodactyl' },
+              { text: 'Pelican', link: '/docs/advanced/migrating/pelican' },
             ],
           },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
