@@ -8,7 +8,7 @@ Installing extensions requires the Panel to compile new code (yours, plus whatev
 - The `:heavy` or `:nightly-heavy` Docker image variant, or
 - A full local development environment
 
-If you're on `:latest` or `:nightly`, switch to the heavy variant first. See [Change the Docker image variant](../installation/docker.md#change-the-docker-image-variant-optional).
+If you're not on the heavy docker image already, switch to the heavy variant first. See [Switching to the heavy image](./switching-to-the-heavy-image.md).
 :::
 
 ## Install an Extension
