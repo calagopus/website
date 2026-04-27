@@ -45,6 +45,12 @@ export default withMermaid({
   markdown: {
     config(md) {
       md.use(tabsMarkdownPlugin);
+
+      const defaultCodeInline = md.renderer.rules.code_inline!;
+      md.renderer.rules.code_inline = (tokens, idx, options, env, self) => {
+        tokens[idx].attrSet('v-pre', '');
+        return defaultCodeInline(tokens, idx, options, env, self);
+      };
     },
   },
 
@@ -154,6 +160,7 @@ export default withMermaid({
                   { text: 'Translations', link: '/docs/panel/extensions/concepts/translations' },
                   { text: 'Mounting UI', link: '/docs/panel/extensions/concepts/mounting-ui' },
                   { text: 'Extending Models', link: '/docs/panel/extensions/concepts/extending-models' },
+                  { text: 'Email Templates', link: '/docs/panel/extensions/concepts/email-templates' },
                 ],
               },
             ],
