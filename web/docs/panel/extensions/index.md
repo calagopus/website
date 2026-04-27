@@ -8,9 +8,11 @@ For a high-level architectural breakdown of how extensions work within the syste
 
 If you are new to extensions, start here:
 
-- [Installing Extensions](./installing-extensions.md) - Learn how to install `.c7s.zip` extensions in the Panel  
-- [Development Environment](./dev-environment.md) - Set up a local environment for building extensions  
-- [Extension File Structure](./file-structure.md) - Learn how extensions are structured across frontend, backend, and database layers  
+- [Installing Extensions](./installing-extensions.md) - Learn how to install `.c7s.zip` extensions in the Panel
+- [Uninstalling Extensions](./uninstalling-extensions.md) - How to remove extensions and what happens to their data
+- [Switching to the Heavy Image](./switching-to-the-heavy-image.md) - Use the `:heavy` Docker image variant to enable extension support in a containerized setup
+- [Development Environment](./dev-environment.md) - Set up a local environment for building extensions
+- [Extension File Structure](./file-structure.md) - Learn how extensions are structured across frontend, backend, and database layers
 
 ## Concepts
 

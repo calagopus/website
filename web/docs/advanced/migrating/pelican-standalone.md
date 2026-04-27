@@ -99,7 +99,7 @@ The connection details come from Pelican's `.env` file - you don't need to type 
 
 Your Pelican `.env` should have entries like:
 
-```env
+```bash
 APP_URL=https://panel.example.com
 APP_KEY=base64:...
 DB_CONNECTION=mysql
@@ -116,7 +116,7 @@ Nothing special to do here - the importer reads these directly.
 
 Your Pelican `.env` should have entries like:
 
-```env
+```bash
 APP_URL=https://panel.example.com
 APP_KEY=base64:...
 DB_CONNECTION=sqlite

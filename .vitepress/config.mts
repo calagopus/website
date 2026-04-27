@@ -135,6 +135,8 @@ export default withMermaid({
             collapsed: true,
             items: [
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
+              { text: 'Uninstalling Extensions', link: '/docs/panel/extensions/uninstalling-extensions' },
+              { text: 'Switching to the Heavy Image', link: '/docs/panel/extensions/switching-to-the-heavy-image' },
               { text: 'Development Environment', link: '/docs/panel/extensions/dev-environment' },
               { text: 'Extension File Structure', link: '/docs/panel/extensions/file-structure' },
               { text: 'Getting your Extension ready', link: '/docs/panel/extensions/getting-your-extension-ready' },

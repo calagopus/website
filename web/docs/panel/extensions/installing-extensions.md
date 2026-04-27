@@ -1,50 +1,67 @@
 # Installing Extensions
 
-In this guide, you will learn how to install `.c7s.zip` extensions in your Calagopus Panel.
+Extensions ship as `.c7s.zip` files - a single archive containing both backend and frontend code. This page covers how to install one in your Calagopus Panel.
 
-This process is *meant* to be done via either the `:heavy` docker image or a full development environment, nothing in between. If
-you are using the regular `:latest` or `:nightly` docker image, you will need to switch it over to `:heavy` (or `:nightly-heavy`) to be able to install extensions. [Click here to view the guide on how to change the Docker image variant](../installation/docker.md#change-the-docker-image-variant-optional).
+::: warning Requires the `:heavy` image or a development environment
+Installing extensions requires the Panel to compile new code (yours, plus whatever the extension brings) at install time. The regular `:latest` and `:nightly` Docker images don't include the toolchain for that. You need either:
+
+- The `:heavy` or `:nightly-heavy` Docker image variant, or
+- A full local development environment
+
+If you're on `:latest` or `:nightly`, switch to the heavy variant first. See [Change the Docker image variant](../installation/docker.md#change-the-docker-image-variant-optional).
+:::
 
 ## Install an Extension
 
-To install an extension, the steps will vary depending on whether you are using the Docker image or a local installation. Use the tabs below to navigate to the instructions for your installation method.
+The steps depend on which environment you're running. Pick the matching tab:
 
 ::::tabs
 === With Docker
 
-The process for installing extensions with the Docker image pretty straightforward. First, ensure you are using the `:heavy` or `:nightly-heavy` Docker image variant, as the regular `:latest` and `:nightly` images do not include the necessary tools to install extensions. [Click here to view the guide on how to change the Docker image variant](../installation/docker.md#change-the-docker-image-variant-optional).
+Once your stack is on `:heavy` or `:nightly-heavy`, you have two options.
 
-Then, after you have ran `docker compose up -d` to (re)start the Panel with the new image variant, you can then access the extension management page in the Panel and upload the `.c7s.zip` file for your extension. The Panel will handle the rest of the installation process for you.
+**Option 1: Upload through the admin UI.** Open the Panel's extension management page, drop the `.c7s.zip` file into the upload area, and the Panel handles the rest - install, compile, and load.
 
-Alternatively, you can also copy the `.c7s.zip` file for your extension directly into the `extensions` directory of the Panel's data volume. If you are using the default heavy compose stack, this will be at `./build/extensions` relative to your compose file. The Panel will automatically detect the new extension and install it for you after you restart the Container. (e.g. by running `docker compose restart web`).
+![Placeholder: extension upload UI](./admin-extensions-ui-empty.webp)
+
+**Option 2: Drop the file in directly and restart.** Copy the `.c7s.zip` into the Panel's `extensions/` data directory (with the default heavy compose stack, that's `./build/extensions` relative to your compose file), then restart the container:
+
+```bash
+docker compose restart web
+```
+
+The Panel detects the new file on startup and installs it, you can see the progress via the afforementioned admin UI or simply wait, it shouldn't take more than a minute or two even for complex extensions.
 
 === With Development Environment
 
-If you have a local installation of the Panel, you can install extensions by running the following command in your terminal, replacing `path/to/extension.c7s.zip` with the actual path to your extension file:
+Add the extension source to your tree:
 
 ```bash
 panel-rs extensions add path/to/extension.c7s.zip
 ```
 
-And thats *almost* it, the extension src has now been added to the Panel, however you will now need to compile the frontend and backend of the Panel to be able to use the extension. To do this, run the following command in your terminal:
+That gets the source in place but doesn't compile it yet. To compile and apply:
 
 ```bash
 panel-rs extensions apply --profile balanced
 ```
 
-If you are developing locally, you can also use the `dev` profile instead (which will use the `dev` profile in cargo whereas `balanced` will use the `heavy-release` profile), this will make the compilation process faster, but it is not recommended for production use as it may have some performance implications.
+The `balanced` profile compiles the backend with cargo's `heavy-release` profile - production-grade optimization but a lot faster to compile than `release`. If you're iterating locally and want faster compile times, use `--profile dev` instead, which compiles with cargo's `dev` profile. Don't ship `dev`-built binaries to production; the speed comes at a real performance cost.
 
-Alternatively, you can also compile the frontend and backend separately by running the following commands:
+::: details Manual frontend + backend builds
+If you'd rather drive the build steps yourself instead of going through `extensions apply`:
 
 ```bash
 cd frontend
-pnpm i # required, since the extension may have added new dependencies to the frontend
+pnpm i # extensions may bring new dependencies
 pnpm build:fast
 
 cd ..
 cargo b --profile heavy-release
-
-# bin now at ./target/heavy-release/panel-rs
+# binary lands at ./target/heavy-release/panel-rs
 ```
+
+Same end result; just more granular if you're debugging a build issue.
+:::
 
 ::::
