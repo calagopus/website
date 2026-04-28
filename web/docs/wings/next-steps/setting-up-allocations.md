@@ -12,7 +12,7 @@ Click **Create** and a popup will appear:
 
 **IP address**: Use the public IP of the node's network interface. To find it, run `hostname -I | awk '{print $1}'` on the node, or `ip addr | grep "inet "` to see all interfaces. You can also use `0.0.0.0` to bind all available interfaces.
 
-::: warning
+::: tip
 You can use `127.0.0.1` for allocations if you want the server to be accessible only from the same machine. This is useful for locally hosted services that shouldn't be exposed to the internet.
 :::
 

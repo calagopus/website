@@ -36,9 +36,45 @@ Use `btrfs_subvolume` if you are already running (or are happy to run) Btrfs for
 
 If you are setting up a fresh node and choosing a filesystem, Btrfs is a solid choice when you also want cheap snapshots and online resize. If you want maximum raw throughput and don't need those features, [XFS](./xfs-quota.md) is worth considering. If you already use ZFS for other reasons, [ZFS](./zfs-dataset.md) is the obvious pick.
 
+## Docker Compose Setup
+
+Wings needs access to the underlying block device and elevated permissions to create and manage Btrfs subvolumes inside a container. The preferred approach is to pass through the drive and add the required capabilities explicitly rather than running the container as fully privileged:
+
+```diff
+ services:
+   wings:
++    devices:
++      - /dev/sdb:/dev/sdb # replace with the device your Btrfs filesystem lives on
++      # - /dev/sdc:/dev/sdc # if your Btrfs filesystem spans multiple devices, pass them all through
++    cap_add:
++      - SYS_ADMIN
++      - SYS_RAWIO
+```
+
+::: warning Replace the device path
+`/dev/sdb` is an example. Use the actual block device that your Btrfs filesystem lives on. You can find it with `lsblk` or `findmnt /var/lib/pterodactyl/volumes` on the host.
+:::
+
+::: details Alternatively: privileged mode
+If you'd rather not manage individual capabilities and device paths, `privileged: true` works too - it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
+
+```diff
+ services:
+   wings:
++    privileged: true
+```
+:::
+
+After making either change, restart the stack:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
 ## How do I use it?
 
-Set `disk_limiter_mode` to `btrfs_subvolume` in your wings configuration:
+Set `disk_limiter_mode` to `btrfs_subvolume` in your Wings configuration:
 
 ```yaml
 system:

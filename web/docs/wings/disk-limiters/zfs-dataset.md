@@ -35,9 +35,45 @@ Use `zfs_dataset` if you are already running (or want to run) ZFS for your serve
 
 ZFS is particularly attractive if you also want its other features - RAID-Z, cheap snapshots, send/receive for backups, dataset-level compression, ARC caching. If you don't care about any of those, [Btrfs](./btrfs-subvolume.md) gives you a similar feature set without needing an out-of-tree kernel module on most distros, and [XFS](./xfs-quota.md) gives you the best raw performance if you don't need snapshots at all.
 
+## Docker Compose Setup
+
+Wings needs access to the pool's underlying drives and elevated permissions to create and manage ZFS datasets inside a container. The preferred approach is to pass through the drives and add the required capabilities explicitly rather than running the container as fully privileged:
+
+```diff
+ services:
+   wings:
++    devices:
++      - /dev/sdb:/dev/sdb # replace with the device your ZFS pool lives on
++      # - /dev/sdc:/dev/sdc # if your ZFS pool spans multiple drives, pass them all through
++    cap_add:
++      - SYS_ADMIN
++      - SYS_RAWIO
+```
+
+::: warning Add every drive in the pool
+All physical drives that make up the ZFS pool must be passed through - not just one. Run `zpool status` on the host to see which devices belong to your pool, then add a `devices` entry for each one.
+:::
+
+::: details Alternatively: privileged mode
+If you'd rather not manage individual capabilities and device paths, `privileged: true` works too - it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
+
+```diff
+ services:
+   wings:
++    privileged: true
+```
+:::
+
+After making either change, restart the stack:
+
+```bash
+docker compose down
+docker compose up -d
+```
+
 ## How do I use it?
 
-Set `disk_limiter_mode` to `zfs_dataset` in your wings configuration:
+Set `disk_limiter_mode` to `zfs_dataset` in your Wings configuration:
 
 ```yaml
 system:

@@ -1,5 +1,9 @@
 # Fusequota
 
+::: warning
+It is **highly** discouraged from even thinking of using `fuse_quota` when using a Docker Wings installation. Every time Wings restarts, Fusequota will be killed and the server filesystem mounts become inaccessible, causing tons of I/O errors until you manually restart all Servers.
+:::
+
 ## What is it?
 
 The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on *any* underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount, whatever. This makes it the fallback option when no native limiter is available.
