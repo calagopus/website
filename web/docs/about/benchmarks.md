@@ -1,486 +1,417 @@
+<script setup>
+import BenchChart from '../../../.vitepress/components/BenchChart.vue'
+
+const C = '#14b8a6'
+const P = '#d97706'
+
+const servers = [
+  '9900X · 4t · 4G',
+  '9900X · 8t · 4G',
+  '9900X · 16t · 4G',
+  'EPYC 7443P · 4t · 4G',
+  'EPYC 7443P · 8t · 4G',
+  'EPYC 7443P · 16t · 4G',
+  '2× E5-2680v2 · 4t · 4G',
+  '2× E5-2680v2 · 8t · 4G',
+  '2× E5-2680v2 · 16t · 4G',
+  'Altra Q80-30 · 4t · 4G',
+  'Altra Q80-30 · 8t · 4G',
+  'Altra Q80-30 · 16t · 4G',
+]
+
+const indicator = (text) => ({
+  type: 'text',
+  right: 12,
+  top: 8,
+  style: {
+    text,
+    fontFamily: 'ui-monospace, monospace',
+    fontSize: 10,
+    fill: '#888',
+    opacity: 0.7,
+  },
+})
+
+const baseHorizontal = (direction, extra = {}) => ({
+  grid: { left: 170, right: 30, top: 44, bottom: 40, ...extra.grid },
+  legend: { top: 4, left: 8, icon: 'roundRect', itemWidth: 12, itemHeight: 12 },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+  graphic: [indicator(direction === 'up' ? '↑ higher is better' : '↓ lower is better')],
+  yAxis: {
+    type: 'category',
+    data: servers,
+    inverse: true,
+    axisTick: { show: false },
+    axisLabel: { fontFamily: 'ui-monospace, monospace', fontSize: 11 },
+  },
+  ...extra,
+})
+
+const calBar = (data) => ({
+  name: 'Calagopus',
+  type: 'bar',
+  data,
+  color: C,
+  barMaxWidth: 16,
+  itemStyle: { borderRadius: [0, 3, 3, 0] },
+})
+
+const ptlBar = (data) => ({
+  name: 'Pterodactyl',
+  type: 'bar',
+  data,
+  color: P,
+  barMaxWidth: 16,
+  itemStyle: { borderRadius: [0, 3, 3, 0] },
+})
+
+const memPeak = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'MiB' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} MiB` },
+  series: [
+    calBar([273, 260, 251, 261, 274, 284, 188, 188, 210, 279, 178, 171]),
+    ptlBar([968, 1270, 1116, 750, 1100, 1023, 414, 470, 535, 705, 717, 760]),
+  ],
+})
+
+const memIdle = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'MiB' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} MiB` },
+  series: [
+    calBar([150, 150, 150, 159, 159, 159, 150, 150, 150, 138, 138, 138]),
+    ptlBar([300, 300, 300, 305, 305, 305, 216, 216, 216, 345, 345, 345]),
+  ],
+})
+
+const rpsRoot = baseHorizontal('up', {
+  xAxis: { type: 'value', name: 'req/s', axisLabel: { formatter: v => v >= 1000 ? `${v/1000}k` : v } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v.toLocaleString()} req/s` },
+  series: [
+    calBar([111272, 181350, 263828, 31226, 79993, 146558, 21607, 45191, 68425, 18411, 10310, 7795]),
+    ptlBar([577, 799, 722, 485, 670, 605, 161, 318, 196, 336, 363, 384]),
+  ],
+})
+
+const rpsApi = baseHorizontal('up', {
+  xAxis: { type: 'value', name: 'req/s', axisLabel: { formatter: v => v >= 1000 ? `${v/1000}k` : v } },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v.toLocaleString()} req/s` },
+  series: [
+    calBar([110005, 183122, 260129, 28784, 54853, 75518, 14403, 24801, 24091, 8112, 5402, 3788]),
+    ptlBar([304, 730, 658, 240, 575, 518, 141, 258, 169, 282, 316, 346]),
+  ],
+})
+
+const latAvgRoot = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'ms' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} ms` },
+  series: [
+    calBar([4.5, 2.8, 1.9, 16.0, 6.2, 3.4, 23.1, 11.1, 7.3, 27.1, 48.5, 64.1]),
+    ptlBar([872, 627, 693, 1045, 750, 831, 3182, 1589, 2599, 1499, 1384, 1307]),
+  ],
+})
+
+const latAvgApi = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'ms' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} ms` },
+  series: [
+    calBar([4.5, 2.7, 1.9, 17.4, 9.1, 6.6, 34.7, 20.2, 20.7, 61.6, 92.6, 132.1]),
+    ptlBar([1664, 688, 763, 2110, 875, 972, 3628, 1963, 3028, 1789, 1591, 1449]),
+  ],
+})
+
+const latP99Root = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'ms' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} ms` },
+  series: [
+    calBar([12.0, 7.8, 5.7, 41.3, 16.9, 8.7, 58.8, 31.5, 15.6, 62.5, 139.8, 194.8]),
+    ptlBar([1135, 854, 1105, 1360, 1025, 1019, 3432, 1836, 2985, 1965, 2177, 2051]),
+  ],
+})
+
+const latP99Api = baseHorizontal('down', {
+  xAxis: { type: 'value', name: 'ms' },
+  tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' }, valueFormatter: v => v == null ? 'no data' : `${v} ms` },
+  series: [
+    calBar([12.2, 7.8, 5.8, 33.6, 19.0, 11.8, 64.0, 59.0, 67.5, 95.1, 175.9, 230.5]),
+    ptlBar([2648, 935, 1052, 3360, 1190, 1337, 3920, 2204, 3449, 2347, 2440, 2256]),
+  ],
+})
+
+const chartHeight = (servers.length * 36 + 100) + 'px'
+</script>
+
 # Benchmarks
 
-Want to know what kind of performance you can expect from Calagopus? Here are some benchmark results from our testing environment(s), with comparison to Pterodactyl.
+Performance results for Calagopus, measured against Pterodactyl on identical hardware. Each chart compares both panels across every test configuration.
 
-## Test Server 1
+<div class="headline-stats">
+  <div class="stat">
+    <div class="stat-label">peak throughput</div>
+    <div class="stat-value">263k <span>req/s</span></div>
+    <div class="stat-sub">
+      <div>Calagopus</div>
+      <div><s>799</s> Pterodactyl</div>
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">avg response</div>
+    <div class="stat-value">1.9 <span>ms</span></div>
+    <div class="stat-sub">
+      <div>Calagopus</div>
+      <div><s>627 ms</s> Pterodactyl</div>
+    </div>
+  </div>
+  <div class="stat">
+    <div class="stat-label">idle memory</div>
+    <div class="stat-value">138 <span>MiB</span></div>
+    <div class="stat-sub">
+      <div>Calagopus</div>
+      <div><s>216 MiB</s> Pterodactyl</div>
+    </div>
+  </div>
+</div>
 
-- **CPU**: AMD EPYC 7443P (4 threads assigned)
-- **RAM**: 4GB DDR4 2666MHZ
-- **Storage**: RAID 1 NVMe SSDs
+::: tip Methodology
+Tests use Calagopus `1.0.4` and Pterodactyl `1.12.2`, both running from their official Docker images with no additional configuration beyond initial setup. Each test ran [`oha`](https://github.com/hatoo/oha) with 500 concurrent connections for 60 seconds, from a separate machine on the same LAN over a 10 Gbps link. Two endpoints were targeted: the panel root (`/`) and an authenticated API endpoint (`/api/client/permissions`). Both panels used default rate limiting; the high `[429]` counts on the API endpoint are expected.
 
-### Memory Usage
-
-| Panel         | Idle RAM Usage | High Load RAM Usage |
-| ------------- | -------------- | ------------------- |
-| Calagopus     | ~150MiB        | ~450MiB             |
-| Pterodactyl   | ~296MiB        | ~400MiB             |
-
-Not much to say here, Calagopus uses significantly less memory at idle, and slightly more under high load due to more aggressive caching.
-
-### Response Times
-
-I ran 2 seperate tests using [`oha`](https://github.com/hatoo/oha), each with 500 concurrent connections for 1 minute. The first test targeted the root endpoint `/`, while the second test targeted the `/api/client/permissions` endpoint. Oha was run from a different machine on the same local network with a 10Gbps connection to the test server.
-
-::::tabs
-=== Test 1
-
-500 concurrent connections to `/` for 1 minute.
-
-::: code-group
-```yml [Calagopus]
-# oha -c 500 -z 1m http://192.168.178.53:8000/
-Summary:
-  Success rate: 100.00%
-  Total:        60003.8388 ms
-  Slowest:      73.7278 ms
-  Fastest:      0.0753 ms
-  Average:      9.1649 ms
-  Requests/sec: 54538.6939
-
-  Total data:   2.70 GiB
-  Size/request: 885 B
-  Size/sec:     46.02 MiB
-
-Response time histogram:
-   0.075 ms [1]       |
-   7.441 ms [1419342] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  14.806 ms [1422133] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  22.171 ms [334597]  |■■■■■■■
-  29.536 ms [75308]   |■
-  36.902 ms [16819]   |
-  44.267 ms [2872]    |
-  51.632 ms [743]     |
-  58.997 ms [208]     |
-  66.363 ms [49]      |
-  73.728 ms [21]      |
-
-Response time distribution:
-  10.00% in 3.4208 ms
-  25.00% in 5.4255 ms
-  50.00% in 8.1712 ms
-  75.00% in 11.7421 ms
-  90.00% in 16.1065 ms
-  95.00% in 19.4296 ms
-  99.00% in 27.3239 ms
-  99.90% in 38.3188 ms
-  99.99% in 49.6870 ms
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   11.0390 ms, 0.3218 ms, 21.0907 ms
-  DNS-lookup:   0.0011 ms, 0.0004 ms, 0.0319 ms
-
-Status code distribution:
-  [200] 3272093 responses
-
-Error distribution:
-  [438] aborted due to deadline
-```
-
-```yml [Pterodactyl]
-# oha -c 500 -z 1m http://192.168.178.53
-Summary:
-  Success rate: 100.00%
-  Total:        60.0034 sec
-  Slowest:      1.8325 sec
-  Fastest:      0.0367 sec
-  Average:      1.2973 sec
-  Requests/sec: 389.3946
-
-  Total data:   16.12 MiB
-  Size/request: 739 B
-  Size/sec:     275.05 KiB
-
-Response time histogram:
-  0.037 sec [1]     |
-  0.216 sec [37]    |
-  0.396 sec [37]    |
-  0.575 sec [40]    |
-  0.755 sec [43]    |
-  0.935 sec [55]    |
-  1.114 sec [54]    |
-  1.294 sec [12524] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  1.473 sec [9157]  |■■■■■■■■■■■■■■■■■■■■■■■
-  1.653 sec [783]   |■■
-  1.833 sec [135]   |
-
-Response time distribution:
-  10.00% in 1.2638 sec
-  25.00% in 1.2748 sec
-  50.00% in 1.2898 sec
-  75.00% in 1.3099 sec
-  90.00% in 1.3333 sec
-  95.00% in 1.4013 sec
-  99.00% in 1.5885 sec
-  99.90% in 1.7889 sec
-  99.99% in 1.8249 sec
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.0045 sec, 0.0003 sec, 0.0083 sec
-  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0000 sec
-
-Status code distribution:
-  [200] 22866 responses
-
-Error distribution:
-  [499] aborted due to deadline
-```
-
+Configurations are labeled `<CPU> · <threads>t · <RAM>G`. Memory figures come from Proxmox LXC container stats (the Docker container runs inside the LXC).
 :::
 
-=== Test 2
-
-500 concurrent connections to `/api/client/permissions` for 1 minute.
-::: code-group
-
-```yml [Calagopus]
-# oha -c 500 -z 1m http://192.168.178.53:8000/api/client/permissions -H "Authorization: Bearer c7sp_J9SjTBNLYnD43pC8X43CVz7nphoLqHCs6vH1ehsqVNl"
-Summary:
-  Success rate: 100.00%
-  Total:        60003.1351 ms
-  Slowest:      111.5004 ms
-  Fastest:      0.6788 ms
-  Average:      16.4726 ms
-  Requests/sec: 30350.6808
-
-  Total data:   140.57 MiB
-  Size/request: 80 B
-  Size/sec:     2.34 MiB
-
-Response time histogram:
-    0.679 ms [1]       |
-   11.761 ms [125223]  |■■
-   22.843 ms [1593537] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-   33.925 ms [95751]   |■
-   45.007 ms [1639]    |
-   56.090 ms [1130]    |
-   67.172 ms [2561]    |
-   78.254 ms [712]     |
-   89.336 ms [71]      |
-  100.418 ms [51]      |
-  111.500 ms [24]      |
-
-Response time distribution:
-  10.00% in 12.2877 ms
-  25.00% in 13.9148 ms
-  50.00% in 15.8884 ms
-  75.00% in 18.3135 ms
-  90.00% in 21.0755 ms
-  95.00% in 23.1809 ms
-  99.00% in 28.2464 ms
-  99.90% in 61.1721 ms
-  99.99% in 75.1722 ms
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   6.4798 ms, 0.3407 ms, 12.3721 ms
-  DNS-lookup:   0.0014 ms, 0.0004 ms, 0.0662 ms
-
-Status code distribution:
-  [429] 1816137 responses
-  [200] 4563 responses
-
-Error distribution:
-  [436] aborted due to deadline
-```
-
-```yml [Pterodactyl]
-# oha -c 500 -z 1m http://192.168.178.53/api/client/permissions -H "Authorization: Bearer ptlc_tQYHdJvyep0d5KTBmkCSoDgXTbqw5slkvm2iFnTDTUe"
-Summary:
-  Success rate: 100.00%
-  Total:        60.0040 sec
-  Slowest:      2.1540 sec
-  Fastest:      0.0249 sec
-  Average:      1.7020 sec
-  Requests/sec: 297.9803
-
-  Total data:   109.33 MiB
-  Size/request: 6.44 KiB
-  Size/sec:     1.82 MiB
-
-Response time histogram:
-  0.025 sec [1]     |
-  0.238 sec [53]    |
-  0.451 sec [52]    |
-  0.664 sec [60]    |
-  0.877 sec [59]    |
-  1.089 sec [62]    |
-  1.302 sec [64]    |
-  1.515 sec [63]    |
-  1.728 sec [13137] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  1.941 sec [2349]  |■■■■■
-  2.154 sec [1480]  |■■■
-
-Response time distribution:
-  10.00% in 1.6494 sec
-  25.00% in 1.6651 sec
-  50.00% in 1.6851 sec
-  75.00% in 1.7225 sec
-  90.00% in 1.8120 sec
-  95.00% in 2.0609 sec
-  99.00% in 2.1217 sec
-  99.90% in 2.1453 sec
-  99.99% in 2.1539 sec
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.0074 sec, 0.0001 sec, 0.0204 sec
-  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0000 sec
-
-Status code distribution:
-  [429] 17126 responses
-  [200] 254 responses
-
-Error distribution:
-  [500] aborted due to deadline
-```
-
-:::
-::::
-
-Whats most important here is the average and slowest response times. As you can see, Calagopus is able to handle these requests significantly more efficiently than Pterodactyl, resulting in lower latency and better overall performance. Requests per second is much higher in both tests, however this is not actually that relevant since both panels were able to handle all incoming requests without any errors.
-
-## Test Server 2
-
-- **CPU**: Ampere Altra Q80-30 (4 threads assigned)
-- **RAM**: 4GB DDR4 2133MHZ
-- **Storage**: RAID 1 NVMe SSDs
-
-### Memory Usage
-
-| Panel         | Idle RAM Usage | High Load RAM Usage |
-| ------------- | -------------- | ------------------- |
-| Calagopus     | ~150MiB        | ~450MiB             |
-| Pterodactyl   | ~296MiB        | ~400MiB             |
-
-Essentially the same as on Test Server 1.
-
-### Response Times
-
-I ran the same 2 tests as on Test Server 1 using [`oha`](https://github.com/hatoo/oha), each with 500 concurrent connections for 1 minute. Oha was run from a different machine on the same local network with a 10Gbps connection to the test server.
-
-::::tabs
-=== Test 1
-
-500 concurrent connections to `/` for 1 minute.
-
-::: code-group
-```yml [Calagopus]
-# oha -c 500 -z 1m http://192.168.178.4:8000/
-Summary:
-  Success rate: 100.00%
-  Total:        60003.1143 ms
-  Slowest:      326.7033 ms
-  Fastest:      0.1708 ms
-  Average:      75.1486 ms
-  Requests/sec: 6655.9545
-
-  Total data:   336.66 MiB
-  Size/request: 885 B
-  Size/sec:     5.61 MiB
-
-Response time histogram:
-    0.171 ms [1]      |
-   32.824 ms [30181]  |■■■■■■
-   65.477 ms [136113] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-   98.131 ms [146622] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  130.784 ms [63574]  |■■■■■■■■■■■■■
-  163.437 ms [17724]  |■■■
-  196.090 ms [3706]   |
-  228.744 ms [766]    |
-  261.397 ms [150]    |
-  294.050 ms [30]     |
-  326.703 ms [15]     |
-
-Response time distribution:
-  10.00% in 36.7929 ms
-  25.00% in 53.2144 ms
-  50.00% in 71.5264 ms
-  75.00% in 94.0241 ms
-  90.00% in 117.5066 ms
-  95.00% in 133.3357 ms
-  99.00% in 166.4651 ms
-  99.90% in 213.5064 ms
-  99.99% in 264.3327 ms
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   8.7894 ms, 0.2816 ms, 16.6059 ms
-  DNS-lookup:   0.0010 ms, 0.0003 ms, 0.0206 ms
-
-Status code distribution:
-  [200] 398882 responses
-
-Error distribution:
-  [496] aborted due to deadline
-```
-
-```yml [Pterodactyl]
-# oha -c 500 -z 1m http://192.168.178.177
-Summary:
-  Success rate: 100.00%
-  Total:        60.0036 sec
-  Slowest:      2.3796 sec
-  Fastest:      0.0415 sec
-  Average:      1.9175 sec
-  Requests/sec: 264.8842
-
-  Total data:   10.85 MiB
-  Size/request: 739 B
-  Size/sec:     185.17 KiB
-
-Response time histogram:
-  0.041 sec [1]     |
-  0.275 sec [35]    |
-  0.509 sec [34]    |
-  0.743 sec [40]    |
-  0.977 sec [51]    |
-  1.211 sec [53]    |
-  1.444 sec [53]    |
-  1.678 sec [51]    |
-  1.912 sec [2192]  |■■■■■
-  2.146 sec [12745] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  2.380 sec [139]   |
-
-Response time distribution:
-  10.00% in 1.9082 sec
-  25.00% in 1.9162 sec
-  50.00% in 1.9296 sec
-  75.00% in 1.9452 sec
-  90.00% in 1.9616 sec
-  95.00% in 2.0082 sec
-  99.00% in 2.1184 sec
-  99.90% in 2.3387 sec
-  99.99% in 2.3738 sec
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.0096 sec, 0.0004 sec, 0.0183 sec
-  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0000 sec
-
-Status code distribution:
-  [200] 15394 responses
-
-Error distribution:
-  [500] aborted due to deadline
-```
-
-:::
-
-=== Test 2
-
-500 concurrent connections to `/api/client/permissions` for 1 minute.
-::: code-group
-
-```yml [Calagopus]
-# oha -c 500 -z 1m http://192.168.178.4:8000/api/client/permissions -H "Authorization: Bearer c7sp_igGghMj9heIWeYUU7hAgQyDOVTEqzBFsKg6H35fWzE8"
-Summary:
-  Success rate: 100.00%
-  Total:        60.0036 sec
-  Slowest:      4.0932 sec
-  Fastest:      0.0006 sec
-  Average:      0.2170 sec
-  Requests/sec: 2307.9456
-
-  Total data:   25.27 MiB
-  Size/request: 192 B
-  Size/sec:     431.20 KiB
-
-Response time histogram:
-  0.001 sec [1]      |
-  0.410 sec [137514] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  0.819 sec [112]    |
-  1.228 sec [51]     |
-  1.638 sec [51]     |
-  2.047 sec [45]     |
-  2.456 sec [42]     |
-  2.865 sec [41]     |
-  3.275 sec [40]     |
-  3.684 sec [40]     |
-  4.093 sec [48]     |
-
-Response time distribution:
-  10.00% in 0.1676 sec
-  25.00% in 0.1919 sec
-  50.00% in 0.2138 sec
-  75.00% in 0.2349 sec
-  90.00% in 0.2571 sec
-  95.00% in 0.2730 sec
-  99.00% in 0.3169 sec
-  99.90% in 2.7891 sec
-  99.99% in 3.9781 sec
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.0040 sec, 0.0004 sec, 0.0073 sec
-  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0000 sec
-
-Status code distribution:
-  [429] 136478 responses
-  [200] 1507 responses
-
-Error distribution:
-  [500] aborted due to deadline
-```
-
-```yml [Pterodactyl]
-# oha -c 500 -z 1m http://192.168.178.177/api/client/permissions -H "Authorization: Bearer ptlc_fsc3jLHeCWO3WxMT7NCF9Cg6c97oWDT0aAMzvq3aqko"
-Summary:
-  Success rate: 100.00%
-  Total:        60.0040 sec
-  Slowest:      2.8156 sec
-  Fastest:      0.2462 sec
-  Average:      2.5040 sec
-  Requests/sec: 203.4366
-
-  Total data:   73.71 MiB
-  Size/request: 6.45 KiB
-  Size/sec:     1.23 MiB
-
-Response time histogram:
-  0.246 sec [1]    |
-  0.503 sec [44]   |
-  0.760 sec [58]   |
-  1.017 sec [50]   |
-  1.274 sec [50]   |
-  1.531 sec [71]   |
-  1.788 sec [50]   |
-  2.045 sec [32]   |
-  2.302 sec [50]   |
-  2.559 sec [8587] |■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■■
-  2.816 sec [2714] |■■■■■■■■■■
-
-Response time distribution:
-  10.00% in 2.5156 sec
-  25.00% in 2.5269 sec
-  50.00% in 2.5415 sec
-  75.00% in 2.5572 sec
-  90.00% in 2.5792 sec
-  95.00% in 2.6180 sec
-  99.00% in 2.6872 sec
-  99.90% in 2.7151 sec
-  99.99% in 2.7966 sec
-
-
-Details (average, fastest, slowest):
-  DNS+dialup:   0.1115 sec, 0.0003 sec, 0.2152 sec
-  DNS-lookup:   0.0000 sec, 0.0000 sec, 0.0000 sec
-
-Status code distribution:
-  [429] 11578 responses
-  [200] 129 responses
-
-Error distribution:
-  [500] aborted due to deadline
-```
-
-:::
-::::
-
-While we have a similar outcome on this test server, the performance difference is not as pronounced as on Test Server 1. This is likely due to the overall lower performance of the Ampere Altra CPU in single-threaded tasks compared to the AMD EPYC CPU. However, Calagopus still demonstrates significantly better performance in both tests compared to Pterodactyl.
-
-
-## Conclusion
-
-From the benchmark results on both test servers, it's evident that Calagopus outperforms Pterodactyl in terms of memory usage and response times under load. Calagopus consistently uses less memory at idle and maintains competitive memory usage under high load. More importantly, Calagopus exhibits significantly lower average and slowest response times in both tests, indicating better efficiency and performance in handling requests. These results highlight Calagopus as a more optimized solution for managing game servers compared to Pterodactyl.
+## Test environments
+
+<div class="env-grid">
+  <div class="env">
+    <div class="env-name">Ryzen 9 9900X</div>
+    <div class="env-row"><span>CPU</span><span>AMD Ryzen 9 9900X</span></div>
+    <div class="env-row"><span>RAM</span><span>DDR5-6000</span></div>
+    <div class="env-row"><span>Storage</span><span>RAID 1 NVMe</span></div>
+    <div class="env-row"><span>Kernel</span><span>Linux 6.17.4-2-pve</span></div>
+    <div class="cpu-stats">
+      <span>c7s idle</span><span>0.05%</span>
+      <span>c7s peak</span><span>78&ndash;90%</span>
+      <span>ptero peak</span><span>56&ndash;97%</span>
+    </div>
+  </div>
+  <div class="env">
+    <div class="env-name">EPYC 7443P</div>
+    <div class="env-row"><span>CPU</span><span>AMD EPYC 7443P</span></div>
+    <div class="env-row"><span>RAM</span><span>DDR4-2666</span></div>
+    <div class="env-row"><span>Storage</span><span>RAID 1 NVMe</span></div>
+    <div class="env-row"><span>Kernel</span><span>Linux 6.17.4-2-pve</span></div>
+    <div class="cpu-stats">
+      <span>c7s idle</span><span>0.06%</span>
+      <span>c7s peak</span><span>91&ndash;99%</span>
+      <span>ptero peak</span><span>57&ndash;98%</span>
+    </div>
+  </div>
+  <div class="env">
+    <div class="env-name">2× Xeon E5-2680 v2</div>
+    <div class="env-row"><span>CPU</span><span>2× Intel Xeon E5-2680 v2</span></div>
+    <div class="env-row"><span>RAM</span><span>DDR3-1600</span></div>
+    <div class="env-row"><span>Storage</span><span>RAID 1 SATA SSD</span></div>
+    <div class="env-row"><span>Kernel</span><span>Linux 6.17.13-2-pve</span></div>
+    <div class="cpu-stats">
+      <span>c7s idle</span><span>0.12%</span>
+      <span>c7s peak</span><span>85&ndash;99%</span>
+      <span>ptero peak</span><span>60&ndash;100%</span>
+    </div>
+  </div>
+  <div class="env">
+    <div class="env-name">Ampere Altra Q80-30</div>
+    <div class="env-row"><span>CPU</span><span>Ampere Altra Q80-30</span></div>
+    <div class="env-row"><span>RAM</span><span>DDR4-2133</span></div>
+    <div class="env-row"><span>Storage</span><span>RAID 1 NVMe</span></div>
+    <div class="env-row"><span>Kernel</span><span>Linux 6.12.63-rt-arm64</span></div>
+    <div class="cpu-stats">
+      <span>c7s idle</span><span>0.08%</span>
+      <span>c7s peak</span><span>17&ndash;93%</span>
+      <span>ptero peak</span><span>52&ndash;99%</span>
+    </div>
+  </div>
+</div>
+
+## Memory usage
+
+<div class="chart-pair">
+  <div class="chart-col">
+    <div class="chart-cap">Idle</div>
+    <BenchChart :option="memIdle" :height="chartHeight" />
+  </div>
+  <div class="chart-col">
+    <div class="chart-cap">Peak under load</div>
+    <BenchChart :option="memPeak" :height="chartHeight" />
+  </div>
+</div>
+
+Calagopus idles around 140-160 MiB regardless of host. Under load it rarely exceeds 300 MiB, while Pterodactyl peaks above 1 GiB on the 9900X.
+
+## Throughput
+
+<div class="chart-cap">Endpoint: <code>/</code></div>
+<BenchChart :option="rpsRoot" :height="chartHeight" />
+
+<div class="chart-cap">Endpoint: <code>/api/client/permissions</code></div>
+<BenchChart :option="rpsApi" :height="chartHeight" />
+
+## Average latency
+
+<div class="chart-cap">Endpoint: <code>/</code></div>
+<BenchChart :option="latAvgRoot" :height="chartHeight" />
+
+<div class="chart-cap">Endpoint: <code>/api/client/permissions</code></div>
+<BenchChart :option="latAvgApi" :height="chartHeight" />
+
+## p99 latency
+
+<div class="chart-cap">Endpoint: <code>/</code></div>
+<BenchChart :option="latP99Root" :height="chartHeight" />
+
+<div class="chart-cap">Endpoint: <code>/api/client/permissions</code></div>
+<BenchChart :option="latP99Api" :height="chartHeight" />
+
+<style scoped>
+.headline-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0 2.5rem;
+  padding: 1.5rem;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 8px;
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--vp-c-brand-1, #14b8a6) 4%, transparent),
+    transparent 60%);
+}
+.stat-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--vp-c-text-3);
+  font-family: var(--vp-font-family-mono);
+  margin-bottom: 0.4rem;
+}
+.stat-value {
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1;
+  color: #14b8a6;
+  font-feature-settings: 'tnum';
+}
+.stat-value span {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--vp-c-text-2);
+  margin-left: 0.2rem;
+}
+.stat-sub {
+  margin-top: 0.5rem;
+  font-size: 0.78rem;
+  color: var(--vp-c-text-2);
+  font-family: var(--vp-font-family-mono);
+  line-height: 1.5;
+}
+.stat-sub s {
+  color: var(--vp-c-text-3);
+  text-decoration-color: var(--vp-c-text-3);
+}
+
+.env-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0 2rem;
+}
+.env {
+  padding: 1rem 1.2rem;
+  border-left: 3px solid #14b8a6;
+  background: var(--vp-c-bg-soft);
+  border-radius: 0 6px 6px 0;
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.85rem;
+}
+.env-name {
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.01em;
+}
+.env-row {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.15rem 0;
+}
+.env-row > span:first-child {
+  color: var(--vp-c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 0.7rem;
+  min-width: 4rem;
+  flex-shrink: 0;
+}
+.env-row > span:last-child {
+  color: var(--vp-c-text-1);
+}
+.cpu-stats {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.1rem 0.8rem;
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px dashed var(--vp-c-divider);
+  font-size: 0.7rem;
+}
+.cpu-stats > span:nth-child(odd) {
+  color: var(--vp-c-text-3);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.cpu-stats > span:nth-child(even) {
+  color: var(--vp-c-text-2);
+  text-align: right;
+}
+
+.chart-cap {
+  font-family: var(--vp-font-family-mono);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vp-c-text-3);
+  margin: 1.4rem 0 0.2rem;
+}
+.chart-cap code {
+  text-transform: none;
+  letter-spacing: 0;
+}
+.chart-pair {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+.chart-col .chart-cap {
+  margin-top: 0.6rem;
+}
+
+.raw-output {
+  margin: 0.6rem 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+}
+.raw-output > summary {
+  cursor: pointer;
+  font-size: 0.85rem;
+  color: var(--vp-c-text-2);
+  padding: 0.4rem 0;
+  user-select: none;
+  font-family: var(--vp-font-family-mono);
+}
+.raw-output > summary:hover {
+  color: var(--vp-c-brand-1);
+}
+.raw-output[open] > summary {
+  margin-bottom: 0.5rem;
+  border-bottom: 1px dashed var(--vp-c-divider);
+}
+</style>
