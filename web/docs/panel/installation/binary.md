@@ -5,7 +5,7 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 Calagopus Panel comes shipped as a compiled binary file that you can download directly from [GitHub](https://github.com/calagopus/panel/releases/latest).
 
 ::: warning
-The binary installation method is generally not recommended for production environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
+The binary installation method is generally not recommended for most environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
 :::
 
 ## Getting Started
@@ -84,14 +84,6 @@ brew services start valkey
 ```
 === Windows
 You can download PostgreSQL using [this guide](https://www.postgresql.org/download/windows/) with an interactive installer. Instructions on how to use the installer can be found [here](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/windows/).
-
-::: info
-**TLDR**: As of 17/03/2026, you no longer need Valkey/Redis installed for Calagopus Panel to work. All you need is PostgreSQL installed on your system.
-
-Starting with commit [`1c56627`](https://github.com/calagopus/panel/commit/1c56627ab8026091fdc261bac555a2e29640e92a), you no longer need Valkey installed in your system! This also affects Linux and MacOS, and can be used as a backup option if Valkey/Redis cannot be installed in your system.
-
-For Windows, the old process involved installing WSL2 and keeping the WSL instance open, which can be a hard task for people.
-:::
 ::::
 
 ### Download the binary

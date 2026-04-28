@@ -2,8 +2,33 @@
 
 Please see the [Minimum Requirements](./overview.md#minimum-requirements) section in the Wings Overview documentation.
 
+::: tip
+Updating Wings will not cause any downtime for your servers, since the servers run seperately from the Wings Daemon. You can update Wings without stopping your servers, and they will continue to run as normal.
+:::
+
 ::::tabs
-=== On Linux Bare-Metal (Binary)
+=== On Linux using Docker (Recommended)
+Head to the Calagopus directory where the `compose.yml` file is located and run theses 2 commands:
+```bash
+docker compose pull
+docker compose up -d
+```
+=== On Linux with APT/RPM
+Depending of your package manager, run theses commands:
+```bash
+# APT
+apt update
+apt upgrade -y
+
+# RPM
+dnf check-update
+dnf upgrade -y
+```
+Then, restart the service:
+```bash
+systemctl restart wings
+```
+=== Binary
 First, stop the service by running this command:
 ```bash
 systemctl stop wings
@@ -24,18 +49,4 @@ And finally, start Wings back again:
 ```bash
 systemctl start wings
 ```
-=== On Linux with APT/RPM
-Depending of your package manager, run theses commands:
-```bash
-# APT
-apt update
-apt upgrade -y
-
-# RPM
-dnf check-update
-dnf upgrade -y
-```
-Then, restart the service:
-```bash
-systemctl restart wings
-```
+::::

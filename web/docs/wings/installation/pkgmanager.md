@@ -2,7 +2,9 @@
 
 Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Wings Overview documentation.
 
-With the APT/RPM repository, you can directly install Calagopus from your package manager. Select your package manager below:
+With the APT/RPM repository, you can directly install and update Calagopus from your package manager.
+
+## Getting Started
 
 ::::tabs
 === With APT
@@ -51,57 +53,6 @@ ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 ```
 If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replace that to the directory where Wings is installed.
 
-### Configure Wings
-
-Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
-Then, paste the copied configuration command into your terminal, which will look something like this:
-
-```bash
-calagopus-wings configure --join-data xxxxxx
-```
-
-To test the configuration, you can run:
-
-```bash
-calagopus-wings
-```
-
-This will start Wings in the foreground, and you should see it connecting to the Panel.
-
-### Install Wings as a Service
-
-To ensure that Wings starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
-
-```bash
-calagopus-wings service-install
-```
-
-This will also start the service and enable it to start on boot. To check the status of the Wings service, you can run:
-
-```bash
-systemctl status wings
-```
-
-### Node Allocations
-Allocation is a combination of IP and Port that you can assign to a server. The allocation would be the IP address of your network interface, such as `65.20.69.420`, or when behind NAT, an internal IP.
-
-To create allocations, go to Nodes, then click on your node, and click on the Allocation tab.
-![](./images/allocation-1.webp)
-
-Then, click on the Create button and a popup should come up:
-![](./images/allocation-popup.webp)
-
-To find the IP to be used for the allocation, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
-
-::: warning
-You can use `127.0.0.1` for allocations if you don't want the server to be exposed via the internet. This is useful for internal services that are hosted locally on the same server.
-:::
-
-The IP Alias can be set to anything, as this value is shown to the user in the console, the network tab, etc. This is useful for people who are behind NAT and/or don't want to show their IP directly.
-
-The Port Ranges value is what you'll use to connect to your server. It can either be a single port `10000`, or a range `10000-11000`.
-
-Once you're done filling theses 2-3 values, click on the Create button, and you should now be able to assign allocations to servers!
 === With RPM
 ### Remove Podman (optional, but recommended)
 In some operating systems, Podman comes preinstalled by default, which Wings does not (officially) support. If Podman is installed, run this command to remove Podman:
@@ -161,6 +112,8 @@ ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 ```
 If Wings is installed somewhere else than `/usr/local/bin/`, make sure to replace that to the directory where Wings is installed.
 
+::::
+
 ### Configure Wings
 
 Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
@@ -192,24 +145,6 @@ This will also start the service and enable it to start on boot. To check the st
 systemctl status wings
 ```
 
-### Node Allocations
-Allocation is a combination of IP and Port that you can assign to a server. The allocation would be the IP address of your network interface, such as `65.20.69.420`, or when behind NAT, an internal IP.
+### Next Steps
 
-To create allocations, go to Nodes, then click on your node, and click on the Allocation tab.
-![](./images/allocation-1.webp)
-
-Then, click on the Create button and a popup should come up:
-![](./images/allocation-popup.webp)
-
-To find the IP to be used for the allocation, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
-
-::: warning
-You can use `127.0.0.1` for allocations if you don't want the server to be exposed via the internet. This is useful for internal services that are hosted locally on the same server.
-:::
-
-The IP Alias can be set to anything, as this value is shown to the user in the console, the network tab, etc. This is useful for people who are behind NAT and/or don't want to show their IP directly.
-
-The Port Ranges value is what you'll use to connect to your server. It can either be a single port `10000`, or a range `10000-11000`.
-
-Once you're done filling theses 2-3 values, click on the Create button, and you should now be able to assign allocations to servers!
-::::
+Congratulations! You have now installed Calagopus Wings on your server. The next step is to set up Allocations, which is a combination of IP and Port that you can assign to a server. Please see the [Setting up Allocations](../next-steps/setting-up-allocations.md) documentation in the Next Steps part of the documentation.

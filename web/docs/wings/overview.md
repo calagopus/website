@@ -22,7 +22,7 @@ The Calagopus Wings Daemon is a lightweight agent responsible for managing game 
 - **SSH Handling**: [`russh`](https://crates.io/crates/russh)
 
 While Cross-Platform support is a goal for Wings, at this time only Linux/MacOS is officially supported due to the reliance on Unix-specific features.
-Most of the other functionality is implemented from scatch or using smaller crates to keep dependencies minimal and avoid bloat.
+Most of the other functionality is implemented from scratch or using smaller crates to keep dependencies minimal and avoid bloat.
 
 ## Volumes
 

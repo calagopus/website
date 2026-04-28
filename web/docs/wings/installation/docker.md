@@ -87,3 +87,7 @@ If any issues arise, you can check the logs of the Wings container by running:
 ```bash
 docker compose logs -f wings
 ```
+
+### Next Steps
+
+Congratulations! You have now installed Calagopus Wings on your server. The next step is to set up Allocations, which is a combination of IP and Port that you can assign to a server. Please see the [Setting up Allocations](../next-steps/setting-up-allocations.md) documentation in the Next Steps part of the documentation.

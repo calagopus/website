@@ -186,6 +186,12 @@ export default withMermaid({
           },
           { text: 'Updating', link: '/docs/wings/updating' },
           {
+            text: 'Next Steps',
+            link: '/docs/wings/next-steps',
+            collapsed: true,
+            items: [{ text: 'Setting up Allocations', link: '/docs/wings/next-steps/setting-up-allocations' }],
+          },
+          {
             text: 'Disk Limiters',
             link: '/docs/wings/disk-limiters',
             collapsed: true,
