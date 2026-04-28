@@ -28,7 +28,7 @@ import { useHead } from '@vueuse/head';
 const faqs = [
   {
     q: 'How is Calagopus different from Pterodactyl?',
-    a: 'Calagopus is built in Rust and React, where Pterodactyl uses PHP and Vue. This delivers throughput improvements of over 32,800% along with Rust\'s memory-safety guarantees. We provide a migration guide for existing Pterodactyl users.',
+    a: 'Calagopus is built in Rust, where Pterodactyl uses PHP. This delivers throughput improvements of over 32,800% along with Rust\'s memory-safety guarantees. We provide a migration guide for existing Pterodactyl users.',
   },
   {
     q: 'What games does Calagopus support?',

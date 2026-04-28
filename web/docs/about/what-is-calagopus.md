@@ -10,7 +10,7 @@ It draws inspiration from Pterodactyl but is written from scratch in Rust, with 
 
 ### How is Calagopus different from Pterodactyl?
 
-Calagopus is built in Rust and React, where Pterodactyl uses PHP and Vue. The result is meaningfully better performance - throughput improvements of over 32,800% in our [benchmarks](./benchmarks.md) - alongside Rust's memory-safety guarantees. Calagopus also ships its own extension API designed around Rust traits, rather than the PHP-based plugin systems of older panels. We provide a [migration guide](../advanced/migrating/pterodactyl.md) for existing Pterodactyl users.
+Calagopus is built in Rust, where Pterodactyl uses PHP. The result is meaningfully better performance - throughput improvements of over 32,800% in our [benchmarks](./benchmarks.md) - alongside Rust's memory-safety guarantees. Calagopus also ships its own extension API designed around Rust traits, rather than the PHP-based plugin systems of older panels. We provide a [migration guide](../advanced/migrating/pterodactyl.md) for existing Pterodactyl users.
 
 ### How is Calagopus different from Pelican?
 
