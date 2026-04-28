@@ -1,14 +1,14 @@
 # Wings Installation
 
-Please see the [Minimum Requirements](./overview.md#minimum-requirements) section in the Wings Overview documentation.
+Before installing, check the [minimum requirements](./overview.md#minimum-requirements).
 
-## Getting Started
+Choose your installation method:
 
 ::::tabs
-=== On Linux with Docker
-Please see the [Docker Wings Installation](./installation/docker.md) documentation in the Installation part of the documentation.
-=== On Linux Bare-Metal (Binary)
-Please see the [Binary Wings Installation](./installation/binary.md) documentation in the Installation part of the documentation.
-=== On Linux with APT/RPM
-Please see the [Package Manager Wings Installation](./installation/pkgmanager.md) documentation in the Installation part of the documentation.
+=== Docker
+See the [Docker Wings Installation](./installation/docker.md) guide. The recommended path for most deployments.
+=== APT / RPM
+See the [Package Manager Installation](./installation/pkgmanager.md) guide. Install directly from the Calagopus repository using APT (Debian/Ubuntu) or RPM (RHEL/Fedora).
+=== Binary
+See the [Binary Wings Installation](./installation/binary.md) guide. Download and run the Wings binary directly on Linux.
 ::::

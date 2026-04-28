@@ -1,19 +1,17 @@
 # Panel
 
-The Calagopus **Panel** is the central management interface for administering game servers and related services. It provides a user-friendly web interface and a robust backend to handle server orchestration, user management, and various integrations. This will not actually host any game servers yet, for that you will need to install [Wings](../wings/overview.md).
+The Calagopus **Panel** is the central management interface for game servers and related services. It provides the web UI and backend that handle server orchestration, user management, and integrations. The panel alone doesn't host game servers - for that you also need [Wings](../wings/overview.md) running on at least one node.
 
 ## Minimum Requirements
 
-Before installing the Calagopus **Panel**, ensure that your system meets the following minimum requirements:
+- **Operating System**: Windows 10 or later, macOS, Ubuntu 22.04 LTS or later, Debian 11 or later, or anything that supports modern Docker versions
+- **CPU Architecture**: x86_64, ARM64, RISC-V, or PPC64LE (extensions require x86_64 or ARM64)
+- **RAM**: 512 MB minimum (1 GB recommended; 2 GB recommended when using extensions)
+- **Disk Space**: 1 GB minimum (10 GB recommended when using extensions)
 
-- **Operating System**: Windows 10 or later, MacOS, Ubuntu 22.04 LTS or later, Debian 11 or later, or anything that supports modern Docker versions
-- **CPU Architecture**: x86_64, ARM64, RISC-V or PPC64LE (when using extensions, only x86_64 and ARM64 are supported)
-- **RAM**: Minimum 512 MB (1 GB or more recommended, 2 GB recommended when using extensions)
-- **Disk Space**: At least 1 GB of free disk space, at least 10 GB recommended when using extensions
+### Real-World Usage Example
 
-### Real World Usage Example
-
-Here is an example of a Calagopus Panel running with 50 servers managed on x86_64 hardware:
+A panel managing 50 servers on x86_64 hardware:
 
 ```bash
 CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NET I/O         BLOCK I/O        PIDS
@@ -22,8 +20,7 @@ CONTAINER ID   NAME                 CPU %     MEM USAGE / LIMIT     MEM %     NE
 f5925cc2dd3f   rjns-control_cache   0.09%     3.832MiB / 91.99GiB   0.00%     293MB / 18MB    12.8MB / 332MB   7
 ```
 
-Keep in mind that when using extensions you will need additional resources for compiling the panel frontend and backend.
-This example only reflects the base panel usage without any extensions installed.
+Extension support adds overhead for frontend and backend compilation; these numbers reflect the base panel without any extensions installed.
 
 ## Technical Overview
 
@@ -31,7 +28,7 @@ The Calagopus Panel is built using a modern web stack to ensure scalability, per
 
 ### Frontend
 
-The frontend of the Calagopus Panel is developed using React.js, providing a responsive and intuitive user interface. It communicates with the backend via RESTful APIs to perform various operations such as server management, user authentication, and configuration settings.
+The frontend is built with React and communicates with the backend via REST APIs.
 
 - **Language**: TypeScript
 - **Framework**: [React.js](https://reactjs.org/)
@@ -42,12 +39,12 @@ The frontend of the Calagopus Panel is developed using React.js, providing a res
 
 ### Backend
 
-The backend is powered by Rust, leveraging the axum crate for handling HTTP requests. It manages core functionalities such as user management, server orchestration, and database interactions.
+The backend is written in Rust and handles user management, server orchestration, and database interactions.
 
 - **Language**: :crab: Rust
 - **Web Framework**: [`axum`](https://crates.io/crates/axum)
 - **Database**: PostgreSQL via [`sqlx`](https://crates.io/crates/sqlx)
-- **Caching**: Redis via [`rustis`](https://crates.io/crates/rustis)
+- **Caching**: Redis/Valkey via [`rustis`](https://crates.io/crates/rustis)
 - **Runtime**: [`tokio`](https://crates.io/crates/tokio)
 
-Most of the other backend functionality is implemented from scatch or using smaller crates to keep dependencies minimal and avoid bloat.
+Most other functionality is implemented from scratch or via small focused crates to keep the dependency tree lean.

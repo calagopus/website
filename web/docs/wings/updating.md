@@ -1,20 +1,18 @@
 # Updating Wings
 
-Please see the [Minimum Requirements](./overview.md#minimum-requirements) section in the Wings Overview documentation.
-
-::: tip
-Updating Wings will not cause any downtime for your servers, since the servers run seperately from the Wings Daemon. You can update Wings without stopping your servers, and they will continue to run as normal.
+::: tip No downtime required
+Game server containers run independently of the Wings daemon. You can update Wings without stopping your servers - they will continue running as normal.
 :::
 
 ::::tabs
-=== On Linux using Docker (Recommended)
-Head to the Calagopus directory where the `compose.yml` file is located and run theses 2 commands:
+=== Docker (Recommended)
+Pull the latest image and restart the stack:
 ```bash
 docker compose pull
 docker compose up -d
 ```
-=== On Linux with APT/RPM
-Depending of your package manager, run theses commands:
+=== APT / RPM
+Run the package manager upgrade, then restart the service:
 ```bash
 # APT
 apt update
@@ -24,28 +22,23 @@ apt upgrade -y
 dnf check-update
 dnf upgrade -y
 ```
-Then, restart the service:
 ```bash
 systemctl restart wings
 ```
 === Binary
-First, stop the service by running this command:
+Stop the service, replace the binary, then start it again:
 ```bash
 systemctl stop wings
 ```
-
-Then, download and install the new version of the Wings binary:
 ```bash
 curl -L "https://github.com/calagopus/wings/releases/latest/download/wings-rs-$(uname -m)-linux" -o /usr/local/bin/wings
 chmod +x /usr/local/bin/wings
 ```
 
-To test that the installation was successful, you can run:
+Verify the new version:
 ```bash
 wings version
 ```
-
-And finally, start Wings back again:
 ```bash
 systemctl start wings
 ```

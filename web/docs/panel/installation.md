@@ -1,16 +1,14 @@
 # Panel Installation
 
-Please see the [Minimum Requirements](./overview.md#minimum-requirements) section in the Panel Overview documentation.
+Before installing, check the [minimum requirements](./overview.md#minimum-requirements).
 
-## Getting Started
+Choose your installation method:
 
 ::::tabs
-=== On Linux using Docker (Recommended)
-Please see the [Docker Panel Installation](./installation/docker.md) documentation in the Installation part of the documentation.
-=== On Linux with APT/RPM
-Please see the [Package Manager Panel Installation](./installation/pkgmanager.md) documentation in the Installation part of the documentation.
+=== Docker (Recommended)
+See the [Docker Panel Installation](./installation/docker.md) guide. Runs the panel and its dependencies as containers - the recommended path for most deployments, and the only method that supports extensions out of the box.
+=== APT / RPM
+See the [Package Manager Installation](./installation/pkgmanager.md) guide. Install directly from the Calagopus repository using APT (Debian/Ubuntu) or RPM (RHEL/Fedora). Note that this method does not support extensions.
 === Binary
-Please see the [Binary Panel Installation](./installation/binary.md) documentation in the Installation part of the documentation.
-=== On Windows Bare Metal
-Please see the [Binary Panel Installation](./installation/binary.md) documentation in the Installation part of the documentation.
+See the [Binary Installation](./installation/binary.md) guide. Download and run the panel binary directly on Linux, macOS, or Windows. Note that this method does not support extensions.
 ::::

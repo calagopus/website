@@ -1,11 +1,11 @@
-# Next steps
-Congratulations! You have now installed Calagopus Panel in your server. All that's left is to start the OOBE, and you should be all set!
+# Next Steps
 
-## What's next?
-The following guides below will show you some steps that you may be interested in:
+The panel is installed and the OOBE is complete. Here's what to do next:
 
-### Creating a new node
-Please see the [Creating a new node](./add-node.md) documentation in the Next Steps part of the documentation.
+## Add a Node
 
-### Adding egg repositories
-Please see the [Adding egg repositories](./egg-repos.md) documentation in the Next Steps part of the documentation.
+The panel manages servers, but it doesn't run them directly - game server containers are managed by Wings on one or more nodes. See [Creating a New Node](./add-node.md) to register a node and connect it to the panel.
+
+## Add Egg Repositories
+
+Eggs define how a specific type of game server is installed and configured. Calagopus has a built-in egg repository system that lets you browse and import eggs from Git repositories. See [Adding Egg Repositories](./egg-repos.md) to get started.

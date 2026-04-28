@@ -1,95 +1,79 @@
-# Adding egg repositories
-Egg repositories is like the Blueprint extension [Eggify](https://builtbybit.com/resources/eggify-mass-egg-importer-updater.52525/), but integrated into Calagopus Panel. It allows you to install eggs from a Git repository by scraping all the available eggs and making them available in a page for you to download.
+# Egg Repositories
+
+Egg repositories are Git repositories that store collections of eggs - the configuration files that tell the panel how to install and run a specific game server type. Calagopus has a built-in egg repository system that lets you browse and import eggs directly from the admin UI, similar to what Blueprint's Eggify extension provided for Pterodactyl.
+
+Calagopus has backwards compatibility for Pterodactyl eggs, so you can use the official Pterodactyl egg repositories as a starting point:
+- [pterodactyl/game-eggs](https://github.com/pterodactyl/game-eggs)
+- [pterodactyl/application-eggs](https://github.com/pterodactyl/application-eggs)
+- [pterodactyl/generic-eggs](https://github.com/pterodactyl/generic-eggs)
 
 ::: info
-You can now add egg repositories directly from the OOBE when setting up Calagopus Panel, all you have to do is select the egg repositories you would like to import, then click on the Import button.
+You can also add egg repositories directly from the OOBE when first setting up Calagopus - select the repositories you want and click Import.
+
 ![](./images/egg-repos/oobe.webp)
-:::
+:::d
 
-## How do egg repositories work?
-An egg repository works by storing lots of eggs on a Git repository. They are often organized by seperating games, softwares, programming languages, etc. into their own Git repository.
+## How Egg Repositories Work
 
-## But do they work with regular Pterodactyl eggs?
-Yes! Calagopus has backwards compability for Pterodactyl eggs, making migration easier. This guide will use Pterodactyl's 3 egg repositories:
-* [Their games repo](https://github.com/pterodactyl/game-eggs)
-* [Their applications repo](https://github.com/pterodactyl/application-eggs)
-* [Their generic (programming languages) repo](https://github.com/pterodactyl/generic-eggs)
+An egg repository is a Git repository organized into directories, with each egg defined as a JSON file following the Pterodactyl/Calagopus egg format. Repositories commonly separate games, applications, and programming languages into separate repositories or subdirectories.
 
-## Prerequisites
-To setup egg repositories, all you need is Calagopus Panel setup that is fully functional. You will also need a nest to store your eggs.
+## Adding a Repository
 
-## Adding a egg repository
-For this guide, we will be adding the [Pterodactyl's games repository](https://github.com/pterodactyl/game-eggs), although you can also use any egg repository you want.
+Head to **Admin → Egg Repositories** and click **Create**.
 
-First, head over to the admin panel, click on Egg Repositories on the sidebar, and then click on the Create button.
 ![Adding egg repos](./images/egg-repos/add.webp)
 
-Then, fill out theses fields:
-* **Name**: This is the name used to distinguish this egg repository from others. This can be whatever you want.
-* **Git Repository**: This is the Git repository that the eggs are stored. This can be a GitHub repository, or any Git source such as GitLab. For this guide, I'm using Pterodactyl's games repository, so I will put `https://github.com/pterodactyl/game-eggs` in this field.
-* **Description**: This is a long description that is used to identify the egg repository.
+Fill in the fields:
+- **Name**: A label to distinguish this repository from others.
+- **Git Repository**: The full URL of the Git repository (e.g. `https://github.com/pterodactyl/game-eggs`).
+- **Description**: Optional description.
+
 ![](./images/egg-repos/add-2.webp)
 
-Once you're done, click on the `Save` button. Then, click on the `Sync` button to start syncing the eggs to the panel.
+Click **Save**, then click **Sync** to pull the egg list from the repository.
+
 ![](./images/egg-repos/sync.webp)
-::: warning
-This will not add the eggs directly to the panel, it will only put the full list of eggs on the Eggs tab, which then you have to import them to the egg.
-:::
 
-You should now see a little green callout saying that the egg repository is synchronised.
+This doesn't install any eggs - it populates the Eggs tab with the full list from the repository so you can choose which ones to import.
 
-## Importing the eggs
-::: warning
-It is currently not possible to import all eggs at once. However, you can import the eggs by dragging them and clicking on the `Install` button below.
-![alt text](./images/egg-repos/drag.webp)
-:::
+## Importing Eggs
 
-Click on the Eggs tab, and you should be redirected to a page like this:
+Head to the **Eggs** tab for the repository. You'll see a list of all available eggs.
+
 ![](./images/egg-repos/import.webp)
 
-Here, it's up to you to decide which egg(s) would you like! If you would like documentation for what egg does what, head to the same directory as the egg in the Git repository.
+For documentation on what a specific egg does, check the same path in the source Git repository.
 
-On the egg you would like to import, click on the little import icon on the right of the egg like shown:
-![](./images/egg-repos/import-2.webp)
+Select the eggs you want by dragging them into the selection area or searching by name, then click **Install**.
 
-You should now be brought to a popup to select which nest would you like to import the egg to. Select the egg and click on the `Install` button.
+![alt text](./images/egg-repos/drag.webp)
+
+A popup will ask which nest to import into. Select the nest and click **Install**.
+
 ![](./images/egg-repos/install.webp)
 
-And you're done! You can now create a server with the egg(s) you imported! If you want to import multiple eggs, just select them, and then click on the Install button below.
+## Updating Eggs
 
-## Updating the eggs
-In case an egg has been updated, you can follow this guide to update the egg imported via the repository. You must first resync the egg repository.
+When an egg in the repository has been updated, re-sync the repository first, then update the egg in the panel.
 
-To do so, head into the Egg Repositories tab in the admin panel and click on the egg repository you want to update.
+### Updating a Single Egg
+
+Re-sync the repository:
+
 ![](./images/egg-repos/updating-eggrepo.webp)
-
-Then, simply click on the `Sync` button to sync the updated eggs to the list.
 ![](./images/egg-repos/sync.webp)
 
-To update an egg, first head to the Nests tab and click on the nest where your egg is located at.
+Then head to **Admin → Nests**, click the nest containing the egg, click the egg, scroll down to the **Update** section, and click **Update from Repository**.
+
 ![](./images/egg-repos/nest-update.webp)
-
-Then, click on the egg you want to update.
 ![](./images/egg-repos/egg-update.webp)
-
-Once in the egg settings, scroll down until you see the Update button, then the `from Repository` button.
 ![](./images/egg-repos/update.webp)
 
-The egg should now be updated from the repository. Keep in mind you may need to update your servers according to the changes done.
+### Updating Multiple Eggs at Once
 
-## Mass-updating the eggs
-In case you want to update multiple eggs, you can follow this guide to update the eggs imported via the repository. You must first resync the egg repository.
+Re-sync the repository, then head to **Admin → Nests** and open the nest. Select the eggs you want to update and click **Update from Repository** in the action bar.
 
-To do so, head into the Egg Repositories tab in the admin panel and click on the egg repository you want to update.
-![](./images/egg-repos/updating-eggrepo.webp)
-
-Then, simply click on the `Sync` button to sync the updated eggs to the list.
-![](./images/egg-repos/sync.webp)
-
-To update an egg, first head to the Nests tab and click on the nest where your eggs is located at.
 ![](./images/egg-repos/nest-update.webp)
-
-Then, select the eggs you want to update, by either dragging it or searching for them manually, and then click on the `Update from Repository` button at the action bar.
 ![](./images/egg-repos/massupdate.webp)
 
-The selected eggs should now be updated from the repository. Keep in mind you may need to update your servers according to the changes done.
+Keep in mind that egg updates may require updating server configurations or reinstalling servers to take effect.

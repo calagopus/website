@@ -1,72 +1,62 @@
 # Binary Wings Installation
 
-Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Wings Overview documentation.
+## Install Docker
 
-## Getting Started
-
-### Install Docker
-
-The Calagopus Wings Daemon requires Docker to be installed and running on the host machine to manage game server containers.
-You can validate your Docker installation by running:
+Wings requires Docker to be installed and running on the host to manage game server containers. Verify your installation:
 
 ```bash
 docker --version
 ```
 
-If Docker is not installed, please refer to the [official Docker installation guide](https://docs.docker.com/engine/install) for your operating system.
-In many cases running Dockers installation script is the easiest way to get started:
+If Docker is not installed, the easiest way to get it is Docker's installation script:
 
 ```bash
 curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 ```
 
-### Install the Wings Binary
+Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install) for your distribution.
 
-Next, you need to download and install the Wings binary. You can do this by running the following commands:
+## Install the Wings Binary
 
 ```bash
 curl -L "https://github.com/calagopus/wings/releases/latest/download/wings-rs-$(uname -m)-linux" -o /usr/local/bin/wings
 chmod +x /usr/local/bin/wings
 ```
 
-This will download the latest version of Wings for your architecture and make it executable using `wings`.
-To test that the installation was successful, you can run:
+Verify the installation:
 
 ```bash
 wings version
 ```
 
-### Configure Wings
+## Configure Wings
 
-Before starting Wings, you need to configure it to connect to your Calagopus Panel. To do this, create the Node on the Panel using this guide [here](../../panel/next-steps/add-node.md).
-Then, paste the copied configuration command into your terminal, which will look something like this:
+Before starting Wings, you need to register the node in the panel and generate its configuration. Follow the [Adding a Node](../../panel/next-steps/add-node.md) guide to create the node, then run the auto-deploy command the panel provides:
 
 ```bash
 wings configure --join-data xxxxxx
 ```
 
-To test the configuration, you can run:
+Test the configuration by running Wings in the foreground - you should see it connect to the panel:
 
 ```bash
 wings
 ```
 
-This will start Wings in the foreground, and you should see it connecting to the Panel.
+Kill it with `Ctrl-C` once you've confirmed it connects.
 
-### Install Wings as a Service
-
-To ensure that Wings starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
+## Install as a Service
 
 ```bash
 wings service-install
 ```
 
-This will also start the service and enable it to start on boot. To check the status of the Wings service, you can run:
+This creates and enables a systemd service that starts on boot. Check its status with:
 
 ```bash
 systemctl status wings
 ```
 
-### Next Steps
+## Next Steps
 
-Congratulations! You have now installed Calagopus Wings on your server. The next step is to set up Allocations, which is a combination of IP and Port that you can assign to a server. Please see the [Setting up Allocations](../next-steps/setting-up-allocations.md) documentation in the Next Steps part of the documentation.
+With Wings running, the next step is to set up allocations - the IP and port combinations you can assign to servers. See [Setting up Allocations](../next-steps/setting-up-allocations.md).

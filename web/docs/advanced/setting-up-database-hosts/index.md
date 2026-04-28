@@ -1,16 +1,16 @@
 # Setting up Database Hosts
 
-This guide explains how to set up database hosts for your Calagopus Panel. Using database hosts allows your users to create databases on external database servers.
+Database hosts let your users create databases for their game servers directly from the panel. This is useful for game server plugins and applications that need to store data in a relational or document database - for example, Minecraft plugins with MySQL support, or Node.js game servers that use MongoDB.
 
-The Main usecases for this feature are when hosting game servers and e.g. plugins want to store data in a database, instead of using flat files. This is especially useful for Minecraft servers, as many plugins support MySQL/PostgreSQL/MongoDB databases. It can also be useful for other types of servers, such as Node.js servers, that want to use a database to store data.
+The panel connects to the database host using a privileged account and provisions databases and users on demand. Each server gets its own isolated credentials.
 
-## Getting started
+Choose a database type:
 
 ::::tabs
 === MySQL (MariaDB)
-Please see the [MySQL (MariaDB)](./mysql.md) documentation in the Setting up Database Hosts part of the documentation.
+See the [MySQL (MariaDB)](./mysql.md) guide.
 === PostgreSQL
-Please see the [PostgreSQL](./postgres.md) documentation in the Setting up Database Hosts part of the documentation.
+See the [PostgreSQL](./postgres.md) guide.
 === MongoDB
-Please see the [MongoDB](./mongodb.md) documentation in the Setting up Database Hosts part of the documentation.
+See the [MongoDB](./mongodb.md) guide.
 ::::

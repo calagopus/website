@@ -1,21 +1,23 @@
 # Setting up Allocations
 
-Allocation is a combination of IP and Port that you can assign to a server. The allocation would be the IP address of your network interface, such as `65.20.69.420`, or when behind NAT, an internal IP.
+An allocation is an IP address and port combination that you assign to a server. It's how players connect to their game server - the allocation determines what address and port appear in the panel.
 
-To create allocations, go to Nodes, then click on your node, and click on the Allocation tab.
+To create allocations, go to **Admin → Nodes**, click your node, then open the **Allocations** tab.
+
 ![](./images/allocation-1.webp)
 
-Then, click on the Create button and a popup should come up:
+Click **Create** and a popup will appear:
+
 ![](./images/allocation-popup.webp)
 
-To find the IP to be used for the allocation, type `hostname -I | awk '{print $1}'` on your terminal. Alternatively, you can type `ip addr | grep "inet "` to see all your available interfaces and IP addresses, or use `0.0.0.0` as the IP to bind all the available interfaces.
+**IP address**: Use the public IP of the node's network interface. To find it, run `hostname -I | awk '{print $1}'` on the node, or `ip addr | grep "inet "` to see all interfaces. You can also use `0.0.0.0` to bind all available interfaces.
 
 ::: warning
-You can use `127.0.0.1` for allocations if you don't want the server to be exposed via the internet. This is useful for internal services that are hosted locally on the same server.
+You can use `127.0.0.1` for allocations if you want the server to be accessible only from the same machine. This is useful for locally hosted services that shouldn't be exposed to the internet.
 :::
 
-The IP Alias can be set to anything, as this value is shown to the user in the console, the network tab, etc. This is useful for people who are behind NAT and/or don't want to show their IP directly.
+**IP Alias**: An optional display name shown to users in the panel instead of the raw IP. Useful if you're behind NAT and don't want to expose the internal address.
 
-The Port Ranges value is what you'll use to connect to your server. It can either be a single port `10000`, or a range `10000-11000`.
+**Port Ranges**: A single port (`10000`) or a range (`10000-11000`). These are the ports players use to connect.
 
-Once you're done filling theses 2-3 values, click on the Create button, and you should now be able to assign allocations to servers!
+Fill in the fields and click **Create**. The allocations are now available to assign to servers.

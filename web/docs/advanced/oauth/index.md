@@ -1,23 +1,16 @@
 # Setting up OAuth
 
-This guide explains how to link OAuth providers to your Calagopus Panel. Using OAuth allows users to login to your panel without having to manually create an account.
+OAuth allows users to sign in to the panel using an existing identity provider instead of a panel-specific password. This reduces friction for onboarding, eliminates panel-specific password reset flows, and lets communities centralize identity with a provider they already manage.
 
-Some usecases include:
-
-- Let users sign in with existing accounts (Google, GitHub, Discord).
-- Reduce support for password resets and account recovery.
-- Allow quick onboarding for communities without manual approvals.
-- Centralize identity with a custom OIDC provider.
-
-## Getting started
+Supported providers:
 
 ::::tabs
-=== GitHub OAuth
-Please see the [GitHub OAuth](./github.md) documentation in the OAuth part of the documentation.
-=== Google OAuth
-Please see the [Google OAuth](./google.md) documentation in the OAuth part of the documentation.
-=== Discord OAuth
-Please see the [Discord OAuth](./discord.md) documentation in the OAuth part of the documentation.
-=== Generic (Custom OIDC Provider)
-Please see the [Generic OAuth](./generic.md) documentation in the OAuth part of the documentation.
+=== GitHub
+See the [GitHub OAuth](./github.md) guide.
+=== Google
+See the [Google OAuth](./google.md) guide.
+=== Discord
+See the [Discord OAuth](./discord.md) guide.
+=== Generic (OIDC)
+See the [Generic OAuth](./generic.md) guide for any OpenID Connect compatible provider.
 ::::

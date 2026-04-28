@@ -1,5 +1,5 @@
 # Documentation
 
-Welcome to the Calagopus documentation! Here you will find all the information you need to get started with Calagopus, as well as detailed guides and reference materials to help you make the most of our game server management panel.
+Welcome to the Calagopus documentation. Whether you're installing the panel for the first time, deploying Wings on a node, or building an extension, this is the right place to start.
 
-To get started with the panel, check out our [Installation Guide](./panel/installation.md). If you have any questions or need help, feel free to join our [Discord community](https://discord.gg/uSM8tvTxBV) where you can ask for assistance and connect with other Calagopus users.
+To get the panel running, head to the [Installation Guide](./panel/installation.md). For questions or community support, join the [Discord](https://discord.gg/uSM8tvTxBV).

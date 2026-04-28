@@ -1,9 +1,7 @@
-# Next steps
+# Next Steps
 
-Congratulations! You have now installed Calagopus Wings on your server.
+Wings is installed and connected to the panel. Here's what to do next:
 
-## What's next?
-The following guides below will show you some steps that you may be interested in:
+## Set Up Allocations
 
-### Setting up Allocations
-Please see the [Setting up Allocations](./setting-up-allocations.md) documentation in the Next Steps part of the documentation.
+Allocations are the IP and port combinations you assign to game servers so players can connect to them. See [Setting up Allocations](./setting-up-allocations.md) to create them on your node.

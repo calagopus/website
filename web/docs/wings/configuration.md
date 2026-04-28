@@ -1,5 +1,6 @@
 # Configuration
-This page covers all the configuration options for the Calagopus Wings Daemon, including how to set up and manage these configurations.
+
+This page is a reference for all Wings configuration options. The configuration file is located at `/etc/pterodactyl/config.yml` on Linux (the path defaults to the Pterodactyl location for migration compatibility).
 
 ## Core Configuration
 ### debug
@@ -50,7 +51,7 @@ The port used by the Wings internal API.
 
 Default value:
 ```yaml
-test
+port: 8080
 ```
 
 ### api.ssl.enabled
@@ -306,7 +307,7 @@ container_gid: 0
 ```
 
 ### system.user.uid
-The Iser ID (UID) on the host system that Wings uses when managing server files.
+The User ID (UID) on the host system that Wings uses when managing server files.
 
 Default value:
 ```yaml
@@ -1136,10 +1137,9 @@ ignore_panel_wings_upgrades: false
 
 
 ## SSL Configuration
-The Wings configuration file is located at `/etc/pterodactyl/config.yml`. To enable SSL for your node, you will need to modify the api section, specifically lines `10`, `11`, and `12`.
 
 ::: info
-This guide assumes you have already generated your certificates using Certbot. Replacing `<domain>` with your actual node domain will point Wings to the correct Let's Encrypt directory.
+This section assumes you have already generated certificates using Certbot. Replace `<domain>` with your actual node domain.
 :::
 
 ### Enabling SSL

@@ -1,42 +1,35 @@
-# Package Panel Installation
 
-Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview documentation.
+# Package Manager Panel Installation
 
-With the APT/RPM repository, you can directly install Calagopus from your package manager. Select your package manager below:
-
-::: warning
-The binary installation method is generally not recommended for most environments, as it does not come with extension management in **any** way, it is not possible to add extensions to a binary installation, so if you need any extension, you will have to switch to the [Docker](./docker.md) or [Development environment](../extensions/dev-environment.md) installation method.
+::: warning No extension support
+The package manager installation method does not support extensions in any capacity. If you need extensions, use the [Docker](./docker.md) installation instead.
 :::
 
-::::tabs
-=== With APT
-#### Prerequisites
-This guide assumes you have PostgreSQL and Valkey installed on your server. You can replace Valkey with Redis, although keep in mind that Valkey is much faster than Redis. This guide assume you are using Valkey.
+Install Calagopus Panel directly from the APT or RPM repository. Select your package manager:
 
-To install PostgreSQL, [click me to view the guide](https://wiki.postgresql.org/wiki/Apt) to add the APT repository, and then install PostgreSQL:
+::::tabs
+=== APT (Debian / Ubuntu)
+
+#### Prerequisites
+
+This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
+
+Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then install:
 ```bash
 sudo apt update
 sudo apt install postgresql-18
-```
-Then, start PostgreSQL when the server reboots:
-```bash
 sudo systemctl enable --now postgresql
 ```
 
-To install Valkey, run the following commands:
+Install Valkey:
 ```bash
 sudo apt update
 sudo apt install -y valkey
-``` 
-
-Then, start Valkey when the server reboots:
-```bash
 sudo systemctl enable valkey-server
 sudo systemctl start valkey-server
 ```
 
-#### Add the repository
-The first step to install Calagopus is to add the Calagopus APT repository. If the APT repository is already added, you can skip this step. To do so, on your server run theses commands:
+#### Add the Repository
 
 ```bash
 curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
@@ -45,17 +38,17 @@ apt update
 ```
 
 #### Install Calagopus Panel
-Now that the repository has been added, you can now install the Calagopus Panel package. You can do this by running the following commands:
+
 ```bash
 apt install -y calagopus-panel
 ```
 
 #### Database Configuration
-You will need a database setup and a user with the correct permissions created for that database before continuing any further. To do so, first login to PostgreSQL:
+
+Connect to PostgreSQL and create the user and database:
 ```bash
 sudo -u postgres psql
 ```
-Then, create the user and database and grant the user all permissions:
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -63,9 +56,9 @@ GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
 exit
 ```
 
-#### Configure Environment Variables 
+#### Configure Environment Variables
 
-Before starting the Panel, you need to configure the environment variables. By default, the `.env` is not included in the package, you can download it manually by running the following commands:
+Download the example `.env` file:
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -74,78 +67,67 @@ curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.
 ls -lha # should show you the .env file
 ```
 
-Edit the `.env` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for more details on each variable. Make sure to configure PostgreSQL/Redis and your app encryption keys in the `.env` file.
+Open it in your preferred editor and configure the variables. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
 
-To set the `DATABASE_URL` variable, replace the value below with your own values, for example: `calagopus` is the user, `yourPassword` is your user's password, and `panel` is your database name:
 ```
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
-`REDIS_URL` can stay to the default value `redis://localhost`, unless Redis is on another server, where you will have to modify this string.
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
-You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
-
+Set `APP_ENCRYPTION_KEY` to a random value:
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
 ```
 
-#### Test the configuration
+#### Test the Configuration
 
-To test the configuration, you can run:
 ```bash
 calagopus-panel
 ```
 
-If everything works correctly, the panel should not show any errors and will start the HTTP server, in which case you can kill the panel with Ctrl-C.
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
 
-#### Install Panel as a Service
-To ensure that the panel starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
+#### Install as a Service
+
 ```bash
 calagopus-panel service-install
 ```
-This will also start the service and enable it to start on boot. To check the status of the Panel service, you can run:
+
+This creates and enables a systemd service that starts on boot. Check its status with:
 ```bash
 systemctl status calagopus-panel
 ```
-If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
+
+The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
 
 ![Calagopus Panel OOBE](../oobe.webp)
 
-=== With RPM
-#### Prerequisites
-This guide assumes you have PostgreSQL and Redis installed on your server.
+=== RPM (RHEL / Fedora / Rocky / Alma)
 
-To install PostgreSQL, [click me to view the guide](https://www.postgresql.org/download/linux/redhat/) to add the RPM repository, initialize the database and enable automatic start (the command should start with `sudo systemctl`). For example, if you use Fedora 43 and are on a x86_64 architecture, you would run:
+#### Prerequisites
+
+This guide assumes you have PostgreSQL and Valkey installed.
+
+Add the PostgreSQL RPM repository following [this guide](https://www.postgresql.org/download/linux/redhat/). For example on Fedora 43 (x86_64):
 ```bash
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server
-```
-
-You may need to also install the contrib package of PostgreSQL:
-```bash
 sudo dnf install -y postgresql18-contrib
-```
-
-Then, start PostgreSQL when the server reboots:
-```bash
 sudo systemctl enable postgresql-18
 sudo systemctl start postgresql-18
 ```
 
-To install Valkey, run the following commands:
+Install Valkey:
 ```bash
 sudo yum install valkey
-```
-
-Then, start Valkey when the server reboots:
-```bash
 sudo systemctl enable valkey-server
 sudo systemctl start valkey-server
 ```
 
-#### Add the repository
-The first step to install Calagopus is to add the Calagopus RPM repository. If the RPM repository is already added, you can skip this step. To do so, on your server run theses commands:
+#### Add the Repository
+
 ```bash
 sudo rpm --import https://packages.calagopus.com/pubring.gpg
 sudo tee /etc/yum.repos.d/calagopus.repo > /dev/null <<EOF
@@ -159,17 +141,17 @@ EOF
 ```
 
 #### Install Calagopus Panel
-Now that the repository has been added, you can now install the Calagopus Panel package. You can do this by running the following commands:
+
 ```bash
 dnf install calagopus-panel
 ```
 
 #### Database Configuration
-You will need a database setup and a user with the correct permissions created for that database before continuing any further. To do so, first login to PostgreSQL:
+
+Connect to PostgreSQL and create the user and database:
 ```bash
 sudo -u postgres psql
 ```
-Then, create the user and database and grant the user all permissions:
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -177,9 +159,9 @@ GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
 exit
 ```
 
-#### Configure Environment Variables 
+#### Configure Environment Variables
 
-Before starting the Panel, you need to configure the environment variables. By default, the `.env` is not included in the package, you can download it manually by running the following commands:
+Download the example `.env` file:
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -188,41 +170,40 @@ curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.
 ls -lha # should show you the .env file
 ```
 
-Edit the `.env` with your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for more details on each variable. Make sure to configure PostgreSQL/Redis and your app encryption keys in the `.env` file.
+Open it in your preferred editor. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
 
-To set the `DATABASE_URL` variable, replace the value below with your own values, for example: `calagopus` is the user, `yourPassword` is your user's password, and `panel` is your database name:
 ```
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
-`REDIS_URL` can stay to the default value `redis://localhost`, unless Redis is on another server, where you will have to modify this string.
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
-You can use this script to set the `APP_ENCRYPTION_KEY` variable to a random value:
-
+Set `APP_ENCRYPTION_KEY` to a random value:
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
 ```
 
-#### Test the configuration
+#### Test the Configuration
 
-To test the configuration, you can run:
 ```bash
 calagopus-panel
 ```
 
-If everything works correctly, the panel should not show any errors and will start the HTTP server, in which case you can kill the panel with Ctrl-C.
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
 
-#### Install Panel as a Service
-To ensure that the panel starts automatically on system boot, you can install it as a systemd service. Create a new service file by running:
+#### Install as a Service
+
 ```bash
 calagopus-panel service-install
 ```
-This will also start the service and enable it to start on boot. To check the status of the Panel service, you can run:
+
+This creates and enables a systemd service that starts on boot. Check its status with:
 ```bash
 systemctl status calagopus-panel
 ```
-If everything went well, you should be able to access the Panel by navigating to `http://<your-server-ip>:8000` in your web browser and see the OOBE (Out Of Box Experience) setup screen.
+
+The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
 
 ![Calagopus Panel OOBE](../oobe.webp)
 
