@@ -4,32 +4,50 @@
 
 Calagopus is a modern, open-source game server management panel built with Rust and React. It provides a fast, secure interface for deploying, monitoring, and maintaining game servers - built for everyone from solo homelabbers to large hosting operators.
 
-It draws inspiration from Pterodactyl but is written from scratch with a focus on performance, security, and extensibility. The panel includes a rich extension API, and the project welcomes community contributions.
+It draws inspiration from Pterodactyl but is written from scratch in Rust, with a focus on performance, security, and extensibility. The panel includes a rich extension API and welcomes community contributions.
 
-## Is Calagopus open source?
+## Frequently Asked Questions
 
-Yes. Calagopus is available on [GitHub](https://github.com/calagopus) and licensed primarily under the MIT License. Some components may carry different licenses - check the individual repositories for details.
+### How is Calagopus different from Pterodactyl?
 
-## Does Calagopus have an Extension API?
+Calagopus is built in Rust and React, where Pterodactyl uses PHP and Vue. The result is meaningfully better performance - throughput improvements of over 32,800% in our [benchmarks](./benchmarks.md) - alongside Rust's memory-safety guarantees. Calagopus also ships its own extension API designed around Rust traits, rather than the PHP-based plugin systems of older panels. We provide a [migration guide](../advanced/migrating/pterodactyl.md) for existing Pterodactyl users.
 
-Yes. Extensions can add backend logic, custom routes, UI elements, database migrations, and more. See the [Extension Development Guide](../panel/extensions/dev-environment.md) to get started.
+### How is Calagopus different from Pelican?
 
-## Does Calagopus support Blueprint?
+Pelican is a Pterodactyl fork that retains the same PHP/Laravel architecture. Calagopus is a complete rewrite in a different language stack, so the two share goals but very little code. If you're already on Pelican, see the [migration guide](../advanced/migrating/pelican.md).
 
-No. Blueprint extensions are not compatible with Calagopus. The two projects use fundamentally different languages and architectures, making compatibility impossible at the integration level.
+### What games does Calagopus support?
 
-## Can I run Calagopus on Windows?
+Calagopus uses an "egg" system (compatible with the Pterodactyl ecosystem) to support arbitrary games. Anything that runs in a Linux Docker container can be managed - Minecraft (Java and Bedrock), Rust, ARK, Valheim, FiveM, source-engine games, and many more. See [egg repositories](../panel/next-steps/egg-repos.md) for available presets.
 
-The panel itself runs on Windows natively. Wings, however, requires a Linux environment - WSL2 works for local testing, but for anything beyond that a Linux server is the better choice.
+### Is Calagopus open source?
 
-## Can I run Calagopus on a Raspberry Pi?
+Yes. The source is on [GitHub](https://github.com/calagopus). Core components are MIT-licensed; check individual repositories for specifics.
 
-Yes. Calagopus supports ARM64 and the Docker Compose setup works out of the box on a Raspberry Pi. Keep resource limits in mind - multiple CPU-intensive game servers on constrained hardware will show its limits.
+### Is Calagopus free to use?
 
-## Do I need Linux experience to use Calagopus?
+Yes - for personal and commercial use, with no feature gating.
 
-Not much. After the initial setup you can manage everything through the web interface. Some familiarity with the terminal is helpful for troubleshooting, but day-to-day operation doesn't require it. The [Discord community](https://discord.gg/uSM8tvTxBV) is available if you get stuck.
+### Can I migrate from Pterodactyl or Pelican?
 
-## Is Calagopus free to use?
+Yes. Calagopus provides migration tooling for both panels. See the [Pterodactyl migration guide](../advanced/migrating/pterodactyl.md) or [Pelican migration guide](../advanced/migrating/pelican.md).
 
-Yes, for personal and commercial use. If you find it useful, contributions and donations to the project are appreciated.
+### Does Calagopus have an Extension API?
+
+Yes. Extensions can add backend logic, custom routes, UI elements, database migrations, and more. The API uses Rust traits for type safety and performance. See the [Extension Development Guide](../panel/extensions/dev-environment.md) to get started.
+
+### Does Calagopus support Blueprint extensions?
+
+No. Blueprint targets the PHP-based Pterodactyl architecture and isn't compatible with Calagopus's Rust-based system. Calagopus's native extension API covers the same use cases - and more - with better performance and type safety.
+
+### Can I run Calagopus on Windows?
+
+The panel runs natively on Windows and via Docker Desktop. Wings (the daemon that runs game servers) requires Linux - WSL2 works for local testing, but a real Linux host is recommended for anything production-adjacent.
+
+### Can I run Calagopus on a Raspberry Pi?
+
+Yes. Calagopus supports ARM64 and the Docker Compose setup works on a Raspberry Pi out of the box. Resource limits apply - running multiple CPU-intensive game servers on a Pi will hit hardware ceilings quickly.
+
+### Do I need Linux experience to use Calagopus?
+
+Not much. After the initial setup, day-to-day operation happens through the web UI. Some terminal familiarity helps for troubleshooting, but isn't required. The [Discord community](https://discord.gg/uSM8tvTxBV) is there if you get stuck.

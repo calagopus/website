@@ -5,8 +5,10 @@ import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
+  buildConcurrency: 128,
   srcDir: 'web',
   cleanUrls: true,
+  metaChunk: true,
 
   vite: {
     plugins: [
@@ -30,6 +32,8 @@ export default withMermaid({
           title: 'Calagopus',
           description: 'Game server management - reimagined.',
           image: 'https://calagopus.com/fulllogo.png',
+          url: 'https://calagopus.com',
+          siteName: 'Calagopus',
         },
         twitter: {
           card: 'summary_large_image',
@@ -54,8 +58,10 @@ export default withMermaid({
     },
   },
 
+  lang: 'en-US',
   title: 'Calagopus',
-  description: 'Game server management - reimagined.',
+  description:
+    'Calagopus is a modern, open-source game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.',
   head: [
     [
       'link',
@@ -70,6 +76,7 @@ export default withMermaid({
         name: 'darkreader-lock',
       },
     ],
+    ['link', { rel: 'sitemap', type: 'application/xml', href: '/sitemap.xml' }],
     [
       'script',
       {
@@ -81,6 +88,31 @@ export default withMermaid({
       'script',
       {},
       `window.plausible=window.plausible||function(){(plausible.q=plausible.q||[]).push(arguments)},plausible.init=plausible.init||function(i){plausible.o=i||{}}; plausible.init()`,
+    ],
+    [
+      'script',
+      { type: 'application/ld+json' },
+      JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'Calagopus',
+        description: 'An open-source game server management panel built in Rust.',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Linux, Docker',
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
+        },
+        url: 'https://calagopus.com',
+        author: {
+          '@type': 'Organization',
+          name: 'Calagopus',
+          url: 'https://github.com/calagopus',
+        },
+        license: 'https://github.com/calagopus/calagopus/blob/main/LICENSE',
+        softwareVersion: '1.0.0',
+      }),
     ],
   ],
 
@@ -256,5 +288,14 @@ export default withMermaid({
 
   sitemap: {
     hostname: 'https://calagopus.com',
+  },
+
+  transformPageData(pageData) {
+    const canonicalUrl = `https://calagopus.com/${pageData.relativePath}`
+      .replace(/index\.md$/, '')
+      .replace(/\.md$/, '');
+
+    pageData.frontmatter.head ??= [];
+    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
   },
 });
