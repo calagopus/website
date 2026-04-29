@@ -14,6 +14,7 @@ name_first_path: '$.given_name'
 name_last_path: '$.family_name'
 enabled: true
 login_only: false
+login_bypass_2fa: false
 link_viewable: true
 user_manageable: true
 basic_auth: false

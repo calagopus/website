@@ -21,7 +21,7 @@ const features = [
     icon: faBolt,
     title: 'Performance',
     details:
-      "With Rust's high performance and low-level control, Calagopus delivers fast and efficient game server management, with throughput improvements of over 32,800% — making server administration smoother than ever. Our binaries are compiled to be as small and efficient as possible, and we use caching and other optimization techniques to ensure the best performance possible.",
+      "With Rust's high performance and low-level control, Calagopus delivers fast and efficient game server management, with throughput improvements of over 32,800% - making server administration smoother than ever. Our binaries are compiled to be as small and efficient as possible, and we use caching and other optimization techniques to ensure the best performance possible.",
     link: {
       href: '/docs/about/benchmarks',
       label: 'See the benchmarks',

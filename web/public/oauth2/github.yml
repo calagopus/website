@@ -12,6 +12,7 @@ name_first_path: null
 name_last_path: null
 enabled: true
 login_only: false
+login_bypass_2fa: false
 link_viewable: true
 user_manageable: true
 basic_auth: false
