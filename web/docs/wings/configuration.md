@@ -363,15 +363,15 @@ disk_check_interval: 150
 ```
 
 ### system.full_disk_check_every
-Number of inotify disk check intervals before performing a full disk scan. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 6 = 900s / 15 min).
+Number of inotify disk check intervals before performing a full disk scan. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 4 = 600s / 10 min).
 
 Default value:
 ```yaml
-full_disk_check_every: 6
+full_disk_check_every: 4
 ```
 
 ### system.disk_check_use_inotify
-Uses inotify for selective scanning to reduce overhead.
+Uses inotify for selective scanning to reduce scanning overhead of large servers. When disabled, Wings will perform a full disk scan every time instead of relying on inotify events. Disabling this can lead to increased CPU and disk usage, especially on servers with large file counts, but may be necessary in environments where inotify is unreliable or unavailable.
 
 Default value:
 ```yaml

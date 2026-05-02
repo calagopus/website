@@ -172,7 +172,9 @@ impl Extension for ExtensionStruct {
                         .parse_extended::<model::ExtendedApiServerFeatureLimits>()
                         && let Some(value) = extended.subdomains
                     {
-                        query_builder.set("subdomains", value);
+                        query_builder.set("subdomains", value.unwrap_or(0)); // the unwrap_or is due to the NOT NULL constraint on the column - if the client sent null, treat it as 0 on create
+                    } else {
+                        query_builder.set("subdomains", 0); // default value for new servers if not provided, since the API struct field is optional and the database column is NOT NULL
                     }
                     Ok(())
                 })
