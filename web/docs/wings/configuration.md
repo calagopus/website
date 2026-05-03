@@ -353,6 +353,13 @@ Default value:
 ```yaml
 directory: /run/wings/machine-id
 ```
+### system.disk_check_concurrency
+The number of concurrent allowed disk scans Wings can perform across all servers. This limits the number of simultaneous disk usage checks to prevent excessive background resource consumption on large nodes.
+
+Default value:
+```yaml
+disk_check_concurrency: 2
+```
 
 ### system.disk_check_interval
 Defines how often (in seconds) Wings performs incremental disk usage checks using inotify. These checks are lightweight and rely on filesystem events rather than scanning the entire disk.
