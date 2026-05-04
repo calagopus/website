@@ -13,7 +13,7 @@ Both setups use the same database schema, so the process comes down to one thing
 
 There's no importer, no data conversion, and no format changes involved. You're just changing how the application is deployed.
 
-**The general flow looks like this:**
+### The general flow looks like this:
 
 - Stop your standalone installation
 - Export your database
@@ -23,7 +23,7 @@ There's no importer, no data conversion, and no format changes involved. You're 
 
 Once completed, your panel should look and behave exactly the same as before.
 
-**This guide assumes:**
+### This guide assumes:
 
 - You're using the standard standalone installation
 - Your database is running locally (default setup)
