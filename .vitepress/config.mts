@@ -247,6 +247,14 @@ export default withMermaid({
               { text: 'Pelican', link: '/docs/advanced/migrating/pelican' },
             ],
           },
+          {
+            text: 'Migrating to another Instance',
+            collapsed: true,
+            items: [
+              { text: 'Docker', link: '/docs/advanced/migrating/instances/docker' },
+              { text: 'Standalone', link: '/docs/advanced/migrating/instances/standalone' },
+            ],
+          },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
           { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
           { text: 'Generating SSL Certificates', link: '/docs/advanced/generate-ssl' },
