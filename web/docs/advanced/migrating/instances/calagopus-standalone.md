@@ -171,6 +171,3 @@ The database was not imported correctly. Stop the panel with `systemctl stop cal
 
 **Login fails / encrypted data appears corrupted:**
 The `APP_ENCRYPTION_KEY` in `/etc/calagopus/.env` does not match the one from your Docker installation. Stop the panel, correct the key, and start it again.
-
-**`calagopus-db-1` container not found:**
-The container name is generated from your compose directory name. Check the actual name with `docker compose ps` and adjust the export command accordingly.
