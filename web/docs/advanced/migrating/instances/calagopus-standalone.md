@@ -19,9 +19,47 @@ Make sure you have:
 - The Calagopus binary installed but not yet configured - you need to land on the OOBE screen and stop there
 
 ::: warning Don't click through the OOBE
+The OOBE creates database records that can conflict with the import. If you've already clicked through, drop and recreate the database first.
 ![Calagopus Panel OOBE](../../../panel/oobe.webp)
-The binary install needs an empty database to write into on first run. Stop at the OOBE screen and come back here.
-:::
+
+::: details I already clicked through - how do I undo it?
+You'll need to drop and recreate the database. Pick the matching tab for how Calagopus is installed:
+
+::::tabs
+=== APT/RPM, Binary
+Stop Calagopus first:
+```bash
+# Linux
+systemctl stop calagopus-panel
+
+# Windows
+nssm stop "Calagopus Panel"
+```
+
+Connect to Postgres and recreate the database:
+```bash
+# Linux/MacOS
+sudo -u postgres psql
+
+# Windows: see the binary install guide for psql access
+# https://calagopus.com/docs/panel/installation/binary#database-configuration
+```
+```sql
+DROP DATABASE panel WITH (FORCE);
+CREATE DATABASE panel OWNER calagopus;
+GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
+exit
+```
+
+Start Calagopus back up:
+```bash
+# Linux
+systemctl start calagopus-panel
+
+# Windows
+nssm start "Calagopus Panel"
+```
+::::
 
 
 ## Collect values from your existing installation
@@ -48,12 +86,12 @@ Keep both values handy. You'll need them shortly.
 Open `/etc/calagopus/.env` on your target host and set the following values.
 
 Set `APP_ENCRYPTION_KEY` to the value copied above:
-```env
+```txt
 APP_ENCRYPTION_KEY=Ab3xZ9qR2mKp7vLw
 ```
 
 Set `DATABASE_URL` to point at your host PostgreSQL instance. Use the same password from your Docker setup, or a new one if you prefer. Just make sure it matches what you set when creating the database user:
-```env
+```txt
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
@@ -68,15 +106,14 @@ docker exec calagopus-db-1 pg_dump \
   -F c \
   -f /tmp/panel.backup
 
-docker cp calagopus-db-1:/tmp/panel.backup ./panel.backup
+docker compose cp db:/tmp/panel.backup ./panel.backup
 ```
 
 This copies the dump out of the container to `./panel.backup` on your host.
 
-::: info
-If you're migrating to a different host, copy `panel.backup` to that machine before continuing.
+::: info Migrating to a different host?
+Copy `panel.backup` to `/opt/calagopus/` on the target machine before continuing.
 :::
-
 
 ## Import the database into the host PostgreSQL
 First, make sure the database user and database exist. Connect to PostgreSQL:
