@@ -31,6 +31,7 @@ Extensions are built around several core systems:
 - [Mounting UI](./concepts/mounting-ui.md) - Inject UI elements into the Panel interface
 - [Extending Models](./concepts/extending-models.md) - Add fields to existing data models
 - [Email Templates](./concepts/email-templates.md) - Define custom email templates for notifications and communications
+- [File Storage](./concepts/file-storage.md) - Manage files and directories within the Panel
 
 ## Installation Methods
 
