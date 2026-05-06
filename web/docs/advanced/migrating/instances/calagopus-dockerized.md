@@ -201,6 +201,3 @@ The database was not imported correctly, or the wrong database was targeted. Sto
 
 **Login fails / encrypted data appears corrupted:**
 Your `APP_ENCRYPTION_KEY` in `docker-compose.yml` probably doesn't match the one from your original installation. Stop the stack, correct the key and run `docker compose up -d` again.
-
-**`calagopus-db-1` container not found:**
-The container name is generated from your directory name. Check the actual name with `docker compose ps` and adjust the import command accordingly.
