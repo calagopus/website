@@ -22,7 +22,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/vue-fontawesome": "^3.2.0",
     "@vueuse/head": "^2.0.0",
-    "cytoscape": "^3.33.2",
+    "cytoscape": "^3.33.3",
     "cytoscape-cose-bilkent": "^4.1.0",
     "dayjs": "^1.11.20",
     "debug": "^4.4.3",
@@ -35,7 +35,7 @@
     "vitepress": "2.0.0-alpha.17",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.7.3",
-    "vue": "^3.5.33",
+    "vue": "^3.5.34",
     "vue-echarts": "^8.0.1"
   }
 }
