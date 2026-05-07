@@ -11,7 +11,7 @@ Calagopus has backwards compatibility for Pterodactyl eggs, so you can use the o
 You can also add egg repositories directly from the OOBE when first setting up Calagopus - select the repositories you want and click Import.
 
 ![](./images/egg-repos/oobe.webp)
-:::d
+:::
 
 ## How Egg Repositories Work
 
