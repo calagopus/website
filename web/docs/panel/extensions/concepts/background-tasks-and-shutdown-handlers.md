@@ -58,10 +58,36 @@ builder
 
 **Panics don't kill the task either.** The Panel catches panics via `catch_unwind`, logs them, and records the panic message as the task's last error. Unlike errors, though, a panic *does* terminate the loop - the task won't run again until the process restarts. Panics indicate programmer bugs rather than operational failures, so this is reasonable behavior, but be aware of it if you're writing defensive code.
 
+### Scheduled Tasks (Cron)
+
+If your task *does* need a strict schedule-like running at midnight every day, or at the top of every hour-calculating the exact sleep duration manually inside an `add_task` loop is tedious. For these cases, use `add_cron_task`:
+
+```rs
+use std::str::FromStr;
+
+builder
+    .add_cron_task(
+        "daily-database-cleanup",
+        cron::Schedule::from_str("0 0 0 * * *").unwrap(),
+        |state| async move {
+            crate::cleanup::run_daily(&state).await?;
+            Ok(())
+        }
+    )
+    .await;
+
+```
+
+**The Panel handles the pacing.** Unlike `add_task`, you do *not* need to sleep at the end of a cron task. When your function returns, the Panel automatically calculates the time until the next matching cron tick and sleeps for you before calling your function again.
+
+Everything else behaves exactly like `add_task`: errors are logged and retried at the next scheduled tick, panics permanently park the task until a restart, and registrations silently overwrite previous tasks with the same name.
+
+> Also, keep in mind, the cron syntax is "second minute hour day month weekday" - that extra seconds field is a common gotcha for folks used to the more traditional "minute hour day month weekday" format. If your task isn't running when you expect, double-check your cron expression.
+
 ### Primary Instance Only
 
 ::: warning
-**Background tasks only run on the primary instance.** If the Panel is deployed with multiple instances behind a load balancer (a standard setup for HA), only the instance marked `app_primary` will actually execute registered tasks. Calls to `add_task` on other instances are silently no-ops.
+**Background tasks only run on the primary instance.** If the Panel is deployed with multiple instances behind a load balancer (a standard setup for HA), only the instance marked `app_primary` will actually execute registered tasks (both `add_task` and `add_cron_task`). Calls on other instances are silently no-ops.
 
 This prevents the obvious "every instance runs the same cron, so the job runs N times" problem. But it means you cannot rely on your background task to run if the operator hasn't designated a primary - in practice every deployment has one, but extension authors occasionally forget and wonder why their job never fires in dev setups with `app_primary = false`.
 
@@ -99,14 +125,15 @@ impl Extension for ExtensionStruct {
         builder
     }
 }
+
 ```
 
 The handler gets called once during graceful shutdown, before the process exits. The Panel awaits it - if you take ten seconds to flush, the process waits ten seconds. This is the right place for:
 
-- Flushing in-memory buffers to the database
-- Committing pending work that can't be safely restarted
-- Closing external connections cleanly (telling an upstream service "I'm going away", logging out of a session, etc.)
-- Writing final metrics or a "shutdown complete" log line
+* Flushing in-memory buffers to the database
+* Committing pending work that can't be safely restarted
+* Closing external connections cleanly (telling an upstream service "I'm going away", logging out of a session, etc.)
+* Writing final metrics or a "shutdown complete" log line
 
 ### Shutdown Handlers Run Everywhere
 
@@ -124,14 +151,15 @@ builder
         Ok(())
     })
     .await;
+
 ```
 
 ### Interaction with Background Tasks
 
 When shutdown starts, **background tasks are aborted abruptly.** Their `JoinHandle` is dropped and the loop is cancelled at its next `.await` point - whatever the task was mid-way through doing gets dropped. This means:
 
-- Anything your background task writes needs to be atomic from the database's perspective. Don't use background tasks for "start a multi-step transaction, commit at the end" workflows where abrupt cancellation leaves data half-written.
-- If your background task has persistent state that needs flushing, **do the flushing in a shutdown handler, not in the task's own cleanup code**. A shutdown handler is the only hook that's guaranteed to run during shutdown; your background task's code after the work is already cancelled and won't execute.
+* Anything your background task writes needs to be atomic from the database's perspective. Don't use background tasks for "start a multi-step transaction, commit at the end" workflows where abrupt cancellation leaves data half-written.
+* If your background task has persistent state that needs flushing, **do the flushing in a shutdown handler, not in the task's own cleanup code**. A shutdown handler is the only hook that's guaranteed to run during shutdown; your background task's code after the work is already cancelled and won't execute.
 
 The typical pairing is a background task that accumulates work in memory and a shutdown handler that flushes whatever's accumulated:
 
@@ -166,6 +194,7 @@ async fn initialize_shutdown_handlers(
 
     builder
 }
+
 ```
 
 With this shape, the background task accumulates samples in-memory at a 10-second cadence, and on shutdown the handler flushes whatever's left regardless of whether the task was mid-iteration when shutdown hit.
