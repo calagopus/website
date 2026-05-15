@@ -30,6 +30,7 @@ A high-level overview of what Calagopus offers, followed by a comparison with ot
 | Uncommon Game-specific Features | ❌ | ❌ | ❌ | ✅ |
 | Live Console | ✅ | ✅ | ✅ | ✅ |
 | File Manager | ✅ | ✅ | ✅ | ✅ |
+| File Edit History | ✅ | ❌ | ❌ | ❌ |
 | Backup Browsing Support | ✅ | ❌ | ❌ | ✅ |
 | Archive Browsing Support | ✅ | ❌ | ❌ | ❌ |
 | SFTP Support | ✅ | ✅ | ✅ | ✅ |
