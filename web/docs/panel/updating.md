@@ -6,6 +6,10 @@ Pull the latest images and restart the stack:
 ```bash
 docker compose pull
 docker compose up -d
+
+# optionally, if you want to remove old images:
+# this is recommended if you have limited disk space / are using the heavy image
+docker image prune -a
 ```
 === APT / RPM
 Run the package manager upgrade, then restart the service:

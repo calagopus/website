@@ -7,7 +7,7 @@ This guide will help you set up a development environment for creating extension
 Before you begin, ensure you have the following installed on your machine:
 
 - Node.js (version 24 or higher)
-- pnpm (version 10 or higher)
+- pnpm (version 11 or higher)
 - Rust (latest stable version)
 - A code editor (e.g., Visual Studio Code)
 - Git (any reasonable version)
@@ -93,7 +93,7 @@ To keep your development environment up to date with the latest changes from the
 
 ```bash
 rm Cargo.lock frontend/pnpm-lock.yaml # remove lockfiles to avoid git conflicts
-git pull
+git pull # if there are additional conflicts, resolve them here
 ```
 
 And you are essentially almost done, just rebuild the project:
