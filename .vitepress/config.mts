@@ -2,6 +2,7 @@ import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
 import ogPlugin from 'vite-plugin-open-graph';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
+import { aiDocPlugin } from './plugins/ai-doc.ts';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid({
@@ -12,6 +13,13 @@ export default withMermaid({
 
   vite: {
     plugins: [
+      aiDocPlugin([
+        {
+          route: '/ai-doc/extensions.md',
+          title: 'Extensions',
+          sourceDir: 'docs/panel/extensions',
+        },
+      ]),
       ViteImageOptimizer({
         png: {
           quality: 80,

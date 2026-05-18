@@ -335,8 +335,10 @@ import { useSearchablePaginatedTable } from '@/plugins/useSearchablePageableTabl
 import getMyItems from '@/api/getMyItems.ts';
 import Table from '@/elements/Table.tsx';
 import { useMyStore } from '@/stores/myStore.ts';
+import { useTranslations } from '@/providers/TranslationProvider.tsx';
 
 export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
+  const { t } = useTranslations();
   const { items, setItems } = useMyStore();
 
   const { loading, search, setSearch, page, setPage } = useSearchablePaginatedTable({
@@ -347,7 +349,11 @@ export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
 
   return (
     <Table
-      columns={['Name', 'Created', '']}
+      columns={[
+        t('common.table.columns.name'),
+        t('common.table.columns.created'),
+        ''
+      ]}
       loading={loading}
       pagination={items}
       onPageSelect={setPage}
