@@ -586,6 +586,71 @@ timeout: 60
 ```
 
 
+## File History Configuration
+### system.file_history.enabled
+Enables or disables the file history tracking system. When enabled, Wings records a diff-based changelog of edits made to server files through the file manager and SFTP, allowing users to view and restore previous versions.
+
+Default value:
+```yaml
+enabled: true
+```
+
+### system.file_history.zstd_level
+The [Zstandard](https://facebook.github.io/zstd/) compression level used when storing snapshots and delta entries in the history database. Higher values produce smaller stored history at the cost of more CPU time. Valid range is `1`–`22`.
+
+Default value:
+```yaml
+zstd_level: 19
+```
+
+### system.file_history.anchor_interval
+The number of delta (diff) entries written in a chain before Wings stores a full snapshot (anchor) instead. A lower value creates anchors more frequently, making history reconstruction faster at the cost of more disk space.
+
+Default value:
+```yaml
+anchor_interval: 4
+```
+
+### system.file_history.keep_chains
+The number of diff chains to retain per file. Once a new chain is started (after an anchor), older chains beyond this count are pruned. Increasing this retains more history depth.
+
+Default value:
+```yaml
+keep_chains: 2
+```
+
+### system.file_history.file_size_cap
+The maximum size (in bytes) of file content that Wings will read and track through the HTTP file manager. File writes whose pre-write or post-write content exceeds this size are silently skipped and not recorded in history.
+
+Default value:
+```yaml
+file_size_cap: 1048576
+```
+
+### system.file_history.per_file_disk_budget
+The maximum amount of disk space (in bytes) that the history database may use for a single file. When exceeded, Wings drops the oldest diff chains for that file until the budget is met.
+
+Default value:
+```yaml
+per_file_disk_budget: 5242880
+```
+
+### system.file_history.per_server_disk_budget
+The maximum total disk space (in bytes) that the history database may use across all files for a single server. When exceeded, Wings drops the globally oldest diff chains until the budget is met.
+
+Default value:
+```yaml
+per_server_disk_budget: 209715200
+```
+
+### system.file_history.maintenance_interval
+The interval (in seconds) between background maintenance runs that clean up stale history entries and enforce disk budgets.
+
+Default value:
+```yaml
+maintenance_interval: 3600
+```
+
 ## Backups Configuration
 ### system.backups.write_limit
 The maximum disk write speed (in `MiB/s`) for creating backups. This prevents restoration processes from saturating the disk I/O and slowing down the rest of the node (`0` = unlimited).
@@ -1263,6 +1328,15 @@ system:
     enabled: true
     detect_clean_exit_as_crash: true
     timeout: 60
+  file_history:
+    enabled: true
+    zstd_level: 19
+    anchor_interval: 4
+    keep_chains: 2
+    file_size_cap: 1048576
+    per_file_disk_budget: 5242880
+    per_server_disk_budget: 209715200
+    maintenance_interval: 3600
   backups:
     write_limit: 0
     read_limit: 0

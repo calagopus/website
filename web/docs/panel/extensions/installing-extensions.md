@@ -61,7 +61,7 @@ cargo b --profile heavy-release
 # binary lands at ./target/heavy-release/panel-rs
 ```
 
-Same end result; just more granular if you're debugging a build issue.
+Same end result; just more granular if you're debugging a build issue. If you manually added files/reset your internal-list meta extension, make sure to run `panel-rs extensions resync` to refresh the internal state before building.
 :::
 
 ::::
