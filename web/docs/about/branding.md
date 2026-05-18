@@ -8,6 +8,7 @@
 | ![Calagopus Icon SVG](/icon.svg) | ![Calagopus Icon PNG](/icon.png) |
 | ![Badge Made For Calagopus SVG](/badges/made_for_calagopus.svg) | ![Badge Made For Calagopus PNG](/badges/made_for_calagopus.png) |
 | ![Badge Supports Calagopus SVG](/badges/supports_calagopus.svg) | ![Badge Supports Calagopus PNG](/badges/supports_calagopus.png) |
+| ![Badge Requires Calagopus SVG](/badges/requires_calagopus_wide.svg) | ![Badge Requires Calagopus PNG](/badges/requires_calagopus_wide.png) |
 
 ## Colors
 
