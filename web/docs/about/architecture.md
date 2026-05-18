@@ -12,8 +12,8 @@ The Calagopus Panel uses a relational database to store all of its persistent da
 
 To improve performance and reduce database load, the Calagopus Panel utilizes 2 caching layers:
 
-1. **In-Memory Cache**: A local in-memory cache is used for frequently accessed data with very short ttl (e.g., session data, db object cache). This is specific to each backend and can be disabled.
-2. **Redis Cache**: A Redis-like distributed cache is used for data that needs to be shared across multiple backend instances or has a longer ttl (e.g., login-related data, rate limiting). This cache is forced and cannot be disabled, even with a single backend instance. While not required, enabling persistent storage is beneficial for retaining rate limiting data across redis restarts, though not strictly necessary.
+1. **In-Memory Cache**: A local in-memory cache is used for frequently accessed data with a very short TTL (e.g., session data, db object cache). This is specific to each backend and can be disabled.
+2. **Redis Cache**: A Redis-like distributed cache is used for data that needs to be shared across multiple backend instances or has a longer TTL (e.g., login-related data, rate limiting). This cache is required and cannot be disabled, even with a single backend instance. While not required, enabling persistent storage is beneficial for retaining rate limiting data across Redis restarts, though not strictly necessary.
 
 The Panel will also cache decrypted secrets in both caching layers when enabled, while this improves performance it does come with security trade-offs, so make sure to choose the right option for your use case.
 
@@ -82,13 +82,13 @@ graph TD
   Wings -.->|Status Updates| Panel
 ```
 
-This means that the Panel communicates with multiple Wings daemons, each managing its own set of game servers. The architecture is designed to handle a large number of game servers efficiently while maintaining performance and reliability. But the Wings Daemons also equire a route back to the panel for tasks such as authentication and status updates.
+This means that the Panel communicates with multiple Wings daemons, each managing its own set of game servers. The architecture is designed to handle a large number of game servers efficiently while maintaining performance and reliability. The Wings daemons also require a route back to the panel for tasks such as authentication and status updates.
 
 ## Scalability
 
 The architecture of Calagopus is designed to be highly scalable. As the number of game servers increases, additional Wings daemons can be deployed to distribute the load. Each Wings daemon operates independently, allowing for horizontal scaling. The panel backend can also be scaled horizontally by replacing the database and cache with managed services or clustering solutions. (e.g. [YugabyteDB](https://www.yugabyte.com/) for the database and a [Redis Sentinel Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/) for the cache).
 
-Something worth noting is that the backend can use different database urls for reading and writing, allowing for read replicas to be used to offload read traffic from the primary database in a simpler setup. It's also important to delegate one backend to be the "primary", in this case that only means its responsible for running background jobs like cleanup, so it's recommended to have it close to the primary database for performance reasons.
+Something worth noting is that the backend can use different database urls for reading and writing, allowing for read replicas to be used to offload read traffic from the primary database in a simpler setup. It's also important to delegate one backend to be the "primary", in this case that only means it's responsible for running background jobs like cleanup, so it's recommended to have it close to the primary database for performance reasons.
 
 ### Read-Offloading Architecture Example
 
@@ -175,4 +175,4 @@ In a real-world scenario, having more than 2 backends per region is not needed a
 
 **Important Note**: Within the same region, the backends should share the same redis cache to avoid login issues and session inconsistencies.
 
-Once you introduce Wings daemons and game servers into this architecture, each panel instance will communicate with the Wings daemons that need to be, directly, no passive connections are made unless an extension or feature requires it.
+Once Wings daemons and game servers are introduced into this architecture, each panel instance communicates directly with the relevant Wings daemons. No passive connections are made unless an extension or feature requires it.

@@ -26,7 +26,7 @@ When you create a backup configuration, you pick a **backup disk** - the backend
 
 The four node-local options (**Local**, **DdupBak**, **Btrfs**, **Zfs**) don't require any credentials on the Panel side - the Wings node writes directly to its own disk, at the path configured by [`system.backup_directory`](../wings/configuration.md#system-backup-directory) (defaults to `/var/lib/pterodactyl/backups`). The two remote options (**S3** and **Restic**) need credentials, which you enter when creating the configuration. All secrets are encrypted at rest using the Panel's encryption key.
 
-**DdupBak** is currently **experimental**, but it's the fastest deduplicating backend available - faster than restic both when creating backups and when restoring from them - while keeping the operational setup as simple as a local tarball (no repository, no password, nothing to initialize). If you're after dedup, are not completely in love with your data, and aren't already committed to restic, it's worth trying. See [ddup-bak on GitHub](https://github.com/0x7d8/ddup-bak) for details on the format.
+**DdupBak** is currently **experimental**, but it's the fastest deduplicating backend available - faster than restic both when creating and restoring backups - while keeping the operational setup as simple as a local tarball (no repository, no password, nothing to initialize). If you want deduplication and are comfortable with the experimental status, it's worth trying. See [ddup-bak on GitHub](https://github.com/0x7d8/ddup-bak) for details on the format.
 
 **Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../wings/disk-limiters/index.md) to be configured on the Wings node - that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../wings/disk-limiters/btrfs-subvolume.md) and [ZFS](../wings/disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
 
@@ -50,8 +50,8 @@ The four node-local options (**Local**, **DdupBak**, **Btrfs**, **Zfs**) don't r
 | **Maintenance Enabled** | Leave off unless you want to temporarily prevent this configuration from being used (useful when rotating credentials or doing repository maintenance) |
 | **Backup Disk** | One of the options from the table above |
 
-3. Fill in the disk-specific fields (see [S3](#s3-settings) or [Restic](#restic-settings) below; the node-local disks have no extra fields).
-4. Click **Save**.
+1. Fill in the disk-specific fields (see [S3](#s3-settings) or [Restic](#restic-settings) below; the node-local disks have no extra fields).
+2. Click **Save**.
 
 There is no "test connection" button. To verify a new configuration works, create a small test backup of a real server that's assigned to it.
 

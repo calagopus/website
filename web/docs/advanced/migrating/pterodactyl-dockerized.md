@@ -5,13 +5,13 @@ next: false
 
 # Migrating from Pterodactyl (Dockerized)
 
-This guide is for Pterodactyl installs that run in Docker - if you've got a `docker-compose.yml` somewhere with a Pterodactyl service in it, you're in the right place. If you're running Pterodactyl directly on the host without containers, head to the [Standalone](./pterodactyl-standalone.md) guide instead.
+This guide is for Pterodactyl installs running in Docker - if you have a `docker-compose.yml` with a Pterodactyl service, you are in the right place. If you are running Pterodactyl directly on the host without containers, use the [Standalone](./pterodactyl-standalone.md) guide instead.
 
 This guide assumes Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml), but it also works for Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/docker/blob/Master/docker-compose.yml). Variable names and locations are mostly the same.
 
 The general shape of the import is the same regardless of how Pterodactyl is running: you point the Calagopus importer at a `.env` file containing Pterodactyl's database connection details, and it reads everything across. The Docker-specific wrinkle is that you'll usually need to construct that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pterodactyl's original `.env`.
 
-A reminder of what doesn't migrate: API keys. See the [intro](./pterodactyl.md) for the full reasoning - the short version is that the hashes aren't compatible and the API isn't either, so old keys wouldn't work even if we did import them.
+API keys do not migrate. See the [intro](./pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 
@@ -112,7 +112,7 @@ The exact commands depend on how Calagopus itself is installed. Pick the matchin
 
 ### Building the Pterodactyl `.env` File
 
-Pterodactyl's database is reachable from your Pterodactyl containers, but probably not from your Calagopus containers - different Docker networks, different hostnames. So we'll build a small `ptero.env` file with database connection details that work from where the importer will run.
+Pterodactyl's database is reachable from within the Pterodactyl containers, but likely not from your Calagopus containers - different Docker networks use different hostnames. The solution is to build a small `ptero.env` file with database connection details that work from where the importer will run.
 
 The importer needs all seven of these variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`. You'll find them across Pterodactyl's `docker-compose.yml` and `.env` file. A finished `ptero.env` looks something like:
 
@@ -126,7 +126,7 @@ DB_USERNAME=pterodactyl
 DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 
-Open a scratch text editor (or just a terminal scratch buffer) and assemble the values one at a time using the steps below.
+Assemble the values one at a time using the steps below.
 
 #### `APP_URL`
 
@@ -342,6 +342,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Don't forget the node side. Calagopus uses Wings as its node agent, but it needs to be pointed at the new panel rather than the old one. See [Wings - Updating](../../wings/updating.md) for the swap.
+Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
 
-After that, regenerate any API keys your external scripts were using. The old Pterodactyl keys won't work and the API itself is different anyway, so you're rewriting those scripts regardless.
+After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.

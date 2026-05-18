@@ -1,20 +1,24 @@
 # Discord OAuth Setup
 
-This guide will show you how to setup Discord OAuth for your Calagopus Panel.
+This guide walks through setting up Discord OAuth for your Calagopus Panel.
 
 ### Prerequisites
-To setup Discord OAuth, you only need 2 things:
+
+To set up Discord OAuth, you need:
+
 * [A Discord account](https://discord.com)
-* A Calagopus Panel, cause why would you read this guide if you don't have one??
+* A running Calagopus Panel
 
 ### Downloading required files
-To setup Discord OAuth, you can use the `discord.yml` file to import to Calagopus Panel without having to manually copy the values by yourself.
 
-To download this file, right click on the link below, and save it locally on your computer.
+Download the `discord.yml` template to import the Discord provider configuration without entering values manually.
+
+Right-click the link below and save the file locally.
 
 <a href="/oauth2/discord.yml" download>Download <code>discord.yml</code> ➚</a>
 
 ### Import the template config
+
 Once `discord.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
 ![OAuth Providers tab](./files/images/oauth-providers.webp)
 
@@ -27,16 +31,19 @@ Once imported, click on the newly created Discord provider's ID and you should a
 Copy the Redirect URL provided by the panel and proceed to the next step.
 
 ### Setting up Discord OAuth
+
 #### Creating the application
+
 Go to [Discord's Developer Portal](https://discord.com/developers/applications), and create an application.
 ![](./files/images/discord/image-1.webp)
 
 In the popup, type the name of your application, which will be shown on the Discord login page. Select a team if you have one and then click on `Create`.
 ![](./files/images/discord/image-2.webp)
 
-In the General Information page (the page you get redirected to once you click `Create`), set an icon and/or a description if you'll like, for this guide we're not gonna cover this step.
+On the General Information page, you can optionally set an icon and description - this is not required and is not covered further here.
 
 #### Add your Redirect URL to Discord OAuth
+
 On the left sidebar, click on `OAuth2`.
 ![](./files/images/discord/image-3.webp)
 
@@ -48,13 +55,15 @@ At the bottom, you should see the warning below:
 Click on the `Save Changes` button below.
 
 #### Issue a OAuth Client ID and Secret
+
 On the same `OAuth2` page, look for the Client information section. Reset your Client Secret by clicking on the `Reset Secret` button.
 ![](./files/images/discord/image-6.webp)
 
-Once you reset your Client Secret, copy both your Client ID and Client Secret. You will need thoses for the next step.
+Once you reset your Client Secret, copy both your Client ID and Client Secret. You will need those for the next step.
 
 ### Configuring the OAuth Provider
-Back to the panel, change the Client ID and the Client secret to the ones Discord has given you.
+
+Back in the panel, enter the Client ID and Client Secret you copied from Discord.
 
 On the switches below, choose if you want to enable Discord OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
 
@@ -64,6 +73,7 @@ It should normally look like this:
 Finally, save your changes, and you should be done!
 
 ### Test the configuration
+
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Discord account.
 ![Testing Discord](./files/images/discord/test.webp)
 
@@ -71,10 +81,13 @@ If everything works correctly, you should now be able to see your Discord accoun
 ![List](./files/images/discord/list.webp)
 
 ### Troubleshooting
+
 #### Error: "Invalid OAuth2 redirect_uri"
+
 You may have put the wrong redirect URL in Discord than the one Calagopus Panel has provided you.
 
 **Solution:**
+
 1. Go back to your Calagopus Panel OAuth provider configuration page
 2. Copy the exact Redirect URL shown
 3. Go to [Discord Developer Portal](https://discord.com/developers/applications) and select your application
@@ -83,9 +96,11 @@ You may have put the wrong redirect URL in Discord than the one Calagopus Panel 
 6. Click `Save Changes`
 
 #### Error: "Unknown application"
+
 The Client ID and Client Secret set on the panel is invalid.
 
 **Solution:**
+
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications) and select your application
 2. Navigate to OAuth2
 3. Copy your Client ID

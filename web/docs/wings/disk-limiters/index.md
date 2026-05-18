@@ -1,8 +1,8 @@
 # Disk Limiters
 
-Ever heard of "Pterodactyl-Destroyer" or similar Tools? They are all based on the same principle, they abuse the fact that Pterodactyl doesn't have a quota system for disk space, and they create a file that fills up the entire disk, causing other servers on the same node to be affected, and potentially causing the node to crash. This is a common attack vector for malicious users, and it's something that has been a problem for Pterodactyl for a long time.
+Without per-server disk quotas, a malicious user can fill the node's disk entirely - disrupting other servers and potentially crashing the host. This has been a well-known attack vector against Pterodactyl-based panels for years.
 
-At Calagopus we have multiple Systems in place that can prevent this, not all are applicable to everyone.
+Calagopus provides several disk limiter options to prevent this. Not all are applicable to every setup.
 
 - [**Btrfs Subvolume**](./btrfs-subvolume.md): A native, kernel-enforced disk limiter using Btrfs subvolumes and qgroups. Stable and performant, but requires Btrfs and is not retroactive for existing servers.
 - [**ZFS Dataset**](./zfs-dataset.md): A native, kernel-enforced disk limiter using ZFS datasets and `refquota`. Stable and performant, but requires ZFS and is not retroactive for existing servers.

@@ -30,7 +30,7 @@ Once your stack is on `:heavy` or `:nightly-heavy`, you have two options.
 docker compose restart web
 ```
 
-The Panel detects the new file on startup and installs it, you can see the progress via the afforementioned admin UI or simply wait, it shouldn't take more than a minute or two even for complex extensions.
+The Panel detects the new file on startup and installs it, you can see the progress via the aforementioned admin UI or simply wait, it shouldn't take more than a minute or two even for complex extensions.
 
 === With Development Environment
 

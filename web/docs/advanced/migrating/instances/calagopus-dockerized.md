@@ -5,7 +5,7 @@ next: false
 
 # Migrating from Standalone to Docker Compose
 
-This guide walks you through migrating an existing Calagopus standalone (binary) installation to a Docker Compose stack. The process involves three things: copying your encryption key, exporting your PostgreSQL database and importing it into the new Docker-managed database.
+This guide walks you through migrating an existing Calagopus standalone (binary) installation to a Docker Compose stack. The process involves two things: copying your encryption key, and exporting your PostgreSQL database and importing it into the new Docker-managed database.
 
 No data transformation is required. The schema is identical between installations.
 
@@ -13,8 +13,8 @@ No data transformation is required. The schema is identical between installation
 This guide covers the standalone panel compose setup only. If you want to migrate to an All-in-One setup instead, follow the [Docker installation guide](../../../panel/installation/docker.md) first, then return here for the database migration steps.
 :::
 
-
 ## Overview
+
 Here's what you'll be doing at a high level:
 
 - Grab your `APP_ENCRYPTION_KEY` and database password from your existing installation
@@ -23,8 +23,8 @@ Here's what you'll be doing at a high level:
 - Dump the existing database and restore it into Docker
 - Start the full stack and verify everything works
 
-
 ## Before You Start
+
 Make sure you have:
 
 - A working standalone Calagopus installation
@@ -32,8 +32,8 @@ Make sure you have:
 - Access to `/etc/calagopus/.env` on your standalone system
 - `pg_dump` available on your standalone system (it should already be there if PostgreSQL is installed)
 
-
 ## Collect values from your existing installation
+
 Open your existing configuration file:
 
 ```bash
@@ -43,15 +43,18 @@ cat /etc/calagopus/.env
 You need two values from this file:
 
 **`APP_ENCRYPTION_KEY`** a 16-character alphanumeric string that was generated during initial setup:
+
 ```txt
 APP_ENCRYPTION_KEY=Ab3xZ9qR2mKp7vLw
 ```
 
 **The database password** found in `DATABASE_URL`:
+
 ```txt
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
-The password is the segment between the second `:` and the `@` in the example above, that's `yourPassword`.
+
+The password is the segment between the second `:` and the `@` - in the example above, that is `yourPassword`.
 
 ::: warning
 The `APP_ENCRYPTION_KEY` must be copied exactly as-is. It is used to decrypt sensitive data stored in your database. If it is wrong or missing, that data cannot be recovered.
@@ -59,8 +62,8 @@ The `APP_ENCRYPTION_KEY` must be copied exactly as-is. It is used to decrypt sen
 
 Keep both values handy. You'll need them in the next step.
 
-
 ## Set up your Docker directory
+
 Create a directory to hold your Compose file and persistent data:
 
 ```bash
@@ -68,8 +71,8 @@ mkdir -p /opt/calagopus
 cd /opt/calagopus
 ```
 
-
 ## Create the Docker Compose file
+
 Create `/opt/calagopus/docker-compose.yml` with the following content. **Before saving, replace the placeholder values** marked with comments:
 
 ```yaml
@@ -124,11 +127,12 @@ services:
 ```
 
 Replace:
-- `YOUR_ENCRYPTION_KEY` the `APP_ENCRYPTION_KEY` value collected above
-- `YOUR_DB_PASSWORD` (both occurrences) you can reuse your old database password, or choose a new one. It just needs to match in both the `web` and `db` service definitions.
 
+- `YOUR_ENCRYPTION_KEY` with the `APP_ENCRYPTION_KEY` value collected above
+- `YOUR_DB_PASSWORD` (both occurrences) with your old database password, or a new one - the value must match in both the `web` and `db` service definitions.
 
 ## Start the database and cache
+
 Start only the database and cache containers for now. The web container will fail on first boot if the database isn't populated yet.
 
 ```bash
@@ -143,8 +147,8 @@ docker compose ps
 
 Both `db` and `cache` should show as `running`.
 
-
 ## Export your existing database
+
 Run this on your **standalone system** (not inside Docker). Replace `yourPassword` with the password collected earlier:
 
 ```bash
@@ -160,8 +164,8 @@ This creates a compressed database dump at `/opt/calagopus/panel.backup`.
 
 > If you're migrating to a different host, copy `panel.backup` to `/opt/calagopus/` on the target machine before continuing.
 
-
 ## Import the database into Docker
+
 From `/opt/calagopus` on your Docker host, run the following:
 
 ```bash
@@ -176,23 +180,22 @@ docker exec -i calagopus-db-1 pg_restore \
 
 You may see some harmless notices about dropping objects that don't exist yet - that's normal. The restore is successful as long as the command exits without errors.
 
-
 ## Start the full stack
+
 ```bash
 docker compose up -d
 ```
 
 The web container will run any pending database migrations automatically on first boot (`DATABASE_MIGRATE=true`).
 
-
 ## Verify the migration
+
 Once the stack is up, open Calagopus in your browser and check:
 
 - You can log in with your existing credentials
 - Your servers are visible and intact
 - No setup wizard (OOBE) appears (if it does, the database import likely did not work - see below)
 - Wings nodes are still connected
-
 
 ## Troubleshooting
 

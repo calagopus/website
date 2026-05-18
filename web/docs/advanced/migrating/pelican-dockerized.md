@@ -5,7 +5,7 @@ next: false
 
 # Migrating from Pelican (Dockerized)
 
-This guide is for Pelican installs that run in Docker - if you've got a `docker-compose.yml` somewhere with a Pelican service in it, you're in the right place. If you're running Pelican directly on the host without containers, head to the [Standalone](./pelican-standalone.md) guide instead.
+This guide is for Pelican installs running in Docker - if you have a `docker-compose.yml` with a Pelican service, you are in the right place. If you are running Pelican directly on the host without containers, use the [Standalone](./pelican-standalone.md) guide instead.
 
 The general shape of the import is the same regardless of how Pelican is running: you point the Calagopus importer at a `.env` file containing Pelican's database connection details, and it reads everything across. The Docker-specific wrinkle is that you may have to construct that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pelican's original `.env`.
 
@@ -99,7 +99,7 @@ Most of the commands below reference your Pelican install directory. To save typ
 export PELICAN_DIRECTORY=/srv/pelican
 ```
 
-This isn't required - you can substitute the path inline anywhere you see `$PELICAN_DIRECTORY` - but it makes the commands shorter and more copy-pasteable.
+This is optional - you can substitute the path inline anywhere you see `$PELICAN_DIRECTORY` - but it makes the commands shorter.
 
 ## Choose Your Calagopus Install Method
 
@@ -110,7 +110,7 @@ The exact commands depend on how Calagopus itself is installed. Pick the matchin
 
 ### Building the Pelican `.env` File
 
-Pelican's database is reachable from your Pelican containers, but probably not from your Calagopus containers - different Docker networks, different hostnames. So we'll build a small `pelican.env` file with database connection details that work from where the importer will run.
+Pelican's database is reachable from within the Pelican containers, but likely not from your Calagopus containers - different Docker networks use different hostnames. The solution is to build a small `pelican.env` file with database connection details that work from where the importer will run.
 
 The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supports these database drivers:
 
@@ -119,7 +119,7 @@ The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supp
 - `sqlite`
 - `sqlite3`
 
-You can find the values in Pelican's `.env` file. Open a scratch text editor (or just a terminal scratch buffer) - you'll be assembling values into a new file in a moment.
+You can find the values in Pelican's `.env` file. You will be assembling them into a new file in a moment.
 
 #### `APP_URL`
 
@@ -191,7 +191,7 @@ DB_CONNECTION=sqlite
 DB_DATABASE=/database.sqlite
 ```
 
-The path here matters: `/database.sqlite` is where we'll be putting the SQLite file *inside* the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, you'll override that to the in-container absolute path.
+The path matters: `/database.sqlite` is where the SQLite file will be placed *inside* the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, override it with this absolute in-container path.
 
 #### Assembling the File
 
@@ -372,6 +372,6 @@ Log in with your existing Pelican credentials.
 
 ## What's Next
 
-Don't forget the node side. Calagopus uses Wings as its node agent, but it needs to be pointed at the new panel rather than the old one. See [Wings - Updating](../../wings/updating.md) for the swap.
+Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
 
-After that, regenerate any API keys your external scripts were using. The old Pelican keys won't work and the API itself is different anyway, so you're rewriting those scripts regardless.
+After the migration, regenerate any API keys used by external scripts. The old Pelican keys will not work, and the Calagopus API differs from Pelican's, so those integrations will need to be updated regardless.

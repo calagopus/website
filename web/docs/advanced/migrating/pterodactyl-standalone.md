@@ -7,9 +7,9 @@ next: false
 
 This guide is for Pterodactyl installs that run directly on the host - no Docker, no containers, just a typical install at `/var/www/pterodactyl` or similar. If you're using Docker, head to the [Dockerized](./pterodactyl-dockerized.md) guide instead.
 
-The plan: install Calagopus alongside your existing Pterodactyl, point the importer at Pterodactyl's `.env` file, let it read everything from Pterodactyl's database, and write equivalent records into Calagopus's fresh database. Your users log in with the same credentials afterwards.
+The process involves installing Calagopus alongside your existing Pterodactyl, pointing the importer at Pterodactyl's `.env` file, and letting it read everything from Pterodactyl's database and write equivalent records into Calagopus's fresh database. Users log in with the same credentials afterwards.
 
-A reminder of what doesn't migrate: API keys. See the [intro](./pterodactyl.md) for the full reasoning - the short version is that the hashes aren't compatible and the API isn't either, so old keys wouldn't work even if we did import them.
+API keys do not migrate. See the [intro](./pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 
@@ -33,23 +33,27 @@ You'll need to drop and recreate the database. Pick the matching tab for how Cal
 ::::tabs
 === Docker
 Head to the directory with your Calagopus compose file and stop the stack:
+
 ```bash
 docker compose down
 ```
 
 Delete the Postgres data directory:
+
 ```bash
 # This wipes the Calagopus database. Don't run this if you have data you care about.
 rm -r postgres
 ```
 
 Start Calagopus back up:
+
 ```bash
 docker compose up -d
 ```
 
 === APT/RPM, Binary
 Stop Calagopus first:
+
 ```bash
 # Linux
 systemctl stop calagopus-panel
@@ -59,6 +63,7 @@ nssm stop "Calagopus Panel"
 ```
 
 Connect to Postgres and recreate the database:
+
 ```bash
 # Linux/MacOS
 sudo -u postgres psql
@@ -66,6 +71,7 @@ sudo -u postgres psql
 # Windows: see the binary install guide for psql access
 # https://calagopus.com/docs/panel/installation/binary#database-configuration
 ```
+
 ```sql
 DROP DATABASE panel WITH (FORCE);
 CREATE DATABASE panel OWNER calagopus;
@@ -74,6 +80,7 @@ GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
 ```
 
 Start Calagopus back up:
+
 ```bash
 # Linux
 systemctl start calagopus-panel
@@ -81,6 +88,7 @@ systemctl start calagopus-panel
 # Windows
 nssm start "Calagopus Panel"
 ```
+
 ::::
 
 ## Choose Your Calagopus Install Method
@@ -201,6 +209,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Don't forget the node side. Calagopus uses Wings as its node agent, but it needs to be pointed at the new panel rather than the old one. See [Wings - Updating](../../wings/updating.md) for the swap.
+Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
 
-After that, regenerate any API keys your external scripts were using. The old Pterodactyl keys won't work and the API itself is different anyway, so you're rewriting those scripts regardless.
+After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.

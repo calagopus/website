@@ -4,7 +4,7 @@ Please see the [Minimum Requirements](../overview.md#minimum-requirements) secti
 
 ## Which image should I use?
 
-If you only plan to run a **single node** (Panel + Wings on the same host), use the **All-in-One (AIO)** image. It ships the Panel and Wings together in one container, which makes the setup noticeably simpler: one compose file, one service to start, no separate node to register, no reverse proxy gymnastics for Wings. **This is the recommended path for most users** and will save you (and us) a lot of support headaches.
+If you only plan to run a **single node** (Panel + Wings on the same host), use the **All-in-One (AIO)** image. It ships the Panel and Wings together in one container, which makes the setup noticeably simpler: one compose file, one service to start, no separate node to register, no additional Wings reverse proxy configuration. **This is the recommended path for most users.**
 
 If you plan to run **multiple nodes**, or want to keep the Panel and Wings on separate hosts, use one of the standalone Panel images (`:latest` or `:heavy`) and install Wings separately following the [Wings Docker Installation](../../wings/installation/docker.md) guide.
 

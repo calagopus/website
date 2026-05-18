@@ -7,9 +7,9 @@ next: false
 
 This guide is for Pelican installs that run directly on the host - no Docker, no containers. If you're using Docker, head to the [Dockerized](./pelican-dockerized.md) guide instead.
 
-The plan: install Calagopus alongside your existing Pelican, point the importer at Pelican's `.env` file, let it read everything from Pelican's database, and write equivalent records into Calagopus's fresh database. Your users log in with the same credentials afterwards.
+The process involves installing Calagopus alongside your existing Pelican, pointing the importer at Pelican's `.env` file, and letting it read everything from Pelican's database and write equivalent records into Calagopus's fresh database. Users log in with the same credentials afterwards.
 
-A reminder of what doesn't migrate: API keys. See the [intro](./pelican.md) for the full reasoning - the short version is that the hashes aren't compatible and the API isn't either, so old keys wouldn't work even if we did import them.
+API keys do not migrate. See the [intro](./pelican.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 
@@ -34,23 +34,27 @@ You'll need to drop and recreate the database. Pick the matching tab for how Cal
 ::::tabs
 === Docker
 Head to the directory with your Calagopus compose file and stop the stack:
+
 ```bash
 docker compose down
 ```
 
 Delete the Postgres data directory:
+
 ```bash
 # This wipes the Calagopus database. Don't run this if you have data you care about.
 rm -r postgres
 ```
 
 Start Calagopus back up:
+
 ```bash
 docker compose up -d
 ```
 
 === APT/RPM, Binary
 Stop Calagopus first:
+
 ```bash
 # Linux
 systemctl stop calagopus-panel
@@ -60,6 +64,7 @@ nssm stop "Calagopus Panel"
 ```
 
 Connect to Postgres and recreate the database:
+
 ```bash
 # Linux/MacOS
 sudo -u postgres psql
@@ -67,6 +72,7 @@ sudo -u postgres psql
 # Windows: see the binary install guide for psql access
 # https://calagopus.com/docs/panel/installation/binary#database-configuration
 ```
+
 ```sql
 DROP DATABASE panel WITH (FORCE);
 CREATE DATABASE panel OWNER calagopus;
@@ -75,6 +81,7 @@ GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
 ```
 
 Start Calagopus back up:
+
 ```bash
 # Linux
 systemctl start calagopus-panel
@@ -82,6 +89,7 @@ systemctl start calagopus-panel
 # Windows
 nssm start "Calagopus Panel"
 ```
+
 ::::
 
 ## Supported Pelican Databases
@@ -161,7 +169,7 @@ Now run the importer:
 docker compose exec web calagopus-panel import pelican --environment /.env
 ```
 
-The import will chew through users, servers, nodes, allocations, eggs, and so on. How long it takes depends on how much data Pelican has - small installs finish in seconds, large ones can take a few minutes. Progress is logged to stdout.
+The importer walks through users, servers, nodes, allocations, eggs, and so on. How long it takes depends on the amount of data - small installs finish in seconds, larger ones can take a few minutes. Progress is logged to stdout.
 
 ::: warning If the import errors out with a connection or auth error
 If the importer fails immediately with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, you've hit MySQL/MariaDB's host-based access control. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
@@ -219,7 +227,7 @@ Run the importer from the machine where Calagopus is installed. Assuming Pelican
 calagopus-panel import pelican --environment /var/www/pelican/.env
 ```
 
-The import will chew through users, servers, nodes, allocations, eggs, and so on. How long it takes depends on how much data Pelican has - small installs finish in seconds, large ones can take a few minutes. Progress is logged to stdout.
+The importer walks through users, servers, nodes, allocations, eggs, and so on. How long it takes depends on the amount of data - small installs finish in seconds, larger ones can take a few minutes. Progress is logged to stdout.
 
 ::: warning If the import errors out
 Treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres database (the steps in the OOBE warning callout above), recreate it, and re-run.
@@ -240,6 +248,6 @@ Log in with your existing Pelican credentials.
 
 ## What's Next
 
-Don't forget the node side. Calagopus uses Wings as its node agent, but it needs to be pointed at the new panel rather than the old one. See [Wings - Updating](../../wings/updating.md) for the swap.
+Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
 
-After that, regenerate any API keys your external scripts were using. The old Pelican keys won't work and the API itself is different anyway, so you're rewriting those scripts regardless.
+After the migration, regenerate any API keys used by external scripts. The old Pelican keys will not work, and the Calagopus API differs from Pelican's, so those integrations will need to be updated regardless.

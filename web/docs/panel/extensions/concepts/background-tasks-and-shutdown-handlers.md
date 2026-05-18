@@ -60,7 +60,7 @@ builder
 
 ### Scheduled Tasks (Cron)
 
-If your task *does* need a strict schedule-like running at midnight every day, or at the top of every hour-calculating the exact sleep duration manually inside an `add_task` loop is tedious. For these cases, use `add_cron_task`:
+If your task needs to run on a strict schedule - at midnight every day, or at the top of every hour - calculating the exact sleep duration manually inside an `add_task` loop is tedious. For these cases, use `add_cron_task`:
 
 ```rs
 use std::str::FromStr;

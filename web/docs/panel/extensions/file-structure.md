@@ -1,6 +1,6 @@
 # Extension File Structure
 
-Extensions are split into 3 main file structures. Frontend, Backend, Database.
+Extensions are split into three main parts: Frontend, Backend, and Database.
 
 All Extensions have a package name, which is defined in the backend `Cargo.toml` file, and is also required in the `Metadata.toml` file.
 These are semi-java-like package names, so they should be all lowercase, and can contain dots, for example `dev.0x7d8.test`.
@@ -54,7 +54,7 @@ You can add dependencies to your frontend extension code by adding them to this 
 import { Extension, ExtensionContext } from 'shared';
 import type { MantineThemeOverride } from '@mantine/core';
 
-// the class name doesnt really matter, but changing it close to your package name is advisable
+// the class name doesn't matter much, but naming it after your package is advisable
 class Dev0x7d8TestExtension extends Extension {
   public cardConfigurationPage: React.FC | null = null;
   public cardComponent: React.FC | null = null;
@@ -126,7 +126,7 @@ panel_version = ">=1.0.3" # panel version requirement of your extension, must be
 use shared::{State, extensions::Extension};
 
 #[derive(Default)]
-pub struct ExtensionStruct; // must be called this, and must implement Default trait, and well, must be `Send` if ykyk
+pub struct ExtensionStruct; // must be named this, must implement Default and Send
 
 #[async_trait::async_trait]
 impl Extension for ExtensionStruct {

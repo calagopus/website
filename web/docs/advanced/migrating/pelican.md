@@ -1,10 +1,10 @@
 # Migrating from Pelican
 
-So you've been running Pelican and you'd like to switch to Calagopus without losing every server, user, and configuration you've built up. Good news: there's an importer for that. It reads your Pelican database, walks through every record, and writes equivalent rows into a fresh Calagopus database. By the time it's done, your users log in with the same credentials, your servers are still there, your nodes are still there, your eggs are still there.
+Calagopus includes an importer that reads a Pelican database and writes equivalent records into a fresh Calagopus database. After the import, users log in with the same credentials and all servers, nodes, and eggs are intact.
 
-The only thing that doesn't make the trip is API keys, and that's not us being lazy. Pelican stores them as hashes (not the keys themselves), Calagopus stores them as hashes too but with a different algorithm, so there's no path to migrate the actual values. And honestly it doesn't matter much - the Calagopus API isn't compatible with Pelican's anyway, so any external scripts or integrations that were hitting Pelican's API need to be rewritten for Calagopus regardless of what happens to their API keys. Generate fresh ones after migration, plug them into your scripts, move on.
+The one thing that does not migrate is API keys. Pelican stores them as hashes using a different algorithm than Calagopus, so the values cannot be carried over. This is also not a practical concern - the Calagopus API is not compatible with Pelican's, so any external scripts using Pelican's API need to be updated for Calagopus regardless. Generate new keys after migration and update your integrations.
 
-There's also one thing this guide doesn't cover: the node side. Wings is a drop-in replacement for Pelican's node agent, but you do still need to update Wings to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that part. The panel migration in this guide handles every database record on the panel side; Wings handles itself.
+This guide covers the panel database migration only. Wings also needs to be updated to point at the new panel - see [Wings - Updating](../../wings/updating.md) for that step.
 
 ## Pick Your Path
 

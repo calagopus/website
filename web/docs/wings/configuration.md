@@ -184,7 +184,7 @@ file_compression_threads: 2
 ```
 
 ### api.upload_limit
-The maximum file size defined in `MiB`, that can be uploaded through the web-based file manager.
+The maximum file size in `MiB` that can be uploaded through the web-based file manager.
 
 Default value:
 ```yaml
@@ -200,7 +200,7 @@ max_jwt_uses: 5
 ```
 
 ### api.trusted_proxies
-A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user using the `X-Forwarded-For` or `X-Real-IP header`.
+A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user using the `X-Forwarded-For` or `X-Real-IP` header.
 
 Default value:
 ```yaml
@@ -266,7 +266,6 @@ tmp_directory: /tmp/pterodactyl
 ```
 
 ### system.username
-System user that Wings runs under.
 The operating system user account that the Wings process runs under on the host.
 
 Default value:
@@ -657,7 +656,7 @@ archive_format: tar_gz
 ```
 
 ### system.backups.s3.create_threads
-The amount of Threads used when creating a `.gz` S3 backup.
+The number of threads used when creating a `.gz` S3 backup.
 
 Default value:
 ```yaml
@@ -734,8 +733,7 @@ environment: {}
 ```
 
 ### system.backups.btrfs.restore_threads
-The number of threads used for restoring BTRFS snapshots.
-The number of threads used for restoring BTRFS snapshots. 1 thread will be used per file, so 4 threads in `restore_threads` = a snapshot restore can process 4 files at once.
+The number of threads used for restoring Btrfs snapshots. Each thread processes one file, so with 4 threads, up to 4 files are restored concurrently.
 
 Default value:
 ```yaml
@@ -751,7 +749,7 @@ create_read_only: true
 ```
 
 ### system.backups.zfs.restore_threads
-The number of threads used for restoring ZFS snapshots. 1 thread will be used per file, so 4 threads in `restore_threads` = a snapshot restore can process 4 files at once.
+The number of threads used for restoring ZFS snapshots. Each thread processes one file, so with 4 threads, up to 4 files are restored concurrently.
 
 Default value:
 ```yaml
@@ -785,7 +783,7 @@ server_name_in_container_name: false
 ```
 
 ### docker.delete_container_on_stop
-When enabled, containers are deleted as soon as a server is stops, is killed, or crashes. This significantly reduces long-term CPU/resource overhead.
+When enabled, containers are deleted as soon as a server stops, is killed, or crashes. This significantly reduces long-term CPU/resource overhead.
 
 Default value:
 ```yaml

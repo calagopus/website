@@ -1,6 +1,6 @@
 # Google OAuth Setup
 
-This guide will show you how to setup Google OAuth for your Calagopus Panel.
+This guide walks through setting up Google OAuth for your Calagopus Panel.
 
 ::: warning
 If you are planning to configure Google OAuth, please keep in mind that on Google's login page, it will leak your email address on the `Developer info` popup. You can literally do this by clicking on the app name:
@@ -9,19 +9,19 @@ If you are planning to configure Google OAuth, please keep in mind that on Googl
 ![Developer info](./files/images/google/warning2.webp)
 
 If you don't want your personal email to be shared, you have 2 options:
-* **1. Create a seperate Google account with a work email.** This will show your work email instead of your personal email, so you won't get spammed by bots on your personal email.
+* **1. Create a separate Google account with a work email.** This will show your work email instead of your personal email, so you won't get spammed by bots on your personal email.
 * **2. Don't use Google OAuth.** Use another provider from [this list](./index.md).
 :::
 
 ### Prerequisites
-To setup Google OAuth, you only need 2 things:
+To set up Google OAuth, you need:
 * [A Google account](https://accounts.google.com)
-* A Calagopus Panel, cause why would you read this guide if you don't have one??
+* A running Calagopus Panel
 
 ### Downloading required files
-To setup Google OAuth, you can use the `google.yml` file to import to Calagopus Panel without having to manually copy the values by yourself.
+Download the `google.yml` template to import the Google provider configuration without entering values manually.
 
-To download this file, right click on the link below, and save it locally on your computer.
+Right-click the link below and save the file locally.
 
 <a href="/oauth2/google.yml" download>Download <code>google.yml</code> ➚</a>
 
@@ -98,11 +98,11 @@ Pick `Credentials` in the sidebar. Click `+ Create credentials` dropdown and sel
 Pick `Web application` for the application type, type the name for the client, and add the redirect URL. Then, create the OAuth Client ID by clicking the `Create` button.
 ![](./files/images/google/image-16.webp)
 
-Copy both your Client ID and your Client secret, and then you can close Google Cloud. You will need thoses for the next step.
+Copy both your Client ID and your Client secret, and then you can close Google Cloud. You will need those for the next step.
 ![](./files/images/google/image-17.webp)
 
 ### Configuring the OAuth Provider
-Back to the panel, change the Client ID and the Client secret to the ones Google has given you.
+Back in the panel, enter the Client ID and Client Secret you copied from Google Cloud.
 
 On the switches below, choose if you want to enable Google OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
 

@@ -9,8 +9,8 @@ This guide walks you through migrating an existing Calagopus Docker Compose inst
 
 No data transformation is required. The schema is identical between installations.
 
-
 ## Before You Start
+
 Make sure you have:
 
 - A running Calagopus Docker Compose installation
@@ -28,6 +28,7 @@ You'll need to drop and recreate the database. Pick the matching tab for how Cal
 ::::tabs
 === APT/RPM, Binary
 Stop Calagopus first:
+
 ```bash
 # Linux
 systemctl stop calagopus-panel
@@ -37,6 +38,7 @@ nssm stop "Calagopus Panel"
 ```
 
 Connect to Postgres and recreate the database:
+
 ```bash
 # Linux/MacOS
 sudo -u postgres psql
@@ -44,6 +46,7 @@ sudo -u postgres psql
 # Windows: see the binary install guide for psql access
 # https://calagopus.com/docs/panel/installation/binary#database-configuration
 ```
+
 ```sql
 DROP DATABASE panel WITH (FORCE);
 CREATE DATABASE panel OWNER calagopus;
@@ -52,6 +55,7 @@ exit
 ```
 
 Start Calagopus back up:
+
 ```bash
 # Linux
 systemctl start calagopus-panel
@@ -59,18 +63,21 @@ systemctl start calagopus-panel
 # Windows
 nssm start "Calagopus Panel"
 ```
+
 ::::
 
-
 ## Collect values from your existing installation
+
 Open your `compose.yml` and find the `web` service environment variables. You need two values:
 
 **`APP_ENCRYPTION_KEY`**:
+
 ```yaml
 - APP_ENCRYPTION_KEY=Ab3xZ9qR2mKp7vLw
 ```
 
 **The database password**, found in `POSTGRES_PASSWORD` on the `db` service:
+
 ```yaml
 - POSTGRES_PASSWORD=yourPassword
 ```
@@ -81,22 +88,24 @@ The `APP_ENCRYPTION_KEY` must be copied exactly as-is. It is used to decrypt sen
 
 Keep both values handy. You'll need them shortly.
 
-
 ## Configure the binary installation
+
 Open `/etc/calagopus/.env` on your target host and set the following values.
 
 Set `APP_ENCRYPTION_KEY` to the value copied above:
+
 ```txt
 APP_ENCRYPTION_KEY=Ab3xZ9qR2mKp7vLw
 ```
 
-Set `DATABASE_URL` to point at your host PostgreSQL instance. Use the same password from your Docker setup, or a new one if you prefer. Just make sure it matches what you set when creating the database user:
+Set `DATABASE_URL` to point at your host PostgreSQL instance. Use the same password from your Docker setup, or a new one - it must match what you set when creating the database user:
+
 ```txt
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
-
 ## Export the database from Docker
+
 Run this from the directory containing your `compose.yml`. Replace `yourPassword` with the `POSTGRES_PASSWORD` collected earlier:
 
 ```bash
@@ -116,6 +125,7 @@ Copy `panel.backup` to `/opt/calagopus/` on the target machine before continuing
 :::
 
 ## Import the database into the host PostgreSQL
+
 First, make sure the database user and database exist. Connect to PostgreSQL:
 
 ```bash
@@ -146,23 +156,22 @@ PGPASSWORD="yourPassword" pg_restore \
 
 You may see some harmless notices about dropping objects that don't exist yet. That's normal. The restore is successful as long as the command exits without errors.
 
-
 ## Start the binary
+
 ```bash
 systemctl start calagopus-panel
 ```
 
 The panel will run any pending database migrations automatically on first boot.
 
-
 ## Verify the migration
+
 Open Calagopus in your browser and check:
 
 - You can log in with your existing credentials
 - Your servers are visible and intact
 - No setup wizard (OOBE) appears (if it does, the database import likely did not work, see below)
 - Wings nodes are still connected
-
 
 ## Troubleshooting
 

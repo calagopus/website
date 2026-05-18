@@ -1,6 +1,6 @@
 # Exposing Wings in a Homelab
 
-Let's say you just finished setting up your Calagopus Panel and Wings in your homelab, and you want to access it from the internet. This guide will cover all the ways you can expose your Wings machine to the internet, and the pros and cons of each method.
+This guide covers the available methods for exposing a Wings node to the internet from a homelab, along with the trade-offs of each approach.
 
 ## Prerequisites
 
@@ -26,10 +26,10 @@ The most common way to expose your Wings machine to the internet is by using a r
 
 For a detailed guide on setting up a reverse proxy, please see our [Reverse Proxies documentation](./reverse-proxies.md).
 
-Whats important to note for Wings is how you configure the reverse proxy, since Wings uses both HTTP and WebSocket connections, you need to make sure to properly configure your reverse proxy to support both types of connections. When entering the URL into the panel, you should make sure you enter the Reverse Proxy URL without a Port (well, usually). For example, if your reverse proxy is accessible at `https://wings.example.com`, you should enter `https://wings.example.com` in the panel, and not `https://wings.example.com:8080` or any other port.
+Wings uses both HTTP and WebSocket connections, so your reverse proxy must be configured to support both. When entering the URL in the panel, use the reverse proxy URL without a port. For example, if your reverse proxy is at `https://wings.example.com`, enter `https://wings.example.com` - not `https://wings.example.com:8080`.
 
 === Reverse Proxy + Wings Proxy Mode
-This method is similar to the Reverse Proxy method, but it also involves setting up the Panel to support Wings Proxy Mode. This allows the Panel to proxy HTTP/WS connections going to wings through the panel itself, which can simplify the reverse proxy configuration and also allows you to use the same domain and port for both the panel and wings (e.g. `https://panel.example.com` for both the panel and wings). This method is recommended for users who want to simplify their reverse proxy configuration and are okay with having the panel proxying connections to wings.
+This method builds on the Reverse Proxy approach by enabling Wings Proxy Mode in the panel. The panel proxies HTTP/WS connections to Wings directly, letting you use a single domain and port for both (e.g. `https://panel.example.com`). It's a good choice if you want a simpler reverse proxy setup and are comfortable with the panel handling the proxy traffic.
 
 | Pros | Cons |
 | --- | --- |
@@ -70,6 +70,6 @@ Another way to expose your Wings machine to the internet is by using port forwar
 
 For a detailed guide on setting up port forwarding, please refer to your router's documentation, as the steps can vary greatly depending on the make and model of your router.
 
-Whats important to note for Wings is that if you choose to use port forwarding, your Wings URL in the panel should include the port number. For example, if you forwarded port 8080 to your Wings machine, and your public IP is `217.33.3.3`, you should enter `http://217.33.3.3:8080` in the panel. (Or your DynDNS domain if you have one set up, like `http://mywings.dyndns.org:8080`)
+When using port forwarding, the Wings URL in the panel must include the port. For example, if port 8080 is forwarded to your Wings machine and your public IP is `217.33.3.3`, enter `http://217.33.3.3:8080`. If you have a Dynamic DNS domain, use that instead (e.g. `http://mywings.dyndns.org:8080`).
 
 ::::

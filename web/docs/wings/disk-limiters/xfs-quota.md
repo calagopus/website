@@ -20,7 +20,7 @@ mount | grep /var/lib/pterodactyl
 # /dev/... on /var/lib/pterodactyl type xfs (rw,...,prjquota)
 ```
 
-If you see `prjquota` in the mount options, you're good. If you don't, the `xfs_quota` commands will fail when Wings tries to apply a limit.
+If `prjquota` appears in the mount options, the option is active. If it does not, the `xfs_quota` commands will fail when Wings tries to apply a limit.
 
 ## Downsides
 

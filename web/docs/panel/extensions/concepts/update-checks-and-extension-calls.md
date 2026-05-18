@@ -146,7 +146,7 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-A lot is going on in a small amount of code. Let's unpack it.
+There is a lot going on in a small amount of code - here is what each part does.
 
 ### `ExtensionCallValue` is `Box<dyn Any + Send + Sync>`
 

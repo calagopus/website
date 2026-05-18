@@ -195,7 +195,7 @@ Replace `<strong-password>` with the password you set and `<host>` with the IP a
 
 ## Making the Database Host Show Up for Users
 
-By default, new database hosts are not visible to any client API endpoints, to fix this, we need to add the database host to the Locations Database Host List.
+By default, new database hosts are not visible to any client API endpoints. To fix this, we need to add the database host to the Locations Database Host List.
 
 1. Go to **Admin → Locations** and click on the location you want to add the database host to.
 2. Click the **Database Hosts** tab at the top.

@@ -7,7 +7,7 @@ next:
 
 # Migrating to Standalone
 
-So you've been running Calagopus in Docker and want to move to a standalone installation without losing your users, servers, or configuration? This is a straightforward migration.
+This guide covers migrating an existing Calagopus Docker installation to a standalone binary without losing your users, servers, or configuration.
 
 Both setups use the same database schema, so the process comes down to one thing: exporting your existing database from Docker and importing it into a fresh standalone installation. Once the data is in place, the panel will pick up exactly where it left off.
 

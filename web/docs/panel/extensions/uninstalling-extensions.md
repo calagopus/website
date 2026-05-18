@@ -1,6 +1,6 @@
 # Uninstalling Extensions
 
-Sometimes an extension isn't working out, or you no longer need its functionality, or you want a clean slate before installing a different version. This page covers how to remove an extension from your Calagopus Panel - and what happens to its data when you do (spoiler: it stays put).
+Sometimes an extension isn't working out, or you no longer need its functionality, or you want a clean slate before installing a different version. This page covers how to remove an extension from your Calagopus Panel - and what happens to its data when you do (it stays put).
 
 ::: warning Data is not removed when an extension is uninstalled
 Uninstalling an extension removes its code, not its data. The settings the extension stored, any rows it wrote into core tables via model extensions, and any tables/columns its migrations created **all stay in the database**. The Panel deliberately leaves them alone, because:

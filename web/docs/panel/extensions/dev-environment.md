@@ -72,7 +72,7 @@ This will compile the frontend and backend components of the Calagopus Panel.
 
 ### Step 5: Running the Development Server
 
-Now that you have a working backend, hopefully, you can run the frontend development server:
+With a working backend, run the frontend development server:
 
 ```bash
 cd frontend
@@ -96,7 +96,7 @@ rm Cargo.lock frontend/pnpm-lock.yaml # remove lockfiles to avoid git conflicts
 git pull # if there are additional conflicts, resolve them here
 ```
 
-And you are essentially almost done, just rebuild the project:
+Then rebuild the project:
 
 ```bash
 # build frontend, required to build the backend
