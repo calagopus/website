@@ -27,7 +27,7 @@ services:
     environment:
       POSTGRES_PASSWORD: <strong-root-password>
     volumes:
-      - ./data:/var/lib/postgresql/data
+      - ./data:/var/lib/postgresql
     ports:
       - "0.0.0.0:5432:5432"
 ```
