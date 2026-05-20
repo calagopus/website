@@ -6,7 +6,7 @@ That last part is what this page is about. If your extension sends emails - noti
 
 ## What a Template Looks Like
 
-A template is a small Rust struct: an identifier, a list of available variable names, and the default content as a string (typically `include_str!`'d from an HTML file in your extension's source tree). You don't store templates yourself - the Panel manages persistence. You just declare them and the framework handles the override-and-fall-back machinery.
+A template is a small Rust struct: an identifier, a list of available variable names, a default subject line, the default body content as a string (typically `include_str!`'d from an HTML file in your extension's source tree), and whether the template is enabled by default. You don't store templates yourself - the Panel manages persistence. You just declare them and the framework handles the override-and-fall-back machinery.
 
 ```rs
 use shared::extensions::email_templates::EmailTemplate;
@@ -14,20 +14,26 @@ use shared::extensions::email_templates::EmailTemplate;
 EmailTemplate {
     identifier: "dev.0x7d8.test.welcome",
     available_variables: vec!["user", "invite_link"],
+    default_subject: "{{ settings.app.name }} - Welcome",
     default_content: include_str!("../mails/welcome.html"),
+    default_enabled: true,
 }
 ```
 
-The three fields, in order:
+The five fields, in order:
 
 - **`identifier`** is a `&'static str` that uniquely names this template. It's how your code looks the template up later when sending an email, and it's how the admin UI keys overrides in the database. Identifiers are global across the whole Panel - core templates and every extension share one namespace - so prefix yours with your package name (e.g. `dev.0x7d8.test.welcome`, not just `welcome`) to avoid collisions.
 
 - **`available_variables`** is a `Vec<&'static str>` listing the variables your template can use. This is **metadata for the admin UI** - it shows operators which variables are available to put into the template - not enforcement. The actual rendering uses whatever variables the calling code passes; a typo in an override that references a non-existent variable will just render as nothing rather than error. Keep this list accurate so operators editing the template have something to work from.
 
+- **`default_subject`** is the email subject line, as a MiniJinja template string. It supports the same `{{ variable }}` syntax as the body - `{{ settings.app.name }}` works here just as it does in the body content. Operators can override the subject through the admin UI independently of the body.
+
 - **`default_content`** is the template body, a MiniJinja-formatted HTML string. It's `&'static str` because it's typically `include_str!`'d from a file in your extension at build time. Operators can override it through the admin UI; if no override is set, your default is used.
 
+- **`default_enabled`** controls whether the template is enabled out of the box. If `false`, `send_template` and `send_template_foreground` silently skip sending when no operator override is in place. Use this for opt-in notifications (e.g. "server installed" alerts) where most operators probably don't want the email unless they actively turn it on.
+
 ::: info
-Every template implicitly gets a `settings` variable in addition to whatever you declare - it's the Panel's app settings, accessible as `{{ settings.app.name }}`, `{{ settings.app.url }}`, etc. Two things happen automatically: `settings` is appended to your `available_variables` list during finalization (so it shows up in the admin UI even if you didn't list it), and it's injected into the rendering context by `send` / `send_foreground` at send time. You should not pass `settings` yourself in the context - whatever you pass gets overwritten by the framework-provided value anyway.
+Every template implicitly gets a `settings` variable in addition to whatever you declare - it's the Panel's app settings, accessible as `{{ settings.app.name }}`, `{{ settings.app.url }}`, etc. Two things happen automatically: `settings` is appended to your `available_variables` list during finalization (so it shows up in the admin UI even if you didn't list it), and it's injected into the rendering context by `send_template` / `send_template_foreground` at send time. You should not pass `settings` yourself in the context - whatever you pass gets overwritten by the framework-provided value anyway.
 :::
 
 ## Registering Templates
@@ -56,7 +62,9 @@ impl Extension for ExtensionStruct {
         builder.add_template(EmailTemplate {
             identifier: "dev.0x7d8.test.welcome",
             available_variables: vec!["user", "invite_link"],
+            default_subject: "{{ settings.app.name }} - Welcome",
             default_content: include_str!("../mails/welcome.html"),
+            default_enabled: true,
         })
     }
 }
@@ -103,7 +111,7 @@ The `default_content` you ship with your extension should be written in English,
 
 ## Sending an Email Using Your Template
 
-Sending an email is the same pattern the core Panel uses for its own emails - look up the template by identifier, fetch the (possibly-overridden) content, render it with `state.mail.send`:
+Sending an email uses `state.mail.send_template` (fire-and-forget) or `state.mail.send_template_foreground` (awaits and propagates errors). Both methods look up the template, check whether it's enabled, resolve the subject and body (applying any operator overrides), and then send:
 
 ```rs
 use shared::{
@@ -116,19 +124,12 @@ async fn send_welcome_email(
     user: &shared::models::user::User,
     invite_link: &str,
 ) -> Result<(), anyhow::Error> {
-    let settings = state.settings.get().await?;
-    let template = state
-        .mail
-        .templates
-        .get_template("dev.0x7d8.test.welcome")?;
-    let content = template.get_content(state).await?;
-
     state
         .mail
-        .send(
+        .send_template(
+            state,
+            "dev.0x7d8.test.welcome",
             user.email.clone(),
-            format!("{} - Welcome", settings.app.name).into(),
-            content,
             minijinja::context! {
                 user => user,
                 invite_link => invite_link,
@@ -140,16 +141,16 @@ async fn send_welcome_email(
 }
 ```
 
-Note the absence of `?` on the `send` call - `send` returns nothing meaningful at the call site (it spawns a tokio task and any failure is logged from inside the task). If you used `send_foreground` instead, you'd want `.await?` to propagate any send error.
+Note the absence of `?` on the `send_template` call - it returns nothing meaningful (it spawns a tokio task and any failure is logged from inside the task). If you use `send_template_foreground` instead, you'd propagate errors with `.await?`.
 
-The four arguments to `state.mail.send` / `send_foreground`: recipient address, subject line, the rendered template content, and the MiniJinja context for variable substitution.
+The four arguments to `send_template` / `send_template_foreground`: the `State`, the template identifier, the recipient address, and the MiniJinja context for variable substitution.
 
 A few notes on this pattern:
 
-- **The subject is determined by your code, not the template.** Templates only override the body. If you want a translatable or operator-customizable subject too, that's a separate problem (use the [translations system](./translations.md) for translatable, or a regular extension setting for operator-customizable).
-- **`get_content` returns a `Cow<'static, str>`** - if there's no operator override, you get a borrow into your `default_content` (zero-copy); if there is an override, you get an owned `String` from the database. Either way it works as the third argument to `send`.
-- **`get_content` is cached for 15 seconds.** A template change made in the admin UI won't be visible to senders for up to that long. This is almost never a problem, but if you're hammering `get_content` in a tight loop, it's good to know.
-- **`send` vs `send_foreground` is about who handles failures.** `state.mail.send` returns almost immediately - it grabs the settings cache synchronously and spawns a tokio task to do the actual sending. You won't see SMTP errors, network errors, or template rendering errors at the call site; if any of those happen, they're logged from inside the task and the user is none the wiser. `state.mail.send_foreground` has the same signature but does everything in your async context and propagates errors back through the return type. Use `send` for fire-and-forget notifications (welcome emails, password reset notices) where you don't want the user-facing request to fail just because email is broken; use `send_foreground` when the send result actually matters to your code (e.g. an SMTP connection test, where the whole point is to know whether it worked).
+- **The subject comes from the template, not your code.** Both the subject and body are stored in the template and can be overridden by operators. The subject is itself a MiniJinja template string, so `{{ settings.app.name }}` and other variables work there too.
+- **If the template is disabled, the send is silently skipped.** `send_template` returns immediately with no error; `send_template_foreground` returns `Ok(())`. A `tracing::debug` message is emitted so you can see it in logs. Check `default_enabled` on your template definition if you're wondering why emails aren't sending.
+- **The 15-second cache still applies.** Template content and the enabled/disabled state are cached from the database for 15 seconds. A change made in the admin UI won't be visible to senders for up to that long.
+- **`send_template` vs `send_template_foreground` is about who handles failures.** `send_template` returns almost immediately and spawns a tokio task for the actual send - SMTP errors, network errors, and rendering errors are logged from inside the task and the user-facing request is unaffected. `send_template_foreground` does everything in your async context and propagates errors back. Use `send_template` for fire-and-forget notifications; use `send_template_foreground` when the send result actually matters to your code (e.g. an SMTP connection test, where the whole point is to know whether it worked).
 
 ## Overriding Core Templates
 
@@ -164,18 +165,23 @@ async fn initialize_email_templates(
     builder: ExtensionEmailTemplateBuilder,
 ) -> ExtensionEmailTemplateBuilder {
     builder.mutate_template("password_reset", |template| {
+        template.default_subject = "Password Reset - My Brand";
         template.default_content = include_str!("../mails/branded_password_reset.html");
     })
 }
 ```
 
-`mutate_template` finds the template by identifier and runs your closure against it, letting you change the `default_content` (the most common case) or other fields. If no template with that identifier exists, the closure is silently skipped.
+`mutate_template` finds the template by identifier and runs your closure against it, letting you change any field - `default_content` (the most common case), `default_subject`, or `default_enabled`. If no template with that identifier exists, the closure is silently skipped.
 
 The core templates available for mutation, as of this writing, are:
 
 - `account_created` - sent when a new user account is created. Variables: `user`, `reset_link`.
 - `password_reset` - sent when a user requests a password reset. Variables: `user`, `reset_link`.
 - `connection_test` - sent by the admin SMTP test feature. No variables (other than the implicit `settings`).
+- `added_to_server` - sent when a user is added as a subuser to a server. Variables: `user`, `server_link`.
+- `removed_from_server` - sent when a user is removed as a subuser from a server. Variables: `user`.
+- `server_installed` - sent when a server finishes installing. Variables: `user`, `server_link`. Disabled by default.
+- `server_restored` - sent when a server backup is restored. Variables: `user`, `server_link`. Disabled by default.
 
 ::: warning Don't extend `available_variables` on a core template
 The variables list reflects what the calling code actually passes when sending. If you add `"server_count"` to the `password_reset` template's variable list but the password-reset code path never passes a `server_count`, operators will see it in the UI as available but every reference to it in their template will render as nothing. If you need extra variables, register your own template under a new identifier instead and use it from your own code.
@@ -189,17 +195,19 @@ The whole point of using the template system rather than hardcoded HTML is that 
 
 - See the list of all registered templates (core and extension-provided), each labeled by its identifier
 - See the available variables for each template, so they know what they can reference
-- Edit the content, replacing your default with their own customized version
-- Reset back to the default at any time
+- Toggle a template on or off (independently of the default) - disabled templates are silently skipped at send time
+- Edit the subject line, replacing your default with their own customized version (the subject supports the same MiniJinja syntax as the body)
+- Edit the body content, replacing your default with their own customized version
+- Reset the subject and/or content back to the default at any time
 
-The override is per-template and stored in the Panel's database, so it persists across restarts and is shared across panel instances. Resetting deletes the database row, falling back to your `default_content` immediately.
+Overrides are per-template and stored in the Panel's database, so they persist across restarts and are shared across panel instances. Resetting deletes the database row for that field, falling back to your `default_subject` / `default_content` immediately.
 
 ## Where to Go From Here
 
-Most extensions only need `add_template` and the standard send pattern - the rest of this is for less common cases. If you're shipping a feature that sends email, register a template, write your default HTML in English, and use it. The override flow happens for free.
+Most extensions only need `add_template` and `send_template` - the rest of this is for less common cases. If you're shipping a feature that sends email, register a template, write your default HTML and subject in English, and use it. The override flow happens for free.
 
 A few things this page didn't cover that you might want to look into separately:
 
-- **Triggering sends from background tasks.** Nothing about email is route-specific - you can call `state.mail.send` from a `BackgroundTaskBuilder` task or a `ShutdownHandlerBuilder` handler the same way you'd call it from a route. See [Background Tasks and Shutdown Handlers](./background-tasks-and-shutdown-handlers.md).
+- **Triggering sends from background tasks.** Nothing about email is route-specific - you can call `state.mail.send_template` from a `BackgroundTaskBuilder` task or a `ShutdownHandlerBuilder` handler the same way you'd call it from a route. See [Background Tasks and Shutdown Handlers](./background-tasks-and-shutdown-handlers.md).
 - **Per-recipient customization beyond the context.** The MiniJinja context is per-call, so for things like "include this user's recent activity in the email," compute the activity, pass it as a variable, and render it in the template. That's standard usage; no special API.
-- **Conditionally suppressing sends.** If you want users to opt out of certain emails (or operators to disable specific email types globally), check whatever flag you've set up on the user/settings before calling `send` at all - the email-template system doesn't have a built-in suppression mechanism, but the call sites are your code anyway.
+- **Conditionally suppressing sends.** If you want users to opt out of certain emails (or operators to disable specific email types globally), the `default_enabled` field and the operator-facing enabled toggle handle the operator-global case. For per-user opt-out, check whatever flag you've set up on the user before calling `send_template` - the email-template system doesn't have a built-in per-user suppression mechanism, but the call sites are your code anyway.
