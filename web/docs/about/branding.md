@@ -6,6 +6,8 @@
 | -------- | ------- |
 | ![Calagopus Full Logo SVG](/fulllogo.svg) | ![Calagopus Full Logo PNG](/fulllogo.png) |
 | ![Calagopus Icon SVG](/icon.svg) | ![Calagopus Icon PNG](/icon.png) |
+| ![Sleepy Calagopus with ZZZ SVG](/sleepy-zzz.svg) | ![Sleepy Calagopus with ZZZ PNG](/sleepy-zzz.png) |
+| ![Sleepy Calagopus SVG](/sleepy.svg) | ![Sleepy Calagopus PNG](/sleepy.png) |
 | ![Badge Made For Calagopus SVG](/badges/made_for_calagopus.svg) | ![Badge Made For Calagopus PNG](/badges/made_for_calagopus.png) |
 | ![Badge Supports Calagopus SVG](/badges/supports_calagopus.svg) | ![Badge Supports Calagopus PNG](/badges/supports_calagopus.png) |
 | ![Badge Requires Calagopus SVG](/badges/requires_calagopus_wide.svg) | ![Badge Requires Calagopus PNG](/badges/requires_calagopus_wide.png) |
