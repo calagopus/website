@@ -116,7 +116,7 @@ Update your `compose.yaml` to pass the `--auth` flag:
 ```yaml
 services:
   mongodb:
-    image: mongo:11
+    image: mongo:7
     restart: unless-stopped
     command: ["--auth"]
     volumes:
