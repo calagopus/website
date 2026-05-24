@@ -77,7 +77,9 @@ async function buildIndex(bundles: ResolvedBundle[]): Promise<string> {
   for (const bundle of bundles) {
     const rels = await listIncludedFiles(bundle);
     const list = rels.map((rel) => `- ${rel}`).join('\n');
-    sections.push(`# ${bundle.title}\nFiles included in this bundle:\n${list}\n\n## To see this file bundle, fetch \`${bundle.route}\``);
+    sections.push(
+      `# ${bundle.title}\nFiles included in this bundle:\n${list}\n\n## To see this file bundle, fetch \`${bundle.route}\``,
+    );
   }
   return `${sections.join('\n\n')}\n`;
 }
