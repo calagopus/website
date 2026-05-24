@@ -1001,6 +1001,14 @@ Default value:
 container_pid_limit: 5120
 ```
 
+### docker.container_apply_seccomp
+Whether to apply a modified seccomp profile with additional syscalls toggled from the panel, this can break on podman.
+
+Default value:
+```yaml
+container_apply_seccomp: true
+```
+
 ### docker.installer_limits.timeout
 The maximum time (in seconds) allowed for an installation container to run before it is considered failed (`0` = no limit).
 
