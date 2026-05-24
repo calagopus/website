@@ -100,17 +100,20 @@ The importer can read from any of these database backends:
 - `mariadb`
 - `sqlite`
 - `sqlite3`
+- `pgsql`
+- `postgres`
+- `postgresql`
 
 The connection details come from Pelican's `.env` file - you don't need to type them in separately, just point the importer at the file with `--environment` and it figures the rest out.
 
-### MySQL or MariaDB
+### MySQL, MariaDB or PostgreSQL
 
 Your Pelican `.env` should have entries like:
 
 ```bash
 APP_URL=https://panel.example.com
 APP_KEY=base64:...
-DB_CONNECTION=mysql
+DB_CONNECTION=mysql # or pgsql/postgres/postgresql
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_DATABASE=pelican

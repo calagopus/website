@@ -118,6 +118,9 @@ The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supp
 - `mariadb`
 - `sqlite`
 - `sqlite3`
+- `pgsql`
+- `postgres`
+- `postgresql`
 
 You can find the values in Pelican's `.env` file. You will be assembling them into a new file in a moment.
 
@@ -151,9 +154,9 @@ Look at Pelican's `.env` for the value. Common values are `mysql`, `mariadb`, or
 DB_CONNECTION=mysql
 ```
 
-#### MySQL / MariaDB Database Settings
+#### MySQL / MariaDB / PostgreSQL Database Settings
 
-If `DB_CONNECTION` is `mysql` or `mariadb`, you also need:
+If `DB_CONNECTION` is `mysql`, `mariadb`, `pgsql`, `postgres`, or `postgresql`, you also need:
 
 - `DB_HOST`
 - `DB_PORT`
@@ -286,9 +289,9 @@ From Pelican's `.env`:
 DB_CONNECTION=mysql
 ```
 
-#### MySQL / MariaDB Database Settings
+#### MySQL / MariaDB / PostgreSQL Database Settings
 
-If `DB_CONNECTION` is `mysql` or `mariadb`, you also need:
+If `DB_CONNECTION` is `mysql`, `mariadb`, `pgsql`, `postgres`, or `postgresql`, you also need:
 
 - `DB_HOST`
 - `DB_PORT`
@@ -306,10 +309,10 @@ echo "DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddre
 echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $_ })"
 ```
 
-A finished MySQL/MariaDB block looks like:
+A finished MySQL/MariaDB/PostgreSQL block looks like:
 
 ```sh
-DB_CONNECTION=mysql
+DB_CONNECTION=mysql # or mariadb, pgsql, postgres, postgresql
 DB_HOST=172.29.0.4
 DB_PORT=3306
 DB_DATABASE=pelican
@@ -335,7 +338,7 @@ Head to wherever your Calagopus `.env` lives (`/etc/calagopus` by default on Lin
 ```sh
 APP_URL=https://panel.example.com
 APP_KEY=base64:xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
-DB_CONNECTION=mysql
+DB_CONNECTION=mysql # or mariadb, pgsql, postgres, postgresql
 DB_HOST=172.29.0.4
 DB_PORT=3306
 DB_DATABASE=pelican
