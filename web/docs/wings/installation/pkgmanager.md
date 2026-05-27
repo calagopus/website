@@ -51,17 +51,19 @@ ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 
 === RPM (RHEL / Fedora / Rocky / Alma)
 
-### Remove Podman (Optional but Recommended)
+### Install a Container Runtime
 
-Some distributions ship Podman by default. Wings does not officially support Podman - CPU usage reporting will be incorrect if Podman is present instead of Docker.
+Wings needs either Docker or Podman installed and running. RHEL-family distributions ship Podman by default, so you may already have it.
+
+::: tip Already have Podman?
+You can keep it. Skip ahead to [Add the Repository](#add-the-repository-1). After Wings is installed, follow the [Running Wings with Podman](../../advanced/running-wings-with-podman.md) guide to configure Wings to use the Podman socket instead of Docker.
+:::
+
+To use Docker instead, remove Podman first:
 
 ```bash
 dnf remove podman buildah
 ```
-
-::: warning
-If you choose to keep Podman, skip the Docker installation step below and continue from "Add the Repository". Wings will run but CPU usage will not be reported correctly.
-:::
 
 ### Install Docker
 

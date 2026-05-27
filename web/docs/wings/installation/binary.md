@@ -1,8 +1,13 @@
 # Binary Wings Installation
 
-## Install Docker
+## Install a Container Runtime
 
-Wings requires Docker to be installed and running on the host to manage game server containers. Verify your installation:
+Wings requires Docker or Podman to be installed and running on the host to manage game server containers.
+
+::::tabs
+=== Docker
+
+Verify your installation:
 
 ```bash
 docker --version
@@ -15,6 +20,12 @@ curl -sSL https://get.docker.com/ | CHANNEL=stable bash
 ```
 
 Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install) for your distribution.
+
+=== Podman
+
+Podman is supported as a drop-in alternative. Install it via your distribution's package manager (e.g. `apt install podman` or `dnf install podman`), then follow the [Running Wings with Podman](../../advanced/running-wings-with-podman.md) guide to configure Wings to use the Podman socket.
+
+::::
 
 ## Install the Wings Binary
 

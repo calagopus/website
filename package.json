@@ -25,7 +25,7 @@
     "@vueuse/head": "^2.0.0",
     "cytoscape": "^3.33.4",
     "cytoscape-cose-bilkent": "^4.1.0",
-    "dayjs": "^1.11.20",
+    "dayjs": "^1.11.21",
     "debug": "^4.4.3",
     "echarts": "^6.1.0",
     "mermaid": "^11.15.0",
