@@ -11,7 +11,7 @@ Pull the latest image and restart the stack:
 docker compose pull
 docker compose up -d
 ```
-=== APT / RPM
+=== APT / RPM / APK
 Run the package manager upgrade, then restart the service:
 ```bash
 # APT
@@ -21,6 +21,10 @@ apt upgrade -y
 # RPM
 dnf check-update
 dnf upgrade -y
+
+# APK
+apk update
+apk upgrade
 ```
 ```bash
 systemctl restart wings

@@ -11,7 +11,7 @@ docker compose up -d
 # this is recommended if you have limited disk space / are using the heavy image
 docker image prune -a
 ```
-=== APT / RPM
+=== APT / RPM / APK
 Run the package manager upgrade, then restart the service:
 ```bash
 # APT
@@ -21,6 +21,10 @@ apt upgrade -y
 # RPM
 dnf check-update
 dnf upgrade -y
+
+# APK
+apk update
+apk upgrade
 ```
 ```bash
 systemctl restart calagopus-panel

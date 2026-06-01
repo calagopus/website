@@ -138,11 +138,11 @@ The role below can connect from **any IP address**. Use a long, randomly generat
 :::
 
 ```sql
-CREATE USER calagopus WITH PASSWORD '<strong-password>' CREATEDB CREATEROLE;
+CREATE USER calagopus WITH PASSWORD '<strong-password>' SUPERUSER;
 ```
 
 ::: info
-`CREATEDB` and `CREATEROLE` allow the panel to provision databases and per-game-server roles without needing full superuser access.
+`SUPERUSER` allows the panel to provision databases and per-game-server roles without needing additional privileges.
 :::
 
 ## Adding the Host to the Panel
