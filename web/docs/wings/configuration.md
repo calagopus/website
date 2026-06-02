@@ -528,6 +528,38 @@ Default value:
 authentication_cooldown: 60
 ```
 
+### system.sftp.limits.max_connections_per_user
+The maximum number of simultaneous SFTP connections allowed per user account. This prevents a single user from opening too many connections and overwhelming the server.
+
+Default value:
+```yaml
+max_connections_per_user: 10
+```
+
+### system.sftp.limits.max_channels_per_connection
+The maximum number of concurrent channels (e.g., SFTP sessions, shell sessions) allowed within a single SSH connection. This limits the resources consumed by a single connection.
+
+Default value:
+```yaml
+max_channels_per_connection: 10
+```
+
+### system.sftp.limits.max_handles_per_channel
+The maximum number of open file handles allowed per channel in the SFTP server. This prevents resource exhaustion from too many open files in a single session.
+
+Default value:
+```yaml
+max_handles_per_channel: 32
+```
+
+### system.sftp.limits.max_handles_total
+The maximum total number of open file handles across all channels and connections in the SFTP server. This is a global limit to prevent overall resource exhaustion.
+
+Default value:
+```yaml
+max_handles_total: 1024
+```
+
 ### system.sftp.shell.enabled
 Determines whether to allow server management and command-line access via the Wings remote shell over SSH.
 
@@ -1325,6 +1357,10 @@ system:
       authentication_password_attempts: 3
       authentication_pubkey_attempts: 20
       authentication_cooldown: 60
+      max_connections_per_user: 10
+      max_channels_per_connection: 10
+      max_handles_per_channel: 32
+      max_handles_total: 1024
     shell:
       enabled: true
       cli:
