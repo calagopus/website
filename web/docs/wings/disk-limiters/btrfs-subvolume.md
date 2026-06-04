@@ -15,20 +15,50 @@ Wings drives this by shelling out to the `btrfs` CLI: `btrfs subvolume create` o
 
 ## Downsides
 
-- **Not retroactive for existing servers.** See [Migrating existing servers](#migrating-existing-servers) below. A server's volume directory only becomes a subvolume when Wings creates it; directories that already exist as plain folders will not be converted in place.
+- **Not retroactive by default for existing servers.** A server's volume directory only becomes a subvolume when Wings creates it; directories that already exist as plain folders are not converted automatically. The [`migrate-disk-limiter` command](#migrating-existing-servers) can convert them for you.
 - **Qgroup accounting is filesystem-wide work.** Btrfs has to maintain reference counters across all subvolumes on the filesystem. On very large or heavily-fragmented filesystems, this can make operations like balancing or scrubbing noticeably more expensive. For typical game-server workloads this is not a problem, but it is worth knowing about.
 - **Snapshots count against quotas in non-obvious ways.** If you use Btrfs snapshots (for backups or otherwise), be aware that shared extents between a subvolume and its snapshots can show up in qgroup accounting in ways that are not always intuitive. If you don't use Btrfs snapshots outside of what Wings does, you don't need to worry about this.
 
 ## Migrating existing servers
 
-Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `btrfs_subvolume` will **not** convert existing server directories into subvolumes - they will remain plain directories and will not have quotas enforced. Attaching the limiter to a non-subvolume directory will also fail, because Wings verifies it is looking at an actual Btrfs subvolume (inode number 256) before taking ownership of it.
+Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `btrfs_subvolume` will **not** automatically convert existing server directories into subvolumes - they will remain plain directories and will not have quotas enforced. A subvolume is a distinct filesystem object, so existing files have to be copied into a freshly-created subvolume; there is no way to turn a plain directory into one in place.
 
-To bring an existing server under the new limiter, move it off the node and back:
+Wings ships a `migrate-disk-limiter` command that does this conversion for you. For each server it renames the existing directory aside, creates a new subvolume in its place, copies the data back in (using reflinks where possible, so on the same Btrfs filesystem this is fast and uses almost no extra space), applies the disk limit, and removes the old directory. Servers that are already subvolumes are detected and skipped.
 
-1. Transfer the server to a different node.
-2. Transfer it back to the original node.
+::: danger Stop Wings first
+The Wings daemon and all running servers **must** be stopped before running the migration. Migrating a server's directory while its container is running can corrupt or lose data.
+:::
 
-Wings will create a fresh subvolume on the way back in, and the server will be subject to its disk limit from that point on. There is no in-place conversion path; this is inherent to how Btrfs subvolumes work, not a Wings limitation.
+1. Stop the Wings daemon (e.g. `systemctl stop wings`).
+2. Set `disk_limiter_mode: btrfs_subvolume` in your config (see [How do I use it?](#how-do-i-use-it)). The command uses this as the default target, and Wings needs it set to attach the subvolumes on the next boot.
+3. Run a dry run to see what would be migrated:
+
+   ```bash
+   wings migrate-disk-limiter --dry-run
+   ```
+
+4. Run the migration:
+
+   ```bash
+   wings migrate-disk-limiter
+   ```
+
+5. Start the Wings daemon again.
+
+The command pulls the server list and per-server disk limits from the panel, so the node must be configured and able to reach it.
+
+| Flag | Description |
+| --- | --- |
+| `--mode <btrfs-subvolume\|zfs-dataset>` | Target limiter to migrate to. Defaults to the configured `disk_limiter_mode`. |
+| `--server <uuid>` | Only migrate the given server. May be passed multiple times. Defaults to all servers. |
+| `--dry-run` | Report what would be migrated without making any changes. |
+| `-y`, `--yes` | Skip the confirmation prompt (only the daemon-stopped check; you are still responsible for stopping it). |
+
+If a migration fails partway through, the command rolls back automatically: it destroys the partial subvolume and restores the original directory, leaving the server exactly as it was.
+
+::: details Alternative: transfer off the node and back
+If you'd rather not run the command, you can also move a server off the node and back - transfer it to another node, then transfer it back. Wings creates a fresh subvolume on the way back in. This is slower and moves data over the network, so the migration command is preferred.
+:::
 
 ## When should I use it?
 

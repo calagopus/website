@@ -14,20 +14,50 @@ Wings drives this by shelling out to the `zfs` CLI: `zfs create` with an explici
 
 ## Downsides
 
-- **Not retroactive for existing servers.** See [Migrating existing servers](#migrating-existing-servers) below. Each server's volume must be its own dataset; directories that exist as plain folders on the pool will not be converted in place.
+- **Not retroactive by default for existing servers.** Each server's volume must be its own dataset; directories that exist as plain folders on the pool are not converted automatically. The [`migrate-disk-limiter` command](#migrating-existing-servers) can convert them for you.
 - **`refquota`, not `quota`.** Wings uses `refquota`, which counts only data the dataset itself references, not snapshots or descendant datasets. This is almost always what you want for a per-server limit, but if you add your own ZFS snapshots on top, they won't count against the server's limit.
 - **Dataset count can grow large.** ZFS is fine with thousands of datasets per pool, but some operations (e.g. `zfs list` without filters) get slower as the list grows. This is rarely a problem in practice but is worth knowing if you run very dense nodes.
 
 ## Migrating existing servers
 
-Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `zfs_dataset` will **not** convert existing server directories into datasets - they will remain plain directories on the parent dataset and will not have quotas enforced.
+Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `zfs_dataset` will **not** automatically convert existing server directories into datasets - they will remain plain directories on the parent dataset and will not have quotas enforced. A dataset is a distinct filesystem, so existing files have to be copied into a freshly-created dataset; there is no way to turn a plain directory into one in place.
 
-To bring an existing server under the new limiter, move it off the node and back:
+Wings ships a `migrate-disk-limiter` command that does this conversion for you. For each server it renames the existing directory aside, creates a new `server-<uuid>` dataset in its place, copies the data back in, applies the `refquota`, and removes the old directory. Servers that are already backed by a dataset are detected and skipped.
 
-1. Transfer the server to a different node.
-2. Transfer it back to the original node.
+::: danger Stop Wings first
+The Wings daemon and all running servers **must** be stopped before running the migration. Migrating a server's directory while its container is running can corrupt or lose data.
+:::
 
-Wings will create a fresh child dataset on the way back in, and the server will be subject to its `refquota` from that point on. There is no in-place conversion path; this is inherent to how ZFS datasets work, not a Wings limitation.
+1. Stop the Wings daemon (e.g. `systemctl stop wings`).
+2. Set `disk_limiter_mode: zfs_dataset` in your config (see [How do I use it?](#how-do-i-use-it)). The command uses this as the default target, and Wings needs it set to attach the datasets on the next boot.
+3. Run a dry run to see what would be migrated:
+
+   ```bash
+   wings migrate-disk-limiter --dry-run
+   ```
+
+4. Run the migration:
+
+   ```bash
+   wings migrate-disk-limiter
+   ```
+
+5. Start the Wings daemon again.
+
+The command pulls the server list and per-server disk limits from the panel, so the node must be configured and able to reach it.
+
+| Flag | Description |
+| --- | --- |
+| `--mode <btrfs-subvolume\|zfs-dataset>` | Target limiter to migrate to. Defaults to the configured `disk_limiter_mode`. |
+| `--server <uuid>` | Only migrate the given server. May be passed multiple times. Defaults to all servers. |
+| `--dry-run` | Report what would be migrated without making any changes. |
+| `-y`, `--yes` | Skip the confirmation prompt (only the daemon-stopped check; you are still responsible for stopping it). |
+
+If a migration fails partway through, the command rolls back automatically: it destroys the partial dataset and restores the original directory, leaving the server exactly as it was.
+
+::: details Alternative: transfer off the node and back
+If you'd rather not run the command, you can also move a server off the node and back - transfer it to another node, then transfer it back. Wings creates a fresh child dataset on the way back in. This is slower and moves data over the network, so the migration command is preferred.
+:::
 
 ## When should I use it?
 
