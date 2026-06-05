@@ -264,7 +264,7 @@ export default withMermaid({
               { text: 'Standalone', link: '/docs/advanced/migrating/instances/standalone' },
             ],
           },
-          { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
+          { text: 'Reverse Proxy', link: '/docs/advanced/reverse-proxy' },
           { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
           { text: 'Running Wings with Podman', link: '/docs/advanced/running-wings-with-podman' },
           { text: 'Generating SSL Certificates', link: '/docs/advanced/generate-ssl' },
