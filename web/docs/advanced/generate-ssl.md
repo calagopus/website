@@ -2,7 +2,7 @@
 
 Passkeys and some other features require an SSL certificate for your Calagopus Panel and Wings. This guide walks through creating one, based on [Pterodactyl's documentation](https://pterodactyl.io/tutorials/creating_ssl_certificates.html) with some updates for clarity.
 
-This guide is useful if you want to set up a [Reverse Proxy](reverse-proxies.md) or add an SSL certificate to your Wings machine.
+This guide is useful if you want to set up a [Reverse Proxy](reverse-proxy.md) or add an SSL certificate to your Wings machine.
 
 Three methods are covered below, though any standard approach works. All examples use [Let's Encrypt](https://letsencrypt.org).
 
