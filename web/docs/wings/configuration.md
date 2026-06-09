@@ -345,13 +345,6 @@ Default value:
 enabled: true
 ```
 
-### system.machine_id.directory
-The directory on the host disk where Wings stores the generated `machine-id` files.
-
-Default value:
-```yaml
-directory: /run/wings/machine-id
-```
 ### system.disk_check_concurrency
 The number of concurrent allowed disk scans Wings can perform across all servers. This limits the number of simultaneous disk usage checks to prevent excessive background resource consumption on large nodes.
 
@@ -1334,7 +1327,6 @@ system:
     directory: /run/wings/etc
   machine_id:
     enabled: true
-    directory: /run/wings/machine-id
   disk_check_interval: 150
   full_disk_check_every: 6
   disk_check_use_inotify: true

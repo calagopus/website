@@ -52,6 +52,9 @@ export default withMermaid({
         },
       }),
     ],
+    server: {
+      allowedHosts: true,
+    },
   },
 
   markdown: {
@@ -184,6 +187,7 @@ export default withMermaid({
                 text: 'Concepts',
                 collapsed: true,
                 items: [
+                  { text: 'Theming', link: '/docs/panel/extensions/concepts/theming' },
                   { text: 'Events', link: '/docs/panel/extensions/concepts/events' },
                   { text: 'Settings', link: '/docs/panel/extensions/concepts/settings' },
                   { text: 'Routing', link: '/docs/panel/extensions/concepts/routing' },
