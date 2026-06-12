@@ -302,6 +302,7 @@ export default withMermaid({
           { text: 'VS Code', link: '/docs/integrations/vscode' },
           { text: 'Paymenter', link: '/docs/integrations/paymenter' },
           { text: 'WHMCS', link: '/docs/integrations/whmcs' },
+          { text: 'Blesta', link: '/docs/integrations/blesta' },
         ],
       },
     ],
