@@ -296,6 +296,14 @@ export default withMermaid({
           },
         ],
       },
+      {
+        text: 'Integrations',
+        items: [
+          { text: 'VS Code', link: '/docs/integrations/vscode' },
+          { text: 'Paymenter', link: '/docs/integrations/paymenter' },
+          { text: 'WHMCS', link: '/docs/integrations/whmcs' },
+        ],
+      },
     ],
 
     socialLinks: [
