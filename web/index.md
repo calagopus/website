@@ -23,7 +23,7 @@ hero:
 <script setup lang="ts">
 import Features from '../.vitepress/components/Features.vue';
 import Stats from '../.vitepress/components/Stats.vue';
-import { useHead } from '@vueuse/head';
+import { useHead } from '@unhead/vue';
 
 const faqs = [
   {

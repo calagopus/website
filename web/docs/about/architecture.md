@@ -181,7 +181,7 @@ Once Wings daemons and game servers are introduced into this architecture, each 
 
 Calagopus publishes a Software Bill of Materials (SBOM) for every release. An SBOM is a machine-readable inventory that lists the software components, libraries, dependencies, and packages included in a build. It provides transparency into exactly what is shipped with the platform and helps operators understand their software supply chain.
 
-The latest published SBOMs can be found at: [packages.calagopus.com/sbom](https://packages.calagopus.com/sbom)
+The latest published SBOMs can be found at: [packages.calagopus.com/sbom](https://packages.calagopus.com/sbom/)
 
 ### Why We Publish SBOMs
 

@@ -1,5 +1,6 @@
 // https://vitepress.dev/guide/custom-theme
 
+import { createHead } from '@unhead/vue/client';
 import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client';
@@ -17,5 +18,6 @@ export default {
   },
   enhanceApp({ app, router, siteData }) {
     enhanceAppWithTabs(app);
+    app.use(createHead());
   },
 } satisfies Theme;
