@@ -21,7 +21,7 @@
     "@fortawesome/fontawesome-svg-core": "^7.2.0",
     "@fortawesome/free-solid-svg-icons": "^7.2.0",
     "@fortawesome/vue-fontawesome": "^3.2.0",
-    "@types/node": "^24.13.2",
+    "@types/node": "^24.13.1",
     "@vueuse/head": "^2.0.0",
     "cytoscape": "^3.34.0",
     "cytoscape-cose-bilkent": "^4.1.0",
@@ -37,7 +37,7 @@
     "vitepress": "2.0.0-alpha.17",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.9.0",
-    "vue": "^3.5.37",
+    "vue": "^3.5.35",
     "vue-echarts": "^8.0.1"
   }
 }
