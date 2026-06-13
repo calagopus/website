@@ -176,3 +176,23 @@ In a real-world scenario, having more than 2 backends per region is not needed a
 **Important Note**: Within the same region, the backends should share the same redis cache to avoid login issues and session inconsistencies.
 
 Once Wings daemons and game servers are introduced into this architecture, each panel instance communicates directly with the relevant Wings daemons. No passive connections are made unless an extension or feature requires it.
+
+## Software Bill of Materials (SBOM)
+
+Calagopus publishes a Software Bill of Materials (SBOM) for every release. An SBOM is a machine-readable inventory that lists the software components, libraries, dependencies, and packages included in a build. It provides transparency into exactly what is shipped with the platform and helps operators understand their software supply chain.
+
+The latest published SBOMs can be found at: [packages.calagopus.com/sbom](https://packages.calagopus.com/sbom)
+
+### Why We Publish SBOMs
+
+Publishing an SBOM allows administrators and security teams to:
+
+* Audit the third-party dependencies included in a release.
+* Identify whether a known vulnerability affects a deployed version of Calagopus.
+* Meet compliance, governance, or regulatory requirements.
+* Track dependency changes between releases.
+* Integrate Calagopus into existing Software Composition Analysis (SCA) and vulnerability management workflows.
+
+### Supported Formats
+
+SBOMs are provided in standard industry formats to ensure compatibility with common security and compliance tooling, this being [CycloneDX](https://cyclonedx.org).
