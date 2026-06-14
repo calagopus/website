@@ -1,5 +1,4 @@
 import { ViteImageOptimizer } from 'vite-plugin-image-optimizer';
-import ogPlugin from 'vite-plugin-open-graph';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import { tabsMarkdownPlugin } from 'vitepress-plugin-tabs';
 import { aiDocPlugin } from './plugins/ai-doc.ts';
@@ -34,23 +33,6 @@ export default withMermaid({
           multipass: true,
         },
       }),
-      ogPlugin({
-        basic: {
-          type: 'website',
-          title: 'Calagopus',
-          description: 'Game server management - reimagined.',
-          image: 'https://calagopus.com/fulllogo.png',
-          url: 'https://calagopus.com',
-          siteName: 'Calagopus',
-        },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Calagopus',
-          description: 'Game server management - reimagined.',
-          image: 'https://calagopus.com/fulllogo.png',
-          imageAlt: 'Calagopus Logo',
-        },
-      }),
     ],
     server: {
       allowedHosts: true,
@@ -81,6 +63,17 @@ export default withMermaid({
         href: '/favicon.ico',
       },
     ],
+    ['meta', { property: 'og:type', content: 'website' }],
+    ['meta', { property: 'og:title', content: 'Calagopus' }],
+    ['meta', { property: 'og:description', content: 'Game server management - reimagined.' }],
+    ['meta', { property: 'og:image', content: 'https://calagopus.com/fulllogo.png' }],
+    ['meta', { property: 'og:url', content: 'https://calagopus.com' }],
+    ['meta', { property: 'og:site_name', content: 'Calagopus' }],
+    ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+    ['meta', { name: 'twitter:title', content: 'Calagopus' }],
+    ['meta', { name: 'twitter:description', content: 'Game server management - reimagined.' }],
+    ['meta', { name: 'twitter:image', content: 'https://calagopus.com/fulllogo.png' }],
+    ['meta', { name: 'twitter:image:alt', content: 'Calagopus Logo' }],
     [
       'meta',
       {

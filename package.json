@@ -33,7 +33,6 @@
     "svgo": "^4.0.1",
     "vite": "^8.0.16",
     "vite-plugin-image-optimizer": "^2.0.3",
-    "vite-plugin-open-graph": "^2.0.6",
     "vitepress": "2.0.0-alpha.17",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.9.0",
