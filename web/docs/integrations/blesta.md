@@ -7,7 +7,7 @@ This module is based on the official [Blesta Pterodactyl module](https://github.
 :::
 
 ::: danger
-This module authenticates with an **admin API key**, which grants full administrative access to your panel — creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
+This module authenticates with an **admin API key**, which grants full administrative access to your panel - creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
 :::
 
 ## What it does
@@ -68,8 +68,8 @@ The **Nest**, **Egg**, **Node**, and **Location** fields are populated live from
 
 You can deploy in one of two ways:
 
-- **Specific node** — pick a **Node**, and the module provisions onto the first available allocation on that node.
-- **Auto deploy** — leave the node set to *Auto* and select one or more **Locations**. Calagopus picks a node and allocation automatically.
+- **Specific node** - pick a **Node**, and the module provisions onto the first available allocation on that node.
+- **Auto deploy** - leave the node set to *Auto* and select one or more **Locations**. Calagopus picks a node and allocation automatically.
 
 At least one of a node or one or more locations must be set, or the package will not save.
 
@@ -99,7 +99,7 @@ At least one of a node or one or more locations must be set, or the package will
 
 ### Egg variables
 
-The package form renders a field for each of the egg's environment variables, validated against the egg's own rules. Each variable has a **(display)** checkbox — tick it to expose that variable to the client during checkout, letting them set its value themselves; leave it unticked to keep the value fixed by the package.
+The package form renders a field for each of the egg's environment variables, validated against the egg's own rules. Each variable has a **(display)** checkbox - tick it to expose that variable to the client during checkout, letting them set its value themselves; leave it unticked to keep the value fixed by the package.
 
 ## Troubleshooting
 
