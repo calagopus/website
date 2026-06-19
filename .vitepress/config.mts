@@ -242,31 +242,34 @@ export default withMermaid({
           },
         ],
       },
+
       {
         text: 'Advanced',
         items: [
           {
-            text: 'Migrating from another Panel',
+            text: 'Migrations',
             collapsed: true,
             items: [
-              { text: 'Pterodactyl', link: '/docs/advanced/migrating/pterodactyl' },
-              { text: 'Pelican', link: '/docs/advanced/migrating/pelican' },
+              {
+                text: 'From another Panel',
+                collapsed: true,
+                items: [
+                  { text: 'Pterodactyl', link: '/docs/advanced/migrating/pterodactyl' },
+                  { text: 'Pelican', link: '/docs/advanced/migrating/pelican' },
+                ],
+              },
+              {
+                text: 'To another Instance',
+                collapsed: true,
+                items: [
+                  { text: 'Docker', link: '/docs/advanced/migrating/instances/docker' },
+                  { text: 'Standalone', link: '/docs/advanced/migrating/instances/standalone' },
+                ],
+              },
             ],
           },
           {
-            text: 'Migrating to another Instance',
-            collapsed: true,
-            items: [
-              { text: 'Docker', link: '/docs/advanced/migrating/instances/docker' },
-              { text: 'Standalone', link: '/docs/advanced/migrating/instances/standalone' },
-            ],
-          },
-          { text: 'Reverse Proxy', link: '/docs/advanced/reverse-proxy' },
-          { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
-          { text: 'Running Wings with Podman', link: '/docs/advanced/running-wings-with-podman' },
-          { text: 'Generating SSL Certificates', link: '/docs/advanced/generate-ssl' },
-          {
-            text: 'Setting up Database Hosts',
+            text: 'Database Hosts',
             link: '/docs/advanced/setting-up-database-hosts',
             collapsed: true,
             items: [
@@ -275,7 +278,11 @@ export default withMermaid({
               { text: 'MongoDB', link: '/docs/advanced/setting-up-database-hosts/mongodb' },
             ],
           },
-          { text: 'Setting up Backup Configurations', link: '/docs/advanced/setting-up-backup-configurations' },
+          { text: 'SSL Certificates', link: '/docs/advanced/generate-ssl' },
+          { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
+          { text: 'Backup Configurations', link: '/docs/advanced/setting-up-backup-configurations' },
+          { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
+          { text: 'Running Wings with Podman', link: '/docs/advanced/running-wings-with-podman' },
           {
             text: 'Setting up OAuth',
             link: '/docs/advanced/oauth',
@@ -289,6 +296,7 @@ export default withMermaid({
           },
         ],
       },
+
       {
         text: 'Integrations',
         items: [
