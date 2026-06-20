@@ -23,7 +23,7 @@ Use these if you are running the Panel on its own and Wings on separate hosts.
 | `:latest` | The latest stable release of the Calagopus Panel. Optimized for production use and does not include development tools. |
 | `:latest-pre` | The latest pre-release version. May contain new features and bug fixes not yet in `:latest`, but also potentially new bugs. Not recommended for production. |
 | `:nightly` | The latest development build. Updated frequently, may contain new features and bug fixes not yet in `:latest` or `:latest-pre`. Not recommended for production. |
-| `:heavy` | The official image for installing [extensions](../extensions/index.md) in Docker deployments. Includes the build tools and dependencies needed to compile and run them. |
+| `:heavy` | The official image for installing [extensions](../extensions.md) in Docker deployments. Includes the build tools and dependencies needed to compile and run them. |
 | `:heavy-pre` | Pre-release variant of `:heavy`. Same trade-offs as `:latest-pre`. |
 | `:nightly-heavy` | Development-build variant of `:heavy`. Same trade-offs as `:nightly`. |
 
@@ -148,7 +148,7 @@ ls -lh # should show you the compose.yml file
 
 The **Basic** compose uses the `:latest` image and is the right choice for most standalone Panel installations.
 The **Basic with automatic Database Backups** variant adds a small sidecar that periodically backs up the Postgres database.
-The **Heavy** compose uses the `:heavy` image and includes the volume mounts needed to install [extensions](../extensions/index.md) - pick this one only if you know you'll be using extensions.
+The **Heavy** compose uses the `:heavy` image and includes the volume mounts needed to install [extensions](../extensions.md) - pick this one only if you know you'll be using extensions.
 
 ### 2. Change the Docker Image Variant (Optional)
 
