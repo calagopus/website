@@ -142,6 +142,7 @@ export default withMermaid({
       },
       {
         text: 'Panel',
+        link: '/docs/panel/',
         items: [
           { text: 'Overview', link: '/docs/panel/overview' },
           { text: 'Environment', link: '/docs/panel/environment' },
@@ -209,6 +210,7 @@ export default withMermaid({
       },
       {
         text: 'Wings',
+        link: '/docs/wings/',
         items: [
           { text: 'Overview', link: '/docs/wings/overview' },
           { text: 'Configuration', link: '/docs/wings/configuration' },
@@ -242,6 +244,7 @@ export default withMermaid({
           },
           {
             text: 'Advanced',
+            link: '/docs/wings/advanced/',
             collapsed: true,
             items: [
               { text: 'Backup Configurations', link: '/docs/wings/advanced/backup-configurations' },
@@ -253,7 +256,7 @@ export default withMermaid({
       },
       {
         text: 'Additional',
-        link: '/docs/additional',
+        link: '/docs/additional/',
         items: [
           {
             text: 'Migrations',
@@ -306,6 +309,7 @@ export default withMermaid({
 
       {
         text: 'Integrations',
+        link: '/docs/integrations/',
         items: [
           { text: 'VS Code', link: '/docs/integrations/vscode' },
           { text: 'Paymenter', link: '/docs/integrations/paymenter' },

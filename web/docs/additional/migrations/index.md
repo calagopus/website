@@ -1,8 +1,3 @@
----
-prev: false
-next: true
----
-
 # Migrations
 
 Whether you're moving from another panel, or just changing how your existing Calagopus install is deployed, pick the guide that matches what you're doing:
