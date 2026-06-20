@@ -1,7 +1,3 @@
----
-next: false
----
-
 # Feature Reference
 
 A high-level overview of what Calagopus offers, followed by a comparison with other panels.

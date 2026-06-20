@@ -1,7 +1,3 @@
----
-next: false
----
-
 # Architecture
 
 ## Database
