@@ -11,7 +11,7 @@ This guide assumes Pterodactyl's standard [Docker compose setup](https://github.
 
 The general shape of the import is the same regardless of how Pterodactyl is running: you point the Calagopus importer at a `.env` file containing Pterodactyl's database connection details, and it reads everything across. The Docker-specific wrinkle is that you'll usually need to construct that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pterodactyl's original `.env`.
 
-API keys do not migrate. See the [intro](./pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
+API keys do not migrate. See the [intro](../pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 

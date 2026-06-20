@@ -8,7 +8,7 @@ If you only plan to run a **single node** (Panel + Wings on the same host), use 
 
 If you plan to run **multiple nodes**, or want to keep the Panel and Wings on separate hosts, use one of the standalone Panel images (`:latest` or `:heavy`) and install Wings separately following the [Wings Docker Installation](../../wings/installation/docker.md) guide.
 
-Use a **heavy** variant (AIO or standalone) only if you intend to install [extensions](../extensions/index.md) - it bundles the build tooling needed to compile them. Otherwise stick with the non-heavy image; it has a smaller footprint.
+Use a **heavy** variant (AIO or standalone) only if you intend to install [extensions](../extensions.md). It bundles the build tooling needed to compile them. Otherwise stick with the non-heavy image; it has a smaller footprint.
 
 ## Docker Image Variants
 
