@@ -1,5 +1,11 @@
-# Generating an SSL Certificate
+---
+prev: 
+  text: 'Database Hosts'
+  link: '/docs/advanced/database-hosts'
+after: true
+---
 
+# Generating SSL Certificates
 Passkeys and several other Calagopus features require a valid SSL certificate for your Panel and Wings. This guide walks you through generating one.
 
 This is also a prerequisite if you plan to set up a [Reverse Proxy](reverse-proxies.md) or want to [add an SSL certificate](../wings/configuration.md#ssl-configuration) directly to your Wings machine.

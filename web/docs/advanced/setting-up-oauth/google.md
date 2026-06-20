@@ -1,5 +1,11 @@
-# Google OAuth Setup
+---
+prev: 
+  text: 'Setting up OAuth'
+  link: '/docs/advanced/setting-up-oauth'
+next: false
+---
 
+# Google OAuth Setup
 This guide walks through setting up Google OAuth for your Calagopus Panel.
 
 ::: warning
@@ -38,6 +44,7 @@ Once imported, click on the newly created Google provider's ID and you should ar
 Copy the Redirect URL provided by the panel and proceed to the next step.
 
 ### Setting up Google OAuth
+
 #### Select or create a Google Cloud project
 Go to [Google Cloud console](http://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
 ![](./files/images/google/image-1.webp)
@@ -124,6 +131,7 @@ If everything works correctly, you should now be able to see your Google account
 The redirect URL in Google Cloud doesn't match the one provided by Calagopus Panel.
 
 **Solution:**
+
 1. Go back to your Calagopus Panel OAuth provider configuration page
 2. Copy the exact Redirect URL shown
 3. Go to [Google Cloud Console](https://console.cloud.google.com)
@@ -136,6 +144,7 @@ The redirect URL in Google Cloud doesn't match the one provided by Calagopus Pan
 The Client ID or Client Secret is incorrect.
 
 **Solution:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Navigate to APIs & Services → Credentials
 3. Click on your OAuth 2.0 Client ID
@@ -148,6 +157,7 @@ The Client ID or Client Secret is incorrect.
 **Cause:** Your Google OAuth app is in testing mode or not published.
 
 **Solution:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Navigate to APIs & Services → OAuth consent screen
 3. Go to the `Audience` tab
@@ -158,6 +168,7 @@ The Client ID or Client Secret is incorrect.
 **Cause:** Your panel's domain is not added to the authorized domains list.
 
 **Solution:**
+
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Navigate to APIs & Services → OAuth consent screen
 3. Go to the `Branding` tab

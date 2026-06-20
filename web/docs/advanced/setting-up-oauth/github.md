@@ -1,16 +1,20 @@
-# GitHub OAuth Setup
+---
+prev: 
+  text: 'Setting up OAuth'
+  link: '/docs/advanced/setting-up-oauth/index.md'
+next: false
+---
 
+# GitHub OAuth Setup
 This guide walks through setting up GitHub OAuth for your Calagopus Panel.
 
 ### Prerequisites
-
 To set up GitHub OAuth, you need:
 
 * [A GitHub account](https://github.com)
 * A running Calagopus Panel
 
 ### Downloading required files
-
 Download the `github.yml` template to import the GitHub provider configuration without entering values manually.
 
 Right-click the link below and save the file locally.
@@ -18,7 +22,6 @@ Right-click the link below and save the file locally.
 <a href="/oauth2/github.yml" download>Download <code>github.yml</code> ➚</a>
 
 ### Import the template config
-
 Once `github.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
 ![OAuth Providers tab](./files/images/oauth-providers.webp)
 
@@ -31,7 +34,6 @@ Once imported, click on the newly created GitHub provider's ID and you should ar
 Copy the Redirect URL provided by the panel and proceed to the next step.
 
 ### Create your application
-
 Open [this page](https://github.com/settings/applications/new) or navigate to your GitHub account/organisation settings → `Developer Settings` → `OAuth Apps` → `New OAuth App`.
 
 Once on the page, fill out these values:
@@ -47,11 +49,9 @@ With the required fields filled out, it should look something similar to this:
 Once done, you can click on the `Register Application` button, add a logo if you want, and proceed to the next step.
 
 ### Generate a client secret
-
 Click `Generate a new client secret`, confirm your identity, then copy both your Client ID and Client Secret - you will need them in the next step.
 
 ### Configuring the OAuth Provider
-
 Back in the panel, enter the Client ID and Client Secret you copied from GitHub.
 
 On the switches below, choose if you want to enable GitHub OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
@@ -62,7 +62,6 @@ It should normally look like this:
 Finally, save your changes, and you should be done!
 
 ### Test the configuration
-
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your GitHub account.
 ![Testing GitHub](./files/images/github/test.webp)
 
@@ -72,7 +71,6 @@ If everything works correctly, you should now be able to see your GitHub account
 ### Troubleshooting
 
 #### Error: "Redirect URI Mismatch" or "Invalid Redirect URI"
-
 The authorization callback URL in GitHub doesn't match the one provided by Calagopus Panel.
 
 **Solution:**
@@ -85,7 +83,6 @@ The authorization callback URL in GitHub doesn't match the one provided by Calag
 6. Click `Update application`
 
 #### Error: "Invalid Client Credentials" or "Bad Credentials"
-
 The Client ID or Client Secret is incorrect or expired.
 
 **Solution:**
@@ -98,7 +95,6 @@ The Client ID or Client Secret is incorrect or expired.
 6. Save the changes
 
 #### OAuth connection doesn't work with "device_flow" error
-
 Device Flow is enabled on your GitHub OAuth App.
 
 **Solution:**

@@ -251,7 +251,7 @@ export default withMermaid({
             collapsed: true,
             items: [
               {
-                text: 'From another Panel',
+                text: 'From another Panel', 
                 collapsed: true,
                 items: [
                   { text: 'Pterodactyl', link: '/docs/advanced/migrating/pterodactyl' },
@@ -270,28 +270,28 @@ export default withMermaid({
           },
           {
             text: 'Database Hosts',
-            link: '/docs/advanced/setting-up-database-hosts',
+            link: '/docs/advanced/database-hosts',
             collapsed: true,
             items: [
-              { text: 'MySQL (MariaDB)', link: '/docs/advanced/setting-up-database-hosts/mysql' },
-              { text: 'PostgreSQL', link: '/docs/advanced/setting-up-database-hosts/postgres' },
-              { text: 'MongoDB', link: '/docs/advanced/setting-up-database-hosts/mongodb' },
+              { text: 'MySQL (MariaDB)', link: '/docs/advanced/database-hosts/mysql' },
+              { text: 'PostgreSQL', link: '/docs/advanced/database-hosts/postgres' },
+              { text: 'MongoDB', link: '/docs/advanced/database-hosts/mongodb' },
             ],
           },
-          { text: 'SSL Certificates', link: '/docs/advanced/generate-ssl' },
+          { text: 'SSL Certificates', link: '/docs/advanced/ssl-certificates' },
           { text: 'Reverse Proxies', link: '/docs/advanced/reverse-proxies' },
-          { text: 'Backup Configurations', link: '/docs/advanced/setting-up-backup-configurations' },
+          { text: 'Backup Configurations', link: '/docs/advanced/backup-configurations' },
           { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
           { text: 'Running Wings with Podman', link: '/docs/advanced/running-wings-with-podman' },
           {
             text: 'Setting up OAuth',
-            link: '/docs/advanced/oauth',
+            link: '/docs/advanced/setting-up-oauth',
             collapsed: true,
             items: [
-              { text: 'GitHub', link: '/docs/advanced/oauth/github' },
-              { text: 'Google', link: '/docs/advanced/oauth/google' },
-              { text: 'Discord', link: '/docs/advanced/oauth/discord' },
-              { text: 'Generic', link: '/docs/advanced/oauth/generic' },
+              { text: 'GitHub', link: '/docs/advanced/setting-up-oauth/github' },
+              { text: 'Google', link: '/docs/advanced/setting-up-oauth/google' },
+              { text: 'Discord', link: '/docs/advanced/setting-up-oauth/discord' },
+              { text: 'Generic', link: '/docs/advanced/setting-up-oauth/generic' },
             ],
           },
         ],

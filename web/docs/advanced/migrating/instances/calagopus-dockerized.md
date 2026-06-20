@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: 'Migrating to Docker Compose'
+  link: '/docs/advanced/migrating/instances/docker'
 next: false
 ---
 

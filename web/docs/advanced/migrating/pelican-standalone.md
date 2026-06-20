@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: 'Migrating from Pelican'
+  link: '/docs/advanced/migrating/pelican'
 next: false
 ---
 

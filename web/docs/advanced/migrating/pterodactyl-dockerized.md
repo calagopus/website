@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: 'Migrating from Pterodactyl'
+  link: '/docs/advanced/migrating/pterodactyl'
 next: false
 ---
 

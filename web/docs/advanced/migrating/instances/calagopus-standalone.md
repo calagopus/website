@@ -1,5 +1,7 @@
 ---
-prev: false
+prev: 
+  text: 'Migrating to Standalone'
+  link: '/docs/advanced/migrating/instances/standalone'
 next: false
 ---
 

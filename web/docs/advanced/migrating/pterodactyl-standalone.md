@@ -1,5 +1,7 @@
 ---
-prev: false
+prev:
+  text: 'Migrating from Pterodactyl'
+  link: '/docs/advanced/migrating/pterodactyl'
 next: false
 ---
 
@@ -209,6 +211,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
+Wings also needs to be updated to point at the new panel. See [Wings Updating](../../wings/updating.md) for that step.
 
 After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.

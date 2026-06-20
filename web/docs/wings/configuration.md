@@ -1242,13 +1242,14 @@ ignore_panel_wings_upgrades: false
 ## SSL Configuration
 
 ::: info
-This section assumes you have already generated certificates using Certbot. Replace `<domain>` with your actual node domain.
+This section assumes you've already generated a certificate. See [Generating SSL Certificates](../advanced/ssl-certificates.md) if you haven't. Replace `<domain>` with your actual node domain.
 :::
 
 ### Enabling SSL
-By default, the SSL setting is disabled. To secure your Wings communication, change `enabled: false` to `true` and provide the paths to your certificate files.
+SSL is disabled by default. To secure Wings' communication, set `enabled` to `true` under `api.ssl` and point `cert`/`key` to your certificate files.
 
-If you are using Let's Encrypt, your configuration block should be updated to look like this:
+If you're using Let's Encrypt, your config should look like this:
+
 ```yaml
 api:
   host: 0.0.0.0
@@ -1260,7 +1261,8 @@ api:
 ```
 
 ### Applying Changes
-After saving your changes to `config.yml`, you must restart the Wings service for the new SSL configuration to take effect:
+After saving `config.yml`, restart Wings for the new SSL configuration to take effect:
+
 ```bash
 sudo systemctl restart wings
 ```
