@@ -255,7 +255,8 @@ export default withMermaid({
         text: 'Additional',
         items: [
           {
-            text: 'Migrations', link: '/docs/additional/migrations',
+            text: 'Migrations',
+            link: '/docs/additional/migrations',
             collapsed: true,
             items: [
               {
