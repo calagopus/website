@@ -33,7 +33,9 @@ Set up allocations once Wings is connected to the panel.
 See [Next Steps](./next-steps/index.md).
 
 === Disk Limiters
-Enforce per-server storage quotas using Fusequota, Btrfs, ZFS, or XFS. See [Disk Limiters](./disk-limiters/index.md).
+Enforce per-server storage quotas using Fusequota, Btrfs, ZFS, or XFS. 
+
+See [Disk Limiters](./disk-limiters/index.md).
 
 === Advanced
 Backup configurations, homelab exposure, and running Wings under Podman.
