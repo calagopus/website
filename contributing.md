@@ -1,4 +1,4 @@
-![Calagopus Logo](https://calagopus.com/contributing-fullogo.svg)
+![Calagopus Logo](https://calagopus.com/banners/contributing-fullogo.svg)
 
 # Overview
 
