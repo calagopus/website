@@ -1,7 +1,3 @@
----
-prev: false
-next: false
----
 # Migrating from Pterodactyl
 Calagopus includes an importer that reads a Pterodactyl database and writes equivalent records into a fresh Calagopus database. After the import, users log in with the same credentials and all servers, nodes, and eggs are intact.
 
@@ -14,10 +10,10 @@ Pterodactyl comes in two flavors and the import process is slightly different fo
 
 ::::tabs
 === Standalone
-A normal install on a Linux box, Pterodactyl running directly on the host. Head to the [Standalone](./pterodactyl-standalone.md) guide.
+A normal install on a Linux box, Pterodactyl running directly on the host. Head to the [Standalone](./pterodactyl/standalone.md) guide.
 
 === Dockerized
-Pterodactyl running inside Docker containers, with a `docker-compose.yml` somewhere. Head to the [Dockerized](./pterodactyl-dockerized.md) guide.
+Pterodactyl running inside Docker containers, with a `docker-compose.yml` somewhere. Head to the [Dockerized](./pterodactyl/docker.md) guide.
 ::::
 
 If you're not sure which you have, check whether there's a `docker-compose.yml` file in your Pterodactyl directory. If there is, you're Dockerized; if not, you're Standalone.

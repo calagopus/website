@@ -1,3 +1,7 @@
+---
+prev: true
+next: false
+---
 # File Storage
 
 Some extensions need to store files - user-uploaded avatars, generated reports, exported backups, cached external assets, anything that doesn't fit into a database row. The Panel handles this through a `Storage` abstraction available at `state.storage`, which routes file operations to either the local filesystem or an S3-compatible bucket depending on what the operator has configured.

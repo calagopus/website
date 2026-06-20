@@ -1,7 +1,5 @@
 ---
-prev: 
-  text: 'Setting up OAuth'
-  link: '/docs/advanced/setting-up-oauth/index.md'
+prev: true
 next: false
 ---
 # Generic OAuth Setup

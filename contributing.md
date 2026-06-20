@@ -1,4 +1,4 @@
-![Calagopus Logo](https://raw.githubusercontent.com/calagopus/branding/refs/heads/main/img/banners/contributing-fullogo.svg)
+![Calagopus Logo](https://calagopus.com/contributing-fullogo.svg)
 
 # Overview
 This repo powers the Calagopus website and documentation, built with [VitePress](https://vitepress.dev), currently on `v2.0.0-alpha.17`. Expect occasional breaking changes between versions, check the [changelog](https://github.com/vuejs/vitepress/releases) if something breaks after an update.

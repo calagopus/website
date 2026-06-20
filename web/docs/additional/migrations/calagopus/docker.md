@@ -1,18 +1,17 @@
----
-prev:
-  text: 'Migrating to Docker Compose'
-  link: '/docs/advanced/migrating/instances/docker'
-next: false
----
+# Migrating to Docker Compose
 
-# Migrating from Standalone to Docker Compose
-
-This guide walks you through migrating an existing Calagopus standalone (binary) installation to a Docker Compose stack. The process involves two things: copying your encryption key, and exporting your PostgreSQL database and importing it into the new Docker-managed database.
-
-No data transformation is required. The schema is identical between installations.
+This guide covers migrating an existing Calagopus standalone installation into Docker without losing your users, servers, or configuration. The process involves two things: copying your encryption key, and exporting your PostgreSQL database and importing it into the new Docker-managed database. No data transformation is required, the schema is identical between installations.
 
 ::: info
 This guide covers the standalone panel compose setup only. If you want to migrate to an All-in-One setup instead, follow the [Docker installation guide](../../../panel/installation/docker.md) first, then return here for the database migration steps.
+:::
+
+::: info This guide assumes
+- You're using the standard standalone installation
+- Your database is running locally (default setup)
+- You're moving to the standard Docker Compose setup
+
+If your setup differs significantly (custom database hosts, unusual configurations), you may need to adapt some steps.
 :::
 
 ## Overview

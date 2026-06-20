@@ -1,11 +1,3 @@
----
-prev:
-  text: 'Migrations'
-  link: '/docs/advanced/migrations'
-after:
-  text: 'SSL Certificates'
-  link: '/docs/advanced/ssl-certificates'
----
 # Setting up Database Hosts
 
 Database hosts let your users create databases for their game servers directly from the panel. This is useful for game server plugins and applications that need to store data in a relational or document database - for example, Minecraft plugins with MySQL support, or Node.js game servers that use MongoDB.
@@ -16,9 +8,9 @@ Choose a database type:
 
 ::::tabs
 === MySQL (MariaDB)
-See the [MySQL (MariaDB)](./mysql.md) guide.
+See the [MySQL (MariaDB)](./database-hosts/mysql.md) guide.
 === PostgreSQL
-See the [PostgreSQL](./postgres.md) guide.
+See the [PostgreSQL](./database-hosts/postgres.md) guide.
 === MongoDB
-See the [MongoDB](./mongodb.md) guide.
+See the [MongoDB](./database-hosts/mongodb.md) guide.
 ::::

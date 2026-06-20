@@ -1,15 +1,13 @@
----
-prev: 
-  text: 'Migrating to Standalone'
-  link: '/docs/advanced/migrating/instances/standalone'
-next: false
----
+# Migrating to Standalone
 
-# Migrating from Docker Compose to Standalone
+This guide covers migrating an existing Calagopus Docker Compose installation to a standalone binary install without losing your users, servers, or configuration. The process involves copying your encryption key, exporting the PostgreSQL database from Docker, and importing it into the host PostgreSQL instance. No data transformation is required, the schema is identical between installations.
 
-This guide walks you through migrating an existing Calagopus Docker Compose installation to a standalone binary install. The process involves copying your encryption key, exporting the PostgreSQL database from Docker, and importing it into the host PostgreSQL instance.
+::: info This guide assumes
+- You are currently running the standard Docker Compose setup
+- You are installing the standard standalone version of Calagopus
 
-No data transformation is required. The schema is identical between installations.
+If your setup has been modified (for example, external databases or custom container configurations), you may need to adjust the steps accordingly.
+:::
 
 ## Before You Start
 

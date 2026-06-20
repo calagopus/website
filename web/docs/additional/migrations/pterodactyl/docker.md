@@ -1,13 +1,11 @@
 ---
-prev:
-  text: 'Migrating from Pterodactyl'
-  link: '/docs/advanced/migrating/pterodactyl'
+prev: false
 next: false
 ---
 
 # Migrating from Pterodactyl (Dockerized)
 
-This guide is for Pterodactyl installs running in Docker - if you have a `docker-compose.yml` with a Pterodactyl service, you are in the right place. If you are running Pterodactyl directly on the host without containers, use the [Standalone](./pterodactyl-standalone.md) guide instead.
+This guide is for Pterodactyl installs running in Docker. If you have a `docker-compose.yml` with a Pterodactyl service, you are in the right place. If you are running Pterodactyl directly on the host without containers, use the [Standalone](./standalone.md) guide instead.
 
 This guide assumes Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml), but it also works for Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/docker/blob/Master/docker-compose.yml). Variable names and locations are mostly the same.
 
@@ -24,12 +22,12 @@ Before you start, you'll want:
 
 ## Install Calagopus First
 
-If you haven't installed Calagopus yet, follow the [installation guide](../../panel/installation.md). Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
+If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation.md). Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
 
 ::: warning Don't click through the OOBE
 The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer wants to do.
 
-![Calagopus Panel OOBE](../../panel/oobe.webp)
+![Calagopus Panel OOBE](../../../panel/oobe.webp)
 
 ::: details I already clicked through - how do I undo it?
 You'll need to drop and recreate the database. Pick the matching tab for how Calagopus is installed:
@@ -344,6 +342,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
+Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../../wings/updating.md) for that step.
 
 After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.
