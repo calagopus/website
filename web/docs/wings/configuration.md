@@ -1010,6 +1010,22 @@ Default value:
 registries: {}
 ```
 
+### docker.registry_image_fetch_cache.enabled
+Whether to enable caching of image metadata (e.g., digests, tags) from Docker registries to reduce API calls and speed up repeated server starts.
+
+Default value:
+```yaml
+enabled: true
+```
+
+### docker.registry_image_fetch_cache.duration
+The duration (in seconds) that cached image metadata is considered valid before it is refreshed with a new request to the Docker registry.
+
+Default value:
+```yaml
+duration: 300
+```
+
 ### docker.tmpfs_size
 The size (in `MiB`) of the `/tmp` directory mounted as a tmpfs in containers.
 
