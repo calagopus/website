@@ -10,7 +10,7 @@
 
 ## Install Docker
 
-::: tip Using Podman instead?
+::: info Using Podman instead?
 Podman is supported as an alternative to Docker. If you'd prefer to use Podman, install Wings via the [binary](./binary.md) or [package manager](./pkgmanager.md) method and follow the [Running Wings with Podman](../../wings/advanced/running-wings-with-podman.md) guide. The Docker Compose method requires Docker.
 :::
 

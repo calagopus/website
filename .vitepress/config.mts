@@ -147,7 +147,7 @@ export default withMermaid({
           { text: 'Environment', link: '/docs/panel/environment' },
           {
             text: 'Installation',
-            link: '/docs/panel/installation',
+            link: '/docs/panel/installation/',
             collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/panel/installation/docker' },
@@ -158,7 +158,7 @@ export default withMermaid({
           { text: 'Updating', link: '/docs/panel/updating' },
           {
             text: 'Next Steps',
-            link: '/docs/panel/next-steps',
+            link: '/docs/panel/next-steps/',
             collapsed: true,
             items: [
               { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' },
@@ -167,7 +167,7 @@ export default withMermaid({
           },
           {
             text: 'Extensions',
-            link: '/docs/panel/extensions',
+            link: '/docs/panel/extensions/',
             collapsed: true,
             items: [
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
@@ -214,7 +214,7 @@ export default withMermaid({
           { text: 'Configuration', link: '/docs/wings/configuration' },
           {
             text: 'Installation',
-            link: '/docs/wings/installation',
+            link: '/docs/wings/installation/',
             collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/wings/installation/docker' },
@@ -225,13 +225,13 @@ export default withMermaid({
           { text: 'Updating', link: '/docs/wings/updating' },
           {
             text: 'Next Steps',
-            link: '/docs/wings/next-steps',
+            link: '/docs/wings/next-steps/',
             collapsed: true,
             items: [{ text: 'Setting up Allocations', link: '/docs/wings/next-steps/setting-up-allocations' }],
           },
           {
             text: 'Disk Limiters',
-            link: '/docs/wings/disk-limiters',
+            link: '/docs/wings/disk-limiters/',
             collapsed: true,
             items: [
               { text: 'Fusequota', link: '/docs/wings/disk-limiters/fusequota' },
@@ -253,10 +253,11 @@ export default withMermaid({
       },
       {
         text: 'Additional',
+        link: '/docs/additional',
         items: [
           {
             text: 'Migrations',
-            link: '/docs/additional/migrations',
+            link: '/docs/additional/migrations/',
             collapsed: true,
             items: [
               {
@@ -279,7 +280,7 @@ export default withMermaid({
           },
           {
             text: 'Database Hosts',
-            link: '/docs/additional/database-hosts',
+            link: '/docs/additional/database-hosts/',
             collapsed: true,
             items: [
               { text: 'MySQL (MariaDB)', link: '/docs/additional/database-hosts/mysql' },
@@ -291,7 +292,7 @@ export default withMermaid({
           { text: 'Reverse Proxies', link: '/docs/additional/reverse-proxies' },
           {
             text: 'Setting up OAuth',
-            link: '/docs/additional/setting-up-oauth',
+            link: '/docs/additional/setting-up-oauth/',
             collapsed: true,
             items: [
               { text: 'GitHub', link: '/docs/additional/setting-up-oauth/github' },

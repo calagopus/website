@@ -6,13 +6,13 @@ This guide walks through putting a reverse proxy in front of the Calagopus Panel
 Make sure the Panel is already installed and running before continuing. A misconfigured proxy can make the Panel completely inaccessible until fixed.
 :::
 
-::: info
-This guide assumes you already have Let's Encrypt certificates for your domain *see [Generating SSL Certificates](ssl-certificates.md) if you haven't yet.* Replace every `<domain>` placeholder below with your actual domain name.
-:::
-
 ## Before You Begin
 
 There are two things the Panel needs to know about once it's sitting behind a proxy: which IP the proxy is forwarding from, and which IP it should forward *to*.
+
+::: warning
+This guide assumes you already have Let's Encrypt certificates for your domain *see [Generating SSL Certificates](ssl-certificates.md) if you haven't yet.* Replace every `<domain>` placeholder below with your actual domain name.
+:::
 
 ### 1. Trust the proxy's IP
 

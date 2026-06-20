@@ -32,7 +32,7 @@ Like **Restic** and **DdupBak**, both **Proxmox Backup Server** and **Kopia** de
 
 **DdupBak** is currently **experimental**, but it's the fastest deduplicating backend available - faster than restic both when creating and restoring backups - while keeping the operational setup as simple as a local tarball (no repository, no password, nothing to initialize). If you want deduplication and are comfortable with the experimental status, it's worth trying. See [ddup-bak on GitHub](https://github.com/0x7d8/ddup-bak) for details on the format.
 
-**Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../disk-limiters.md) to be configured on the Wings node - that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../disk-limiters/btrfs-subvolume.md) and [ZFS](../disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
+**Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../disk-limiters/index.md) to be configured on the Wings node - that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../disk-limiters/btrfs-subvolume.md) and [ZFS](../disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
 
 ## Browsing Backups from the Client UI
 
@@ -73,7 +73,7 @@ Use the **S3** disk for AWS S3, MinIO, Backblaze B2's S3-compatible endpoint, Cl
 | **Path Style** | Toggle on for providers that require path-style URLs (`endpoint/bucket/key`) instead of virtual-hosted (`bucket.endpoint/key`). MinIO and some self-hosted setups typically need this on; AWS and most managed providers do not. |
 | **Part Size** | Multipart upload chunk size in bytes. `1073741824` (1 GB) is a good default for most S3 providers. Raise it for very large backups on fast links; the minimum S3 allows is 5 MB. |
 
-::: tip
+::: info
 If you're unsure whether your provider needs **Path Style**, try it off first. If uploads fail with DNS or certificate errors, turn it on.
 :::
 
@@ -126,7 +126,7 @@ Use the **Proxmox Backup Server** disk to store backups in a [Proxmox Backup Ser
 | **Fingerprint** | The PBS server's TLS certificate SHA-256 fingerprint (64 hex characters; colons are optional). Required - PBS connections are pinned to this fingerprint. |
 | **Backup ID Prefix** | Optional prefix for the PBS backup ID. Defaults to `calagopus`. Wings will only ever delete snapshots whose backup ID matches `<prefix>-<server-uuid>`, so this also acts as a safety boundary against touching unrelated snapshots in the datastore. |
 
-::: tip
+::: info
 You can read the fingerprint from the PBS web UI dashboard (**Show Fingerprint**) or with `proxmox-backup-manager cert info` on the PBS host. Either the colon-separated form (`AB:CD:...`) or the plain 64-character hex string works.
 :::
 
@@ -173,7 +173,7 @@ A node-level assignment overrides whatever the location defines.
 
 A server-level assignment overrides both the node and the location.
 
-::: tip
+::: info
 A common setup is one restic repository per location (covering most servers) with per-node overrides for specialized hosts - e.g. a node that backs up to a Btrfs snapshot locally for faster restore, while the rest of the location goes to remote restic.
 :::
 
@@ -207,7 +207,7 @@ Yes:
 
 - **Restic** requires the `restic` binary on the node.
 - **Kopia** requires the `kopia` binary on the node, plus a reachable [Kopia repository server](https://kopia.io/docs/repository-server/).
-- **Btrfs** and **Zfs** require the host filesystem to be Btrfs/ZFS and the matching [disk limiter](../disk-limiters.md) to be configured.
+- **Btrfs** and **Zfs** require the host filesystem to be Btrfs/ZFS and the matching [disk limiter](../disk-limiters/index.md) to be configured.
 - **Proxmox Backup Server**, **S3**, **Local**, and **DdupBak** need no extra binaries on the node (PBS and S3 are reached over HTTP).
 
 ### Can I use different drivers for different servers?

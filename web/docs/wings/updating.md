@@ -2,7 +2,7 @@
 
 Updating Wings periodically gets you bug fixes, security patches, and new features. The process is quick and safe to do whenever a new release comes out, you don't need to plan downtime around it.
 
-::: tip No downtime required
+::: info No downtime required
 Game server containers run independently of the Wings daemon. You can update Wings without stopping your servers, they will continue running as normal while Wings restarts.
 :::
 

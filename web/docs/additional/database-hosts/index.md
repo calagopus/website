@@ -8,9 +8,9 @@ Choose a database type:
 
 ::::tabs
 === MySQL (MariaDB)
-See the [MySQL (MariaDB)](./database-hosts/mysql.md) guide.
+See the [MySQL (MariaDB)](./mysql.md) guide.
 === PostgreSQL
-See the [PostgreSQL](./database-hosts/postgres.md) guide.
+See the [PostgreSQL](./postgres.md) guide.
 === MongoDB
-See the [MongoDB](./database-hosts/mongodb.md) guide.
+See the [MongoDB](./mongodb.md) guide.
 ::::

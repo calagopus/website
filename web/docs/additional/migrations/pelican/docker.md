@@ -20,7 +20,7 @@ Before you start, you'll want:
 
 ## Install Calagopus First
 
-If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation.md). Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
+If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md) Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
 
 ::: warning Don't click through the OOBE
 The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer wants to do.

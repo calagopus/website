@@ -52,7 +52,7 @@ Customers are matched to panel users by their Paymenter user ID (stored as the u
 
 Create a product (or edit an existing one) and select **Calagopus** as the server extension. The product configuration is where you define what every server provisioned from this product looks like.
 
-::: tip
+::: info
 The **Nest**, **Egg**, **Node**, and **Location** fields are populated live from your panel through the API key you configured on the server, so you can pick them from dropdowns rather than copying UUIDs by hand. Choosing a nest refreshes the available eggs.
 :::
 

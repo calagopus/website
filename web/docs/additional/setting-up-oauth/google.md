@@ -9,7 +9,7 @@ If you are planning to configure Google OAuth, please keep in mind that on Googl
 
 If you don't want your personal email to be shared, you have 2 options:
 * **1. Create a separate Google account with a work email.** This will show your work email instead of your personal email, so you won't get spammed by bots on your personal email.
-* **2. Don't use Google OAuth.** Use another provider from [this list](../setting-up-oauth.md).
+* **2. Don't use Google OAuth.** Use another provider from [this list](./index.md).
 :::
 
 ### Prerequisites
