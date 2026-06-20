@@ -1,4 +1,5 @@
 # Setting up a Reverse Proxy
+
 This guide walks through putting a reverse proxy in front of the Calagopus Panel running in Docker. A reverse proxy lets the Panel's internal web server (default port `8000`) be served securely over the standard `HTTP`/`HTTPS` ports (80/443), instead of exposing port 8000 directly.
 
 ::: warning
@@ -10,9 +11,11 @@ This guide assumes you already have Let's Encrypt certificates for your domain *
 :::
 
 ## Before You Begin
+
 There are two things the Panel needs to know about once it's sitting behind a proxy: which IP the proxy is forwarding from, and which IP it should forward *to*.
 
 ### 1. Trust the proxy's IP
+
 Without this, the Panel will log the reverse proxy's IP as the client IP for every request, instead of the real visitor's IP. Set [`APP_TRUSTED_PROXIES`](../panel/environment#app-trusted-proxies) to the proxy's IP (commonly your Docker bridge gateway, e.g. `172.18.0.1`):
 
 ```yaml
@@ -23,6 +26,7 @@ services:
 ```
 
 ### 2. Find the Panel container's IP
+
 This is the address your proxy config below forwards traffic *to*. It depends on your Docker network setup and can vary between systems, so detect it directly rather than assuming `172.18.0.1`:
 
 ```bash
@@ -32,6 +36,7 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(d
 Use whatever IP this outputs (e.g. `172.18.0.1`) everywhere the configs below reference the Panel's address.
 
 ## Proxy Servers
+
 Pick whichever you're already running, or whichever you'd prefer for a new setup:
 
 ::::tabs
@@ -277,6 +282,7 @@ Caddy is the simplest option because it handles SSL automatically on its own, so
 ::::
 
 ## Enabling the Configuration
+
 Once your config file is in place, enable it and reload the relevant service:
 
 ::: code-group
@@ -303,9 +309,11 @@ systemctl restart caddy
 :::
 
 ## Verify Access
+
 Visit `https://<domain>` in your browser. You should land on the Panel's login page, served through your chosen proxy.
 
 ## Set the Server URL
+
 Once access is confirmed, go to the Panel's Admin page, set the server URL to `https://<domain>`, and save. This URL is what the Panel uses for generated links, API calls, and Wings node connections. It needs to match what you just set up.
 
 ![Calagopus Panel URL](./server-url.webp)

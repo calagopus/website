@@ -2,6 +2,7 @@
 prev: false
 next: true
 ---
+
 # Panel
 
 The Calagopus **Panel** is the central management interface for game servers and related services. It provides the web UI and backend that handle server orchestration, user management, and integrations. The panel alone doesn't host game servers - for that you also need [Wings](../wings/overview.md) running on at least one node.

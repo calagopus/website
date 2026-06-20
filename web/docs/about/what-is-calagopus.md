@@ -1,3 +1,8 @@
+---
+prev: false
+next: true
+---
+
 ![Calagopus Logo](/fulllogo.svg)
 
 # What is Calagopus?
@@ -10,11 +15,11 @@ It draws inspiration from Pterodactyl but is written from scratch in Rust, with 
 
 ### How is Calagopus different from Pterodactyl?
 
-Calagopus is built in Rust, where Pterodactyl uses PHP. The result is meaningfully better performance - throughput improvements of over 32,800% in our [benchmarks](./benchmarks.md) - alongside Rust's memory-safety guarantees. Calagopus also ships its own extension API designed around Rust traits, rather than the PHP-based plugin systems of older panels. We provide a [migration guide](../advanced/migrating/pterodactyl.md) for existing Pterodactyl users.
+Calagopus is built in Rust, where Pterodactyl uses PHP. The result is meaningfully better performance - throughput improvements of over 32,800% in our [benchmarks](./benchmarks.md) - alongside Rust's memory-safety guarantees. Calagopus also ships its own extension API designed around Rust traits, rather than the PHP-based plugin systems of older panels. We provide a [migration guide](../additional/migrations/pterodactyl.md) for existing Pterodactyl users.
 
 ### How is Calagopus different from Pelican?
 
-Pelican is a Pterodactyl fork that retains the same PHP/Laravel architecture. Calagopus is a complete rewrite in a different language stack, so the two share goals but very little code. If you're already on Pelican, see the [migration guide](../advanced/migrating/pelican.md).
+Pelican is a Pterodactyl fork that retains the same PHP/Laravel architecture. Calagopus is a complete rewrite in a different language stack, so the two share goals but very little code. If you're already on Pelican, see the [migration guide](../additional/migrations/pelican.md).
 
 ### What games does Calagopus support?
 
@@ -30,7 +35,7 @@ Yes - for personal and commercial use, with no feature gating.
 
 ### Can I migrate from Pterodactyl or Pelican?
 
-Yes. Calagopus provides migration tooling for both panels. See the [Pterodactyl migration guide](../advanced/migrating/pterodactyl.md) or [Pelican migration guide](../advanced/migrating/pelican.md).
+Yes. Calagopus provides migration tooling for both panels. See the [Pterodactyl migration guide](../additional/migrations/pterodactyl.md) or [Pelican migration guide](../additional/migrations/pelican.md).
 
 ### Does Calagopus have an Extension API?
 

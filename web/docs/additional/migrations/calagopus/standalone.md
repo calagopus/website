@@ -176,7 +176,9 @@ Open Calagopus in your browser and check:
 ## Troubleshooting
 
 **Setup wizard (OOBE) appears after starting:**
+
 The database was not imported correctly. Stop the panel with `systemctl stop calagopus-panel`, drop and recreate the database, re-run the import, then start again.
 
 **Login fails / encrypted data appears corrupted:**
+
 The `APP_ENCRYPTION_KEY` in `/etc/calagopus/.env` does not match the one from your Docker installation. Stop the panel, correct the key, and start it again.

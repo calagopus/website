@@ -1,7 +1,14 @@
+---
+prev: true
+next: false
+---
+
 # Running Wings with Podman
+
 Wings communicates with a container runtime through the Docker API. Podman exposes a compatible socket, so Wings works with Podman out of the box with a few configuration changes. This guide covers both **rootful** (running as root) and **rootless** (running as a normal user) Podman setups.
 
 ## Before You Start
+
 Make sure the Podman socket is running before Wings starts. For rootful Podman, enable the system socket service:
 
 ```bash
@@ -15,9 +22,11 @@ systemctl --user enable --now podman.socket
 ```
 
 ## Changes Common to Both Modes
+
 Regardless of whether you're running rootful or rootless, three settings must be changed from the Wings defaults.
 
 ### Socket path
+
 The Docker default is `/var/run/docker.sock`. Point it at the Podman socket instead:
 
 ::::tabs
@@ -41,6 +50,7 @@ Replace `1000` with your actual user ID (`id -u`).
 ::::
 
 ### Log driver
+
 Podman does not support the `local` log driver that Wings uses by default. Switch to `json-file`:
 
 ```diff
@@ -50,6 +60,7 @@ Podman does not support the `local` log driver that Wings uses by default. Switc
 ```
 
 ### Seccomp profile
+
 The default seccomp profile can break under Podman. Disable it:
 
 ```diff
@@ -58,6 +69,7 @@ The default seccomp profile can break under Podman. Disable it:
 ```
 
 ## Rootful Podman
+
 In rootful mode, Podman runs as root. Wings configuration is essentially unchanged from a standard Docker setup - the only differences are the three above. Your `system.user` block stays at defaults (rootless disabled, UID/GID set to whatever user Wings runs as).
 
 A minimal rootful Podman diff from a default Wings config:
@@ -74,9 +86,11 @@ A minimal rootful Podman diff from a default Wings config:
 ```
 
 ## Rootless Podman
+
 In rootless mode, Podman runs entirely under your user account without any root privileges. Wings needs to know this so it can map file ownership and container user namespaces correctly.
 
 ### Enable rootless mode in Wings
+
 Set `system.user.rootless.enabled` to `true`:
 
 ```diff
@@ -91,6 +105,7 @@ When `rootless.enabled` is `true`, Wings automatically fills in `container_uid`,
 :::
 
 ### File paths
+
 In rootless mode, Wings cannot write to system directories. Point all paths to somewhere your user owns, typically under your home directory:
 
 ```diff
@@ -110,6 +125,7 @@ In rootless mode, Wings cannot write to system directories. Point all paths to s
 ```
 
 ### Disk limiters
+
 Most disk limiters require root to set up subvolumes or quotas. If you are not using a disk limiter, set `disk_limiter_mode` to `none`:
 
 ```diff
@@ -122,6 +138,7 @@ Without a disk limiter, Wings cannot enforce per-server disk quotas. If you need
 :::
 
 ## Full Diff: Rootful vs. Rootless
+
 The following shows the differences between a rootful and rootless Podman config, assuming both start from the same base. Lines marked `-` apply to rootful only; lines marked `+` apply to rootless.
 
 ```diff

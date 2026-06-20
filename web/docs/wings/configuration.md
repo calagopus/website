@@ -3,6 +3,7 @@
 This page is a reference for all Wings configuration options. The configuration file is located at `/etc/pterodactyl/config.yml` on Linux (the path defaults to the Pterodactyl location for migration compatibility).
 
 ## Core Configuration
+
 ### debug
 Enables debug mode for Wings. When enabled, detailed logs are printed for troubleshooting.
 
@@ -36,8 +37,8 @@ token_id: TOKEN_ID
 token: TOKEN
 ```
 
-
 ## API Settings
+
 ### api.host
 The IP address Wings binds its internal API to. Alternatively, a Unix socket path can be specified here.
 
@@ -154,7 +155,6 @@ send_offline_server_logs: false
 The number of concurrent worker threads Wings spawns to crawl and scan through server files during a search request.
 
 Default value:
-
 ```yaml
 file_search_threads: 4
 ```
@@ -188,7 +188,7 @@ The maximum file size in `MiB` that can be uploaded through the web-based file m
 
 Default value:
 ```yaml
-upload_limit: 10240
+upload_limit: 100
 ```
 
 ### api.max_jwt_uses
@@ -208,6 +208,7 @@ trusted_proxies: []
 ```
 
 ## System Configuration
+
 ### system.root_directory
 This is the root directory where Wings stores its own persistent data (mainly state of servers so it can restore them on restart).
 
@@ -226,7 +227,6 @@ log_directory: /var/log/pterodactyl
 
 ### system.vmount_directory
 This is the directory where Wings stores virtual mounts for servers. Currently mainly used for spoofing hardware UUIDs for containers. This directory **should not** be located on a tmpfs (temporary filesystem).
-
 
 Default value:
 ```yaml
@@ -431,8 +431,8 @@ Default value:
 websocket_log_count: 150
 ```
 
-
 ## SFTP Configuration
+
 ### system.sftp.enabled
 Whether to enable the integrated SFTP (SSH) server.
 
@@ -586,6 +586,7 @@ log_file_reads: false
 ```
 
 ## Crash Detection
+
 ### system.crash_detection.enabled
 Enables or disables the automatic crash detection system for all servers on the node.
 
@@ -610,8 +611,8 @@ Default value:
 timeout: 60
 ```
 
-
 ## File History Configuration
+
 ### system.file_history.enabled
 Enables or disables the file history tracking system. When enabled, Wings records a diff-based changelog of edits made to server files through the file manager and SFTP, allowing users to view and restore previous versions.
 
@@ -677,6 +678,7 @@ maintenance_interval: 3600
 ```
 
 ## Backups Configuration
+
 ### system.backups.write_limit
 The maximum disk write speed (in `MiB/s`) for creating backups. This prevents restoration processes from saturating the disk I/O and slowing down the rest of the node (`0` = unlimited).
 
@@ -755,6 +757,7 @@ create_threads: 4
 
 ### system.backups.s3.part_upload_timeout
 The maximum time (in seconds) to wait for a single part of a multipart upload.
+
 Default value:
 ```yaml
 part_upload_timeout: 7200
@@ -847,6 +850,7 @@ restore_threads: 4
 ```
 
 ## Transfers
+
 ### system.transfers.download_limit
 The download rate limit for transfers in MiB/s (`0` = unlimited).
 
@@ -856,6 +860,7 @@ download_limit: 0
 ```
 
 ## Docker Configuration
+
 ### docker.socket
 The path to the Docker daemon socket or HTTP address.
 
@@ -923,7 +928,7 @@ ispn: false
 ```
 
 ### docker.network.driver
-The Docker network driver used for the container network (e.g. `bridge`). 
+The Docker network driver used for the container network (e.g. `bridge`).
 
 Default value:
 ```yaml
@@ -1091,7 +1096,6 @@ default_multiplier: 1.05
 ```
 
 ### docker.overhead.multipliers
-Map of memory thresholds to multipliers.
 A map of specific memory thresholds to custom multipliers, allowing for granular overhead control based on server size.
 
 Default value:
@@ -1140,14 +1144,15 @@ max-size: 5m
 ```
 
 ### docker.log_config.config.mode
-The delivery mode for logs (e.g. `non-blocking`), determining how Docker handles log data when the buffer is full. 
+The delivery mode for logs (e.g. `non-blocking`), determining how Docker handles log data when the buffer is full.
 
 Default value:
 ```yaml
 mode: non-blocking
 ```
 
-## Backups & Throttles
+## Throttles
+
 ### throttles.enabled
 The toggle to enable or disable console output throttling for all containers.
 
@@ -1173,6 +1178,7 @@ line_reset_interval: 100
 ```
 
 ## Remote Configuration
+
 ### remote
 The URL of the Panel instance that this Wings node communicates with.
 
@@ -1214,6 +1220,7 @@ retry_limit: 10
 ```
 
 ## Security / Behaviour Flags
+
 ### allowed_mounts
 A security whitelist defining which specific directories or files on the host system are permitted to be mounted into a server's Docker container.
 
@@ -1254,11 +1261,10 @@ Default value:
 ignore_panel_wings_upgrades: false
 ```
 
-
 ## SSL Configuration
 
 ::: info
-This section assumes you've already generated a certificate. See [Generating SSL Certificates](../advanced/ssl-certificates.md) if you haven't. Replace `<domain>` with your actual node domain.
+This section assumes you've already generated a certificate. See [Generating SSL Certificates](../additional/ssl-certificates.md) if you haven't. Replace `<domain>` with your actual node domain.
 :::
 
 ### Enabling SSL
@@ -1285,14 +1291,15 @@ sudo systemctl restart wings
 
 
 ## Example Config
+
 The following is an example of a standard generated `config.yml` for Wings with standard values:
 
 ```yaml
 debug: false
 app_name: Pterodactyl
-uuid: UUID
-token_id: TOKEN_ID
-token: TOKEN
+uuid: UUID_HERE
+token_id: TOKEN_ID_HERE
+token: TOKEN_HERE
 api:
   host: 0.0.0.0
   port: 8080
@@ -1320,7 +1327,7 @@ api:
   file_copy_threads: 4
   file_decompression_threads: 2
   file_compression_threads: 2
-  upload_limit: 10240
+  upload_limit: 100
   max_jwt_uses: 5
   trusted_proxies: []
 system:
@@ -1345,8 +1352,9 @@ system:
     directory: /run/wings/etc
   machine_id:
     enabled: true
+  disk_check_concurrency: 2
   disk_check_interval: 150
-  full_disk_check_every: 6
+  full_disk_check_every: 4
   disk_check_use_inotify: true
   disk_limiter_mode: none
   activity_send_interval: 60
@@ -1449,6 +1457,7 @@ docker:
   registries: {}
   tmpfs_size: 100
   container_pid_limit: 5120
+  container_apply_seccomp: true
   installer_limits:
     timeout: 1800
     memory: 1024

@@ -240,9 +240,17 @@ export default withMermaid({
               { text: 'XFS Quota', link: '/docs/wings/disk-limiters/xfs-quota' },
             ],
           },
+          {
+            text: 'Advanced',
+            collapsed: true,
+            items: [
+              { text: 'Backup Configurations', link: '/docs/wings/advanced/backup-configurations' },
+              { text: 'Exposing Wings in a Homelab', link: '/docs/wings/advanced/exposing-wings-in-a-homelab' },
+              { text: 'Running Wings with Podman', link: '/docs/wings/advanced/running-wings-with-podman' },
+            ],
+          },
         ],
       },
-
       {
         text: 'Additional',
         items: [
@@ -280,12 +288,9 @@ export default withMermaid({
           },
           { text: 'SSL Certificates', link: '/docs/additional/ssl-certificates' },
           { text: 'Reverse Proxies', link: '/docs/additional/reverse-proxies' },
-          { text: 'Backup Configurations', link: '/docs/additional/backup-configurations' },
-          { text: 'Exposing Wings in a Homelab', link: '/docs/additional/exposing-wings-in-a-homelab' },
-          { text: 'Running Wings with Podman', link: '/docs/additional/running-wings-with-podman' },
           {
             text: 'Setting up OAuth',
-            link: '/docs/advanced/setting-up-oauth',
+            link: '/docs/additional/setting-up-oauth',
             collapsed: true,
             items: [
               { text: 'GitHub', link: '/docs/additional/setting-up-oauth/github' },

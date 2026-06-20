@@ -1,10 +1,3 @@
----
-prev: 
-  text: 'Setting up OAuth'
-  link: '/docs/advanced/setting-up-oauth/index.md'
-next: false
----
-
 # GitHub OAuth Setup
 This guide walks through setting up GitHub OAuth for your Calagopus Panel.
 

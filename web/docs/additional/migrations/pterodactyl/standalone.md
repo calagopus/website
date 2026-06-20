@@ -9,7 +9,7 @@ This guide is for Pterodactyl installs that run directly on the host with no Doc
 
 The process involves installing Calagopus alongside your existing Pterodactyl, pointing the importer at Pterodactyl's `.env` file, and letting it read everything from Pterodactyl's database and write equivalent records into Calagopus's fresh database. Users log in with the same credentials afterwards.
 
-API keys do not migrate. See the [intro](./pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
+API keys do not migrate. See the [intro](../pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 

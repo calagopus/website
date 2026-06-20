@@ -1,9 +1,3 @@
----
-prev: 
-  text: 'Setting up OAuth'
-  link: '/docs/advanced/setting-up-oauth/index.md'
-next: false
----
 # Discord OAuth Setup
 This guide walks through setting up Discord OAuth for your Calagopus Panel.
 

@@ -1,7 +1,3 @@
----
-prev: true
-next: false
----
 # XFS Quota
 
 ## What is it?

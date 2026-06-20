@@ -1,4 +1,5 @@
 # Setting up OAuth
+
 OAuth allows users to sign in to the panel using an existing identity provider instead of a panel-specific password. This reduces friction for onboarding, eliminates panel-specific password reset flows, and lets communities centralize identity with a provider they already manage.
 
 Supported providers:

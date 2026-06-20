@@ -1,8 +1,8 @@
 # Setting up Database Hosts
 
-Database hosts let your users create databases for their game servers directly from the panel. This is useful for game server plugins and applications that need to store data in a relational or document database - for example, Minecraft plugins with MySQL support, or Node.js game servers that use MongoDB.
+Database hosts let your users create databases for their game servers directly from the panel, instead of asking you to do it manually every time. Useful for things like Minecraft plugins that need MySQL, or Node.js servers using MongoDB.
 
-The panel connects to the database host using a privileged account and provisions databases and users on demand. Each server gets its own isolated credentials.
+The panel connects using a privileged account and provisions a database and user per server on demand, each with isolated credentials, so no server can see another's data. You can add multiple database hosts if you want, for example, to split load across regions or server types.
 
 Choose a database type:
 

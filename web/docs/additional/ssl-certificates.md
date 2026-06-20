@@ -1,11 +1,5 @@
----
-prev: 
-  text: 'Database Hosts'
-  link: '/docs/advanced/database-hosts'
-after: true
----
-
 # Generating SSL Certificates
+
 Passkeys and several other Calagopus features require a valid SSL certificate for your Panel and Wings. This guide walks you through generating one.
 
 This is also a prerequisite if you plan to set up a [Reverse Proxy](reverse-proxies.md) or want to [add an SSL certificate](../wings/configuration.md#ssl-configuration) directly to your Wings machine.
@@ -18,6 +12,7 @@ All methods below use [Let's Encrypt](https://letsencrypt.org), which issues fre
 This is the most common method and works well if your server has port 80 open to the internet.
 
 ### 1. Install certbot
+
 Commands below are for Debian-based distributions using APT. For other systems, see the [official certbot website](https://certbot.eff.org/instructions).
 
 ```bash
@@ -30,6 +25,7 @@ sudo apt install -y python3-certbot-apache
 ```
 
 ### 2. Generate the certificate
+
 Replace `example.com` with the domain you're issuing a certificate for. To cover multiple domains, repeat the `-d` flag (e.g. `-d example.com -d www.example.com`).
 
 ```bash
@@ -45,6 +41,7 @@ sudo certbot certonly --standalone -d example.com
 You'll be prompted for an email address (used for renewal/expiry notices), then certbot issues the certificate automatically. Certificates are saved to `/etc/letsencrypt/live/example.com/`.
 
 ### 3. Renewal
+
 Certbot installs a systemd timer (or cron job) that checks twice daily and renews when the certificate is close to expiry. If you used the `--nginx` or `--apache` plugin, that's all you need. The plugin reloads your webserver as part of the renewal itself.
 
 If you used `--standalone`, or want Wings to also restart so it picks up a renewed certificate, add a deploy hook:
@@ -69,6 +66,7 @@ sudo certbot renew --dry-run
 ```
 
 ### Troubleshooting
+
 An `Insecure Connection` or SSL/TLS error in the browser almost always means the certificate has expired. If `certbot renew` fails with something like:
 
 `Error: Attempting to renew cert (domain) from /etc/letsencrypt/renew/domain.conf produced an unexpected error`
@@ -92,6 +90,7 @@ sudo systemctl restart wings
 Use this if port 80 can't be exposed to the internet, for example, an internal Wings node behind NAT, or any setup where you'd rather not touch port 80 at all.
 
 ### Using a DNS plugin (recommended)
+
 DNS plugins automate the dns-01 challenge by creating and removing a `TXT` record via your DNS provider's API with no manual record editing, no exposed port 80, and full automatic renewal.
 
 The plugin for some providers isn't included with the base `certbot` package. Check [certbot's plugin list](https://eff-certbot.readthedocs.io/en/latest/using.html#dns-plugins) for install instructions for yours. For many systems this means using [certbot.eff.org](https://certbot.eff.org)'s install instructions and selecting the **Wildcard** tab, which shows the DNS plugin package for your OS.
@@ -140,6 +139,7 @@ sudo certbot certonly \
 That's it. Certbot's systemd timer handles renewal automatically from here. No deploy hook is required for most setups, including Wings; one is only needed if a service caches the certificate in memory rather than reading it from disk on each use.
 
 ### Manual DNS challenge (no plugin)
+
 If your provider doesn't have a plugin, you can complete the challenge manually instead:
 
 ```bash
@@ -163,17 +163,20 @@ source ~/.bashrc
 ```
 
 ### 2. Set your DNS API credentials
+
 ```bash
 export CF_Token="your_cloudflare_api_token"
 export CF_Account_ID="your_cloudflare_account_id"
 ```
 
 ### 3. Issue the certificate
+
 ```bash
 acme.sh --issue --dns dns_cf -d example.com
 ```
 
 ### 4. Install it where your services expect it
+
 `acme.sh` keeps certificates in its own directory by default; use `--install-cert` to copy them to standard paths and reload services on renewal:
 
 ```bash
@@ -184,6 +187,7 @@ acme.sh --install-cert -d example.com \
 ```
 
 ### 5. Renewal
+
 `acme.sh` installs its own cron job during setup, renewing automatically around 60 days in (ahead of the 90-day expiry). Your `--reloadcmd` runs after every successful renewal automatically.
 
 Verify the cron job exists:
