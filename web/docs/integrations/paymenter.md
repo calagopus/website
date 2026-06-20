@@ -112,7 +112,7 @@ OAuth linking lets your customers log into the Calagopus panel using their Payme
 From now on, when a server is created for a customer, Paymenter links their panel account to their Paymenter identity automatically, letting them sign in to the panel with their Paymenter credentials.
 
 ::: info
-The provided template is configured as **login only** - customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../additional/setting-up-oauth.md).
+The provided template is configured as **login only** - customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../additional/setting-up-oauth/index.md).
 :::
 
 ## Troubleshooting

@@ -82,7 +82,7 @@ Click **Save**.
 
 ### Install Wings
 
-If Wings isn't running on this host yet, follow the [Wings Installation](../../wings/installation.md) guide.
+If Wings isn't running on this host yet, follow the [Wings Installation](../../wings/installation/index.md) guide.
 
 ### Apply the Node Configuration
 
