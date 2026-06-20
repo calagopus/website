@@ -260,7 +260,7 @@ export default withMermaid({
             collapsed: true,
             items: [
               {
-                text: 'From another Panel', 
+                text: 'From another Panel',
                 collapsed: true,
                 items: [
                   { text: 'Pterodactyl', link: '/docs/additional/migrations/pterodactyl' },
