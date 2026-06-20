@@ -16,6 +16,7 @@
 | ![Full Logo SVG](/banners/fulllogo.svg) | ![Full Logo Vertical SVG](/banners/fulllogo-vertical.svg) |
 | ![Simple Full Logo SVG](/banners/simple-fulllogo.svg) | ![Simple Full Logo Vertical SVG](/banners/simple-fulllogo-vertical.svg) |
 | ![Simple Standing Full Logo SVG](/banners/simple-standing-fulllogo.svg) | ![Simple Standing Full Logo Vertical SVG](/banners/simple-standing-fulllogo-vertical.svg) |
+| ![Full Logo Contributor SVG](/banners/contributing-fullogo.svg) |
 
 ### Badges
 
