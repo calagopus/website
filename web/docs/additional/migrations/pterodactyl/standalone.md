@@ -5,11 +5,11 @@ next: false
 
 # Migrating from Pterodactyl (Standalone)
 
-This guide is for Pterodactyl installs that run directly on the host - no Docker, no containers, just a typical install at `/var/www/pterodactyl` or similar. If you're using Docker, head to the [Dockerized](./pterodactyl-dockerized.md) guide instead.
+This guide is for Pterodactyl installs that run directly on the host with no Docker, no containers installed, just a typical install at `/var/www/pterodactyl` or similar. If you're using Docker, head to the [Dockerized](./docker.md) guide instead.
 
 The process involves installing Calagopus alongside your existing Pterodactyl, pointing the importer at Pterodactyl's `.env` file, and letting it read everything from Pterodactyl's database and write equivalent records into Calagopus's fresh database. Users log in with the same credentials afterwards.
 
-API keys do not migrate. See the [intro](./pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
+API keys do not migrate. See the [intro](../pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
 
 ## Prerequisites
 
@@ -20,12 +20,12 @@ Before you start, you'll want:
 
 ## Install Calagopus First
 
-If you haven't installed Calagopus yet, follow the [installation guide](../../panel/installation.md) to get it running. Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
+If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md) to get it running. Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
 
 ::: warning Don't click through the OOBE
 The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer wants to do.
 
-![Calagopus Panel OOBE](../../panel/oobe.webp)
+![Calagopus Panel OOBE](../../../panel/oobe.webp)
 
 ::: details I already clicked through - how do I undo it?
 You'll need to drop and recreate the database. Pick the matching tab for how Calagopus is installed:
@@ -209,6 +209,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../wings/updating.md) for that step.
+Wings also needs to be updated to point at the new panel. See [Wings Updating](../../../wings/updating.md) for that step.
 
 After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.

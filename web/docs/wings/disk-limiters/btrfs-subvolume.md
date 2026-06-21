@@ -1,4 +1,4 @@
-# Btrfs Subvolume
+# BTRFS subvolume
 
 ## What is it?
 

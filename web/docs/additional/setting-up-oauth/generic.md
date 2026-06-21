@@ -1,3 +1,8 @@
+---
+prev: true
+next: false
+---
+
 # Generic OAuth Setup
 
 This guide covers setting up a generic OIDC OAuth provider for your Calagopus Panel. It first explains how to locate the required identifiers from your provider, then walks through the integration configuration.

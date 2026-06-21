@@ -142,12 +142,13 @@ export default withMermaid({
       },
       {
         text: 'Panel',
+        link: '/docs/panel/',
         items: [
           { text: 'Overview', link: '/docs/panel/overview' },
           { text: 'Environment', link: '/docs/panel/environment' },
           {
             text: 'Installation',
-            link: '/docs/panel/installation',
+            link: '/docs/panel/installation/',
             collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/panel/installation/docker' },
@@ -158,7 +159,7 @@ export default withMermaid({
           { text: 'Updating', link: '/docs/panel/updating' },
           {
             text: 'Next Steps',
-            link: '/docs/panel/next-steps',
+            link: '/docs/panel/next-steps/',
             collapsed: true,
             items: [
               { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' },
@@ -167,7 +168,7 @@ export default withMermaid({
           },
           {
             text: 'Extensions',
-            link: '/docs/panel/extensions',
+            link: '/docs/panel/extensions/',
             collapsed: true,
             items: [
               { text: 'Installing Extensions', link: '/docs/panel/extensions/installing-extensions' },
@@ -209,12 +210,13 @@ export default withMermaid({
       },
       {
         text: 'Wings',
+        link: '/docs/wings/',
         items: [
           { text: 'Overview', link: '/docs/wings/overview' },
           { text: 'Configuration', link: '/docs/wings/configuration' },
           {
             text: 'Installation',
-            link: '/docs/wings/installation',
+            link: '/docs/wings/installation/',
             collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/wings/installation/docker' },
@@ -225,72 +227,89 @@ export default withMermaid({
           { text: 'Updating', link: '/docs/wings/updating' },
           {
             text: 'Next Steps',
-            link: '/docs/wings/next-steps',
+            link: '/docs/wings/next-steps/',
             collapsed: true,
             items: [{ text: 'Setting up Allocations', link: '/docs/wings/next-steps/setting-up-allocations' }],
           },
           {
             text: 'Disk Limiters',
-            link: '/docs/wings/disk-limiters',
+            link: '/docs/wings/disk-limiters/',
             collapsed: true,
             items: [
               { text: 'Fusequota', link: '/docs/wings/disk-limiters/fusequota' },
-              { text: 'Btrfs Subvolume', link: '/docs/wings/disk-limiters/btrfs-subvolume' },
+              { text: 'BTRFS subvolume', link: '/docs/wings/disk-limiters/btrfs-subvolume' },
               { text: 'ZFS Dataset', link: '/docs/wings/disk-limiters/zfs-dataset' },
-              { text: 'XFS Project Quota', link: '/docs/wings/disk-limiters/xfs-quota' },
+              { text: 'XFS Quota', link: '/docs/wings/disk-limiters/xfs-quota' },
+            ],
+          },
+          {
+            text: 'Advanced',
+            link: '/docs/wings/advanced/',
+            collapsed: true,
+            items: [
+              { text: 'Backup Configurations', link: '/docs/wings/advanced/backup-configurations' },
+              { text: 'Exposing Wings in a Homelab', link: '/docs/wings/advanced/exposing-wings-in-a-homelab' },
+              { text: 'Running Wings with Podman', link: '/docs/wings/advanced/running-wings-with-podman' },
             ],
           },
         ],
       },
       {
-        text: 'Advanced',
+        text: 'Additional',
+        link: '/docs/additional/',
         items: [
           {
-            text: 'Migrating from another Panel',
+            text: 'Migrations',
+            link: '/docs/additional/migrations/',
             collapsed: true,
             items: [
-              { text: 'Pterodactyl', link: '/docs/advanced/migrating/pterodactyl' },
-              { text: 'Pelican', link: '/docs/advanced/migrating/pelican' },
+              {
+                text: 'From another Panel',
+                collapsed: true,
+                items: [
+                  { text: 'Pterodactyl', link: '/docs/additional/migrations/pterodactyl' },
+                  { text: 'Pelican', link: '/docs/additional/migrations/pelican' },
+                ],
+              },
+              {
+                text: 'To another Instance',
+                collapsed: true,
+                items: [
+                  { text: 'Docker', link: '/docs/additional/migrations/calagopus/docker' },
+                  { text: 'Standalone', link: '/docs/additional/migrations/calagopus/standalone' },
+                ],
+              },
             ],
           },
           {
-            text: 'Migrating to another Instance',
+            text: 'Database Hosts',
+            link: '/docs/additional/database-hosts/',
             collapsed: true,
             items: [
-              { text: 'Docker', link: '/docs/advanced/migrating/instances/docker' },
-              { text: 'Standalone', link: '/docs/advanced/migrating/instances/standalone' },
+              { text: 'MySQL (MariaDB)', link: '/docs/additional/database-hosts/mysql' },
+              { text: 'PostgreSQL', link: '/docs/additional/database-hosts/postgres' },
+              { text: 'MongoDB', link: '/docs/additional/database-hosts/mongodb' },
             ],
           },
-          { text: 'Reverse Proxy', link: '/docs/advanced/reverse-proxy' },
-          { text: 'Exposing Wings in a Homelab', link: '/docs/advanced/exposing-wings-in-a-homelab' },
-          { text: 'Running Wings with Podman', link: '/docs/advanced/running-wings-with-podman' },
-          { text: 'Generating SSL Certificates', link: '/docs/advanced/generate-ssl' },
-          {
-            text: 'Setting up Database Hosts',
-            link: '/docs/advanced/setting-up-database-hosts',
-            collapsed: true,
-            items: [
-              { text: 'MySQL (MariaDB)', link: '/docs/advanced/setting-up-database-hosts/mysql' },
-              { text: 'PostgreSQL', link: '/docs/advanced/setting-up-database-hosts/postgres' },
-              { text: 'MongoDB', link: '/docs/advanced/setting-up-database-hosts/mongodb' },
-            ],
-          },
-          { text: 'Setting up Backup Configurations', link: '/docs/advanced/setting-up-backup-configurations' },
+          { text: 'SSL Certificates', link: '/docs/additional/ssl-certificates' },
+          { text: 'Reverse Proxies', link: '/docs/additional/reverse-proxies' },
           {
             text: 'Setting up OAuth',
-            link: '/docs/advanced/oauth',
+            link: '/docs/additional/setting-up-oauth/',
             collapsed: true,
             items: [
-              { text: 'GitHub', link: '/docs/advanced/oauth/github' },
-              { text: 'Google', link: '/docs/advanced/oauth/google' },
-              { text: 'Discord', link: '/docs/advanced/oauth/discord' },
-              { text: 'Generic', link: '/docs/advanced/oauth/generic' },
+              { text: 'GitHub', link: '/docs/additional/setting-up-oauth/github' },
+              { text: 'Google', link: '/docs/additional/setting-up-oauth/google' },
+              { text: 'Discord', link: '/docs/additional/setting-up-oauth/discord' },
+              { text: 'Generic', link: '/docs/additional/setting-up-oauth/generic' },
             ],
           },
         ],
       },
+
       {
         text: 'Integrations',
+        link: '/docs/integrations/',
         items: [
           { text: 'VS Code', link: '/docs/integrations/vscode' },
           { text: 'Paymenter', link: '/docs/integrations/paymenter' },

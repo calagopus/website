@@ -53,7 +53,7 @@ The client area renders a server summary (name, status, address, memory, disk, C
 
 ![](./images/whmcs/add-new-server.png)
 
-::: tip
+::: info
 To store the panel's server UUID against each service, create two **custom fields** named `Server UUID` and `Server ID` on the product (admin-only). The module fills these in automatically on provisioning. They are optional - without them, the module falls back to looking the server up by its `external_id`.
 :::
 

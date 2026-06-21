@@ -171,7 +171,7 @@ Performance results for Calagopus, measured against Pterodactyl on identical har
   </div>
 </div>
 
-::: tip Methodology
+::: info Methodology
 Tests use Calagopus `1.0.3` and Pterodactyl `1.12.2`, both running from their official Docker images with no additional configuration beyond initial setup. Each test ran [`oha`](https://github.com/hatoo/oha) with 500 concurrent connections for 60 seconds, from a separate machine on the same LAN over a 10 Gbps link. Two endpoints were targeted: the panel root (`/`) and an authenticated API endpoint (`/api/client/permissions`). Both panels used default rate limiting; the high `[429]` counts on the API endpoint are expected.
 
 Configurations are labeled `<CPU> · <threads>t · <RAM>G`. Memory figures come from Proxmox LXC container stats (the Docker container runs inside the LXC).

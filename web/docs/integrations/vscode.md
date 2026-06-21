@@ -51,7 +51,7 @@ The quickest way to get started is straight from your server's file manager. Ope
 
 Your editor opens, mounts the server's files as a workspace folder, and attaches to the console automatically. The same **Connect** dropdown is available in the header while editing a file, which will open that exact file in your editor once the server is mounted.
 
-::: tip
+::: info
 The first time you connect to a panel, the extension will prompt you to sign in. Your credentials are stored securely in your editor's secret storage and reused on future connections - see [Authentication](#authentication).
 :::
 

@@ -23,7 +23,7 @@ Otherwise refer to the [official Docker installation guide](https://docs.docker.
 
 === Podman
 
-Podman is supported as a drop-in alternative. Install it via your distribution's package manager (e.g. `apt install podman` or `dnf install podman`), then follow the [Running Wings with Podman](../../advanced/running-wings-with-podman.md) guide to configure Wings to use the Podman socket.
+Podman is supported as a drop-in alternative. Install it via your distribution's package manager (e.g. `apt install podman` or `dnf install podman`), then follow the [Running Wings with Podman](../advanced/running-wings-with-podman.md) guide to configure Wings to use the Podman socket.
 
 ::::
 

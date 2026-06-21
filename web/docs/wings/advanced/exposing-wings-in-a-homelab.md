@@ -24,7 +24,7 @@ The most common way to expose your Wings machine to the internet is by using a r
 | Can be used to expose multiple services on the same domain | May require additional resources on your server |
 | | No support for SFTP (but you can still use SFTP by connecting to the Wings machine directly on the local network) |
 
-For a detailed guide on setting up a reverse proxy, please see our [Reverse Proxy documentation](./reverse-proxy.md).
+For a detailed guide on setting up a reverse proxy, please see our [Reverse Proxy documentation](../../additional/reverse-proxies.md).
 
 Wings uses both HTTP and WebSocket connections, so your reverse proxy must be configured to support both. When entering the URL in the panel, use the reverse proxy URL without a port. For example, if your reverse proxy is at `https://wings.example.com`, enter `https://wings.example.com` - not `https://wings.example.com:8080`.
 
@@ -39,11 +39,11 @@ This method builds on the Reverse Proxy approach by enabling Wings Proxy Mode in
 | | Limits Bandwidth since all connections to wings are proxied through the panel, so if you have a lot of traffic going to wings, it may put a lot of load on the panel |
 | | No support for SFTP (but you can still use SFTP by connecting to the Wings machine directly on the local network) |
 
-For the Reverse Proxy Part, you can refer to the [Reverse Proxy documentation](./reverse-proxy.md) for a detailed guide on setting up a reverse proxy.
+For the Reverse Proxy Part, you can refer to the [Reverse Proxy documentation](../../additional/reverse-proxies.md) for a detailed guide on setting up a reverse proxy.
 
 ### Enabling Wings Proxy Mode
 
-To enable Wings Proxy Mode, you need to edit your panel's `.env` file and set the [`APP_ENABLE_WINGS_PROXY`](../panel/environment#app-enable-wings-proxy) variable to `true`, then restart your panel. After that, you can enter the same URL for both the panel and wings in the panel's node configuration, and the panel will automatically proxy connections to wings.
+To enable Wings Proxy Mode, you need to edit your panel's `.env` file and set the [`APP_ENABLE_WINGS_PROXY`](../../panel/environment.md#app-enable-wings-proxy) variable to `true`, then restart your panel. After that, you can enter the same URL for both the panel and wings in the panel's node configuration, and the panel will automatically proxy connections to wings.
 
 If you installed the Panel via Docker, that means editing your `compose.yml` file and adding the following environment variable to the `web` service, then running `docker compose up -d` to apply the changes:
 

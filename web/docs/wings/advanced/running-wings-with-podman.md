@@ -1,3 +1,8 @@
+---
+prev: true
+next: false
+---
+
 # Running Wings with Podman
 
 Wings communicates with a container runtime through the Docker API. Podman exposes a compatible socket, so Wings works with Podman out of the box with a few configuration changes. This guide covers both **rootful** (running as root) and **rootless** (running as a normal user) Podman setups.

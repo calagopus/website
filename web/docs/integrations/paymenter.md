@@ -52,7 +52,7 @@ Customers are matched to panel users by their Paymenter user ID (stored as the u
 
 Create a product (or edit an existing one) and select **Calagopus** as the server extension. The product configuration is where you define what every server provisioned from this product looks like.
 
-::: tip
+::: info
 The **Nest**, **Egg**, **Node**, and **Location** fields are populated live from your panel through the API key you configured on the server, so you can pick them from dropdowns rather than copying UUIDs by hand. Choosing a nest refreshes the available eggs.
 :::
 
@@ -112,7 +112,7 @@ OAuth linking lets your customers log into the Calagopus panel using their Payme
 From now on, when a server is created for a customer, Paymenter links their panel account to their Paymenter identity automatically, letting them sign in to the panel with their Paymenter credentials.
 
 ::: info
-The provided template is configured as **login only** - customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../advanced/oauth/).
+The provided template is configured as **login only** - customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../additional/setting-up-oauth/index.md).
 :::
 
 ## Troubleshooting

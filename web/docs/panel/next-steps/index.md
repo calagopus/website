@@ -4,7 +4,7 @@ The panel is installed and the OOBE is complete. Here's what to do next:
 
 ## Add a Node
 
-The panel manages servers, but it doesn't run them directly - game server containers are managed by Wings on one or more nodes. See [Creating a New Node](./add-node.md) to register a node and connect it to the panel.
+The panel manages servers, but it doesn't run them directly, game server containers are managed by Wings on one or more nodes. See [Creating a New Node](./add-node.md) to register a node and connect it to the panel.
 
 ## Add Egg Repositories
 

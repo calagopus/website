@@ -54,7 +54,7 @@ The Panel mounts `MantineProvider` with `defaultColorScheme='dark'`. Most of its
 
 Anything Mantine already models: `colors` (including a custom 10-shade palette), `primaryColor`, `primaryShade`, `fontFamily` / `headings`, `defaultRadius`, `spacing`, `shadows`, and per-component `defaultProps` / `classNames` / `styles`. The full surface is upstream - see Mantine's [theme object](https://mantine.dev/theming/theme-object/) and [styles overview](https://mantine.dev/styles/styles-overview/) - and all of it is fair game inside the object you return.
 
-::: tip
+::: info
 Setting a component's `defaultProps` in the theme is usually a cleaner way to restyle a whole class of component than a props interceptor. If all you want is "every `Button` defaults to `variant='light'`", the theme is the simpler tool. Reach for an interceptor only when the change depends on the incoming props.
 :::
 

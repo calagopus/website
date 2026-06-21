@@ -1,3 +1,7 @@
+---
+prev: true
+next: false
+---
 # Branding
 
 ## Images

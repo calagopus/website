@@ -1,3 +1,7 @@
+---
+prev: true
+next: false
+---
 # Blesta
 
 The **Calagopus Blesta module** is a server provisioning module for [Blesta](https://www.blesta.com). It provisions and manages Calagopus servers from Blesta as part of your billing workflow, with support for nests/eggs, node- or location-based deployment, egg variables, and custom (extension-added) feature limits.
@@ -60,7 +64,7 @@ The client service page shows a server summary (name, status, address, memory, d
 
 Create a **Package** and select the **Calagopus** module. The package configuration defines what every server provisioned from it looks like.
 
-::: tip
+::: info
 The **Nest**, **Egg**, **Node**, and **Location** fields are populated live from your panel through the API key on the server, so you can pick them from dropdowns. Changing the nest or egg refreshes the dependent options and the egg variable fields.
 :::
 

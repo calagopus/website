@@ -32,7 +32,7 @@ Click **Create & Continue**.
 
 ### Install Wings
 
-At this point you need Wings running on the node. Follow the [Wings Installation](../../wings/installation.md) guide, then come back here.
+At this point you need Wings running on the node. Follow the [Wings Installation](../../wings/installation/index.md) guide, then come back here.
 
 ### Apply the Node Configuration
 
@@ -82,7 +82,7 @@ Click **Save**.
 
 ### Install Wings
 
-If Wings isn't running on this host yet, follow the [Wings Installation](../../wings/installation.md) guide.
+If Wings isn't running on this host yet, follow the [Wings Installation](../../wings/installation/index.md) guide.
 
 ### Apply the Node Configuration
 

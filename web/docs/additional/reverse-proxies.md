@@ -1,20 +1,22 @@
-# Reverse Proxy
+# Setting up a Reverse Proxy
 
-This guide explains how to set up a reverse proxy for the Calagopus Panel running in Docker. Using a reverse proxy allows the internal web server (default port `8000`) to be served securely over standard `HTTP`/`HTTPS` ports.
+This guide walks through putting a reverse proxy in front of the Calagopus Panel running in Docker. A reverse proxy lets the Panel's internal web server (default port `8000`) be served securely over the standard `HTTP`/`HTTPS` ports (80/443), instead of exposing port 8000 directly.
 
 ::: warning
-Ensure that the Panel is already installed and running before continuing. Misconfigured proxy settings may make the Panel inaccessible.
-:::
-
-::: info
-We assume you already have Let's Encrypt certificates generated for your domain. All `<domain>` placeholders should be replaced with your actual domain name.
+Make sure the Panel is already installed and running before continuing. A misconfigured proxy can make the Panel completely inaccessible until fixed.
 :::
 
 ## Before You Begin
 
-### Trusted Proxies
+There are two things the Panel needs to know about once it's sitting behind a proxy: which IP the proxy is forwarding from, and which IP it should forward *to*.
 
-When running the Panel behind a reverse proxy, you must configure the [APP_TRUSTED_PROXIES](../panel/environment#app-trusted-proxies) variable so the Panel logs correct client IP addresses.
+::: warning
+This guide assumes you already have Let's Encrypt certificates for your domain *see [Generating SSL Certificates](ssl-certificates.md) if you haven't yet.* Replace every `<domain>` placeholder below with your actual domain name.
+:::
+
+### 1. Trust the proxy's IP
+
+Without this, the Panel will log the reverse proxy's IP as the client IP for every request, instead of the real visitor's IP. Set [`APP_TRUSTED_PROXIES`](../panel/environment#app-trusted-proxies) to the proxy's IP (commonly your Docker bridge gateway, e.g. `172.18.0.1`):
 
 ```yaml
 services:
@@ -23,23 +25,25 @@ services:
       APP_TRUSTED_PROXIES="172.18.0.1"
 ```
 
-### Container IP Address
+### 2. Find the Panel container's IP
 
-The IP address your reverse proxy uses to reach the Panel depends on your Docker network and may differ on your system. Run the following command to detect it automatically:
+This is the address your proxy config below forwards traffic *to*. It depends on your Docker network setup and can vary between systems, so detect it directly rather than assuming `172.18.0.1`:
 
 ```bash
 docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker ps --format '{{.Image}} {{.ID}}' | awk '$1 ~ /^ghcr\.io\/calagopus\/panel/ {print $2}')
 ```
 
-The output (for example `172.18.0.1`) is the address to use wherever the proxy configuration forwards traffic to the Panel.
+Use whatever IP this outputs (e.g. `172.18.0.1`) everywhere the configs below reference the Panel's address.
 
 ## Proxy Servers
+
+Pick whichever you're already running, or whichever you'd prefer for a new setup:
 
 ::::tabs
 === Nginx
 
 ::: warning
-Before applying the configuration below, add the following map block to your main `nginx.conf` inside the `http {}` context (outside any `server {}` block). This ensures `Connection: upgrade` is sent only for WebSocket requests instead of all requests, preventing issues with multipart uploads and other standard HTTP traffic.
+Before applying the config below, add this `map` block to your main `nginx.conf`, inside the `http {}` context (**not** inside any `server {}` block). It makes sure `Connection: upgrade` is only sent for WebSocket requests rather than all requests — without it, multipart uploads and other normal HTTP traffic can break.
 
 ```nginx
 map $http_upgrade $connection_upgrade {
@@ -49,7 +53,7 @@ map $http_upgrade $connection_upgrade {
 ```
 :::
 
-Create `/etc/nginx/sites-available/panel.conf` *(or `/etc/nginx/conf.d/panel.conf` on RHEL-based systems)*:
+Create `/etc/nginx/sites-available/calagopus.conf` *(or `/etc/nginx/conf.d/calagopus.conf` on RHEL-based systems)*:
 
 ::: code-group
 ```nginx [With SSL]
@@ -120,7 +124,7 @@ server {
     error_log  /var/log/nginx/calagopus.app-error.log error;
 
     sendfile off;
-    # Maximum size for uploads and multipart requests in bytes
+    # Maximum size for uploads and multipart requests
     # (e.g. 100M for allowing 100 MB uploads)
     client_max_body_size 100M;
 
@@ -154,13 +158,13 @@ server {
 
 === Apache
 
-First, remove the default Apache configuration:
+First, remove the default Apache site so it doesn't conflict:
 
 ```bash
 a2dissite 000-default.conf
 ```
 
-Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.conf` on RHEL-based systems)*:
+Create `/etc/apache2/sites-available/calagopus.conf` *(or `/etc/httpd/conf.d/calagopus.conf` on RHEL-based systems)*:
 
 ::: code-group
 ```apache [With SSL]
@@ -262,9 +266,11 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
 
 === Caddy
 
+Caddy is the simplest option because it handles SSL automatically on its own, so there's no separate "With/Without SSL" variant needed:
+
 ```text
 <domain> {
-  # Maximum size for uploads and multipart requests 
+  # Maximum size for uploads and multipart requests
   # (e.g. 100MB for allowing 100 MB uploads)
   request_body max_size 100MB
 
@@ -275,24 +281,26 @@ Create `/etc/apache2/sites-available/panel.conf` *(or `/etc/httpd/conf.d/panel.c
 
 ::::
 
-## Enabling Configuration
+## Enabling the Configuration
+
+Once your config file is in place, enable it and reload the relevant service:
 
 ::: code-group
 ```bash [Nginx]
-# On RHEL-based systems, placing the file in /etc/nginx/conf.d/ is sufficient as there is no symlink needed.
-sudo ln -s /etc/nginx/sites-available/panel.conf /etc/nginx/sites-enabled/panel.conf
+# On RHEL-based systems, placing the file in /etc/nginx/conf.d/ is enough.
+sudo ln -s /etc/nginx/sites-available/calagopus.conf /etc/nginx/sites-enabled/calagopus.conf
 sudo systemctl restart nginx
 ```
 ```bash [Apache (With SSL)]
 # You do not need to run any of these commands on RHEL-based systems.
 sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel ssl http2
-sudo a2ensite panel.conf
+sudo a2ensite calagopus.conf
 sudo systemctl restart apache2
 ```
 ```bash [Apache]
 # You do not need to run any of these commands on RHEL-based systems.
 sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel
-sudo a2ensite panel.conf
+sudo a2ensite calagopus.conf
 sudo systemctl restart apache2
 ```
 ```bash [Caddy]
@@ -302,10 +310,10 @@ systemctl restart caddy
 
 ## Verify Access
 
-Visit `https://<domain>` in your browser. You should see the Panel login page served via your chosen proxy server.
+Visit `https://<domain>` in your browser. You should land on the Panel's login page, served through your chosen proxy.
 
-## Set Server URL
+## Set the Server URL
 
-After verifying access, go to your Panel’s Admin page, set the server URL, and click Save. This URL is used for links, API calls, and Wings node connections.
+Once access is confirmed, go to the Panel's Admin page, set the server URL to `https://<domain>`, and save. This URL is what the Panel uses for generated links, API calls, and Wings node connections. It needs to match what you just set up.
 
 ![Calagopus Panel URL](./server-url.webp)

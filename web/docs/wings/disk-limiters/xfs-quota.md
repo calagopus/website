@@ -2,7 +2,7 @@
 
 ## What is it?
 
-The `xfs_quota` disk limiter uses [XFS project quotas](https://man7.org/linux/man-pages/man8/xfs_quota.8.html) to enforce per-server disk limits. Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), which require each server to have its own subvolume or dataset, XFS project quotas apply to an arbitrary *directory tree*. This means existing server directories can be brought under the limiter without any data movement - a Wings restart is enough.
+The `xfs_quota` disk limiter uses [XFS Quotas](https://man7.org/linux/man-pages/man8/xfs_quota.8.html) to enforce per-server disk limits. Unlike [BTRFS](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), which require each server to have its own subvolume or dataset, XFS project quotas apply to an arbitrary *directory tree*. This means existing server directories can be brought under the limiter without any data movement - a Wings restart is enough.
 
 Wings assigns each server a deterministic project ID (derived from the first four bytes of the server UUID), registers it in `/etc/projects`, initializes the tree with `xfs_quota -x -c 'project -s <id>'`, and enforces the limit with `xfs_quota -x -c 'limit -p bsoft=<N>m bhard=<N>m <id>'`. Usage is polled every 5 seconds with `xfs_quota -x -c 'report -p -b -N'`.
 
@@ -43,7 +43,7 @@ Use `xfs_quota` if:
 
 XFS is the right pick if you want maximum raw filesystem performance and don't need snapshots or other volume-manager features. It is also the only native limiter that applies cleanly to existing servers without moving data.
 
-If you need snapshots or other CoW features, [Btrfs](./btrfs-subvolume.md) or [ZFS](./zfs-dataset.md) will serve you better.
+If you need snapshots or other CoW features, [BTRFS](./btrfs-subvolume.md) or [ZFS](./zfs-dataset.md) will serve you better.
 
 ## How do I use it?
 

@@ -26,19 +26,19 @@ When you create a backup configuration, you pick a **backup disk** - the backend
 | **Proxmox Backup Server** | A [Proxmox Backup Server](https://www.proxmox.com/en/products/proxmox-backup-server) datastore | PBS server URL, datastore, API token, and server fingerprint |
 | **Kopia** | A [Kopia](https://kopia.io) repository, via a running Kopia repository server | Kopia server URL, username, repository password, and server fingerprint |
 
-The four node-local options (**Local**, **DdupBak**, **Btrfs**, **Zfs**) don't require any credentials on the Panel side - the Wings node writes directly to its own disk, at the path configured by [`system.backup_directory`](../wings/configuration.md#system-backup-directory) (defaults to `/var/lib/pterodactyl/backups`). The four remote options (**S3**, **Restic**, **Proxmox Backup Server**, and **Kopia**) need credentials, which you enter when creating the configuration. All secrets are encrypted at rest using the Panel's encryption key.
+The four node-local options (**Local**, **DdupBak**, **Btrfs**, **Zfs**) don't require any credentials on the Panel side - the Wings node writes directly to its own disk, at the path configured by [`system.backup_directory`](../configuration.md#system-backup-directory) (defaults to `/var/lib/pterodactyl/backups`). The four remote options (**S3**, **Restic**, **Proxmox Backup Server**, and **Kopia**) need credentials, which you enter when creating the configuration. All secrets are encrypted at rest using the Panel's encryption key.
 
 Like **Restic** and **DdupBak**, both **Proxmox Backup Server** and **Kopia** deduplicate at the chunk level. What sets them apart is that they deduplicate *incrementally against the previous snapshot of the same server*, so a backup only uploads the chunks that changed since last time. Proxmox Backup Server stores each backup as a `pxar` archive in a PBS datastore; Kopia stores a snapshot in a Kopia repository, reached through a [Kopia repository server](https://kopia.io/docs/repository-server/). Kopia requires the `kopia` binary to be installed on the Wings node; PBS talks to the server over its HTTP API and needs no extra binary.
 
 **DdupBak** is currently **experimental**, but it's the fastest deduplicating backend available - faster than restic both when creating and restoring backups - while keeping the operational setup as simple as a local tarball (no repository, no password, nothing to initialize). If you want deduplication and are comfortable with the experimental status, it's worth trying. See [ddup-bak on GitHub](https://github.com/0x7d8/ddup-bak) for details on the format.
 
-**Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../wings/disk-limiters/index.md) to be configured on the Wings node - that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../wings/disk-limiters/btrfs-subvolume.md) and [ZFS](../wings/disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
+**Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../disk-limiters/index.md) to be configured on the Wings node - that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../disk-limiters/btrfs-subvolume.md) and [ZFS](../disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
 
 ## Browsing Backups from the Client UI
 
 **DdupBak**, **Btrfs**, **Zfs**, **Restic**, **Proxmox Backup Server**, and **Kopia** backups all support the **browse** feature - users can open a backup in the client UI, navigate its file tree, and download individual files or directories without downloading the full backup first. This is especially useful for large backups where a user only needs to recover one file.
 
-**Local** backups support browse too, but only when the archive format is one that supports random access: `zip` or `seven_zip`. With the default `tar_gz` (or any other `tar_*` variant), the whole archive has to be streamed to read anything out of it, so browse is disabled. To enable browse for local backups, set Wings' archive format accordingly - see [`system.backups.wings.archive_format`](../wings/configuration.md#system-backups-wings-archive-format) in the Wings configuration reference.
+**Local** backups support browse too, but only when the archive format is one that supports random access: `zip` or `seven_zip`. With the default `tar_gz` (or any other `tar_*` variant), the whole archive has to be streamed to read anything out of it, so browse is disabled. To enable browse for local backups, set Wings' archive format accordingly - see [`system.backups.wings.archive_format`](../configuration.md#system-backups-wings-archive-format) in the Wings configuration reference.
 
 **S3** backups do not support browse; they are stored as compressed tarballs and must be downloaded in full to extract.
 
@@ -73,7 +73,7 @@ Use the **S3** disk for AWS S3, MinIO, Backblaze B2's S3-compatible endpoint, Cl
 | **Path Style** | Toggle on for providers that require path-style URLs (`endpoint/bucket/key`) instead of virtual-hosted (`bucket.endpoint/key`). MinIO and some self-hosted setups typically need this on; AWS and most managed providers do not. |
 | **Part Size** | Multipart upload chunk size in bytes. `1073741824` (1 GB) is a good default for most S3 providers. Raise it for very large backups on fast links; the minimum S3 allows is 5 MB. |
 
-::: tip
+::: info
 If you're unsure whether your provider needs **Path Style**, try it off first. If uploads fail with DNS or certificate errors, turn it on.
 :::
 
@@ -126,13 +126,13 @@ Use the **Proxmox Backup Server** disk to store backups in a [Proxmox Backup Ser
 | **Fingerprint** | The PBS server's TLS certificate SHA-256 fingerprint (64 hex characters; colons are optional). Required - PBS connections are pinned to this fingerprint. |
 | **Backup ID Prefix** | Optional prefix for the PBS backup ID. Defaults to `calagopus`. Wings will only ever delete snapshots whose backup ID matches `<prefix>-<server-uuid>`, so this also acts as a safety boundary against touching unrelated snapshots in the datastore. |
 
-::: tip
+::: info
 You can read the fingerprint from the PBS web UI dashboard (**Show Fingerprint**) or with `proxmox-backup-manager cert info` on the PBS host. Either the colon-separated form (`AB:CD:...`) or the plain 64-character hex string works.
 :::
 
 ## Kopia Settings
 
-Use the **Kopia** disk to store backups in a [Kopia](https://kopia.io) repository. Wings does not connect to the underlying storage directly - instead it talks to a running [Kopia repository server](https://kopia.io/docs/repository-server/) (`kopia server start`), which fronts the actual repository (S3, B2, filesystem, etc.). This means the `kopia` binary must be installed on each Wings node that uses this configuration; Wings shells out to it and keeps its per-repository state (config and cache) under the `.kopia` subdirectory of [`system.backup_directory`](../wings/configuration.md#system-backup-directory).
+Use the **Kopia** disk to store backups in a [Kopia](https://kopia.io) repository. Wings does not connect to the underlying storage directly - instead it talks to a running [Kopia repository server](https://kopia.io/docs/repository-server/) (`kopia server start`), which fronts the actual repository (S3, B2, filesystem, etc.). This means the `kopia` binary must be installed on each Wings node that uses this configuration; Wings shells out to it and keeps its per-repository state (config and cache) under the `.kopia` subdirectory of [`system.backup_directory`](../configuration.md#system-backup-directory).
 
 Backups are created as Kopia snapshots tagged with the backup UUID, deduplicated against the repository.
 
@@ -173,7 +173,7 @@ A node-level assignment overrides whatever the location defines.
 
 A server-level assignment overrides both the node and the location.
 
-::: tip
+::: info
 A common setup is one restic repository per location (covering most servers) with per-node overrides for specialized hosts - e.g. a node that backs up to a Btrfs snapshot locally for faster restore, while the rest of the location goes to remote restic.
 :::
 
@@ -207,7 +207,7 @@ Yes:
 
 - **Restic** requires the `restic` binary on the node.
 - **Kopia** requires the `kopia` binary on the node, plus a reachable [Kopia repository server](https://kopia.io/docs/repository-server/).
-- **Btrfs** and **Zfs** require the host filesystem to be Btrfs/ZFS and the matching [disk limiter](../wings/disk-limiters/index.md) to be configured.
+- **Btrfs** and **Zfs** require the host filesystem to be Btrfs/ZFS and the matching [disk limiter](../disk-limiters/index.md) to be configured.
 - **Proxmox Backup Server**, **S3**, **Local**, and **DdupBak** need no extra binaries on the node (PBS and S3 are reached over HTTP).
 
 ### Can I use different drivers for different servers?
