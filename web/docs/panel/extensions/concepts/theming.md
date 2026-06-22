@@ -58,6 +58,59 @@ Anything Mantine already models: `colors` (including a custom 10-shade palette),
 Setting a component's `defaultProps` in the theme is usually a cleaner way to restyle a whole class of component than a props interceptor. If all you want is "every `Button` defaults to `variant='light'`", the theme is the simpler tool. Reach for an interceptor only when the change depends on the incoming props.
 :::
 
+## The CSS Variables Resolver
+
+The theme object and a static `app.css` sit at two extremes: the theme is fully theme-aware but only reaches what Mantine models, while `app.css` reaches any variable but is static - it can't see your palette or react to it. The resolver is the bridge. `initializeMantineCssResolver()` hands you the resolved theme and lets you compute CSS variables from it, so your values stay in lockstep with the palette, `primaryColor`, and the active color scheme.
+
+Override it on your `Extension` class. Most extensions don't need it, so the default returns `null` (contribute nothing):
+
+```ts
+import { Extension, ExtensionContext } from 'shared';
+import type { CSSVariablesResolver } from '@mantine/core';
+
+class MyExtension extends Extension {
+  public initializeMantineCssResolver(ctx: ExtensionContext): CSSVariablesResolver | null {
+    return (theme) => {
+      const brand = theme.colors[theme.primaryColor];
+
+      return {
+        variables: {},
+        dark: {
+          '--chart-series-1-border': brand[4],
+          '--chart-series-1-fill': brand[8],
+        },
+        light: {
+          '--chart-series-1-border': brand[6],
+          '--chart-series-1-fill': brand[2],
+        },
+      };
+    };
+  }
+}
+
+export default new MyExtension();
+```
+
+A resolver returns three buckets:
+
+- **`variables`** - emitted regardless of color scheme.
+- **`light`** - emitted under the light scheme only.
+- **`dark`** - emitted under the dark scheme only.
+
+The Panel feeds the result into the top-level `MantineProvider`'s `cssVariablesResolver`, which renders the variables into a `<style>` tag scoped by scheme. Because the values come from `theme`, a later extension that changes `primaryColor` in `initializeMantineTheme()` automatically reshades everything your resolver derived from it - no second edit on your side.
+
+### How resolvers combine
+
+Like `initializeMantineTheme()`, this runs once per installed extension at load. Each resolver is called with the **already-merged** theme - every extension's `initializeMantineTheme()` override is folded in first - so you derive from the final palette, not your own slice of it. The Panel then merges the returned buckets in installation order, per variable: two extensions writing different variables both take effect; two writing the same one is last-writer-wins. Returning `null` opts out cleanly and adds nothing to the merge.
+
+::: info
+The resolver sees the merged theme but runs separately from it. If your variable is purely theme-derived and Mantine already models the target (a palette shade, a spacing value), set it in `initializeMantineTheme()` instead - the resolver is for variables Mantine *doesn't* model but that you still want computed from the theme, like the chart colors above.
+:::
+
+::: info
+Reach for the resolver over `app.css` only when the value has to track the theme. A fixed `--chart-grid-color: #2a2a2a` belongs in `app.css`; a chart series color derived from `theme.colors[theme.primaryColor]` belongs here, so it follows palette changes and both schemes for free.
+:::
+
 ## CSS Variables and Tailwind Tokens
 
 Below the theme object sits a layer of raw CSS custom properties. The Panel resolves Mantine's theme into `--mantine-color-*` variables on `:root`, scoped by color scheme through the `[data-mantine-color-scheme="dark"]` / `[data-mantine-color-scheme="light"]` attributes. It also defines its own tokens - the font stack, server-status colors, chart colors - in its `app.css`.

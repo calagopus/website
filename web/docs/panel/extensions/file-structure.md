@@ -69,6 +69,11 @@ class Dev0x7d8TestExtension extends Extension {
     return {};
   }
 
+  // Your extension can also provide a resolver for css variables, this runs when the page is loaded
+  public initializeMantineCssResolver(ctx: ExtensionContext): CSSVariablesResolver | null {
+    return null;
+  }
+
   /**
    * Your extension call processor, this can be called by other extensions to interact with yours,
    * if the call does not apply to your extension, simply return `ctx.skip()` to continue the matching process.
