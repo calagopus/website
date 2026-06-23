@@ -1,6 +1,6 @@
 # Package Manager Wings Installation
 
-Install Wings directly from the APT, RPM or APK repository. Select your package manager:
+Install Wings directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager:
 
 ::::tabs
 === APT (Debian / Ubuntu)
@@ -147,6 +147,47 @@ apk update
 
 ```bash
 apk add calagopus-wings
+```
+
+Verify the installation:
+
+```bash
+calagopus-wings version
+```
+
+### Add an Alias (Optional)
+
+If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
+
+```bash
+ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
+```
+
+=== AUR (Arch Linux)
+
+### Install Docker
+
+Wings requires Docker to manage game server containers. Verify your installation:
+
+```bash
+docker --version
+```
+
+If Docker is not installed, install it from the official repositories:
+
+```bash
+sudo pacman -S docker docker-compose
+sudo systemctl enable --now docker
+```
+
+Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install).
+
+### Install Wings
+
+Wings is published to the [AUR](https://aur.archlinux.org/packages/calagopus-wings-bin). Install it with your preferred AUR helper:
+
+```bash
+yay -S calagopus-wings-bin
 ```
 
 Verify the installation:
