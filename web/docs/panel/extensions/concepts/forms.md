@@ -19,7 +19,7 @@ public initialize(ctx: ExtensionContext): void {
         {
           field: {
             type: 'text',
-            name: 'custom_identifier',
+            name: 'customIdentifier',
             label: 'Custom Identifier',
             description: 'An internal label used by your provisioning system.',
           },
@@ -27,10 +27,10 @@ public initialize(ctx: ExtensionContext): void {
         },
       ],
       zodShape: {
-        custom_identifier: z.string().max(64),
+        customIdentifier: z.string().max(64),
       },
       initialValues: {
-        custom_identifier: '',
+        customIdentifier: '',
       },
     }),
   );
@@ -71,8 +71,8 @@ interface ExtensionField {
 | -------- | ----------- |
 | `{ at: 'prepend' }` | First field in the form |
 | `{ at: 'append' }` | Last field in the form |
-| `{ at: 'before', name: 'field_name' }` | Immediately before the named field |
-| `{ at: 'after', name: 'field_name' }` | Immediately after the named field |
+| `{ at: 'before', name: 'fieldName' }` | Immediately before the named field |
+| `{ at: 'after', name: 'fieldName' }` | Immediately after the named field |
 
 If `before` or `after` names a field that doesn't exist, the field is appended to the end.
 
@@ -82,8 +82,8 @@ A record mapping field names to Zod types. The Panel merges this into the form's
 
 ```ts
 zodShape: {
-  custom_identifier: z.string().min(1).max(64),
-  enable_feature_x: z.boolean(),
+  customIdentifier: z.string().min(1).max(64),
+  enableFeatureX: z.boolean(),
 },
 ```
 
@@ -95,8 +95,8 @@ A record mapping field names to their initial (empty-state) values. These get me
 
 ```ts
 initialValues: {
-  custom_identifier: '',
-  enable_feature_x: false,
+  customIdentifier: '',
+  enableFeatureX: false,
 },
 ```
 
@@ -248,7 +248,7 @@ class MyExtension extends Extension {
           {
             field: {
               type: 'text',
-              name: 'provisioning_tag',
+              name: 'provisioningTag',
               label: 'Provisioning Tag',
               description: 'Passed to the provisioning system on first start.',
               colSpan: 'full',
@@ -258,7 +258,7 @@ class MyExtension extends Extension {
           {
             field: {
               type: 'switch',
-              name: 'monitoring_enabled',
+              name: 'monitoringEnabled',
               label: 'Enable Monitoring',
               advanced: true,
             },
@@ -266,12 +266,12 @@ class MyExtension extends Extension {
           },
         ],
         zodShape: {
-          provisioning_tag: z.string().max(128),
-          monitoring_enabled: z.boolean(),
+          provisioningTag: z.string().max(128),
+          monitoringEnabled: z.boolean(),
         },
         initialValues: {
-          provisioning_tag: '',
-          monitoring_enabled: false,
+          provisioningTag: '',
+          monitoringEnabled: false,
         },
       }),
     );
@@ -295,7 +295,7 @@ The `when` function lets you show or hide a field based on the current form valu
 {
   field: {
     type: 'text',
-    name: 'custom_driver_path',
+    name: 'customDriverPath',
     label: 'Driver Path',
     when: (values) => values.driver === 'custom',
   },
