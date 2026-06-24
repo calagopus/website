@@ -101,7 +101,13 @@ The Panel feeds the result into the top-level `MantineProvider`'s `cssVariablesR
 
 ### How resolvers combine
 
-Like `initializeMantineTheme()`, this runs once per installed extension at load. Each resolver is called with the **already-merged** theme - every extension's `initializeMantineTheme()` override is folded in first - so you derive from the final palette, not your own slice of it. The Panel then merges the returned buckets in installation order, per variable: two extensions writing different variables both take effect; two writing the same one is last-writer-wins. Returning `null` opts out cleanly and adds nothing to the merge.
+Unlike `initializeMantineTheme()`, resolvers are **not merged**. The Panel walks installed extensions in installation order and uses the **first one that returns a non-null resolver** - every extension after it is ignored entirely, buckets and all. There's no per-variable merge: a single resolver wins outright. Returning `null` opts out cleanly and lets the Panel fall through to the next extension.
+
+When that one resolver runs, Mantine calls it with the **already-merged** theme - every extension's `initializeMantineTheme()` override is folded in first - so you derive from the final palette, not your own slice of it.
+
+::: warning
+Because only the first non-null resolver is used, two extensions that both ship a resolver don't cooperate - the later one silently contributes nothing. If you need variables that another extension's resolver also sets, you can't rely on merging here; prefer scoping CSS variable overrides to your own surfaces, or set theme-derived values through `initializeMantineTheme()` (which *does* deep-merge) where Mantine models them.
+:::
 
 ::: info
 The resolver sees the merged theme but runs separately from it. If your variable is purely theme-derived and Mantine already models the target (a palette shade, a spacing value), set it in `initializeMantineTheme()` instead - the resolver is for variables Mantine *doesn't* model but that you still want computed from the theme, like the chart colors above.

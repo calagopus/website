@@ -11,6 +11,7 @@ If you are new to extensions, start here:
 - [Installing Extensions](./installing-extensions.md) - Learn how to install `.c7s.zip` extensions in the Panel
 - [Uninstalling Extensions](./uninstalling-extensions.md) - How to remove extensions and what happens to their data
 - [Switching to the Heavy Image](./switching-to-the-heavy-image.md) - Use the `:heavy` Docker image variant to enable extension support in a containerized setup
+- [Patching and Adding Translations](./patching-translations.md) - Override the Panel's built-in translations or add a new language on the heavy image
 - [Development Environment](./dev-environment.md) - Set up a local environment for building extensions
 - [Extension File Structure](./file-structure.md) - Learn how extensions are structured across frontend, backend, and database layers
 
