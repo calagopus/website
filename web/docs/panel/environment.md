@@ -111,6 +111,15 @@ Default:
 APP_ENABLE_WINGS_PROXY=false
 ```
 
+## APP_DISABLE_FRONTEND
+
+When enabled, the Panel stops serving the bundled frontend assets and only exposes the API. Useful when the frontend is hosted separately (e.g. on a CDN or a dedicated web server). Non-API requests will return a 404.
+
+Default:
+```plaintext
+APP_DISABLE_FRONTEND=false
+```
+
 ## APP_USE_DECRYPTION_CACHE
 
 When enabled, decrypted secrets are temporarily stored in Redis for faster access. Improves performance but means decrypted values are present in cache - evaluate against your threat model before enabling.
