@@ -26,7 +26,7 @@ Create a `compose.yaml` with the following content. Authentication is intentiona
 ```yaml
 services:
   mongodb:
-    image: mongo:11
+    image: mongo:8
     restart: unless-stopped
     volumes:
       - ./data:/data/db
@@ -116,7 +116,7 @@ Update your `compose.yaml` to pass the `--auth` flag:
 ```yaml
 services:
   mongodb:
-    image: mongo:7
+    image: mongo:8
     restart: unless-stopped
     command: ["--auth"]
     volumes:
