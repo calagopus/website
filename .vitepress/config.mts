@@ -167,6 +167,7 @@ export default withMermaid({
               { text: 'Docker', link: '/docs/panel/installation/docker' },
               { text: 'Binary', link: '/docs/panel/installation/binary' },
               { text: 'Package Manager', link: '/docs/panel/installation/pkgmanager' },
+              { text: 'TrueNAS SCALE', link: '/docs/panel/installation/truenas' },
             ],
           },
           { text: 'Updating', link: '/docs/panel/updating' },
