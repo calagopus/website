@@ -9,6 +9,11 @@ How the Panel connects to the Redis/Valkey cache.
 - `redis` - Single instance. Also requires `REDIS_URL`.
 - `sentinel` - Redis Sentinel cluster for high availability. Also requires `REDIS_SENTINEL_CLUSTER` and `REDIS_SENTINELS`.
 
+Default:
+```plaintext
+REDIS_MODE=redis
+```
+
 ## REDIS_URL
 
 Connection URL for a single Redis/Valkey instance when `REDIS_MODE=redis`.
@@ -45,7 +50,7 @@ Whether the Panel runs database migrations on startup. In a clustered environmen
 
 Default:
 ```plaintext
-DATABASE_MIGRATE=true
+DATABASE_MIGRATE=false
 ```
 
 ## DATABASE_URL

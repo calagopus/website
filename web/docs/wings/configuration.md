@@ -642,7 +642,7 @@ The number of diff chains to retain per file. Once a new chain is started (after
 
 Default value:
 ```yaml
-keep_chains: 2
+keep_chains: 5
 ```
 
 ### system.file_history.file_size_cap
@@ -748,7 +748,7 @@ archive_format: tar_gz
 ```
 
 ### system.backups.s3.create_threads
-The number of threads used when creating a `.gz` S3 backup.
+The number of CPU threads used when compressing backups for S3 storage. This applies specifically to `.tar.gz`, `.tar.xz`, `.tar.lz` and `.tar.zst`.
 
 Default value:
 ```yaml
