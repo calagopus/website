@@ -1,4 +1,6 @@
 ---
+title: What is Calagopus?
+description: Calagopus is an open-source game server management panel built in Rust. Learn how it compares to Pterodactyl and Pelican, what games it supports, and why it's a great choice for self-hosted game server hosting.
 prev: false
 next: true
 ---

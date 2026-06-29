@@ -1,3 +1,8 @@
+---
+title: Binary Panel Installation
+description: How to install the Calagopus Panel as a standalone binary on Linux, macOS, or Windows without Docker. Covers prerequisites, database setup, environment configuration, and running as a system service.
+---
+
 # Binary Panel Installation
 
 ::: warning No extension support

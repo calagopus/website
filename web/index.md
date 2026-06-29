@@ -80,7 +80,7 @@ useHead({
     src="./browser-preview.webp"
     alt="Calagopus admin panel showing the server management dashboard with two Minecraft servers"
     class="browser-preview"
-    loading="lazy"
+    loading="eager"
     width="1200"
     height="750"
   />

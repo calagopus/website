@@ -1,3 +1,8 @@
+---
+title: Migrating from Pelican
+description: How to migrate from Pelican to Calagopus. The built-in importer copies users, servers, nodes, and eggs from your Pelican database to a fresh Calagopus instance.
+---
+
 # Migrating from Pelican
 
 Calagopus includes an importer that reads a Pelican database and writes equivalent records into a fresh Calagopus database. After the import, users log in with the same credentials and all servers, nodes, and eggs are intact.

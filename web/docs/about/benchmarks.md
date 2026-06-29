@@ -1,3 +1,8 @@
+---
+title: Benchmarks
+description: Performance benchmarks comparing Calagopus and Pterodactyl across throughput, latency, and memory usage. Calagopus achieves up to 263k req/s vs Pterodactyl's 799 req/s on identical hardware.
+---
+
 <script setup>
 import BenchChart from '../../../.vitepress/components/BenchChart.vue'
 

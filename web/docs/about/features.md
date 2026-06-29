@@ -1,3 +1,8 @@
+---
+title: Feature Reference
+description: A full list of Calagopus features and a side-by-side comparison with Pterodactyl, Pelican, and AMP. See what sets Calagopus apart.
+---
+
 # Feature Reference
 
 A high-level overview of what Calagopus offers, followed by a comparison with other panels.

@@ -1,3 +1,7 @@
+---
+title: Package Manager Panel Installation
+description: How to install the Calagopus Panel via a system package manager (APT, RPM). The simplest installation method for supported Linux distributions.
+---
 
 # Package Manager Panel Installation
 

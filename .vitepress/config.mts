@@ -65,13 +65,27 @@ export default withMermaid({
     ],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'Calagopus' }],
-    ['meta', { property: 'og:description', content: 'Game server management - reimagined.' }],
+    [
+      'meta',
+      {
+        property: 'og:description',
+        content:
+          'Calagopus is a modern, open-source game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.',
+      },
+    ],
     ['meta', { property: 'og:image', content: 'https://calagopus.com/fulllogo.png' }],
     ['meta', { property: 'og:url', content: 'https://calagopus.com' }],
     ['meta', { property: 'og:site_name', content: 'Calagopus' }],
     ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
     ['meta', { name: 'twitter:title', content: 'Calagopus' }],
-    ['meta', { name: 'twitter:description', content: 'Game server management - reimagined.' }],
+    [
+      'meta',
+      {
+        name: 'twitter:description',
+        content:
+          'Calagopus is a modern, open-source game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Hytale, and other game servers with industry-leading performance.',
+      },
+    ],
     ['meta', { name: 'twitter:image', content: 'https://calagopus.com/fulllogo.png' }],
     ['meta', { name: 'twitter:image:alt', content: 'Calagopus Logo' }],
     [
@@ -115,7 +129,6 @@ export default withMermaid({
           url: 'https://github.com/calagopus',
         },
         license: 'https://github.com/calagopus/calagopus/blob/main/LICENSE',
-        softwareVersion: '1.0.0',
       }),
     ],
   ],

@@ -1,3 +1,8 @@
+---
+title: Wings Overview
+description: Overview of Calagopus Wings, the Rust-based node daemon that manages Docker containers for game servers. Covers minimum requirements, supported CPU architectures, and the technical stack.
+---
+
 # Wings
 
 Wings is the node agent that runs on your game server hosts. It manages Docker containers on behalf of the panel, receives instructions over the Wings API, and reports status updates back. Each Wings instance can manage multiple game servers, and a single panel can connect to multiple Wings instances.

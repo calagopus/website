@@ -1,3 +1,8 @@
+---
+title: Docker Wings Installation
+description: How to install Calagopus Wings using Docker. Wings is the node daemon that runs game server containers on your host machines.
+---
+
 # Docker Wings Installation
 
 ## Docker Image Variants

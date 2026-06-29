@@ -1,3 +1,8 @@
+---
+title: Migrating from Pterodactyl
+description: How to migrate from Pterodactyl to Calagopus. The built-in importer copies users, servers, nodes, and eggs from your Pterodactyl database to a fresh Calagopus instance with no server data to move.
+---
+
 # Migrating from Pterodactyl
 
 Calagopus includes an importer that reads a Pterodactyl database and writes equivalent records into a fresh Calagopus database. After the import, users log in with the same credentials and all servers, nodes, and eggs are intact.

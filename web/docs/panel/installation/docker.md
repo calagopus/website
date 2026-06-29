@@ -1,3 +1,8 @@
+---
+title: Docker Panel Installation
+description: Step-by-step guide to installing the Calagopus Panel with Docker. Covers the All-in-One image for single-node setups and standalone images for multi-node deployments.
+---
+
 # Docker Panel Installation
 
 Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview documentation.

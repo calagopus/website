@@ -1,3 +1,8 @@
+---
+title: Binary Wings Installation
+description: How to install Calagopus Wings as a standalone binary on Linux. Wings manages game server Docker containers on behalf of the Calagopus Panel.
+---
+
 # Binary Wings Installation
 
 ## Install a Container Runtime
