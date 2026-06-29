@@ -1,6 +1,6 @@
 ---
 title: Panel Overview
-description: Overview of the Calagopus Panel — the central web UI and backend for game server management. Covers minimum requirements, the React + Rust tech stack, and real-world resource usage.
+description: Overview of the Calagopus Panel, the central web UI and backend for game server management. Covers minimum requirements, the React + Rust tech stack, and real-world resource usage.
 ---
 
 # Panel

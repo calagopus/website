@@ -43,7 +43,7 @@ Pick whichever you're already running, or whichever you'd prefer for a new setup
 === Nginx
 
 ::: warning
-Before applying the config below, add this `map` block to your main `nginx.conf`, inside the `http {}` context (**not** inside any `server {}` block). It makes sure `Connection: upgrade` is only sent for WebSocket requests rather than all requests — without it, multipart uploads and other normal HTTP traffic can break.
+Before applying the config below, add this `map` block to your main `nginx.conf`, inside the `http {}` context (**not** inside any `server {}` block). It makes sure `Connection: upgrade` is only sent for WebSocket requests rather than all requests. Without it, multipart uploads and other normal HTTP traffic can break.
 
 ```nginx
 map $http_upgrade $connection_upgrade {

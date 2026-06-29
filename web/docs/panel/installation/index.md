@@ -15,5 +15,5 @@ See the [Package Manager Installation](./pkgmanager.md) guide. Install directly 
 See the [Binary Installation](./binary.md) guide. Download and run the panel binary directly on Linux, macOS, or Windows. Note that this method does not support extensions.
 
 === TrueNAS SCALE
-See the [TrueNAS SCALE Installation](./truenas.md) guide. Install Calagopus directly from the TrueNAS Community Apps catalog — no manual Docker setup required. Includes Wings in the same container.
+See the [TrueNAS SCALE Installation](./truenas.md) guide. Install Calagopus directly from the TrueNAS Community Apps catalog, no manual Docker setup required. Includes Wings in the same container.
 ::::

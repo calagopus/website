@@ -1,6 +1,6 @@
 ---
 title: Architecture
-description: Technical architecture of Calagopus — how the Panel, Wings, database, cache, and container runtime fit together in a deployment.
+description: Technical architecture of Calagopus, how the Panel, Wings, database, cache, and container runtime fit together in a deployment.
 ---
 
 # Architecture

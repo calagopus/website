@@ -33,7 +33,7 @@ Replace `example.com` with the domain you're issuing a certificate for. To cover
 sudo certbot certonly --nginx -d example.com
 # If using Apache
 sudo certbot certonly --apache -d example.com
-# Standalone — use this if you don't run a webserver or the options above don't work.
+# Standalone, use this if you don't run a webserver or the options above don't work.
 # Stop any service already bound to port 80 first (nginx, apache etc.).
 sudo certbot certonly --standalone -d example.com
 ```
