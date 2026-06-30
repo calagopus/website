@@ -216,6 +216,7 @@ export default withMermaid({
                   { text: 'Mounting UI', link: '/docs/panel/extensions/concepts/mounting-ui' },
                   { text: 'Extending Models', link: '/docs/panel/extensions/concepts/extending-models' },
                   { text: 'Email Templates', link: '/docs/panel/extensions/concepts/email-templates' },
+                  { text: 'Speaking Game Protocols', link: '/docs/panel/extensions/concepts/speaking-game-protocols' },
                   { text: 'File Storage', link: '/docs/panel/extensions/concepts/file-storage' },
                 ],
               },
