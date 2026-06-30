@@ -10,6 +10,7 @@ There are different kinds of events that structs can emit, usually, its the foll
 | [`CreatableModel`](https://cratedocs.calagopus.com/shared/models/trait.CreatableModel) | This is a more common event emitter, it emits events when a model is created, this is useful for when you want to run some code when a model is created, for example, you may want to create a default configuration for an extension when a new server is created. |
 | [`UpdatableModel`](https://cratedocs.calagopus.com/shared/models/trait.UpdatableModel) | This is also a common event emitter, it emits events when a model is updated, this is useful for when you want to run some code when a model is updated, for example, you may want to update some configuration for an extension when a server is renamed. |
 | [`DeletableModel`](https://cratedocs.calagopus.com/shared/models/trait.DeletableModel) | This is also a common event emitter, it emits events when a model is deleted, this is useful for when you want to run some code when a model is deleted, for example, you may want to clean up some data for an extension when a server is deleted. |
+| [`DuplicableModel`](https://cratedocs.calagopus.com/shared/models/trait.DuplicableModel) | This emits events when a model is duplicated (such as duplicating a role, location, node, egg, egg configuration, mount, announcement, oauth provider, schedule or schedule step). It works just like the create/update/delete emitters, except the model handed to your handlers is the *source* model being duplicated. This is useful for when you want to copy along your own extension's data for the new copy, or cancel a duplication. |
 
 Listening to these events is pretty straightforward, however it does change slightly between the `EventEmittingModel` trait and the other three, so we will go over them separately.
 
@@ -62,7 +63,7 @@ Relatively straightforward, you just call the `register_event_handler` function 
 
 To see all models that support this, you can check the implementors [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.EventEmittingModel#implementors).
 
-## Listening to `CreatableModel`, `UpdatableModel` and `DeletableModel` Events
+## Listening to `CreatableModel`, `UpdatableModel`, `DeletableModel` and `DuplicableModel` Events
 
 These are a bit more complex, Rust's type system is working overtime with the implementation of these, however you dont have to worry about it too much.
 
@@ -277,5 +278,83 @@ And the after handler function (registered with `register_after_delete_handler`)
 | `transaction` | `&mut Transaction` | The same sqlx transaction the deletion was performed in. Returning an error here will roll back the whole thing, including the deletion itself - useful if your cleanup is critical and you'd rather keep the row around than have it gone with no extension data cleaned up. |
 
 To see all models that support this, you can check the implementors of the `DeletableModel` trait [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.DeletableModel#implementors).
+
+=== DuplicableModel
+
+```rs
+use shared::{
+    State,
+    extensions::Extension,
+    models::{DuplicableModel, ListenerPriority, role::Role},
+};
+
+#[derive(Default)]
+pub struct ExtensionStruct;
+
+#[async_trait::async_trait]
+impl Extension for ExtensionStruct {
+    async fn initialize(&mut self, _state: State) {
+        tracing::info!("dev_0x7d8_test extension initialize called");
+
+        // its important to note that you should not call this multiple times, otherwise you will be registering multiple listeners and your code will run multiple times when the event is emitted
+        Role::register_duplicate_handler(
+            ListenerPriority::Normal,
+            |role, options, _state, _transaction| {
+                Box::pin(async move {
+                    tracing::info!(
+                        "duplicating role {} into new role with name: {}",
+                        role.name,
+                        options.name
+                    );
+                    Ok(())
+                })
+            },
+        )
+        .await;
+
+        // and the after hook, which runs once the duplicate has actually been created
+        Role::register_after_duplicate_handler(
+            ListenerPriority::Normal,
+            |role, duplicated, _options, _state, _transaction| {
+                Box::pin(async move {
+                    tracing::info!(
+                        "role {} was duplicated into new role {} ({})",
+                        role.name,
+                        duplicated.name,
+                        duplicated.uuid
+                    );
+                    Ok(())
+                })
+            },
+        )
+        .await;
+    }
+}
+```
+
+What's important to note here is the `ListenerPriority`, which is an enum that determines the order in which the listeners are called. Huh? But why was that not needed for the `EventEmittingModel` events? Well, that's because those events are ran whenever they see fit, you do not have influence over whether they will be cancelled or similar. By name, its an Emitter, it emits events, you listen to them, but you dont have influence over them. However, with these events, you do have influence over them, for example, with the `DuplicableModel` events, you can cancel the duplication of the model by returning an error in the handler. This is where the `ListenerPriority` comes in, it determines the order in which the listeners are called, and if a listener returns an error, the listeners with lower priority will not be called.
+
+The big thing to keep in mind with duplication is the source model. The before hook is only handed the **source** model - the one being duplicated from - since the copy doesn't exist yet; unlike the create hooks it gets no query builder, so the new copy is constructed from the source model's fields plus the `options`, and the `options` are your only window into what's actually changing (for example, the new name). The after hook, on the other hand, runs once the copy has been inserted, so it receives *both* the source model **and** the freshly created duplicate (mutably), letting you react to the actual result - for example, to grab its newly assigned UUID.
+
+Heres an overview of the parameters of the before handler function (registered with `register_duplicate_handler`):
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `model` | `&Self` | The *source* model that is being duplicated. You can read from it to decide what your handler should do, for example, to copy along your extension's own data that is keyed off the source model onto the new copy. |
+| `options` | `&DuplicateOptions` | The options that are used to duplicate the model, these hold the values that differ from the source (for example, the new name). Note that this is immutable, so you cannot change how the duplicate is created here. |
+| `state` | `&State` | The state of the application, you can use this to access the database or other models. |
+| `transaction` | `&mut Transaction` | The sqlx database transaction that the duplication runs in, you can use this to run additional queries that are part of the duplication, for example, copying your extension's data for the new model. |
+
+And the after handler function (registered with `register_after_duplicate_handler`), which runs *after* the duplicate row has been inserted, still inside the same transaction (so returning an error from it will roll back the whole duplication):
+
+| Parameter | Type | Description |
+| --------- | ---- | ----------- |
+| `model` | `&Self` | The *source* model that was duplicated from. Still readable so you can compare it against the new copy or key your follow-up work off it. |
+| `duplicated` | `&mut Self` | The freshly created duplicate, as it now exists in the database (with its newly assigned UUID and any other generated fields). You can mutate it if you have a reason to, but more commonly you'll just read from it, for example, to grab the new UUID to wire up your extension's own data for the copy. |
+| `options` | `&DuplicateOptions` | The options that were used to duplicate the model. |
+| `state` | `&State` | The state of the application, you can use this to access the database or other models. |
+| `transaction` | `&mut Transaction` | The same sqlx transaction the duplication was performed in. Returning an error here will roll back the whole thing, including the duplicate itself. |
+
+To see all models that support this, you can check the implementors of the `DuplicableModel` trait [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.DuplicableModel#implementors).
 
 ::::
