@@ -208,7 +208,7 @@ ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 
 ## Configure Wings
 
-Before starting Wings, you need to register the node in the panel and get its configuration. Follow the [Adding a Node](../../panel/next-steps/add-node.md) guide to create the node, then run the auto-deploy command the panel provides:
+Before starting Wings, you need to register the node in the panel and get its configuration. Follow the [Configuring a New Node](../../wings/next-steps/configure-node.md) guide to create the node, then run the auto-deploy command the panel provides:
 
 ```bash
 calagopus-wings configure --join-data xxxxxx

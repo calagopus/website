@@ -31,14 +31,18 @@ Locations group nodes together and control backup configuration inheritance. You
 |---|---|
 | Name | A short, identifiable name for the node. |
 | Location | The location to assign this node to. *(Admin panel only which is set automatically in the OOBE)* |
-| URL | The URL the panel uses to reach Wings, e.g. `https://node.calagopus.com:8000`. |
-| Public URL | The URL browsers use to reach Wings directly. Set this if the URL above is an internal address. |
+| URL | The address the panel itself uses to reach Wings, including its port (default `8080`). |
+| Public URL | The address browsers use to reach Wings directly, for websocket connections and downloads. Leave empty to reuse **URL**. |
 | SFTP Host | Custom SFTP hostname shown in the dashboard. Leave empty to reuse the hostname from URL. |
 | SFTP Port | Port for the SFTP/SSH server. Leave default unless you know you need to change it. |
 | Memory | Total RAM this node can allocate across servers. |
 | Disk | Total disk space this node can allocate. |
 | Backup Configuration | The backup configuration servers on this node will use. *(Admin panel only)* |
 | Description | Optional description. *(Admin panel only)* |
+
+**URL vs. Public URL:** **URL** is what the panel itself uses to reach Wings, so it can be an internal address like a LAN IP or `localhost`. **Public URL** is what the browser uses, so it must be reachable from wherever your users are, e.g. a domain with SSL like `https://node.calagopus.com:8080`. Leave Public URL empty to just reuse URL.
+
+If your panel has SSL but Wings doesn't, use **Wings Proxy Mode** instead of a second reverse proxy: the panel proxies Wings traffic itself, so only the panel needs a cert. Enable it via `APP_ENABLE_WINGS_PROXY=true` in the panel's `.env`, then click the globe icon next to Public URL to auto-fill it. Full details and trade-offs (no SFTP, extra load on the panel): [Exposing Wings in a Homelab](../../wings/advanced/exposing-wings-in-a-homelab.md).
 
 ![](./images/configure-node/add-node-oobe.webp)
 ![](./images/configure-node/create-node.webp)
@@ -60,17 +64,14 @@ Once the node exists in the panel, copy its join command and run it on the node'
 wings configure --join-data xxxxxx
 ```
 
-![](./images/configure-node/oobe-nodeconf.webp)
-![](./images/configure-node/config.webp)
-
 Where to find the command:
 - **OOBE**: shown on the Node Configuration step.
 - **Admin panel**: go to **Admin → Nodes → (your node) → Configuration** tab.
 
-![](./images/add-node/oobe-nodeconf.webp)
-![](./images/add-node/config.webp)
+![](./images/configure-node/oobe-nodeconf.webp)
+![](./images/configure-node/config.webp)
 
-After running it, finish setup via [Docker](../../wings/installation/docker.md#configure-wings), [Binary](../../wings/installation/binary.md#configure-wings), or [Package Manager](../../wings/installation/pkgmanager.md#configure-wings).
+After running it, finish setup via [Docker](../../wings/installation/docker.md#configure-wings), [Binary](../../wings/installation/binary.md#configure-wings), or [Package Manager](../../wings/installation/pkgmanager.md#configure-wings) guide.
 
 ## Next step: enable SSL
 
