@@ -175,10 +175,7 @@ export default withMermaid({
             text: 'Next Steps',
             link: '/docs/panel/next-steps/',
             collapsed: true,
-            items: [
-              { text: 'Creating a New Node', link: '/docs/panel/next-steps/add-node' },
-              { text: 'Adding egg repositories', link: '/docs/panel/next-steps/egg-repos' },
-            ],
+            items: [{ text: 'Adding egg repositories', link: '/docs/panel/next-steps/egg-repos' }],
           },
           {
             text: 'Extensions',
@@ -245,7 +242,10 @@ export default withMermaid({
             text: 'Next Steps',
             link: '/docs/wings/next-steps/',
             collapsed: true,
-            items: [{ text: 'Setting up Allocations', link: '/docs/wings/next-steps/setting-up-allocations' }],
+            items: [
+              { text: 'Configuring a New Node', link: '/docs/wings/next-steps/configure-node' },
+              { text: 'Setting up Allocations', link: '/docs/wings/next-steps/setting-up-allocations' },
+            ],
           },
           {
             text: 'Disk Limiters',

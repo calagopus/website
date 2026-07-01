@@ -5,34 +5,34 @@ next: false
 
 # Migrating from Pterodactyl (Standalone)
 
-This guide is for Pterodactyl installs that run directly on the host with no Docker, no containers installed, just a typical install at `/var/www/pterodactyl` or similar. If you're using Docker, head to the [Dockerized](./docker.md) guide instead.
+This guide is for Pterodactyl installs running directly on the host, no Docker, no containers, typically at `/var/www/pterodactyl`. If you're using Docker, use the [Dockerized](./docker.md) guide instead.
 
-The process involves installing Calagopus alongside your existing Pterodactyl, pointing the importer at Pterodactyl's `.env` file, and letting it read everything from Pterodactyl's database and write equivalent records into Calagopus's fresh database. Users log in with the same credentials afterwards.
+You'll install Calagopus alongside your existing Pterodactyl, then point the importer at Pterodactyl's `.env` file. It reads everything from Pterodactyl's database and writes matching records into Calagopus's fresh database. Users log in afterward with the same credentials they already have.
 
-API keys do not migrate. See the [intro](../pterodactyl.md) for the full reasoning - in short, the hashes are not compatible and the API is not either, so old keys would not work even if they were imported.
+API keys do not migrate. The hashes aren't compatible, and neither is the API, so old keys wouldn't work even if they were imported. See the [intro](../pterodactyl.md) for the full reasoning.
 
 ## Prerequisites
 
 Before you start, you'll want:
 
-- Your Pterodactyl `.env` file accessible (you'll point the importer at it)
-- Calagopus Panel installed but not yet configured - we need to land on the Out-of-Box Experience (OOBE) screen and stop there
+- Your Pterodactyl `.env` file accessible. You'll point the importer at it.
+- Calagopus Panel installed but not yet configured. Stop at the Out-of-Box Experience (OOBE) screen.
 
 ## Install Calagopus First
 
-If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md) to get it running. Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
+If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md). Once you reach the OOBE screen, **stop**. Don't click through it, don't create the admin user. Just leave it there and come back here.
 
 ::: warning Don't click through the OOBE
-The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer wants to do.
+The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer is trying to do.
 
 ![Calagopus Panel OOBE](../../../panel/oobe.webp)
 
-::: details I already clicked through - how do I undo it?
-You'll need to drop and recreate the database. Pick the matching tab for how Calagopus is installed:
+::: details Already clicked through? Here's how to undo it
+You'll need to drop and recreate the database. Pick the tab that matches how Calagopus is installed:
 
 ::::tabs
 === Docker
-Head to the directory with your Calagopus compose file and stop the stack:
+Go to the directory with your Calagopus compose file and stop the stack:
 
 ```bash
 docker compose down
@@ -91,39 +91,48 @@ nssm start "Calagopus Panel"
 
 ::::
 
+
 ## Choose Your Calagopus Install Method
 
-The exact import command depends on how Calagopus itself is installed. Pick the matching tab and follow along:
+The import command depends on how Calagopus itself is installed. Pick the matching tab:
 
 ::::tabs
 === Docker
 
-Make a working copy of Pterodactyl's `.env` and edit `DB_HOST` to point at the host from inside the Calagopus container. The `web` service ships with `host.docker.internal` mapped to the host's gateway, so that's the value to use:
+Make a working copy of Pterodactyl's `.env` and point `DB_HOST` at the host machine, since the importer runs inside the Calagopus container. The `web` service maps `host.docker.internal` to the host's gateway, so use that:
 
 ```bash
 cp /var/www/pterodactyl/.env /tmp/pterodactyl.env
-# Open /tmp/pterodactyl.env in your editor and change:
-#   DB_HOST=127.0.0.1   →   DB_HOST=host.docker.internal
 ```
 
-Then copy it into the Calagopus container:
+Open `/tmp/pterodactyl.env` and change:
+
+```txt
+DB_HOST=127.0.0.1
+```
+to
+```txt
+DB_HOST=host.docker.internal
+```
+
+Copy it into the Calagopus container:
 
 ```bash
 docker compose cp /tmp/pterodactyl.env web:/.env
 ```
 
-Now run the importer:
+Run the importer:
 
 ```bash
 docker compose exec web calagopus-panel import pterodactyl --environment /.env
 ```
 
-This walks through users, servers, nodes, allocations, eggs, and so on. Larger Pterodactyl installs take longer; small ones finish in seconds. Progress is logged to stdout.
+This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. Progress is logged to stdout.
 
 ::: warning If the import errors out with a connection or auth error
-If the importer fails immediately with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, you've hit MySQL/MariaDB's host-based access control. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
+If it fails immediately with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, that's MySQL/MariaDB's host-based access control blocking the connection. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
 
-If it fails partway through with a different error, treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres data (the steps in the OOBE warning callout above), let Calagopus recreate it empty, and re-run the import.
+If it fails partway through with a different error, treat the database as poisoned. A partial import leaves Calagopus in an inconsistent state. Drop the Postgres data (steps in the OOBE warning above), let Calagopus recreate it empty, and re-run the import.
 :::
 
 When the import finishes, restart the stack:
@@ -137,27 +146,27 @@ Log in with your existing Pterodactyl credentials.
 
 #### Allowing the Database User to Connect from Docker
 
-If you're only seeing this section because the import failed with a host or auth error: the cause is that Pterodactyl's MySQL/MariaDB user is restricted to specific source hosts (typically `localhost` or `127.0.0.1`), and the Calagopus container connects from a *different* IP - the Docker bridge gateway. From MySQL's perspective, `pterodactyl@'localhost'` and `pterodactyl@'172.17.0.1'` are different users, and only the first one exists.
+Only read this if the import failed with a host or auth error. The cause: Pterodactyl's MySQL/MariaDB user is restricted to specific source hosts, usually `localhost` or `127.0.0.1`, but the Calagopus container connects from a different IP, the Docker bridge gateway. To MySQL, `pterodactyl@'localhost'` and `pterodactyl@'172.17.0.1'` are different users, and only the first one exists.
 
-The fix is to grant the same user access from any host (`'%'`), run the import, then revoke that broad grant once you're done.
+The fix is to grant that user access from any host (`'%'`), run the import, then revoke the grant once you're done.
 
-Connect to your MySQL/MariaDB server (substituting the actual user, password, and database name from Pterodactyl's `.env`):
+Connect to your MySQL/MariaDB server (use the real user, password, and database name from Pterodactyl's `.env`):
 
 ```bash
 mysql -u root -p
 ```
 
-Grant the user access from anywhere:
+Grant access from anywhere:
 
 ```sql
 GRANT ALL PRIVILEGES ON panel.* TO 'pterodactyl'@'%' IDENTIFIED BY 'your-pterodactyl-password';
 FLUSH PRIVILEGES;
 ```
 
-Then go back and re-run the import.
+Then re-run the import.
 
 ::: warning Revoke this after the migration
-A grant from `'%'` lets the user connect from anywhere on any network the database is reachable on, which is far broader than you want for normal operation. Revert it as soon as the import finishes:
+A grant from `'%'` lets the user connect from anywhere the database is reachable, which is far more access than you want long-term. Revoke it as soon as the import finishes:
 
 ```sql
 REVOKE ALL PRIVILEGES ON panel.* FROM 'pterodactyl'@'%';
@@ -165,33 +174,33 @@ DROP USER 'pterodactyl'@'%';
 FLUSH PRIVILEGES;
 ```
 
-This leaves the original `pterodactyl@'localhost'` (or wherever) untouched, so Pterodactyl itself keeps working if you're keeping it running side-by-side. After Pterodactyl is fully decommissioned, you can drop that user too.
+This leaves the original `pterodactyl@'localhost'` (or wherever) untouched, so Pterodactyl keeps working if you're running it alongside Calagopus for now. Once Pterodactyl is fully decommissioned, you can drop that user too.
 :::
 
 === APT/RPM, Binary
 
-Head to the directory containing your Calagopus `.env` (defaults to `/etc/calagopus` on Linux):
+Go to the directory with your Calagopus `.env` (defaults to `/etc/calagopus` on Linux):
 
 ```bash
 cd /etc/calagopus
 ```
 
-Run the importer pointing at Pterodactyl's `.env`. If Pterodactyl is at the default location of `/var/www/pterodactyl`, the importer finds it without needing the `--environment` flag:
+Run the importer pointing at Pterodactyl's `.env`. If Pterodactyl is at the default location, `/var/www/pterodactyl`, the importer finds it automatically:
 
 ```bash
 calagopus-panel import pterodactyl
 ```
 
-If Pterodactyl is somewhere else, point the importer at its `.env` explicitly:
+If Pterodactyl is somewhere else, point the importer at its `.env` directly:
 
 ```bash
 calagopus-panel import pterodactyl --environment /path/to/pterodactyl/.env
 ```
 
-This walks through users, servers, nodes, allocations, eggs, and so on. Larger Pterodactyl installs take longer; small ones finish in seconds. Progress is logged to stdout.
+This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. Progress is logged to stdout.
 
 ::: warning If the import errors out
-Treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres database (the steps in the OOBE warning callout above), recreate it, and re-run.
+Treat the database as poisoned. A partial import leaves Calagopus in an inconsistent state. Drop the Postgres database (steps in the OOBE warning above), recreate it, and re-run.
 :::
 
 When the import finishes, restart Calagopus:
@@ -209,6 +218,6 @@ Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Wings also needs to be updated to point at the new panel. See [Wings Updating](../../../wings/updating.md) for that step.
+Wings also needs to point at the new panel. See [Updating Wings](../../../wings/updating.md) for that step.
 
-After the migration, regenerate any API keys used by external scripts. The old Pterodactyl keys will not work, and the Calagopus API differs from Pterodactyl's, so those integrations will need to be updated regardless.
+After migrating, regenerate any API keys used by external scripts. The old Pterodactyl keys won't work, and the Calagopus API differs from Pterodactyl's, so those integrations need updating regardless.
