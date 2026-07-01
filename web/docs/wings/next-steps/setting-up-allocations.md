@@ -4,11 +4,11 @@ An allocation is an IP address and port combination that you assign to a server.
 
 To create allocations, go to **Admin → Nodes**, click your node, then open the **Allocations** tab.
 
-![](./images/allocation-1.webp)
+![](./images/setting-up-allocations/allocation-1.webp)
 
 Click **Create** and a popup will appear:
 
-![](./images/allocation-popup.webp)
+![](./images/setting-up-allocations/allocation-popup.webp)
 
 **IP address**: Use the public IP of the node's network interface. To find it, run `hostname -I | awk '{print $1}'` on the node, or `ip addr | grep "inet "` to see all interfaces. You can also use `0.0.0.0` to bind all available interfaces.
 

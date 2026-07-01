@@ -5,34 +5,34 @@ next: false
 
 # Migrating from Pelican (Dockerized)
 
-This guide is for Pelican installs running in Docker - if you have a `docker-compose.yml` with a Pelican service, you are in the right place. If you are running Pelican directly on the host without containers, use the [Standalone](./standalone.md) guide instead.
+This guide is for Pelican installs running in Docker. If you have a `docker-compose.yml` with a Pelican service, you're in the right place. If Pelican runs directly on the host without containers, use the [Standalone](./standalone.md) guide instead.
 
-The general shape of the import is the same regardless of how Pelican is running: you point the Calagopus importer at a `.env` file containing Pelican's database connection details, and it reads everything across. The Docker-specific wrinkle is that you may have to construct that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pelican's original `.env`.
+The import works the same way regardless of how Pelican is running: you point the Calagopus importer at a `.env` file with Pelican's database connection details, and it reads everything across. The Docker-specific part is that you may have to build that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pelican's original `.env`.
 
-A reminder of what doesn't migrate: API keys. See the [intro](../pelican.md) for the full reasoning - the short version is that the hashes aren't compatible and the API isn't either, so old keys wouldn't work even if we did import them.
+API keys do not migrate. The hashes aren't compatible, and neither is the API, so old keys wouldn't work even if they were imported. See the [intro](../pelican.md) for the full reasoning.
 
 ## Prerequisites
 
 Before you start, you'll want:
 
-- Access to your Dockerized Pelican install (the directory containing the compose file and `.env`)
-- Calagopus Panel installed but not yet configured - we need to land on the Out-of-Box Experience (OOBE) screen and stop there
+- Access to your Dockerized Pelican install (the directory with the compose file and `.env`).
+- Calagopus Panel installed but not yet configured. Stop at the Out-of-Box Experience (OOBE) screen.
 
 ## Install Calagopus First
 
-If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md) Once you reach the OOBE screen, **stop**. Don't click through it. Don't create the admin user. Just leave it on that screen and come back here.
+If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md). Once you reach the OOBE screen, **stop**. Don't click through it, don't create the admin user. Just leave it there and come back here.
 
 ::: warning Don't click through the OOBE
-The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer wants to do.
+The importer needs an empty Calagopus database to write into. The OOBE creates initial records (admin user, default settings) that would conflict with what the importer is trying to do.
 
 ![Calagopus Panel OOBE](../../../panel/oobe.webp)
 
-::: details I already clicked through - how do I undo it?
-You'll need to drop and recreate the database. Pick the matching tab for how Calagopus is installed:
+::: details Already clicked through? Here's how to undo it
+You'll need to drop and recreate the database. Pick the tab that matches how Calagopus is installed:
 
 ::::tabs
 === Docker
-Head to the directory with your Calagopus compose file and stop the stack:
+Go to the directory with your Calagopus compose file and stop the stack:
 
 ```bash
 docker compose down
@@ -93,24 +93,24 @@ nssm start "Calagopus Panel"
 
 ## Set the Pelican Directory
 
-Most of the commands below reference your Pelican install directory. To save typing, set it as a shell variable up front. If your Pelican host mount is at `/srv/pelican`, this is fine as-is; otherwise change the path:
+Most commands below reference your Pelican install directory. Set it as a shell variable up front to save typing. If your Pelican host mount is at `/srv/pelican`, this is fine as-is, otherwise change the path:
 
 ```bash
 export PELICAN_DIRECTORY=/srv/pelican
 ```
 
-This is optional - you can substitute the path inline anywhere you see `$PELICAN_DIRECTORY` - but it makes the commands shorter.
+This is optional, you can substitute the path inline anywhere you see `$PELICAN_DIRECTORY`. It just makes the commands shorter.
 
 ## Choose Your Calagopus Install Method
 
-The exact commands depend on how Calagopus itself is installed. Pick the matching tab and follow along:
+The exact commands depend on how Calagopus itself is installed. Pick the matching tab:
 
 ::::tabs
 === Docker
 
 ### Building the Pelican `.env` File
 
-Pelican's database is reachable from within the Pelican containers, but likely not from your Calagopus containers - different Docker networks use different hostnames. The solution is to build a small `pelican.env` file with database connection details that work from where the importer will run.
+Pelican's database is reachable from inside the Pelican containers, but likely not from your Calagopus containers, since different Docker networks use different hostnames. The fix is to build a small `pelican.env` file with database connection details that work from where the importer runs.
 
 The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supports these database drivers:
 
@@ -122,11 +122,11 @@ The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supp
 - `postgres`
 - `postgresql`
 
-You can find the values in Pelican's `.env` file. You will be assembling them into a new file in a moment.
+You'll find the values in Pelican's `.env` file. Assemble them into a new file in a moment.
 
 #### `APP_URL`
 
-This is your existing Pelican domain. Look for it in Pelican's `docker-compose.yml` or its `.env`. Example:
+Your existing Pelican domain. Look for it in Pelican's `docker-compose.yml` or `.env`:
 
 ```sh
 APP_URL=https://panel.example.com
@@ -148,7 +148,7 @@ APP_KEY=base64:xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
 
 #### `DB_CONNECTION`
 
-Look at Pelican's `.env` for the value. Common values are `mysql`, `mariadb`, or `sqlite`:
+Check Pelican's `.env` for the value. Common values are `mysql`, `mariadb`, or `sqlite`:
 
 ```sh
 DB_CONNECTION=mysql
@@ -164,7 +164,7 @@ If `DB_CONNECTION` is `mysql`, `mariadb`, `pgsql`, `postgres`, or `postgresql`, 
 - `DB_USERNAME`
 - `DB_PASSWORD`
 
-Most of these come straight from Pelican's `.env`, but `DB_HOST` is tricky. Pelican's `.env` probably has something like `DB_HOST=database` (a Docker service name), which won't resolve from outside that compose stack. Get the actual container IP instead:
+Most of these come straight from Pelican's `.env`, but `DB_HOST` is tricky. Pelican's `.env` probably has something like `DB_HOST=database`, a Docker service name that won't resolve from outside that compose stack. Get the actual container IP instead:
 
 ```bash
 # Linux/MacOS - run from inside the Pelican directory
@@ -194,11 +194,11 @@ DB_CONNECTION=sqlite
 DB_DATABASE=/database.sqlite
 ```
 
-The path matters: `/database.sqlite` is where the SQLite file will be placed *inside* the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, override it with this absolute in-container path.
+The path matters. `/database.sqlite` is where the SQLite file will sit *inside* the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, override it with this absolute in-container path.
 
 #### Assembling the File
 
-Head to the Calagopus directory (where your `compose.yml` lives) and create a file called `pelican.env` with everything you collected:
+Go to the Calagopus directory (where your `compose.yml` lives) and create a file called `pelican.env` with everything you collected:
 
 ```sh
 APP_URL=https://panel.example.com
@@ -225,16 +225,16 @@ If you're on SQLite3, also copy the database file in:
 docker compose cp $PELICAN_DIRECTORY/database/database.sqlite web:/database.sqlite
 ```
 
-Now run the importer:
+Run the importer:
 
 ```bash
 docker compose exec web calagopus-panel import pelican --environment /.env
 ```
 
-This walks through users, servers, nodes, allocations, eggs, and so on. Larger Pelican installs take longer; small ones finish in seconds. Progress is logged to stdout.
+This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. Progress is logged to stdout.
 
 ::: warning If the import errors out
-Treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres data (the steps in the OOBE warning callout above), let Calagopus recreate it empty, and re-run the import.
+Treat the database as poisoned. A partial import leaves Calagopus in an inconsistent state. Drop the Postgres data (steps in the OOBE warning above), let Calagopus recreate it empty, and re-run the import.
 :::
 
 When the import finishes, restart the stack:
@@ -250,7 +250,7 @@ Log in with your existing Pelican credentials.
 
 ### Building the Pelican `.env` File
 
-For binary or APT/RPM installs of Calagopus, the importer runs directly on the host - so as long as the Pelican database is reachable from there, you can often just point the importer at Pelican's existing `.env` file directly. But if Pelican is in Docker and the database isn't exposed outside the Docker network, you'll need to build a separate `pelican.env` with the right hostname.
+For binary or APT/RPM installs of Calagopus, the importer runs directly on the host. As long as Pelican's database is reachable from there, you can often just point the importer at Pelican's existing `.env` file directly. If Pelican is in Docker and the database isn't exposed outside the Docker network, you'll need to build a separate `pelican.env` with the right hostname.
 
 The importer needs `APP_URL`, `APP_KEY`, and the database settings. Pelican supports these database drivers:
 
@@ -299,7 +299,7 @@ If `DB_CONNECTION` is `mysql`, `mariadb`, `pgsql`, `postgres`, or `postgresql`, 
 - `DB_USERNAME`
 - `DB_PASSWORD`
 
-If Pelican's database container is bound to a host port (e.g. `127.0.0.1:3306`), you can use `127.0.0.1` for `DB_HOST`. If not, you'll need to find the container IP from inside Pelican's compose stack:
+If Pelican's database container is bound to a host port (e.g. `127.0.0.1:3306`), use `127.0.0.1` for `DB_HOST`. If not, find the container IP from inside Pelican's compose stack:
 
 ```bash
 # Linux/MacOS - run from inside the Pelican directory
@@ -333,7 +333,7 @@ Use an absolute path so the importer can find the file regardless of where you r
 
 #### Assembling the File
 
-Head to wherever your Calagopus `.env` lives (`/etc/calagopus` by default on Linux) and create a `pelican.env` next to it:
+Go to wherever your Calagopus `.env` lives (`/etc/calagopus` by default on Linux) and create a `pelican.env` next to it:
 
 ```sh
 APP_URL=https://panel.example.com
@@ -354,10 +354,10 @@ From the directory containing `pelican.env`:
 calagopus-panel import pelican --environment pelican.env
 ```
 
-This walks through users, servers, nodes, allocations, eggs, and so on. Larger Pelican installs take longer; small ones finish in seconds. Progress is logged to stdout.
+This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. Progress is logged to stdout.
 
 ::: warning If the import errors out
-Treat the database as poisoned. Partial imports leave Calagopus in an inconsistent state. Drop the Postgres database (the steps in the OOBE warning callout above), recreate it, and re-run.
+Treat the database as poisoned. A partial import leaves Calagopus in an inconsistent state. Drop the Postgres database (steps in the OOBE warning above), recreate it, and re-run.
 :::
 
 When the import finishes, restart Calagopus:
@@ -375,6 +375,6 @@ Log in with your existing Pelican credentials.
 
 ## What's Next
 
-Wings also needs to be updated to point at the new panel. See [Wings - Updating](../../../wings/updating.md) for that step.
+Wings also needs to point at the new panel. See [Updating Wings](../../../wings/updating.md) for that step.
 
-After the migration, regenerate any API keys used by external scripts. The old Pelican keys will not work, and the Calagopus API differs from Pelican's, so those integrations will need to be updated regardless.
+After migrating, regenerate any API keys used by external scripts. The old Pelican keys won't work, and the Calagopus API differs from Pelican's, so those integrations need updating regardless.

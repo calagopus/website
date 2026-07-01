@@ -24,3 +24,5 @@ Pterodactyl running inside Docker containers, with a `docker-compose.yml` somewh
 ::::
 
 If you're not sure which you have, check whether there's a `docker-compose.yml` file in your Pterodactyl directory. If there is, you're Dockerized; if not, you're Standalone.
+
+If you're not sure which you have, check what's actually running. Run `docker compose ps` in your Pterodactyl directory: if it lists an active panel/web container, you're Dockerized. If the panel is served by a regular webserver instead, you're Standalone. The presence of a `docker-compose.yml` file alone doesn't tell you anything, the standard install pulls it from the repo either way.
