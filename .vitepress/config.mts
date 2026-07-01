@@ -175,9 +175,7 @@ export default withMermaid({
             text: 'Next Steps',
             link: '/docs/panel/next-steps/',
             collapsed: true,
-            items: [
-              { text: 'Adding egg repositories', link: '/docs/panel/next-steps/egg-repos' },
-            ],
+            items: [{ text: 'Adding egg repositories', link: '/docs/panel/next-steps/egg-repos' }],
           },
           {
             text: 'Extensions',
