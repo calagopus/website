@@ -2,13 +2,13 @@ name: 'Discord'
 description: null
 auth_url: 'https://discord.com/oauth2/authorize'
 token_url: 'https://discord.com/api/oauth2/token'
-info_url: 'https://discord.com/api/oauth2/@me'
+info_url: 'https://discord.com/api/users/@me'
 scopes:
   - 'email'
   - 'identify'
-identifier_path: '$.user.id'
-email_path: '$.user.email'
-username_path: '$.user.username'
+identifier_path: '$.id'
+email_path: '$.email'
+username_path: '$.username'
 name_first_path: null
 name_last_path: null
 enabled: true
