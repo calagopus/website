@@ -849,6 +849,22 @@ Default value:
 restore_threads: 4
 ```
 
+### system.backups.pbs.create_threads
+The number of threads used when creating Proxmox Backup Server (PBS) backups. Each thread processes one file concurrently while the backup is being uploaded.
+
+Default value:
+```yaml
+create_threads: 4
+```
+
+### system.backups.pbs.download_concurrency
+The number of chunks downloaded concurrently when restoring a Proxmox Backup Server (PBS) backup.
+
+Default value:
+```yaml
+download_concurrency: 4
+```
+
 ## Transfers
 
 ### system.transfers.download_limit
@@ -1427,6 +1443,9 @@ system:
       create_read_only: true
     zfs:
       restore_threads: 4
+    pbs:
+      create_threads: 4
+      download_concurrency: 4
   transfers:
     download_limit: 0
 docker:
