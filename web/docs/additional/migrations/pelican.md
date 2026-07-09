@@ -23,4 +23,4 @@ A normal install on a Linux box, Pelican running directly on the host. Head to t
 Pelican running inside Docker containers, with a `docker-compose.yml` somewhere. Head to the [Dockerized](./pelican/docker.md) guide.
 ::::
 
-If you're not sure which you have, check what's actually running. Run `docker compose ps` in your Pelican directory: if it lists an active panel/web container, you're Dockerized. If the panel is served by a regular webserver instead, you're Standalone. The presence of a `docker-compose.yml` file alone doesn't tell you anything, the standard install pulls it from the repo either way.
+If you're not sure which setup you're using, run `docker compose ps` in your Pelican directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
