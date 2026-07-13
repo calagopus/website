@@ -32,6 +32,7 @@ A high-level overview of what Calagopus offers, followed by a comparison with ot
 | Live Console | ✅ | ✅ | ✅ | ✅ |
 | File Manager | ✅ | ✅ | ✅ | ✅ |
 | File Edit History | ✅ | ❌ | ❌ | ❌ |
+| Live File Editing | ✅ | ❌ | ❌ | ❌ |
 | Backup Browsing Support | ✅ | ❌ | ❌ | ✅ |
 | Archive Browsing Support | ✅ | ❌ | ❌ | ❌ |
 | SFTP Support | ✅ | ✅ | ✅ | ✅ |

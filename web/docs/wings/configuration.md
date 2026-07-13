@@ -677,6 +677,48 @@ Default value:
 maintenance_interval: 3600
 ```
 
+## File Collaboration Configuration
+
+### system.file_collaboration.enabled
+Enables or disables the live file collaboration system. When enabled, multiple users can open and edit the same server file simultaneously through the file manager, seeing each other's changes in real time.
+
+Default value:
+```yaml
+enabled: true
+```
+
+### system.file_collaboration.file_size_cap
+The maximum size (in bytes) of a file that can be opened for collaborative editing. Files larger than this cannot be opened in a collaborative session.
+
+Default value:
+```yaml
+file_size_cap: 1048576
+```
+
+### system.file_collaboration.max_sessions_per_server
+The maximum number of concurrent collaborative editing sessions (distinct open files) allowed per server.
+
+Default value:
+```yaml
+max_sessions_per_server: 16
+```
+
+### system.file_collaboration.max_sessions_per_connection
+The maximum number of concurrent collaborative editing sessions a single websocket connection may subscribe to at once.
+
+Default value:
+```yaml
+max_sessions_per_connection: 8
+```
+
+### system.file_collaboration.session_grace_period
+The amount of time (in seconds) Wings keeps a collaborative session alive after the last participant leaves before tearing it down. This allows a user to briefly disconnect and rejoin without losing the session state.
+
+Default value:
+```yaml
+session_grace_period: 120
+```
+
 ## Backups Configuration
 
 ### system.backups.write_limit
@@ -1415,6 +1457,12 @@ system:
     per_file_disk_budget: 5242880
     per_server_disk_budget: 209715200
     maintenance_interval: 3600
+  file_collaboration:
+    enabled: true
+    file_size_cap: 1048576
+    max_sessions_per_server: 16
+    max_sessions_per_connection: 8
+    session_grace_period: 120
   backups:
     write_limit: 0
     read_limit: 0
