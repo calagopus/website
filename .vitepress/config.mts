@@ -178,9 +178,7 @@ export default withMermaid({
                     text: 'API Keys',
                     link: '/docs/panel/features/dashboard/api-keys',
                     collapsed: true,
-                    items: [
-                      { text: 'Permissions Reference', link: '/docs/panel/features/dashboard/permissions' },
-                    ],
+                    items: [{ text: 'Permissions Reference', link: '/docs/panel/features/dashboard/permissions' }],
                   },
                   { text: 'SSH Keys', link: '/docs/panel/features/dashboard/ssh-keys' },
                   { text: 'Command Snippets', link: '/docs/panel/features/dashboard/command-snippets' },
