@@ -10,6 +10,7 @@ The Panel is the web interface and API that ties everything together: managing u
 | Page | Description |
 | --- | --- |
 | [Overview](./overview.md) | Requirements, architecture, and how the panel is built |
+| [Features](./features/index.md) | A tour of every panel feature: account, servers, API keys, and more |
 | [Installation](./installation/index.md) | Get the panel running via Docker, package manager, or binary |
 | [Environment](./environment.md) | Reference for every environment variable the panel reads |
 | [Updating the Panel](./updating.md) | Keep the panel up to date for your installation method |
