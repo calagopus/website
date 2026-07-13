@@ -29,7 +29,7 @@ Clients are matched to panel users by their Blesta client ID (stored as the user
 
 The client service page shows a server summary (name, status, address, memory, disk) with an **Open in Panel** button, and the admin service tab surfaces the same details.
 
-![](./images/blesta/client-area.png)
+![](./images/blesta/client-area.webp)
 
 ## Requirements
 
@@ -58,7 +58,7 @@ The client service page shows a server summary (name, status, address, memory, d
 
    Saving validates the connection against the panel.
 
-![](./images/blesta/server-config.png)
+![](./images/blesta/server-config.webp)
 
 ## Configuring a package
 
