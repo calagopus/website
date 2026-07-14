@@ -290,7 +290,7 @@ export const extensionSettingsSchema = z.object({
 });
 ```
 
-Note the **camelCase field names** - this is the frontend, so Zod fields match what `axiosInstance` will produce after auto-transforming snake_case responses from your backend. See [Frontend API Calls](./frontend-api.md) for the transformation rules; the short version is that your settings endpoint will return camelCase and should accept snake_case on write.
+Note the **camelCase field names** - this is the frontend, and the same schema is what you hand to `parseFromApi` / `serializeForApi` in your API files, which map the backend's snake_case keys to these camelCase names (and back) and validate the data. See [Frontend API Calls](./frontend-api.md) for the transformation rules.
 
 ### The Form Component
 

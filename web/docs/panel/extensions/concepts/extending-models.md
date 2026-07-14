@@ -179,8 +179,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // 3. Hook into UPDATE so admins can edit the field on existing servers
         Server::register_update_handler(
@@ -197,8 +196,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // 4. Extend the API struct so the field appears in JSON
         ApiServerFeatureLimits::extend_validated(
@@ -240,8 +238,7 @@ Server::register_create_handler(
             Ok(())
         })
     },
-)
-.await;
+);
 ```
 
 The create handler runs as part of the INSERT flow. Your closure gets a `query_builder` you can mutate to add columns to the INSERT statement, and the core insert will execute the resulting SQL with all extensions' columns merged in.
@@ -265,8 +262,7 @@ Server::register_update_handler(
             Ok(())
         })
     },
-)
-.await;
+);
 ```
 
 The update handler is structurally similar but the closure also receives `server` (the current state of the model being updated) as the first argument. You can read from `server` if your update logic needs the existing values - for instance, validating that a new limit isn't being lowered below the number of subdomains already in use, or detecting transitions you want to react to.
@@ -308,81 +304,53 @@ Once registered, the extended struct gets merged into the JSON that flows in and
 
 ## The Frontend Side
 
-The backend is now fully wired - you can `POST /api/admin/servers` or `PATCH /api/admin/servers/{uuid}` with `{ "feature_limits": { "subdomains": 5 } }` in the body and the server will get its limit set. But the existing admin form for creating and editing servers doesn't know about your new field. You need to register form components that slot into the right places.
+The backend is now fully wired - you can `POST /api/admin/servers` or `PATCH /api/admin/servers/{uuid}` with `{ "feature_limits": { "subdomains": 5 } }` in the body and the server will get its limit set. But the existing admin form for creating and editing servers doesn't know about your new field.
 
-Form-aware slot points expose an `appendComponent` (or `prependComponent`) method that takes three arguments instead of one: a Zod schema describing the fields you're adding, the default values for those fields, and the React component itself. Register them in your frontend `index.ts`:
+The server create and update forms are rendered by the Panel's form engine, and extensions hook into them through the form registry - the same mechanism documented in full on the [Forms](./forms.md) page. You register a slot for the form IDs `admin.servers.create` and `admin.servers.update`, using a `transform` to insert your field into the rendered field list:
 
 ```ts
 import { Extension, ExtensionContext } from 'shared';
-import { CreateSubdomainsComponent, UpdateSubdomainsComponent } from './SubdomainsFormComponent.tsx';
-import { serverWithSubdomainsFeatureLimitsSchema } from './lib/schema.ts';
+import { z } from 'zod';
+import { type FieldDef, insertFieldsAfter } from '@/elements/form-engine/index.ts';
 
 class SubdomainsExtension extends Extension {
-  public cardConfigurationPage: React.FC | null = null;
-  public cardComponent: React.FC | null = null;
-
   public initialize(ctx: ExtensionContext): void {
-    ctx.extensionRegistry.pages.admin.servers.create.featureLimitsFormContainer.appendComponent(
-      serverWithSubdomainsFeatureLimitsSchema,
-      { featureLimits: { subdomains: 0 } },
-      CreateSubdomainsComponent,
-    );
-    ctx.extensionRegistry.pages.admin.servers.view.update.featureLimitsFormContainer.appendComponent(
-      serverWithSubdomainsFeatureLimitsSchema,
-      { featureLimits: { subdomains: 0 } },
-      UpdateSubdomainsComponent,
-    );
+    ctx.extensionRegistry.enterForms((forms) => {
+      for (const formId of ['admin.servers.create', 'admin.servers.update'] as const) {
+        forms.extend(formId, {
+          zodShape: {
+            featureLimits: z.object({
+              subdomains: z.number().int().min(0),
+            }),
+          },
+          initialValues: {
+            featureLimits: {
+              subdomains: 0,
+            },
+          },
+          transform: (fields) =>
+            insertFieldsAfter(fields, 'featureLimits.schedules', {
+              type: 'number',
+              name: 'featureLimits.subdomains',
+              label: 'Subdomains',
+              required: true,
+            } satisfies FieldDef),
+        });
+      }
+    });
   }
 }
 
 export default new SubdomainsExtension();
 ```
 
-The schema looks identical to any other Zod schema you've seen in [Settings - Building the Admin Form](./settings.md#building-the-admin-form), nested to match the shape of the form's existing data:
+Field `name`s are Mantine form paths, so the dotted `featureLimits.subdomains` binds into the nested `featureLimits` object in the form's values - the same shape the core fields use. `insertFieldsAfter` anchors your field right after the built-in schedules limit; if the anchor isn't present in a particular render of the form, the transform leaves the fields untouched, which keeps it safe on forms that render their fields in multiple sections.
 
-```ts
-import { z } from 'zod';
-
-export const serverWithSubdomainsFeatureLimitsSchema = z.object({
-  featureLimits: z.object({
-    subdomains: z.number().int().min(0),
-  }),
-});
-```
-
-The Panel merges your schema into the parent form's schema and your defaults into the parent's defaults, so when the form gets submitted, your fields ride along with the core ones. The validation rules from your schema apply alongside the core validation; type-safety on `form.getInputProps('featureLimits.subdomains')` carries through.
-
-Your form component doesn't take any props from the slot point directly - instead it's typed with `FormComponentProps<MainSchema, ExtensionSchema>` from `shared/src/registries/slices/form`, and receives a `form` prop that's the *parent form's* `useForm` instance:
-
-```tsx
-import { FormComponentProps } from 'shared/src/registries/slices/form';
-import NumberInput from '@/elements/input/NumberInput.tsx';
-import { adminServerCreateSchema } from '@/lib/schemas/admin/servers.ts';
-import { serverWithSubdomainsFeatureLimitsSchema } from './lib/schema.ts';
-
-export function CreateSubdomainsComponent({
-  form,
-}: FormComponentProps<typeof adminServerCreateSchema, typeof serverWithSubdomainsFeatureLimitsSchema>) {
-  return (
-    <NumberInput
-      withAsterisk
-      label='Subdomains'
-      placeholder='0'
-      min={0}
-      key={form.key('featureLimits.subdomains')}
-      {...form.getInputProps('featureLimits.subdomains')}
-    />
-  );
-}
-```
-
-The two type parameters tell TypeScript "this component is being slotted into a form whose main schema is `adminServerCreateSchema` and which has my extension schema merged in." The result is that `form.getInputProps('featureLimits.subdomains')` is fully type-safe - if you typo the path, you get a compile error.
-
-The Update component is structurally identical, just with `adminServerUpdateSchema` as the first type parameter instead of `adminServerCreateSchema`. The Panel ships separate schemas for create and update flows because they often have slightly different requirements (some fields optional on update, all required on create, etc.).
+The `zodShape` and `initialValues` here are doing more than just validation and defaults. Both are **deep-merged** into the core form's schema and initial values, which is why the nested `featureLimits` object extends the built-in feature-limit validation instead of replacing it. And crucially, the core create/update API files pass the registered zod shapes to `serializeForApi` (via `formExtensionSchemas(formId)`), so declaring your field in `zodShape` is what gets its value serialized into the request body - as `feature_limits.subdomains`, right where your backend's `parse_extended` expects it. A field that only exists in `transform` renders and validates, but never leaves the browser.
 
 ## Reading Your Extension's Data
 
-The whole point of this exercise is so your extension can *use* the data it stores. The access pattern is slightly different on the backend and the frontend, but in both cases the underlying idea is the same: the field is just *there*, alongside the core fields, since the extended struct gets merged into the model's serialized form.
+The whole point of this exercise is so your extension can *use* the data it stores. The access pattern is pleasingly symmetric on the two sides: wherever a model is loaded, you parse your typed slice back out of it - `parse_model_extension` on the backend, `parseExtendedFromApi` on the frontend.
 
 ### From Backend Routes
 
@@ -480,22 +448,22 @@ The same applies to any other API struct you've extended via `extend_validated` 
 
 ### From Frontend Components
 
-On the frontend, your extended fields are already in the JSON the Panel returns when it loads a server - because of the `extend_validated` call. So you don't need a separate fetch, you don't need a custom API endpoint, you just read from the server store like normal. The only wrinkle is that the TypeScript type for the server doesn't know about your extension's fields, so you have to cast.
+On the frontend, your extended fields are in the JSON the Panel returns when it loads a server - because of the `extend_validated` call. So you don't need a separate fetch and you don't need a custom API endpoint. There is one wrinkle: the Panel's API layer validates every response against its core Zod schemas (see [Frontend API Calls](./frontend-api.md)), and the *typed* objects it produces only contain the fields those schemas declare. Your extension's fields aren't lost, though - during parsing, every field the schema didn't recognize is kept on the parsed object under a hidden `__extension_data` property, mirroring how the backend models carry their extension data.
 
-Here's what that looks like in a server-page component:
+You read them back with `parseExtendedFromApi` - the frontend counterpart of `parse_model_extension`. Define a Zod schema for your extension's slice (camelCase keys, same conventions as any response schema) and hand it the parsed object node your fields live on:
 
 ```tsx
+import { z } from 'zod';
+import { parseExtendedFromApi } from '@/lib/api-transform.ts';
 import { useServerStore } from '@/stores/server.ts';
 
-type ServerWithSubdomains = {
-  featureLimits: {
-    subdomains: number;
-  };
-};
+const subdomainsExtensionSchema = z.object({
+  subdomains: z.number(),
+});
 
 export default function SubdomainsCard() {
   const server = useServerStore((s) => s.server);
-  const { subdomains: limit } = (server as unknown as ServerWithSubdomains).featureLimits;
+  const { subdomains: limit } = parseExtendedFromApi(subdomainsExtensionSchema, server.featureLimits);
 
   return (
     <div>
@@ -505,11 +473,12 @@ export default function SubdomainsCard() {
 }
 ```
 
-The cast is doing the actual work, and that's worth a moment of attention. At runtime the field is genuinely there in the `server` object - the JSON came back from the API with it included, and React/Zustand stored it untouched. TypeScript just doesn't know that, because the base `Server` type is defined by the core Panel without any awareness of your extension. Casting is how you tell the compiler "trust me, this field exists." It's not a runtime operation; nothing magical is happening.
+Note that the second argument is `server.featureLimits`, not `server` - extras are tracked per object node, so you ask the node your backend extension actually extended. Your schema gets the same snake_case-to-camelCase remap and validation as any other response parse: the backend's `subdomains` column arrives as `subdomains`, a hypothetical `custom_flag` would arrive as `customFlag`, and a schema mismatch throws loudly (mark fields `.optional()` if older panel versions might not send them).
 
-The reason for `as unknown as ServerWithSubdomains` rather than a direct `as ServerWithSubdomains` is that TypeScript refuses overly-aggressive direct casts between unrelated types, requiring you to detour through `unknown` first. It looks ugly, and it kind of is - but it's a one-liner per component, and it gives you back the type-safety of a structured object access (`featureLimits.subdomains` autocomplete, type checking on operations, etc.) instead of a stringly-typed lookup.
+Two things to keep in mind:
 
-For extensions that read multiple fields from the server, define a single shape type at the top of the file (or in `types.d.ts` next to your other types) and reuse the cast across all the places you need it.
+- **Go through `parseExtendedFromApi`, don't poke `__extension_data` yourself.** The property holds the raw wire values (snake_case, unvalidated); the helper is what applies your schema. Because it rides on the object as a normal property, it survives store updates that spread the object, `structuredClone`, and JSON round-trips.
+- **This is read-only**, same as `parse_model_extension` on the backend. To change the value, submit it through the update flow like any other field.
 
 ## Where to Go From Here
 

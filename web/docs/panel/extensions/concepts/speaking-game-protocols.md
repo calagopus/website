@@ -26,6 +26,8 @@ The client exposes two methods, one per transport:
 | `open_tunnel_tcp(server, port)` | `QueryTcpTunnel` | Implements `AsyncRead` + `AsyncWrite` - use it like any `tokio` socket |
 | `open_tunnel_udp(server, port)` | `QueryUdpTunnel` | A datagram socket with `send(&[u8])` / `recv(&mut [u8])` |
 
+Both return `Result<_, ApiHttpError>`. `ApiHttpError` converts into `anyhow::Error` but doesn't implement `std::error::Error` itself, which is why the examples below detour through `anyhow::Error::from` when mapping it into an `std::io::Error` (add `anyhow = { workspace = true }` to your dependencies if you follow that pattern).
+
 Both take the server's `uuid` and a `u16` port. **The port is the port the game is listening on inside the container** - in almost every case that's the server's primary allocation, which you can read off the server model:
 
 ```rs
@@ -104,7 +106,7 @@ pub async fn query_minecraft(
     let mut tunnel = client
         .open_tunnel_tcp(server, port)
         .await
-        .map_err(std::io::Error::other)?;
+        .map_err(|err| std::io::Error::other(anyhow::Error::from(err)))?;
 
     // --- Handshake packet (id 0x00) ---
     let mut body: Vec<u8> = Vec::new();
@@ -181,7 +183,7 @@ pub async fn query_gamespy(
     let mut tunnel = client
         .open_tunnel_udp(server, port)
         .await
-        .map_err(std::io::Error::other)?;
+        .map_err(|err| std::io::Error::other(anyhow::Error::from(err)))?;
 
     // Session id - only the low nibble of each byte is significant, so keep it small.
     let session_id: i32 = 1;

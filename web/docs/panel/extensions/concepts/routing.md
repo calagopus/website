@@ -441,6 +441,6 @@ export default async (uuid: string, item: string) => {
 };
 ```
 
-There are two axios instances available - `axiosInstance` automatically converts response keys from `snake_case` to `camelCase`, while `untransformedAxiosInstance` leaves them as-is. Use `axiosInstance` by default; reach for `untransformedAxiosInstance` only when you have keys that need to stay in their original casing (for example, if your response contains a map whose *keys* are user-provided identifiers that you don't want mangled).
+`axiosInstance` does no key conversion itself - responses arrive with the exact `snake_case` keys your backend sent. To work with idiomatic `camelCase` on the frontend, define a Zod schema for the response and run it through `parseFromApi` from `@/lib/api-transform.ts` (and `serializeForApi` for request bodies), which remaps and validates the data in one step.
 
 For a full guide on structuring frontend API calls, see [Frontend API Calls](./frontend-api.md).

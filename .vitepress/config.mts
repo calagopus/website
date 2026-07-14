@@ -242,6 +242,7 @@ export default withMermaid({
                   { text: 'Activity Logging', link: '/docs/panel/extensions/concepts/activity-logging' },
                   { text: 'Translations', link: '/docs/panel/extensions/concepts/translations' },
                   { text: 'Mounting UI', link: '/docs/panel/extensions/concepts/mounting-ui' },
+                  { text: 'Forms', link: '/docs/panel/extensions/concepts/forms' },
                   { text: 'Extending Models', link: '/docs/panel/extensions/concepts/extending-models' },
                   { text: 'Email Templates', link: '/docs/panel/extensions/concepts/email-templates' },
                   { text: 'Speaking Game Protocols', link: '/docs/panel/extensions/concepts/speaking-game-protocols' },
@@ -299,6 +300,25 @@ export default withMermaid({
               { text: 'Running Wings with Podman', link: '/docs/wings/advanced/running-wings-with-podman' },
             ],
           },
+        ],
+      },
+      {
+        text: 'DB Agent',
+        link: '/docs/db-agent/',
+        items: [
+          { text: 'Overview', link: '/docs/db-agent/overview' },
+          { text: 'Configuration', link: '/docs/db-agent/configuration' },
+          {
+            text: 'Installation',
+            link: '/docs/db-agent/installation/',
+            collapsed: true,
+            items: [
+              { text: 'Docker', link: '/docs/db-agent/installation/docker' },
+              { text: 'Binary', link: '/docs/db-agent/installation/binary' },
+              { text: 'Package Manager', link: '/docs/db-agent/installation/pkgmanager' },
+            ],
+          },
+          { text: 'Updating', link: '/docs/db-agent/updating' },
         ],
       },
       {

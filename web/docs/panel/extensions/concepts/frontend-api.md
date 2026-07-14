@@ -1,32 +1,51 @@
 # Frontend API Calls
 
-So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually *talk* to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - which axios instance to use, how keys get transformed, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.
+So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually *talk* to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.
 
-## The Two Axios Instances
+## The Axios Instance
 
-Your frontend has two pre-configured axios instances available - auth tokens, base URL, and error interceptors are all wired up already, so you never instantiate your own. Pick whichever one matches the shape of the data you're working with:
+Your frontend has a pre-configured axios instance available - auth tokens, base URL, and error interceptors are all wired up already, so you never instantiate your own:
 
 ```ts
-import { axiosInstance, untransformedAxiosInstance } from '@/api/axios.ts';
+import { axiosInstance } from '@/api/axios.ts';
 ```
 
-- **`axiosInstance`** - the default. Automatically transforms response keys from `snake_case` to `camelCase` as they come off the wire, so your frontend code stays idiomatic JavaScript regardless of what the Rust backend returns. Use this 95% of the time.
+The instance itself does **no key transformation** - what the backend sends is what you get, and what you send is what goes out on the wire. Key conversion between the backend's `snake_case` and idiomatic frontend `camelCase` is handled per-endpoint by schema-driven helpers, described next.
 
-- **`untransformedAxiosInstance`** - leaves response keys exactly as the backend sent them. Reach for this only when you have a response whose keys are *data*, not field names - see [The Map-Keyed-By-User-Input Trap](#prefer-arrays-over-maps-keyed-by-user-input) below.
+::: info Coming from an older Panel version?
+Earlier builds auto-camelCased every JSON response in an interceptor and shipped a second `untransformedAxiosInstance` for opting out. Both are gone - the interceptor transform was replaced by the schema-based system below, which knows exactly which keys are field names (transform them) and which are data (leave them alone).
+:::
 
-::: warning
-**Request bodies are not auto-transformed, only responses.** If you just hand `axiosInstance.put(...)` a camelCase object, it goes out the wire as camelCase, your Rust handler fails to deserialize it, and you get a confusing 400. This is an unfortunate asymmetry that we might fix eventually, but for now you have to convert request bodies yourself:
+## Schemas and the Transform Helpers
+
+Every response and request body flows through a Zod schema plus one of these helpers from `@/lib/api-transform.ts`:
 
 ```ts
-import { transformKeysToSnakeCase } from '@/lib/transformers.ts';
+import { parseExtendedFromApi, parseFromApi, parsePaginationFromApi, serializeForApi } from '@/lib/api-transform.ts';
+```
 
-await axiosInstance.put('/api/admin/extensions/dev.yourname.test/settings', {
-  ...transformKeysToSnakeCase(data),
+You define a schema per resource with **camelCase keys**, matching the snake_case keys your backend returns:
+
+```ts
+import { z } from 'zod';
+
+export const itemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  maxRetries: z.number(), // backend sends `max_retries`
+  createdAt: z.coerce.date(), // backend sends `created_at` as an ISO string
 });
 ```
 
-The helper is recursive, so nested objects and arrays get handled too.
-:::
+- **`parseFromApi(schema, data)`** - for incoming responses. It walks the raw data guided by the schema (nested objects, arrays, records, and unions all work), remaps each snake_case wire key to your camelCase schema key, then validates with the schema. If validation fails it logs a detailed breakdown to the console (which field, what it got, which API file called it) and throws, so backend/schema mismatches surface loudly during development instead of silently producing `undefined`s downstream.
+- **`parsePaginationFromApi(schema, raw)`** - for paginated list responses. Pass it the raw paginated object (`{ total, per_page, page, data }`) and it returns a `Pagination<T>` with each entry run through `parseFromApi`.
+- **`parseExtendedFromApi(schema, parsed)`** - for reading fields a backend extension added to a *core* response. `parseFromApi` keeps every field the schema didn't declare on the parsed object under a hidden `__extension_data` property (at every nesting level), and this helper parses your typed slice back out of it - the frontend counterpart of the backend's `parse_model_extension`. See [Extending Models](./extending-models.md#from-frontend-components) for the full pattern.
+- **`serializeForApi(schema, data, extraSchemas?)`** - for outgoing request bodies. The reverse direction: camelCase keys in your typed object become snake_case on the wire. Fields that are `undefined` are skipped entirely. The optional third argument is an array of additional schemas whose serialized output is deep-merged into the result - this is how the core endpoints for extensible forms include extension-registered fields: they pass `formExtensionSchemas(formId)`, which returns the `zodShape`s extensions registered for that form (see [Forms](./forms.md)).
+
+Two properties of the transform worth knowing:
+
+- **It's schema-guided, not blind.** Only keys that appear in the schema (or in one of the `extraSchemas`) are transformed - and, for `serializeForApi`, only those keys are *sent*; anything else in the object is dropped. A field typed as `z.record(...)` has its keys passed through verbatim in both directions, so maps whose keys are data (user-provided names, UUIDs, enum constants) survive untouched. The old "auto-transform mangled my map keys" trap no longer exists.
+- **Requests and responses are symmetric.** Define the schema once and use it on both sides; there's no separate "remember to snake_case your request body by hand" step anymore.
 
 ## One File Per Endpoint
 
@@ -35,73 +54,61 @@ The convention is one file per endpoint in `src/api/`, each with a single defaul
 Here's the canonical shape for a GET:
 
 ```ts
+import { z } from 'zod';
 import { axiosInstance } from '@/api/axios.ts';
+import { parseFromApi } from '@/lib/api-transform.ts';
+import { itemSchema } from '../lib/schemas.ts';
 
-export type Item = {
-  id: string;
-  name: string;
-  createdAt: string;
-};
-
-export default async (serverUuid: string, itemType: string): Promise<Item[]> => {
+export default async (serverUuid: string, itemType: string): Promise<z.infer<typeof itemSchema>[]> => {
   const { data } = await axiosInstance.get(
     `/api/client/servers/${serverUuid}/my-feature/items/${itemType}`,
   );
-  return data.items;
+  return data.items.map((item: unknown) => parseFromApi(itemSchema, item));
+};
+```
+
+For a paginated list:
+
+```ts
+import { z } from 'zod';
+import { axiosInstance } from '@/api/axios.ts';
+import { parsePaginationFromApi } from '@/lib/api-transform.ts';
+import { itemSchema } from '../lib/schemas.ts';
+
+export default async (page: number, search?: string): Promise<Pagination<z.infer<typeof itemSchema>>> => {
+  const { data } = await axiosInstance.get('/api/admin/extensions/dev.yourname.test/items', {
+    params: { page, search },
+  });
+  return parsePaginationFromApi(itemSchema, data.items);
 };
 ```
 
 And for a mutation that takes a request body:
 
 ```ts
+import { z } from 'zod';
 import { axiosInstance } from '@/api/axios.ts';
-import { transformKeysToSnakeCase } from '@/lib/transformers.ts';
+import { serializeForApi } from '@/lib/api-transform.ts';
 
-export type UpdateItemData = {
-  name?: string;
-  enabled?: boolean;
-};
+export const updateItemSchema = z.object({
+  name: z.string().optional(),
+  enabled: z.boolean().optional(),
+});
 
-export default async (serverUuid: string, itemId: string, data: UpdateItemData): Promise<void> => {
+export default async (serverUuid: string, itemId: string, data: z.infer<typeof updateItemSchema>): Promise<void> => {
   await axiosInstance.put(
     `/api/client/servers/${serverUuid}/my-feature/items/${itemId}`,
-    transformKeysToSnakeCase(data),
+    serializeForApi(updateItemSchema, data),
   );
 };
 ```
 
-### Excluding keys from the transform
-
-Sometimes a field in your payload shouldn't be transformed - typically because it's a map whose *keys* are data (the same pitfall as [the map-keyed-by-user-input trap](#prefer-arrays-over-maps-keyed-by-user-input)), and you don't want `transformKeysToSnakeCase` recursing into those keys. Pull that field out before the transform and re-add it afterward via object spread:
-
-```ts
-import { axiosInstance } from '@/api/axios.ts';
-import { transformKeysToSnakeCase } from '@/lib/transformers.ts';
-
-export type UpdateSettingsData = {
-  apiUrl: string;
-  typeOrder: Record<string, string[]>; // keys are user-defined category names
-};
-
-export default async (data: UpdateSettingsData): Promise<void> => {
-  const { typeOrder, ...rest } = data;
-
-  await axiosInstance.put('/api/admin/extensions/dev.yourname.test/settings', {
-    ...transformKeysToSnakeCase(rest),
-    type_order: typeOrder,
-  });
-};
-```
-
-Destructuring pulls `typeOrder` out so only the rest of the payload goes through the transform. Then you re-add it under the snake_case name the backend expects, passing the value straight through untouched. This keeps the rest of your request body ergonomic to write in camelCase while preserving whatever keys were in the map-shaped field verbatim.
-
-The same pattern works for any number of excluded keys - destructure them all out, transform the rest, re-add them manually.
-
 A few things worth noticing:
 
 - **URLs are hardcoded.** There's no path helper - you just interpolate the server UUID (and any other path params) directly into the string. The `/api/admin/...`, `/api/client/...`, `/api/client/servers/{uuid}/...` prefixes match the router type you registered the route under on the backend (see [Routing](./routing.md)).
+- **Note the top-level unwrap happens before the parse.** The backend wraps payloads in a keyed object (`data.items`, `data.item`, ...) - the wrapper key comes off the wire in snake_case, so access it with the exact key your backend sends (`data.node_mounts`, not `data.nodeMounts`) and hand the inner value to `parseFromApi` / `parsePaginationFromApi`.
 - **The function takes path/query params as arguments and the request body as the last argument.** This is a convention, not a rule, but it keeps call sites predictable.
-- **Types are colocated.** Request/response types live in the same file as the function that uses them and are re-exported from there. For shapes shared across multiple endpoints, put them in `src/api/types.d.ts`.
+- **Schemas are colocated or shared.** A schema used by a single endpoint can live in that file; schemas shared across endpoints belong in a `src/lib/schemas.ts` in your extension. (The Panel keeps its own in `@/lib/schemas/` - you can import those when consuming core Panel resources, but define your own for your own endpoints.)
 - **Destructure `data` off the axios response.** `axiosInstance.get(...)` returns an object with `data`, `status`, `headers`, and so on - you almost always only care about `data`. Destructuring at the call site (`const { data } = await ...`) keeps the function short and makes the response shape obvious.
 
 ## Handling Errors
@@ -144,12 +151,11 @@ If you need to branch on *what* went wrong - e.g. show a different message for a
 
 A few principles that will save you headaches down the line. These are about the *shape* of the JSON your backend returns, not the frontend code that consumes it - but since the frontend is where you feel the pain, it makes sense to cover them here.
 
-### Prefer arrays over maps-keyed-by-user-input
+### Maps keyed by user input: use `z.record`
 
-This one deserves its own heading because it's the most common mistake, and it's the one that forces you to reach for `untransformedAxiosInstance`. Consider a route that returns a list of categories, each with some items:
+Consider a route that returns categories keyed by their (user-provided) names:
 
 ```jsonc
-// ❌ Bad: map keyed by category names
 {
   "categories": {
     "VANILLA": { "items": [...] },
@@ -159,28 +165,26 @@ This one deserves its own heading because it's the most common mistake, and it's
 }
 ```
 
-This looks clean, but the keys are *data* - they come from the user, a database, or an external API, and you don't control their casing. When `axiosInstance` runs its auto-transform over this, `paper plugins` becomes `paperPlugins`, `VANILLA` stays `VANILLA` (it has no snake_case to transform), and suddenly your frontend has to special-case which keys get mangled. The only way out is `untransformedAxiosInstance`, which means you also lose the transform for the *legitimate* field names in the same response.
+Those keys are *data* - they come from the user, a database, or an external API, and you don't control their casing. Type the field as a record and the transform leaves the keys alone while still transforming the field names *inside* the values:
 
-The fix is to make the outer container an array of objects, where the user-controlled value lives in a *field* instead of being the key:
+```ts
+const responseSchema = z.object({
+  categories: z.record(z.string(), z.object({ items: z.array(itemSchema) })),
+});
+```
+
+That said, arrays of objects are still usually the better shape - they preserve ordering, are easier to iterate and render, and make the "name" an explicit, validated field:
 
 ```jsonc
-// ✅ Good: array of objects with stable field names
 {
   "categories": [
     { "name": "VANILLA", "items": [...] },
-    { "name": "FORGE", "items": [...] },
     { "name": "paper plugins", "items": [...] }
   ]
 }
 ```
 
-Now `categories` is a field name (safe to transform), `name` is a field name (safe to transform), and the user-controlled string lives in a value where transformation doesn't touch it. Plain `axiosInstance` works without any special handling, and the data round-trips cleanly.
-
-**Rule of thumb:** if the keys of an object are something a human or another system *typed in*, make them values in an array instead. Keys in JSON responses should be stable identifiers that you, the extension author, chose.
-
-### When `untransformedAxiosInstance` is actually correct
-
-Sometimes you genuinely do want a keyed structure and you know the keys are safe - for example, an endpoint that returns a map of stable constants (`{ "RED": {...}, "GREEN": {...} }` where the keys are enum variants you defined). In that case, either instance works and the choice is aesthetic. If the keys contain anything else - mixed case, spaces, Unicode, user input - use `untransformedAxiosInstance` and accept that you'll get snake_case field names inside the values.
+**Rule of thumb:** if the keys of an object are something a human or another system *typed in*, prefer making them values in an array. If you do want a keyed structure, `z.record` handles it correctly - the keys round-trip untouched.
 
 ## Data-Fetching Hooks
 
@@ -191,7 +195,7 @@ All four are in `@/plugins/`:
 ```ts
 import { useResource } from '@/plugins/useResource.ts';
 import { useSearchableResource } from '@/plugins/useSearchableResource.ts';
-import { useSearchablePaginatedTable } from '@/plugins/useSearchablePageableTable.ts';
+import { useSearchablePaginatedTable } from '@/plugins/useSearchablePaginatedTable.ts';
 import { useResourceForm } from '@/plugins/useResourceForm.ts';
 ```
 
@@ -276,7 +280,7 @@ interface Pagination<T> {
 }
 ```
 
-The hook unwraps `data?.data ?? []` for you, so the returned `items` field is directly `T[]`.
+This is exactly what `parsePaginationFromApi` returns, so a paginated API file plugs straight in. The hook unwraps `data?.data ?? []` for you, so the returned `items` field is directly `T[]`.
 
 ```tsx
 import { useSearchableResource } from '@/plugins/useSearchableResource.ts';
@@ -331,7 +335,7 @@ const items = useSearchableResource<Item>({
 Use this for full table pages with search and pagination. It manages page and search state, syncs both to URL search params, renders previous data while the next page loads via TanStack Query's `placeholderData: keepPreviousData`, and calls `setStoreData` when fresh data arrives. The actual paginated data lives in your store, not in the hook's return value - the hook drives the store, and the component reads from the store directly.
 
 ```tsx
-import { useSearchablePaginatedTable } from '@/plugins/useSearchablePageableTable.ts';
+import { useSearchablePaginatedTable } from '@/plugins/useSearchablePaginatedTable.ts';
 import getMyItems from '@/api/getMyItems.ts';
 import Table from '@/elements/Table.tsx';
 import { useMyStore } from '@/stores/myStore.ts';
@@ -474,13 +478,14 @@ useResourceForm({
 
 | Situation | Use |
 | --------- | --- |
-| Any normal response | `axiosInstance` |
-| Response whose object *keys* are user-controlled data | `untransformedAxiosInstance` |
-| Any request with a body | `axiosInstance` + `transformKeysToSnakeCase(data)` |
+| Any response | `axiosInstance` + `parseFromApi(schema, data.<wrapper_key>)` |
+| Paginated list response | `parsePaginationFromApi(schema, data.<wrapper_key>)` |
+| Any request with a body | `axiosInstance` + `serializeForApi(schema, data)` |
+| Map whose object *keys* are data | type the field as `z.record(...)` - keys pass through untouched |
 | Any error from any of the above | `httpErrorToHuman(err)` into a toast |
 | Simple one-off data fetch | `useResource` |
 | Searchable `<Select>` or `<MultiSelect>` options | `useSearchableResource` |
 | Full paginated table with search | `useSearchablePaginatedTable` |
 | Create / update / delete form | `useResourceForm` |
 
-Keep your API files one-endpoint-per-file with a default export, colocate types next to the function that uses them, and match the three-callback success/error/loading pattern for any call triggered by user action. Define query keys inline as extension-namespaced arrays - never import from `@/lib/queryKeys.ts`.
+Keep your API files one-endpoint-per-file with a default export, define one Zod schema per resource and run every request and response through the `api-transform` helpers, and match the three-callback success/error/loading pattern for any call triggered by user action. Define query keys inline as extension-namespaced arrays - never import from `@/lib/queryKeys.ts`.

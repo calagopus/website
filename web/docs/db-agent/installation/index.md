@@ -1,4 +1,4 @@
-# Wings Installation
+# DB Agent Installation
 
 Before installing, check the [minimum requirements](../overview.md#minimum-requirements).
 
@@ -6,9 +6,9 @@ Choose your installation method:
 
 ::::tabs
 === Docker
-See the [Docker Wings Installation](./docker.md) guide. The recommended path for most deployments.
+See the [Docker DB Agent Installation](./docker.md) guide. The recommended path for most deployments.
 === APT / RPM / APK
 See the [Package Manager Installation](./pkgmanager.md) guide. Install directly from the Calagopus repository using APT (Debian/Ubuntu), RPM (RHEL/Fedora), or APK (Alpine).
 === Binary
-See the [Binary Wings Installation](./binary.md) guide. Download and run the Wings binary directly on Linux.
+See the [Binary DB Agent Installation](./binary.md) guide. Download and run the DB Agent binary directly on Linux.
 ::::

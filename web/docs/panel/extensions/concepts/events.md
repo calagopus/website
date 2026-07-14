@@ -53,13 +53,12 @@ impl Extension for ExtensionStruct {
             }
 
             Ok(())
-        })
-        .await;
+        });
     }
 }
 ```
 
-Relatively straightforward, you just call the `register_event_handler` function on the model you want to listen to events from, and then you match on the event that is emitted and run your code accordingly.
+Relatively straightforward, you just call the `register_event_handler` function on the model you want to listen to events from, and then you match on the event that is emitted and run your code accordingly. Note that registering is a plain synchronous call - only the handler closure itself is async.
 
 To see all models that support this, you can check the implementors [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.EventEmittingModel#implementors).
 
@@ -98,8 +97,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // and the after hook, which runs once the server has actually been created
         Server::register_after_create_handler(
@@ -113,8 +111,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
     }
 }
 ```
@@ -171,8 +168,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // and the after hook, which runs once the server has actually been updated
         Server::register_after_update_handler(
@@ -183,8 +179,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
     }
 }
 ```
@@ -239,8 +234,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // and the after hook, which runs once the server has actually been deleted
         Server::register_after_delete_handler(
@@ -251,8 +245,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
     }
 }
 ```
@@ -309,8 +302,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
 
         // and the after hook, which runs once the duplicate has actually been created
         Role::register_after_duplicate_handler(
@@ -326,8 +318,7 @@ impl Extension for ExtensionStruct {
                     Ok(())
                 })
             },
-        )
-        .await;
+        );
     }
 }
 ```
