@@ -85,7 +85,7 @@ A description, when you need one, should explain why, call out anything non-obvi
 ## Making Edits
 
 - Don't touch commands, config values, or code blocks during a wording or formatting pass. Technical content stays byte-for-byte correct.
-- Match the existing tone: direct, practical.
+- Match the existing tone: direct, practical, no fluff.
 - More than one method in a guide? Use the existing `:::: tabs` / `=== Method` pattern instead of stacking headings.
 
 Before opening a PR, run the dev server locally and confirm:
