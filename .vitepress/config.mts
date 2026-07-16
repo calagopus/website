@@ -139,6 +139,7 @@ export default withMermaid({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'What is Calagopus?', link: '/docs/about/what-is-calagopus' },
+      { text: 'Releases', link: '/docs/releases/' },
       { text: 'Documentation', link: '/docs' },
     ],
 
@@ -155,6 +156,16 @@ export default withMermaid({
           { text: 'Branding', link: '/docs/about/branding' },
         ],
       },
+
+      {
+        text: 'Releases',
+        link: '/docs/releases/',
+        items: [
+          { text: 'Panel', link: '/docs/releases/panel' },
+          { text: 'Wings', link: '/docs/releases/wings' },
+        ],
+      },
+
       {
         text: 'Panel',
         link: '/docs/panel/',

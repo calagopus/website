@@ -24,6 +24,14 @@ The Wings Daemon is a lightweight agent that runs on remote servers to manage ga
 
 [More about Wings ›](../wings/overview.md)
 
+## DB Agent
+
+DB Agent is a database proxy and provisioning agent that runs PostgreSQL, MariaDB/MySQL, MongoDB, and Redis databases in their own Docker containers on a host. Unlike Wings, the Panel does not proxy database traffic through its own backend, instead each DB Agent host exposes the native protocol ports directly (e.g. `5433` for Postgres, `3307` for MariaDB, `27018` for MongoDB, `6380` for Redis), and clients connect straight to the DB Agent host.
+
+DB Agent authenticates and routes connections itself: the username sent by the client encodes a structured identifier (`u<short-uuid>_<label>`) that DB Agent looks up to find which container to route the connection to, independent of which database engine backs it. Once authenticated, DB Agent relays the connection to the matching container over a Unix socket. A separate REST API (secured with a bearer token, distinct from the database ports) is used by the Panel to provision instances, databases, and users, and to collect stats.
+
+[More about DB Agent ›](../db-agent/overview.md)
+
 ## Basic Architecture
 
 The Calagopus Panel is built using a modular architecture that allows for easy scalability and maintainability. It consists of 3 main components:
@@ -78,12 +86,26 @@ graph TD
     Wings --> GS1 & GS2
   end
 
+  %% DB Agent Host Subgraph
+  subgraph Node2 [DB Agent Host]
+    direction TB
+    DBAgent{{DB Agent}}:::logic
+    DBI1[(Database Instance 1)]:::storage
+    DBI2[(Database Instance 2)]:::storage
+
+    DBAgent --> DBI1 & DBI2
+  end
+
   %% Cross-System Connections
   Backend -->|Wings API| Wings
   Wings -.->|Status Updates| Panel
+  Backend -->|DB Agent API| DBAgent
+  GS1 & GS2 -.->|Native DB Protocol| DBAgent
 ```
 
 This means that the Panel communicates with multiple Wings daemons, each managing its own set of game servers. The architecture is designed to handle a large number of game servers efficiently while maintaining performance and reliability. The Wings daemons also require a route back to the panel for tasks such as authentication and status updates.
+
+DB Agent hosts are managed the same way: the Rust Backend uses the DB Agent REST API to provision and monitor database instances, but game servers connect to those databases directly over the native database protocol, DB Agent routes the connection to the right container itself rather than the traffic passing through the Panel or Wings.
 
 ## Scalability
 
