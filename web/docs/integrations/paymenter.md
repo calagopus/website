@@ -46,7 +46,7 @@ Customers are matched to panel users by their Paymenter user ID (stored as the u
 
 4. Use **Test Connection** to confirm Paymenter can reach the panel with the supplied key.
 
-![](./images/paymenter/server-config.png)
+![](./images/paymenter/server-config.webp)
 
 ## Configuring a product
 

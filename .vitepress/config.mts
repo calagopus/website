@@ -173,6 +173,35 @@ export default withMermaid({
           { text: 'Overview', link: '/docs/panel/overview' },
           { text: 'Environment', link: '/docs/panel/environment' },
           {
+            text: 'Features',
+            link: '/docs/panel/features/',
+            collapsed: true,
+            items: [
+              {
+                text: 'Dashboard',
+                link: '/docs/panel/features/dashboard/',
+                collapsed: true,
+                items: [
+                  { text: 'Servers', link: '/docs/panel/features/dashboard/servers' },
+                  { text: 'Account', link: '/docs/panel/features/dashboard/account' },
+                  { text: 'Security Keys', link: '/docs/panel/features/dashboard/security-keys' },
+                  {
+                    text: 'API Keys',
+                    link: '/docs/panel/features/dashboard/api-keys',
+                    collapsed: true,
+                    items: [{ text: 'Permissions Reference', link: '/docs/panel/features/dashboard/permissions' }],
+                  },
+                  { text: 'SSH Keys', link: '/docs/panel/features/dashboard/ssh-keys' },
+                  { text: 'Command Snippets', link: '/docs/panel/features/dashboard/command-snippets' },
+                  { text: 'OAuth Links', link: '/docs/panel/features/dashboard/oauth-links' },
+                  { text: 'Sessions', link: '/docs/panel/features/dashboard/sessions' },
+                  { text: 'Keyboard Shortcuts', link: '/docs/panel/features/dashboard/keyboard-shortcuts' },
+                  { text: 'Activity', link: '/docs/panel/features/dashboard/activity' },
+                ],
+              },
+            ],
+          },
+          {
             text: 'Installation',
             link: '/docs/panel/installation/',
             collapsed: true,
