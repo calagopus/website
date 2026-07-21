@@ -5,6 +5,9 @@ description: Changelog for the Calagopus Wings daemon, newest release first.
 
 # Wings Releases
 
+Changelog for the Calagopus Wings daemon. Versions are listed newest first. For the
+Panel changelog, see [Panel Releases](./panel.md).
+
 ## 1.1.0
 
 ## Added:
@@ -33,9 +36,6 @@ description: Changelog for the Calagopus Wings daemon, newest release first.
 - Loads of minor optimizations regarding polling and recursion
 
 [View release on GitHub](https://github.com/calagopus/wings/releases/tag/release-1.1.0)
-
-Changelog for the Calagopus Wings daemon. Versions are listed newest first. For the
-Panel changelog, see [Panel Releases](./panel.md).
 
 ## 1.0.11
 
