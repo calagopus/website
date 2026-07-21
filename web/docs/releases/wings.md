@@ -5,6 +5,28 @@ description: Changelog for the Calagopus Wings daemon, newest release first.
 
 # Wings Releases
 
+## 1.1.0
+
+### Added:
+- Added Proxmox Backup Server driver (community contribution)
+- Added Kopia backup driver
+- Added support for transfering btrfs snapshots in server transfers
+- Added support for extracting pxar archives in file manager
+- Added a docker pull image cache to prevent ratelimits
+- Added more detailed debug logs on archive creation issues
+
+### Fixed:
+- Fixed websocket consistency issue when transfers finished
+- Fixed slow wings startups with large servers
+- Fixed debug logs containing more info than wikipedia
+- Fixed some disk limiter issues with native providers
+- Fixed issue in content-disposition parsing
+- Fixed issue in xml wildcard parser
+- Fixed CPU live updates when setting to unlimited
+- Fixed filesystem performance bottleneck in backup browse/large directories
+
+[View release on GitHub](https://github.com/calagopus/wings/releases/tag/release-1.1.0)
+
 Changelog for the Calagopus Wings daemon. Versions are listed newest first. For the
 Panel changelog, see [Panel Releases](./panel.md).
 

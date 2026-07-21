@@ -8,6 +8,63 @@ description: Changelog for the Calagopus Panel, newest release first.
 Changelog for the Calagopus Panel. Versions are listed newest first. For the Wings
 daemon changelog, see [Wings Releases](./wings.md).
 
+## 1.1.0
+
+::: warning Extensions
+Extensions must be updated before using this version.
+:::
+
+::: warning Update Wings after the panel
+After updating the panel, update Wings as well. **DO NOT UPDATE WINGS BEFOREHAND**, as this may lead to issues.
+:::
+
+### Added:
+- Added [DB Agent](../db-agent/index.md) Integration
+- Added Live File Collaboration support
+- Added CLI Command for Shell Autocompletions
+- Added support for defining backup groups
+- Added new schedule steps for backup-related logic
+- Added new schedule logic blocks for better conditions
+- Added new schedule triggers for resource usage over time
+- Added wings query tunnel to allow websocket-proxied tcp/udp tunnels into servers
+- Added support for binary payloads in file write/read endpoints
+- Added resource duplication to tons of models
+- Added overview pages for servers and nodes
+- Added ability to export backups to the server filesystem
+- Added more deployment customization to server deployment
+- Added async backup deletion to prevent long deletions from causing silent failures
+- Added ability to select "other" servers in copy remote and group add modals
+- Added ability to define compression type for raw s3 backups
+- Added readme preview for egg repository eggs when browsing
+- Added proper, readable error displays for tables
+- Added ability to look up users/servers/oauth using external id/identifiers
+- Added "advanced" system for forms, to reduce confusion for unimportant fields
+- Added placeholder system for server routing
+- Added better error messages to security key creation
+- Added ability to remote copy individual files instead of just mass-selections
+- Added new default avatars that display initials instead of the calagopus logo
+- Added better error messages for captcha api errors
+- Added ability to disable built-in panel frontend for deploying only the api
+
+### Fixed:
+- Fixed some wings-proxy body proxying issues
+- Fixed json ordering issues in pterodactyl/pelican import
+- Fixed ports that were removed from a server but not yet deallocated being able to be assigned to new servers
+- Fixed some endpoints logging out the frontend by accident
+- Fixed invalid owner uuid check in copy remote
+- Fixed general performance issues on some pages due to giant state subscriptions
+- Fixed some issues in backup transfer reassignment
+- Fixed general fetching/state issues by switching more and more to tanstack
+- Fixed mobile responsiveness in the sidebar and on some pages in particular
+- Fixed giant page shifts when opening certain modals
+- Fixed issues in server websocket handler that caused pointless reconnects and issues on transfer finishes
+- Fixed issue where server stats would show a very high initial "per second" value instead of waiting for a tick
+- Fixed unability to press enter in some modals/forms
+- Fixed impersonation being stored in localStorage instead of session storage, therefore affecting other tabs
+- Fixed issue where certain code paths ended up not correctly downcasting DisplayErrors causing useless user error messages
+
+[View release on GitHub](https://github.com/calagopus/panel/releases/tag/release-1.1.0)
+
 ## 1.0.11
 
 ::: warning Update Wings first
