@@ -55,7 +55,6 @@ export default withMermaid({
   buildConcurrency: 128,
   srcDir: SRC_DIR,
   cleanUrls: true,
-  metaChunk: true,
 
   vite: {
     plugins: [

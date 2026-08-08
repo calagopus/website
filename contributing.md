@@ -2,7 +2,7 @@
 
 # Contributing
 
-This repo powers the Calagopus website and documentation, built with [VitePress](https://vitepress.dev), currently on `v2.0.0-alpha.18`. Expect occasional breaking changes between VitePress versions. Check the [changelog](https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md) if something breaks after an update.
+This repo powers the Calagopus website and documentation, built with [VitePress](https://vitepress.dev), currently on `v2.0.0-alpha.19`. Expect occasional breaking changes between VitePress versions. Check the [changelog](https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md) if something breaks after an update.
 
 > This page is still a **work in progress**.
 
