@@ -41,7 +41,7 @@ On the same JSON object, look for the `claims_supported` key, and find the claim
 
 Finally, look for the `scopes_supported` key, and find the scopes you need. Usually, you should only put `openid`, `profile` and `email`, but it may depend on your provider.
 
-Then, on your provider, setup Client ID and Client Secrets for Calagopus to use.
+Then, on your provider, set up a Client ID and Client Secret for Calagopus to use.
 
 ### Configuring the OAuth Provider
 Once you have your URLs, your claims and your scopes, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
@@ -54,13 +54,13 @@ On that page, fill out these fields according to the guide below. It will explai
 
 ## General Information
 ### Name
-This would be the name of your provider, it will be displayed on the OAuth list of the user.
+The name of your provider, displayed on the user's OAuth list.
 
 Required: :white_check_mark:\
 Example: `Pocket-ID`
 
 ### Description
-This would be a description of your provider, useful for organization.
+A description of your provider, useful for organization.
 
 Required: :x:
 

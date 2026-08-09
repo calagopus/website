@@ -6,7 +6,7 @@ Using `fuse_quota` with a Docker Wings installation is **strongly** discouraged.
 
 ## What is it?
 
-The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on *any* underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount, whatever. This makes it the fallback option when no native limiter is available.
+The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on *any* underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount. This makes it the fallback option when no native limiter is available.
 
 Wings spawns a dedicated `fusequota` daemon process per server on startup. The daemon mounts a FUSE filesystem over the server's volume directory, enforces the configured quota, and exposes a local Unix socket for Wings to query and update usage. Wings batches usage deltas and syncs them to the daemon every 10 seconds.
 
@@ -31,7 +31,7 @@ Fusequota tries to minimize its user-space overhead by using aggressive write ca
 
 ## Migrating existing servers
 
-Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), Fusequota does not need to convert server directories into subvolumes or datasets - it simply mounts a FUSE layer over whatever directory already exists. Flipping `disk_limiter_mode` to `fuse_quota` and restarting Wings will bring existing servers under the limiter as they start up. No data movement is required.
+Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), Fusequota does not need to convert server directories into subvolumes or datasets - it mounts a FUSE layer over whatever directory already exists. Flipping `disk_limiter_mode` to `fuse_quota` and restarting Wings will bring existing servers under the limiter as they start up. No data movement is required.
 
 ## When should I use it?
 
@@ -46,7 +46,7 @@ If you are unsure which limiter is right for your setup, ask in the [Discord](ht
 
 ## How do I use it?
 
-Set `disk_limiter_mode` to `fuse_quota` in your wings configuration:
+Set `disk_limiter_mode` to `fuse_quota` in your Wings configuration:
 
 ```yaml
 system:

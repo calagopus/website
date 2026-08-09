@@ -54,8 +54,8 @@ Like **Restic** and **DdupBak**, both **Proxmox Backup Server** and **Kopia** de
 | **Maintenance Enabled** | Leave off unless you want to temporarily prevent this configuration from being used (useful when rotating credentials or doing repository maintenance) |
 | **Backup Disk** | One of the options from the table above |
 
-1. Fill in the disk-specific fields (see [S3](#s3-settings), [Restic](#restic-settings), [Proxmox Backup Server](#proxmox-backup-server-settings), or [Kopia](#kopia-settings) below; the node-local disks have no extra fields).
-2. Click **Save**.
+3. Fill in the disk-specific fields (see [S3](#s3-settings), [Restic](#restic-settings), [Proxmox Backup Server](#proxmox-backup-server-settings), or [Kopia](#kopia-settings) below; the node-local disks have no extra fields).
+4. Click **Save**.
 
 There is no "test connection" button. To verify a new configuration works, create a small test backup of a real server that's assigned to it.
 

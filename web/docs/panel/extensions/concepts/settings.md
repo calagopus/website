@@ -1,10 +1,10 @@
 # Settings
 
-Let's say you're making the best extension in the universe. Impossible? Maybe. But you're facing a BIG issue - you need an API key to make it work. So where do you put it? Hardcoding is out, environment variables mean the operator has to restart the Panel to change them, and storing a config file next to your binary is a nightmare to keep in sync across deployments. What you actually want is for the operator to open the admin panel, paste the key into a text field, click Save, and have it Just Work.
+Most extensions need to persist configuration - an API key, for example. Hardcoding is out, environment variables mean the operator has to restart the Panel to change them, and a config file next to your binary is hard to keep in sync across deployments. Settings solve this: the operator pastes the value into the admin panel, clicks Save, and it takes effect.
 
-That's what settings are for. The settings API lets you declare what data your extension needs to persist, the Panel stores it in its database, and your handlers can read or update it like any other Rust struct.
+The settings API lets you declare what data your extension needs to persist, the Panel stores it in its database, and your handlers can read or update it like any other Rust struct.
 
-The whole thing boils down to three steps: define a struct, tell the Panel how to turn it into rows and back, then point the Panel at the deserializer so it knows to use your types. This page walks through all three, and a few patterns that will save you pain along the way.
+Settings take three steps: define a struct, tell the Panel how to turn it into rows and back, then point the Panel at the deserializer so it knows to use your types. This page walks through all three, plus a few common patterns.
 
 ## Defining Your Settings Struct
 
@@ -25,7 +25,7 @@ The only hard requirements are `serde::Serialize` and `serde::Deserialize` (sinc
 
 ## Serializing and Deserializing
 
-Now the interesting part. The Panel stores extension settings in a key-value shape in the database - one row per (extension, key) pair, with the value as a string. That's the storage format you're mapping your struct onto. You implement two traits that describe the mapping: `SettingsSerializeExt` to turn your struct into key-value pairs, and `SettingsDeserializeExt` to rebuild your struct from those pairs.
+The Panel stores extension settings in a key-value shape in the database - one row per (extension, key) pair, with the value as a string. That's the storage format you're mapping your struct onto. You implement two traits that describe the mapping: `SettingsSerializeExt` to turn your struct into key-value pairs, and `SettingsDeserializeExt` to rebuild your struct from those pairs.
 
 You have two options for how the keys line up with your struct's fields: **one key per field**, or **one key for the whole struct**. Both work; pick based on what the data looks like.
 

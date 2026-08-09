@@ -1,6 +1,6 @@
 # Routing
 
-Okay so you have an extension, cool. But unless you want it to sit there looking pretty, you probably want the frontend to actually talk to the backend at some point. Maybe you want to expose a list of servers, let an admin update a setting, or just return a cheeky "hello world". This is where routing comes in, and Calagopus makes it pretty painless - you register your routes through an `ExtensionRouteBuilder` in your `lib.rs`, and then the Panel mounts them onto the main app for you. No plumbing, no middleware wiring, no authentication code to write. Nice.
+Routing is how your extension exposes backend endpoints - list servers, update a setting, anything the frontend or an API client needs to call. You register your routes through an `ExtensionRouteBuilder` in your `lib.rs`, and the Panel mounts them onto the main app for you. No plumbing, no middleware wiring, no authentication code to write.
 
 Under the hood, routes are just [axum](https://docs.rs/axum) routes wrapped in [utoipa_axum](https://docs.rs/utoipa-axum) so that they automatically show up in the Panel's OpenAPI docs. If you've written axum code before, you already know 90% of this.
 
@@ -58,7 +58,7 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-A couple of things to notice. First, **always make sure your routes do not collide with other extensions or the panel itself**. The Panel doesn't do anything to prevent collisions, so if two extensions both register a route at `/api/client/servers/{server}/foo`, utoipa will panic on startup and the process exits. That's a pretty hard failure mode, so just be considerate and pick paths that are unlikely to clash. Calling your routes `/config` is really just asking for trouble, but `/extensions/dev.yourname.test/config` is perfectly reasonable.
+A couple of things to notice. First, **always make sure your routes do not collide with other extensions or the panel itself**. The Panel doesn't do anything to prevent collisions, so if two extensions both register a route at `/api/client/servers/{server}/foo`, utoipa will panic on startup and the process exits. That's a hard failure mode, so pick paths that are unlikely to clash: `/config` is asking for trouble, `/extensions/dev.yourname.test/config` is safe.
 
 How pretty those paths need to be is up to you and depends on who's going to call them. For an admin API that only your extension's own frontend talks to, a namespace like `/extensions/dev.yourname.test/settings` is fine - it's ugly, but it's guaranteed not to collide, and nobody's typing it by hand. For a client API that end users might call with their API key, a cleaner path like `/my-feature` makes for a much nicer public surface. Both are valid choices, pick the one that fits your use case.
 
@@ -66,7 +66,7 @@ Second, each builder method takes a closure that receives an `OpenApiRouter<Stat
 
 ## The File-System Convention
 
-Before we look at an actual route handler, a quick word on how to organize your files. This isn't enforced by the framework - you *could* put every route in `lib.rs` - but following the convention makes your extension way easier to navigate, and matches how the core Panel is laid out.
+File organization isn't enforced by the framework - you *could* put every route in `lib.rs` - but following this convention makes your extension easier to navigate, and matches how the core Panel is laid out.
 
 The idea is simple: **your file tree should mirror your URL tree**. For an example extension that registers routes at `/api/client/servers/{server}/my-feature/...` and `/api/admin/extensions/dev.yourname.test/...`, the backend would look like this:
 
@@ -122,7 +122,7 @@ Every `mod.rs` follows this exact shape - declare the child modules, `OpenApiRou
 
 ## Writing a Route Handler
 
-Okay now the interesting part. Here's the idiom we use for every leaf route file - one inner module per HTTP method, then a `router()` function at the bottom. Let's look at a `settings.rs` that exposes both a `GET` and a `PUT`:
+Every leaf route file follows the same idiom - one inner module per HTTP method, then a `router()` function at the bottom. Here's a `settings.rs` that exposes both a `GET` and a `PUT`:
 
 ```rs
 use super::State;
@@ -263,7 +263,7 @@ pub fn router(state: &State) -> OpenApiRouter<State> {
 A few things worth pointing out:
 
 - **`Path<(String, String, String)>` extracts params in URL order**, from outermost to innermost. On a client-server route, `{server}` always comes first because it's part of the parent mount point - even though you didn't register it yourself. If you don't need it, destructure it as `_server` like above.
-- **`params(...)` in `#[utoipa::path]` documents every param**, including inherited ones like `server`. The Panel uses this to generate a clickable API reference, so fill in `description` and `example` - your future self will thank you when debugging.
+- **`params(...)` in `#[utoipa::path]` documents every param**, including inherited ones like `server`. The Panel uses this to generate a clickable API reference, so fill in `description` and `example`.
 - **Watch out for Rust keywords.** If your parameter has a name like `type`, `ref`, `move`, or similar, you'll need Rust's raw identifier syntax to use it as a variable: `r#type`. This is a Rust thing, not a Calagopus thing, but it trips people up.
 
 ## Request Bodies and Validation

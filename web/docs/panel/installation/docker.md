@@ -5,7 +5,7 @@ description: Step-by-step guide to installing the Calagopus Panel with Docker. C
 
 # Docker Panel Installation
 
-Please see the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview documentation.
+Before installing, check the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview.
 
 ## Which image should I use?
 
@@ -40,7 +40,7 @@ These bundle the Panel and Wings in a single container. Pick one of these if you
 | --- | --- |
 | `:aio` | The latest stable release of the Panel and Wings bundled together. Recommended for single-node setups. |
 | `:heavy-aio` | AIO variant with the development tools needed for extensions. Use if you plan to install extensions on a single-node setup. |
-| `:nightly-aio` | Development-build AIO variant. For users who want to live on the edge. |
+| `:nightly-aio` | Development-build AIO variant. Same trade-offs as `:nightly`. |
 | `:nightly-heavy-aio` | Development-build AIO variant with extension support. |
 
 ## Getting Started
@@ -54,7 +54,7 @@ docker --version
 docker compose version # if this says "command not found" you may need to use `docker-compose` instead or update your docker installation
 ```
 
-If Docker is not installed, please refer to the [official Docker installation guide](https://docs.docker.com/engine/install) for your operating system.
+If Docker is not installed, see the [official Docker installation guide](https://docs.docker.com/engine/install) for your operating system.
 In many cases running Docker's installation script is the easiest way to get started:
 
 ```bash

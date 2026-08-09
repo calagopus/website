@@ -65,7 +65,7 @@ Confirm the option is active:
 mount | grep /var/lib/pterodactyl
 ```
 
-Then set `disk_limiter_mode` to `xfs_quota` in your wings configuration:
+Then set `disk_limiter_mode` to `xfs_quota` in your Wings configuration:
 
 ```yaml
 system:

@@ -52,7 +52,7 @@ On the switches below, choose if you want to enable GitHub OAuth, only allow log
 It should normally look like this:
 ![GitHub Config](./files/images/github/page.webp)
 
-Finally, save your changes, and you should be done!
+Finally, save your changes.
 
 ### Test the configuration
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your GitHub account.

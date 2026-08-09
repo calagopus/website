@@ -1,6 +1,6 @@
 # Frontend API Calls
 
-So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually *talk* to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.
+This page covers how extensions make HTTP requests to their own backend routes (or any Panel route) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes.
 
 ## The Axios Instance
 
@@ -149,7 +149,7 @@ If you need to branch on *what* went wrong - e.g. show a different message for a
 
 ## Designing API Shapes
 
-A few principles that will save you headaches down the line. These are about the *shape* of the JSON your backend returns, not the frontend code that consumes it - but since the frontend is where you feel the pain, it makes sense to cover them here.
+These principles are about the *shape* of the JSON your backend returns, not the frontend code that consumes it - but the frontend is where a bad shape hurts, so they're covered here.
 
 ### Maps keyed by user input: use `z.record`
 

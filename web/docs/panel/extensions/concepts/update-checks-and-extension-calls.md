@@ -1,6 +1,6 @@
 # Update Checks and Extension Calls
 
-The `Extension` trait has a couple of methods that don't fit the "register stuff with a builder" mould of the other hooks - `check_for_updates` and `process_call`. They're both small, they're both independently optional, and neither has enough surface area to deserve a full page of its own. So this page covers both in one pass.
+The `Extension` trait has two methods that don't fit the "register stuff with a builder" mould of the other hooks: `check_for_updates` and `process_call`. Both are small and independently optional, so this page covers them together.
 
 ## Update Checks
 

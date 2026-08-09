@@ -1,6 +1,6 @@
 # Extending Models
 
-So you've read the rest of the docs and you're feeling pretty good - you can add routes, register settings, ship a UI, the whole nine yards. But everything you've built so far has been *next to* the Panel's existing data model, never *part* of it. You can store a setting that says "the subdomain limit for server X is 5", but you can't put a column directly on the `servers` table that everyone else who queries servers will see. And you can't get that column to appear in API responses, or get the existing admin "create server" form to know about it, without a lot of glue code.
+Everything covered so far - routes, settings, UI - lives *next to* the Panel's existing data model, never *part* of it. You can store a setting that says "the subdomain limit for server X is 5", but you can't put a column directly on the `servers` table that everyone else who queries servers will see. And you can't get that column to appear in API responses, or get the existing admin "create server" form to know about it, without a lot of glue code.
 
 Calagopus has a system for exactly this: **model extensions**. Your extension can register itself against a core model (like `Server`, `Node`, `User`, etc.), declare extra columns it owns, hook into the existing create / update / delete flows, and even extend the API structs that get sent over the wire. To core code and other extensions, your data looks like part of the model. To you, it's clearly your domain.
 
@@ -14,7 +14,7 @@ This page walks through the pattern end-to-end using a worked example - one that
 
 ## The Two Sides: Models and API Structs
 
-Before we get into the code, it's worth understanding the divide. Calagopus has two related but distinct concepts that both get extended by this system:
+Calagopus has two related but distinct concepts that both get extended by this system:
 
 **Models** are the database-backed types - `Server`, `Node`, `User`, `NestEgg`, `ServerSchedule`, and so on. They're what the rest of the codebase deals with internally, and they're *your* extension's interface to the database. When you add a column to the `servers` table and want code that queries `Server` to know about it, you're extending the model.
 
@@ -56,7 +56,7 @@ Defaults on `NOT NULL` columns are basically required, since rows already exist 
 
 ### Defining the Model Extension
 
-Now create a `model.rs` in your extension's backend `src/`. This is where the SELECT-side magic happens - you tell the Panel "these are my columns" and "here's how to deserialize a row that includes them":
+Now create a `model.rs` in your extension's backend `src/`. This is the SELECT side - you tell the Panel "these are my columns" and "here's how to deserialize a row that includes them":
 
 ```rs
 use serde::{Deserialize, Serialize};
@@ -217,7 +217,7 @@ Four calls, four different surfaces. Let's go through each.
 
 ## Lifecycle Handlers
 
-The `register_create_handler` and `register_update_handler` calls are part of the `CreatableModel` / `UpdatableModel` lifecycle handler systems, which are documented fully on the [Events](./events.md) page along with `register_delete_handler`. This page won't rehash that documentation - go read the events page if you haven't already, the parameter list for the closure is over there.
+The `register_create_handler` and `register_update_handler` calls are part of the `CreatableModel` / `UpdatableModel` lifecycle handler systems, which are documented fully on the [Events](./events.md) page along with `register_delete_handler`. The closure parameter lists are documented there.
 
 What's worth pointing out *here* is how the lifecycle handlers interact with model extensions. Both closures receive an `options` argument carrying the incoming payload - the same payload the core create/update logic uses. When that payload includes an extended struct (here, `feature_limits`), you call `parse_extended::<YourExtensionStruct>()` to pull out *your* extension's slice of it as a typed Rust struct.
 
@@ -350,7 +350,7 @@ The `zodShape` and `initialValues` here are doing more than just validation and 
 
 ## Reading Your Extension's Data
 
-The whole point of this exercise is so your extension can *use* the data it stores. The access pattern is pleasingly symmetric on the two sides: wherever a model is loaded, you parse your typed slice back out of it - `parse_model_extension` on the backend, `parseExtendedFromApi` on the frontend.
+The access pattern is symmetric on the two sides: wherever a model is loaded, you parse your typed slice back out of it - `parse_model_extension` on the backend, `parseExtendedFromApi` on the frontend.
 
 ### From Backend Routes
 
@@ -488,5 +488,3 @@ The model extension you've built is now a first-class citizen of the `Server` mo
 - **Add custom routes** that operate on your fields, using all the patterns from [Routing](./routing.md). Inside those routes, treat your data exactly like core columns - they were loaded by the same query, after all.
 - **Register additional create / update / delete handlers** if you need more complex behavior (e.g. enforcing business rules, denormalizing data into other tables, emitting custom events when your fields change).
 - **Extend other API structs** if your data should appear in places beyond `ApiServerFeatureLimits`. The `Extendible` trait works on most API struct types - the [implementor list](https://cratedocs.calagopus.com/shared/trait.Extendible#implementors) is the authoritative reference.
-
-Model extensions are one of the more involved patterns Calagopus exposes, but they're also the most powerful - once you've gone through the dance once, you've got code that reads exactly like core code that ships with the Panel, and the rest of the ecosystem can interact with your data without knowing or caring that it came from an extension.

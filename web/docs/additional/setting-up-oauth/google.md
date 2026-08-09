@@ -2,13 +2,13 @@
 This guide walks through setting up Google OAuth for your Calagopus Panel.
 
 ::: warning
-If you are planning to configure Google OAuth, please keep in mind that on Google's login page, it will leak your email address on the `Developer info` popup. You can literally do this by clicking on the app name:
+Google's login page leaks your email address in the `Developer info` popup, opened by clicking the app name:
 ![App Name](./files/images/google/warning.webp)
 
 ![Developer info](./files/images/google/warning2.webp)
 
 If you don't want your personal email to be shared, you have 2 options:
-* **1. Create a separate Google account with a work email.** This will show your work email instead of your personal email, so you won't get spammed by bots on your personal email.
+* **1. Create a separate Google account with a work email.** The work email is shown instead, keeping bot spam away from your personal address.
 * **2. Don't use Google OAuth.** Use another provider from [this list](./index.md).
 :::
 
@@ -57,7 +57,7 @@ Once the project has been created, wait for all the other steps to complete and 
 :::
 
 #### Register the OAuth application
-In the search bar, search for `APIs & Services` or something similar.
+In the search bar, search for `APIs & Services`.
 ![](./files/images/google/image-6.webp)
 
 Then in the left sidebar, pick `OAuth consent screen` to begin the OAuth application registration.
@@ -78,7 +78,7 @@ Add your contact information again, and then click `Next`.
 Accept the Google API Services: User Data Policy, and then click `Continue`, and then finally `Create`.
 ![](./files/images/google/image-12.webp)
 
-Go back to the `Branding` tab at the left sidebar, and scroll down until you find `Authorized domains`. Add a new domain, and enter your top private domain your Calagopus Panel is located. For example, if your panel is `test.example.com`, you would put `example.com`. Finally, click the `Save` button.
+Go back to the `Branding` tab at the left sidebar, and scroll down until you find `Authorized domains`. Add a new domain, and enter the top private domain your Calagopus Panel is located on. For example, if your panel is `test.example.com`, you would put `example.com`. Finally, click the `Save` button.
 ![](./files/images/google/image-13.webp)
 
 ::: warning
@@ -89,7 +89,7 @@ Next, go to the `Audience` tab, and publish the application.
 ![](./files/images/google/image-14.webp)
 
 #### Issue an OAuth client and key for that application
-Go back to the `APIs & Services` page. To do so, in the search bar, search for `APIs & Services` or something similar.
+Go back to the `APIs & Services` page. To do so, search for `APIs & Services` in the search bar.
 ![](./files/images/google/image-6.webp)
 
 Pick `Credentials` in the sidebar. Click `+ Create credentials` dropdown and select `OAuth client ID`.
@@ -109,7 +109,7 @@ On the switches below, choose if you want to enable Google OAuth, only allow log
 It should normally look like this:
 ![Google Config](./files/images/google/page.webp)
 
-Finally, save your changes, and you should be done!
+Finally, save your changes.
 
 ### Test the configuration
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Google account.

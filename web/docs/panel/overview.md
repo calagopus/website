@@ -29,7 +29,7 @@ Extension support adds overhead for frontend and backend compilation; these numb
 
 ## Technical Overview
 
-The Calagopus Panel is built using a modern web stack to ensure scalability, performance, and ease of use. Below is a high-level overview of its architecture:
+The panel is split into a React frontend and a Rust backend.
 
 ### Frontend
 

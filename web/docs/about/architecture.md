@@ -7,16 +7,16 @@ description: Technical architecture of Calagopus, how the Panel, Wings, database
 
 ## Database
 
-The Calagopus Panel uses a relational database to store all of its persistent data. Any PostgreSQL-compatible database should work, but in most deployments we recommend using plain PostgreSQL for the best experience. The database is responsible for storing user accounts, server configurations, settings, and other essential data required for the panel to function.
+The Calagopus Panel stores all of its persistent data (user accounts, server configurations, settings) in a relational database. Any PostgreSQL-compatible database should work, but plain PostgreSQL is recommended for most deployments.
 
 ## Cache
 
-To improve performance and reduce database load, the Calagopus Panel utilizes 2 caching layers:
+To improve performance and reduce database load, the Calagopus Panel uses 2 caching layers:
 
 1. **In-Memory Cache**: A local in-memory cache is used for frequently accessed data with a very short TTL (e.g., session data, db object cache). This is specific to each backend and can be disabled.
-2. **Redis Cache**: A Redis-like distributed cache is used for data that needs to be shared across multiple backend instances or has a longer TTL (e.g., login-related data, rate limiting). This cache is required and cannot be disabled, even with a single backend instance. While not required, enabling persistent storage is beneficial for retaining rate limiting data across Redis restarts, though not strictly necessary.
+2. **Redis Cache**: A Redis-like distributed cache is used for data that needs to be shared across multiple backend instances or has a longer TTL (e.g., login-related data, rate limiting). This cache is required and cannot be disabled, even with a single backend instance. Enabling persistent storage is optional but retains rate limiting data across Redis restarts.
 
-The Panel will also cache decrypted secrets in both caching layers when enabled, while this improves performance it does come with security trade-offs, so make sure to choose the right option for your use case.
+When enabled, the Panel also caches decrypted secrets in both caching layers. This improves performance but comes with security trade-offs; choose the option that fits your use case.
 
 ## Wings Daemon
 
@@ -34,7 +34,7 @@ DB Agent authenticates and routes connections itself: the username sent by the c
 
 ## Basic Architecture
 
-The Calagopus Panel is built using a modular architecture that allows for easy scalability and maintainability. It consists of 3 main components:
+The Calagopus Panel consists of 3 main components:
 
 ```mermaid
 graph TD
@@ -103,15 +103,15 @@ graph TD
   GS1 & GS2 -.->|Native DB Protocol| DBAgent
 ```
 
-This means that the Panel communicates with multiple Wings daemons, each managing its own set of game servers. The architecture is designed to handle a large number of game servers efficiently while maintaining performance and reliability. The Wings daemons also require a route back to the panel for tasks such as authentication and status updates.
+The Panel communicates with multiple Wings daemons, each managing its own set of game servers. The Wings daemons also require a route back to the panel for tasks such as authentication and status updates.
 
 DB Agent hosts are managed the same way: the Rust Backend uses the DB Agent REST API to provision and monitor database instances, but game servers connect to those databases directly over the native database protocol, DB Agent routes the connection to the right container itself rather than the traffic passing through the Panel or Wings.
 
 ## Scalability
 
-The architecture of Calagopus is designed to be highly scalable. As the number of game servers increases, additional Wings daemons can be deployed to distribute the load. Each Wings daemon operates independently, allowing for horizontal scaling. The panel backend can also be scaled horizontally by replacing the database and cache with managed services or clustering solutions. (e.g. [YugabyteDB](https://www.yugabyte.com/) for the database and a [Redis Sentinel Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/) for the cache).
+As the number of game servers increases, additional Wings daemons can be deployed to distribute the load. Each Wings daemon operates independently, allowing for horizontal scaling. The panel backend can also be scaled horizontally by replacing the database and cache with managed services or clustering solutions. (e.g. [YugabyteDB](https://www.yugabyte.com/) for the database and a [Redis Sentinel Cluster](https://redis.io/docs/latest/operate/oss_and_stack/management/sentinel/) for the cache).
 
-Something worth noting is that the backend can use different database urls for reading and writing, allowing for read replicas to be used to offload read traffic from the primary database in a simpler setup. It's also important to delegate one backend to be the "primary", in this case that only means it's responsible for running background jobs like cleanup, so it's recommended to have it close to the primary database for performance reasons.
+The backend can use different database urls for reading and writing, allowing read replicas to offload read traffic from the primary database in a simpler setup. Delegate one backend to be the "primary", meaning only that it runs background jobs like cleanup, and keep it close to the primary database for performance.
 
 ### Read-Offloading Architecture Example
 
@@ -194,17 +194,19 @@ graph TD
 
 In this architecture, we have 3 regions: Germany, Singapore, and the USA. Each region has its own panel instance, cache, and backend cluster. The Germany region contains the primary database since it is essentially in the middle of the other two, while the Singapore and USA regions have read replicas. The load balancer distributes incoming requests to the appropriate panel instance based on factors such as geographic location or server load. This is the same setup that [MCJars](https://mcjars.app) uses to distribute load globally.
 
-In a real-world scenario, having more than 2 backends per region is not needed as the backend is already multi-threaded and can handle many requests simultaneously. The reason why 2 is a good number is that one can be used for maintenance or updates while the other continues to serve requests, though this can be avoided by having sticky sessions at the load balancer level.
+In a real-world scenario, having more than 2 backends per region is not needed as the backend is already multi-threaded and can handle many requests simultaneously. Two is a good number because one can handle maintenance or updates while the other continues to serve requests, though this can be avoided by having sticky sessions at the load balancer level.
 
-**Important Note**: Within the same region, the backends should share the same redis cache to avoid login issues and session inconsistencies.
+::: warning
+Within the same region, the backends should share the same redis cache to avoid login issues and session inconsistencies.
+:::
 
 Once Wings daemons and game servers are introduced into this architecture, each panel instance communicates directly with the relevant Wings daemons. No passive connections are made unless an extension or feature requires it.
 
 ## Software Bill of Materials (SBOM)
 
-Calagopus publishes a Software Bill of Materials (SBOM) for every release. An SBOM is a machine-readable inventory that lists the software components, libraries, dependencies, and packages included in a build. It provides transparency into exactly what is shipped with the platform and helps operators understand their software supply chain.
+Calagopus publishes a Software Bill of Materials (SBOM) for every release. An SBOM is a machine-readable inventory that lists the software components, libraries, dependencies, and packages included in a build.
 
-The latest published SBOMs can be found at: [packages.calagopus.com/sbom](https://packages.calagopus.com/sbom/)
+The latest SBOMs are published at [packages.calagopus.com/sbom](https://packages.calagopus.com/sbom/).
 
 ### Why We Publish SBOMs
 
@@ -218,4 +220,4 @@ Publishing an SBOM allows administrators and security teams to:
 
 ### Supported Formats
 
-SBOMs are provided in standard industry formats to ensure compatibility with common security and compliance tooling, this being [CycloneDX](https://cyclonedx.org).
+SBOMs are provided in [CycloneDX](https://cyclonedx.org), a standard format compatible with common security and compliance tooling.

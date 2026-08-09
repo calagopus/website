@@ -22,7 +22,7 @@ Two rules:
 - **Treat your compose file as a secret.** Don't commit it to a public repo, don't paste it into a support channel, don't share screenshots without redacting it. Anyone with the encryption key can decrypt the secrets stored in your database.
 
 ::: details I lost my encryption key. Now what?
-Stop the Panel, restore the database from a backup taken before the key was lost (if you have one), and start over from there. Without a backup or the original key, the encrypted columns in the database are permanently unrecoverable - the practical recovery is to simply start with a fresh database, which means losing all your existing data and settings. If you find yourself in this situation, it's a good idea to review your backup strategy and secret management practices to prevent it from happening again.
+Stop the Panel, restore the database from a backup taken before the key was lost (if you have one), and start over from there. Without a backup or the original key, the encrypted columns in the database are permanently unrecoverable - the practical recovery is to start with a fresh database, which means losing all your existing data and settings. Review your backup strategy and secret management practices to prevent it from happening again.
 :::
 
 ## The Swap
@@ -84,6 +84,6 @@ If you decide the heavy image isn't for you (resource pressure, you're not actua
 1. Edit `compose.yml`, change the heavy tag back to its non-heavy equivalent (e.g. `:heavy` → `:latest`, `:heavy-aio` → `:aio`).
 2. `docker compose down` then `docker compose up -d`.
 
-The stock image simply ignores anything under `./build/*` and starts cleanly. You don't need to uninstall extensions first, and you don't need to remove the four extra volume mounts you added (though you can clean them up if you want a tidy compose file). Your data carries over the same way it did in the original swap.
+The stock image ignores anything under `./build/*` and starts cleanly. You don't need to uninstall extensions first, and you don't need to remove the four extra volume mounts you added (though you can clean them up if you want a tidy compose file). Your data carries over the same way it did in the original swap.
 
-The extension code in `./build/extensions` stays on disk while you're on the stock image, so if you switch back to heavy later, your previously-installed extensions are still there and recompile on startup. Otherwise simply remove them from the compose and delete them from disk.
+The extension code in `./build/extensions` stays on disk while you're on the stock image, so if you switch back to heavy later, your previously-installed extensions are still there and recompile on startup. Otherwise remove them from the compose and delete them from disk.

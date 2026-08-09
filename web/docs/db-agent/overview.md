@@ -5,7 +5,7 @@ description: Overview of Calagopus DB Agent, the Rust-based database proxy and p
 
 # DB Agent
 
-DB Agent is a high-performance, low-latency database proxy and provisioning agent. It handles database routing and provisioning for PostgreSQL, MariaDB/MySQL, MongoDB, and Redis, running each database in its own Docker container and exposing a REST API for management.
+DB Agent is a database proxy and provisioning agent. It handles database routing and provisioning for PostgreSQL, MariaDB/MySQL, MongoDB, and Redis, running each database in its own Docker container and exposing a REST API for management.
 
 ## Minimum Requirements
 

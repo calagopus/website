@@ -16,7 +16,7 @@ Wings drives this by shelling out to the `btrfs` CLI: `btrfs subvolume create` o
 ## Downsides
 
 - **Not retroactive by default for existing servers.** A server's volume directory only becomes a subvolume when Wings creates it; directories that already exist as plain folders are not converted automatically. The [`migrate-disk-limiter` command](#migrating-existing-servers) can convert them for you.
-- **Qgroup accounting is filesystem-wide work.** Btrfs has to maintain reference counters across all subvolumes on the filesystem. On very large or heavily-fragmented filesystems, this can make operations like balancing or scrubbing noticeably more expensive. For typical game-server workloads this is not a problem, but it is worth knowing about.
+- **Qgroup accounting is filesystem-wide work.** Btrfs has to maintain reference counters across all subvolumes on the filesystem. On very large or heavily-fragmented filesystems, this can make operations like balancing or scrubbing noticeably more expensive. For typical game-server workloads this is not a problem.
 - **Snapshots count against quotas in non-obvious ways.** If you use Btrfs snapshots (for backups or otherwise), be aware that shared extents between a subvolume and its snapshots can show up in qgroup accounting in ways that are not always intuitive. If you don't use Btrfs snapshots outside of what Wings does, you don't need to worry about this.
 
 ## Migrating existing servers

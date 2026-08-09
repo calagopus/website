@@ -87,7 +87,7 @@ pub fn commands(cli: CliCommandGroupBuilder) -> CliCommandGroupBuilder {
 }
 ```
 
-That function then gets passed straight to `add_group`, as shown in the previous section. Once you've written this `mod.rs` once you basically copy its shape and just swap out the command list.
+That function then gets passed straight to `add_group`, as shown in the previous section. Once you've written this `mod.rs` once, copy its shape and swap out the command list.
 
 If you nest a subgroup, do the same thing one level deeper - a `commands/users/mod.rs` exports its own `commands` function, and the parent `commands/mod.rs` calls `.add_group("users", "...", users::commands)` to wire it in.
 

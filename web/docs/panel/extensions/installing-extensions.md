@@ -30,7 +30,7 @@ Once your stack is on `:heavy` or `:nightly-heavy`, you have two options.
 docker compose restart web
 ```
 
-The Panel detects the new file on startup and installs it, you can see the progress via the aforementioned admin UI or simply wait, it shouldn't take more than a minute or two even for complex extensions.
+The Panel detects the new file on startup and installs it. Watch the progress in the admin UI from Option 1, or wait - it shouldn't take more than a minute or two, even for complex extensions.
 
 === With Development Environment
 
@@ -61,7 +61,7 @@ cargo b --profile heavy-release
 # binary lands at ./target/heavy-release/panel-rs
 ```
 
-Same end result; just more granular if you're debugging a build issue. If you manually added files/reset your internal-list meta extension, make sure to run `panel-rs extensions resync` to refresh the internal state before building.
+Same end result; just more granular if you're debugging a build issue. If you manually added files/reset your internal-list meta extension, run `panel-rs extensions resync` to refresh the internal state before building.
 :::
 
 ::::

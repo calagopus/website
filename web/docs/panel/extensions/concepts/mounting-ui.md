@@ -1,13 +1,13 @@
 # Mounting UI
 
-So far the docs have covered the backend side - routes, permissions, settings, activity. But none of that is any use unless the Panel's UI actually *shows* something to a user. This page is about the frontend entry point: how your extension gets React components onto actual pages in the Panel.
+This page covers the frontend entry point: how your extension gets React components onto actual pages in the Panel.
 
 Two things do the work:
 
 1. **The `Extension` class** you export from `src/index.ts`, which declares a couple of default mount points (the admin extension card, the admin extension configuration page).
 2. **The `ExtensionRegistry`**, accessed via `ctx.extensionRegistry` inside your `initialize()` method, which lets you push components into existing Panel pages and add entirely new routes to the sidebar.
 
-Together these cover the big four: "add a summary to the admin extension card", "let the admin configure your extension", "drop a widget into an existing page", and "add a whole new page". Which is most of what most extensions need.
+Together these cover the common cases: "add a summary to the admin extension card", "let the admin configure your extension", "drop a widget into an existing page", and "add a whole new page".
 
 ## The Extension Class
 

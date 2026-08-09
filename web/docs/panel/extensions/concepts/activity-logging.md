@@ -1,12 +1,12 @@
 # Activity Logging
 
-Let's say you just shipped an admin endpoint that lets operators update a critical setting, or a server endpoint that nukes a user's files. Great. Now imagine six months later someone goes "who the hell deleted my world folder" and you have absolutely no way to answer. Awkward. This is why every mutation in the Panel ends with an activity log entry, and it's why your extension should do the same.
+Every mutation in the Panel ends with an activity log entry, and your extension's mutations should too - without one, there is no way to answer "who deleted this" or "who changed that setting" six months later.
 
-The good news is that logging is basically free - you extract a logger from your route handler, call `.log(...).await`, and the Panel handles the rest. IP, user agent, timestamp, and who did it are all captured automatically, so your payload only has to describe *what* happened.
+Logging is nearly free: extract a logger from your route handler, call `.log(...).await`, and the Panel handles the rest. IP, user agent, timestamp, and who did it are all captured automatically, so your payload only has to describe *what* happened.
 
 ## The Three Loggers
 
-There are three logger extractors, one per activity scope. Pick the one that matches the router you're in - if you're in an admin route use the admin logger, if you're in a server route use the server logger, etc. Mixing them across router types doesn't really make sense.
+There are three logger extractors, one per activity scope. Pick the one that matches the router you're in - the admin logger in admin routes, the server logger in server routes, and so on. Mixing them across router types doesn't make sense.
 
 | Logger | Import from | Shows up in | Use from |
 | ------ | ----------- | ----------- | -------- |
