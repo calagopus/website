@@ -1,6 +1,6 @@
 # Translations
 
-The Panel ships with an integrated translation system that extensions use directly - no backend wiring, no separate i18n library. You declare your translation keys once with their English values, the framework handles type-safe lookup at runtime, and operators (or you, if you're shipping translations yourself) can ship JSON files for other languages that automatically get picked up when a user has that language selected.
+The Panel ships with an integrated translation system, and your extension gets to use it for free - no backend wiring, no separate i18n library, no string-bundle nightmares. You declare your translation keys once with their English values, the framework handles type-safe lookup at runtime, and operators (or you, if you're shipping translations yourself) can ship JSON files for other languages that automatically get picked up when a user has that language selected.
 
 This page covers the whole lifecycle: declaring translation keys for your extension, using them in your React components and TypeScript code, and shipping translations for languages other than English.
 
@@ -296,7 +296,7 @@ The `t` / `tExt` split makes it obvious at a glance whether a key lives in the b
 
 ## A Note on Sample File Generation
 
-For the example `translations.ts` on this page - `helloWorld`, `fileCount`, the `pages.home.*` block, and the `file` item - the generated `en/dev.yourname.extension.json` looks like:
+For the example `translations.ts` on this page, with `helloWorld`, `fileCount`, the `pages.home.*` block, and the `file` item, the generated `en/dev.yourname.extension.json` would look like:
 
 ```json
 {

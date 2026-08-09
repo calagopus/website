@@ -2,7 +2,7 @@
 
 Routes and CLI commands both run in response to someone asking for something - a user hits an endpoint, an operator types a command. But sometimes your extension needs to do work on its own schedule: poll an external API every few minutes, expire stale cache entries hourly, or flush pending writes before the process exits. That's what background tasks and shutdown handlers are for.
 
-Both boil down to "register a function, the Panel calls it at the right time", but there are a couple of gotchas worth knowing (primary instance gating, how to get a schedule out of an otherwise-tight loop, what shutdown does to in-flight work) that the rest of this page covers.
+Neither of these is particularly exciting - they're both "register a function, the Panel calls it at the right time" - but there are a couple of gotchas worth knowing (primary instance gating, how to actually get a schedule out of an otherwise-tight loop, what shutdown does to in-flight work) that the rest of this page covers.
 
 ## Background Tasks
 
@@ -38,9 +38,9 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-**The loop function runs in a tight loop.** Whatever function you pass to `add_task` gets called again immediately after it returns. There is no built-in sleep between iterations. This is intentional - different tasks want different cadences, and forcing a single model (cron-like, fixed-interval, adaptive) would be wrong for half the use cases.
+A few things to unpack here.
 
-But it means **you are responsible for pacing your own task**: sleep at the end of each iteration to wait for the next one, or sleep in the middle if you want to wake up on a schedule and do some work. A loop function that returns instantly with no sleep will hot-spin and consume 100% of a CPU core.
+**The loop function runs in a tight loop.** Whatever function you pass to `add_task` gets called again immediately after it returns. There is no built-in sleep between iterations. This is intentional - different tasks want different cadences, and forcing a single model (cron-like, fixed-interval, adaptive) would be wrong for half the use cases. But it means **you are responsible for pacing your own task**: sleep at the end of each iteration to wait for the next one, or sleep in the middle if you want to wake up on a schedule and do some work. A loop function that returns instantly with no sleep will hot-spin and consume 100% of a CPU core.
 
 The typical shape is "do work, then sleep":
 
@@ -82,7 +82,7 @@ builder
 
 Everything else behaves exactly like `add_task`: errors are logged and retried at the next scheduled tick, panics permanently park the task until a restart, and registrations silently overwrite previous tasks with the same name.
 
-> The cron syntax is "second minute hour day month weekday" - the extra seconds field is a common gotcha for folks used to the more traditional "minute hour day month weekday" format. If your task isn't running when you expect, double-check your cron expression.
+> Also, keep in mind, the cron syntax is "second minute hour day month weekday" - that extra seconds field is a common gotcha for folks used to the more traditional "minute hour day month weekday" format. If your task isn't running when you expect, double-check your cron expression.
 
 ### Primary Instance Only
 

@@ -117,7 +117,7 @@ This also works for core groups you've mutated - if you add a new permission to 
 
 ## Mutating Core Permission Groups
 
-Instead of creating a brand-new group for one or two permissions, you can **add your permission to an existing core group**. This is usually the right call when your permission is conceptually part of an existing surface area - for example, a permission that lets a subuser change their server's egg fits cleanly into the existing `settings` group on server permissions, rather than needing its own top-level group.
+Here's where it gets interesting. Instead of creating a brand-new group for one or two permissions, you can **add your permission to an existing core group**. This is usually the right call when your permission is conceptually part of an existing surface area - for example, a permission that lets a subuser change their server's egg fits cleanly into the existing `settings` group on server permissions, rather than needing its own top-level group.
 
 The builder exposes `mutate_*_permission_group` methods for this:
 
