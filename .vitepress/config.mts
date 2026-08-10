@@ -303,6 +303,68 @@ export default withMermaid({
                   { text: 'Activity', link: '/docs/panel/features/server/activity' },
                 ],
               },
+              {
+                text: 'Admin',
+                link: '/docs/panel/features/admin/',
+                collapsed: true,
+                items: [
+                  {
+                    text: 'System',
+                    collapsed: true,
+                    items: [
+                      { text: 'Settings', link: '/docs/panel/features/admin/settings' },
+                      { text: 'Announcements', link: '/docs/panel/features/admin/announcements' },
+                      { text: 'Assets', link: '/docs/panel/features/admin/assets' },
+                      { text: 'Extensions', link: '/docs/panel/features/admin/extensions' },
+                    ],
+                  },
+                  {
+                    text: 'Infrastructure',
+                    collapsed: true,
+                    items: [
+                      { text: 'Locations', link: '/docs/panel/features/admin/locations' },
+                      { text: 'Nodes', link: '/docs/panel/features/admin/nodes' },
+                      { text: 'Servers', link: '/docs/panel/features/admin/servers' },
+                    ],
+                  },
+                  {
+                    text: 'Users & Access',
+                    collapsed: true,
+                    items: [
+                      { text: 'Users', link: '/docs/panel/features/admin/users' },
+                      { text: 'Roles', link: '/docs/panel/features/admin/roles' },
+                      { text: 'OAuth Providers', link: '/docs/panel/features/admin/oauth-providers' },
+                      { text: 'Activity', link: '/docs/panel/features/admin/activity' },
+                    ],
+                  },
+                  {
+                    text: 'Nests & Eggs',
+                    collapsed: true,
+                    items: [
+                      { text: 'Nests', link: '/docs/panel/features/admin/nests' },
+                      { text: 'Egg Configurations', link: '/docs/panel/features/admin/egg-configurations' },
+                      { text: 'Egg Repositories', link: '/docs/panel/features/admin/egg-repositories' },
+                    ],
+                  },
+                  {
+                    text: 'Databases',
+                    collapsed: true,
+                    items: [
+                      { text: 'Database Hosts', link: '/docs/panel/features/admin/database-hosts' },
+                      { text: 'Database Agent Hosts', link: '/docs/panel/features/admin/database-agent-hosts' },
+                      { text: 'Database Agent Templates', link: '/docs/panel/features/admin/database-agent-templates' },
+                    ],
+                  },
+                  {
+                    text: 'Storage',
+                    collapsed: true,
+                    items: [
+                      { text: 'Mounts', link: '/docs/panel/features/admin/mounts' },
+                      { text: 'Backup Configurations', link: '/docs/panel/features/admin/backup-configurations' },
+                    ],
+                  },
+                ],
+              },
             ],
           },
           {

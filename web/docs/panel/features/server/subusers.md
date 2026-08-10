@@ -12,7 +12,7 @@ Subusers are other users with access to your server, each with their own set of 
 The list is searchable and shows each subuser's **Username**, whether they have **2FA Enabled** (a green closed lock, or a red open one if not), and how many **Permissions** and **Ignored Files** patterns they have. A counter at the top tracks the limit, for example "0 of 25 maximum subusers created."; at the limit, **Create** is disabled with the tooltip "This server is limited to 25 subusers."
 
 ::: info
-The maximum number of subusers per server is a panel-wide setting configured by the instance administrator.
+The maximum number of subusers per server is a panel-wide setting configured by the instance administrator under [Settings > Server](../admin/settings.md#server).
 :::
 
 ## Inviting a Subuser
