@@ -1,0 +1,26 @@
+---
+title: Command Snippets
+description: Set up shortcuts for commands you use often in the Calagopus server console.
+---
+
+# Command Snippets
+
+Command snippets are shortcuts for commands you type often into a server console. The list is empty by default and shows each snippet's name, which eggs it applies to, and when it was created.
+
+![](./images/command-snippets/list.webp)
+
+## Creating a Snippet
+
+Click **Create** and give it a short name, since that name is what you'll actually type in the console. Optionally pick an egg to restrict the snippet to servers using it; leave it empty to make the snippet available on every server.
+
+![](./images/command-snippets/create-form.webp)
+
+Then enter the command it should paste. For example, a snippet named `hello` with the command `say hello world!`:
+
+![](./images/command-snippets/example.webp)
+
+Typing `!hello` in the console and pressing enter pastes `say hello world!` in its place, so you don't have to type the full command every time.
+
+![](./images/command-snippets/usage-example.gif)
+
+Right-click an existing snippet to edit or delete it.

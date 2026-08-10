@@ -41,13 +41,13 @@ VSCodium, code-server, and most other forks are wired to the [Open VSX Registry]
 
 ::::
 
-![](./images/vscode/extensions-view.png)
+![](./images/vscode/extensions-view.webp)
 
 ## Connecting from the panel
 
 The quickest way to get started is straight from your server's file manager. Open the **Files** tab for any server, then click the **Connect** dropdown in the toolbar and choose **Connect via VS Code**.
 
-![](./images/vscode/connect-dropdown.png)
+![](./images/vscode/connect-dropdown.webp)
 
 Your editor opens, mounts the server's files as a workspace folder, and attaches to the console automatically. The same **Connect** dropdown is available in the header while editing a file, which will open that exact file in your editor once the server is mounted.
 
@@ -69,7 +69,7 @@ You can also drive everything from the editor using the Command Palette (`Ctrl`/
 | `Calagopus: Enable File Collaboration` | Turn on real-time collaborative editing (see [Real-time collaboration](#real-time-collaboration)). |
 | `Calagopus: Disable File Collaboration` | Turn off real-time collaborative editing. |
 
-![](./images/vscode/command-palette.png)
+![](./images/vscode/command-palette.webp)
 
 ## Features
 
@@ -85,7 +85,7 @@ When the editor's proposed search APIs are enabled, you can search across your s
 
 Attach to your server's console as an integrated terminal. Output streams in real time and you can send commands straight from the terminal input, exactly as you would from the panel's console tab.
 
-![](./images/vscode/integrated-terminal.png)
+![](./images/vscode/integrated-terminal.webp)
 
 ### Real-time collaboration
 
@@ -125,7 +125,7 @@ From a revision's inline actions (or by clicking it) you can:
 
 The current server's power state is shown in the status bar. Use the **Calagopus: Server Power Action** command (or the status bar item) to **start**, **stop**, **restart**, or **kill** the server without switching back to the panel.
 
-![](./images/vscode/status-bar.png)
+![](./images/vscode/status-bar.webp)
 
 ## Deep links
 
@@ -146,7 +146,7 @@ vscode://calagopus.calagopus/open?origin=<panel-url>&server=<server-uuid>
 ::: warning
 A `vscode://` link is the canonical scheme for Visual Studio Code. Some forks register a different scheme (for example, `vscodium://` or `codium://`) - if a link does not open in your editor, click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme.
 
-![](./images/vscode/uri-scheme-setting.png)
+![](./images/vscode/uri-scheme-setting.webp)
 :::
 
 ## Authentication
@@ -181,7 +181,7 @@ Deep links that include an `apiKey` parameter open an **ephemeral** session - th
 
 Your editor may register a URI scheme other than `vscode://`. Click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme (for example, `vscodium://` or `codium://`).
 
-![](./images/vscode/uri-scheme-setting.png)
+![](./images/vscode/uri-scheme-setting.webp)
 
 ### File search returns no results
 
