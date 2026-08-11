@@ -27,7 +27,11 @@ Standard TOTP-based 2FA, the same kind used by most apps. Scan the QR code (or e
 
 ![](./images/account/2fa-setup.webp)
 
-To disable it, you'll need a valid authentication code and your password again.
+Right after enabling, a **Recovery Codes** dialog appears: "Below are your recovery codes. Store these in a safe place. If you lose access to your authentication device, you can use these codes to regain access to your account." You get ten codes; click the code block to copy them all. Each code works exactly once at the [login checkpoint](../auth/login.md#two-factor-checkpoint), and this dialog is the only time they're shown, so store them somewhere safe before closing it.
+
+![](./images/account/2fa-recovery-codes.webp)
+
+Once enabled, the card reads "Two-Factor Verification is currently enabled." with a **Disable Two-Factor** button. Disabling asks for a valid authentication code and your password again.
 
 ![](./images/account/2fa-disable.webp)
 

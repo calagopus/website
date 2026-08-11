@@ -264,6 +264,16 @@ export default withMermaid({
             collapsed: true,
             items: [
               {
+                text: 'Authentication',
+                link: '/docs/panel/features/auth/',
+                collapsed: true,
+                items: [
+                  { text: 'Login', link: '/docs/panel/features/auth/login' },
+                  { text: 'Register', link: '/docs/panel/features/auth/register' },
+                  { text: 'Password Reset', link: '/docs/panel/features/auth/password-reset' },
+                ],
+              },
+              {
                 text: 'Dashboard',
                 link: '/docs/panel/features/dashboard/',
                 collapsed: true,

@@ -17,7 +17,7 @@ The maximum number of subusers per server is a panel-wide setting configured by 
 
 ## Inviting a Subuser
 
-Click **Create** and enter the person's **Email**. If an account with that email already exists it gets added directly; if not, an account is created for them automatically. Either way, they receive an email with a link to the server.
+Click **Create** and enter the person's **Email**. If an account with that email already exists it gets added directly; if not, an account is created for them automatically. Either way, they receive an email with a link to the server. When the panel has a [captcha](../admin/settings.md#captcha) configured, it renders in this modal too and must be solved before **Create** works.
 
 ![](./images/subusers/create-modal.webp)
 
