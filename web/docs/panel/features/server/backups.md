@@ -5,7 +5,7 @@ description: Create, browse, restore, and download server backups, and organize 
 
 # Backups
 
-The Backups page lists every backup of your server, with a counter like "2 of 15 maximum backups created." at the top. The limit is set per server; once you hit it, the create option is disabled with the tooltip "This server is limited to 15 backups."
+The Backups page lists every backup of your server, with a counter like "2 of 15 maximum backups created." at the top. The limit is part of the server's [feature limits](../admin/servers.md#feature-limits); once you hit it, the create option is disabled with the tooltip "This server is limited to 15 backups."
 
 ![](./images/backups/list.webp)
 
@@ -44,8 +44,10 @@ The group header shows retention at a glance:
 
 Pick **Create Backup Group** from the **Create** menu. Give it a name and optionally set:
 
-- **Keep count** - maximum number of usable backups to keep in this group. Leave empty for no limit.
-- **Keep days** - delete backups in this group older than this many days. Leave empty for no limit.
+- **Keep count**: maximum number of usable backups to keep in this group. Leave empty for no limit.
+- **Keep days**: delete backups in this group older than this many days. Leave empty for no limit.
+
+![](./images/backups/edit-backup-group-modal.webp)
 
 With neither set, the group never deletes backups automatically. Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
 
@@ -63,9 +65,11 @@ Right-click a backup (or use the menu at the end of the row) for its actions.
 
 Rename the backup, move it to another group, or toggle **Locked**. A locked backup cannot be deleted and is never rotated out by group retention.
 
+![](./images/backups/edit-modal.webp)
+
 ### Browse
 
-Opens the backup's contents directly in the [file manager](./files.md#browsing-backups) (under a read-only `/.backups/` path), so you can inspect it and pull out individual files without downloading the whole archive. Browse only appears for backups whose storage driver and format support it - see [Browsing Backups from the Client UI](../../../wings/advanced/backup-configurations.md#browsing-backups-from-the-client-ui) for which do.
+Opens the backup's contents directly in the [file manager](./files.md#browsing-backups) (under a read-only `/.backups/` path), so you can inspect it and pull out individual files without downloading the whole archive. Browse only appears for backups whose storage driver and format support it; see [Browsing Backups from the Client UI](../../../wings/advanced/backup-configurations.md#browsing-backups-from-the-client-ui) for which do.
 
 ### Download
 
@@ -75,8 +79,8 @@ Downloads the backup as an archive. For backups stored in a driver that can re-s
 
 Restores the backup onto the server. Two switches control how:
 
-- **Do you want to delete all files of this server before performing this action? This cannot be undone.** - wipes the server first for a clean restore.
-- **Restore the startup command, image, and variables from this backup.** - only available when the backup captured that metadata.
+- **Do you want to delete all files of this server before performing this action? This cannot be undone.** wipes the server first for a clean restore.
+- **Restore the startup command, image, and variables from this backup.** is only available when the backup captured that metadata.
 
 The server switches into a restoring state and you're taken back to the console while it runs.
 
@@ -86,9 +90,13 @@ The server switches into a restoring state and you're taken back to the console 
 
 Writes the backup as an archive file into the server's own file area. Pick a destination directory, file name, and archive format (fixed for backups whose stored format can't be converted); the modal shows the resulting path under `/home/container/` before you hit **Export**.
 
+![](./images/backups/export-modal.webp)
+
 ### Backup Metadata
 
 Shown only for backups that captured metadata (startup command, image, variables); opens a JSON view of it.
+
+![](./images/backups/metadata.webp)
 
 ### Delete
 

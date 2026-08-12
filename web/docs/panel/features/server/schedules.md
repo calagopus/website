@@ -5,7 +5,7 @@ description: Automate your Calagopus server with schedules, combining cron and e
 
 # Schedules
 
-Schedules automate work on your server. Each schedule combines **triggers** (when it fires), an optional **pre-condition** (checked right before it runs), and an ordered list of **actions** (what it actually does). The subtitle shows your usage against the server's limit, e.g. "1 of 15 maximum schedules created."
+Schedules automate work on your server. Each schedule combines **triggers** (when it fires), an optional **pre-condition** (checked right before it runs), and an ordered list of **actions** (what it actually does). The subtitle shows your usage against the server's [feature limit](../admin/servers.md#feature-limits), e.g. "1 of 15 maximum schedules created."
 
 ![](./images/schedules/list.webp)
 
@@ -62,7 +62,7 @@ Opening a schedule shows its name with an **Active**/**Inactive** badge, a **Run
 
 ### Actions
 
-The **Schedule Actions** tab is the heart of a schedule: an ordered list of steps. Add one with **Add Step** (or **Create First Step** on an empty schedule), drag the handle to reorder, and click a step's chevron to expand its full configuration. Each step's menu offers **Edit**, **Duplicate**, and **Delete**. While the schedule executes, the current step shows a **Running** badge; a step that failed on the last run shows a red warning icon with the error message.
+The **Schedule Actions** tab is the heart of a schedule: an ordered list of steps. Add one with **Add Step** (or **Create First Step** on an empty schedule), drag the handle to reorder, and click a step's chevron to expand its full configuration. The maximum number of steps per schedule is a panel-wide setting under [Settings > Server](../admin/settings.md#server). Each step's menu offers **Edit**, **Duplicate**, and **Delete**. While the schedule executes, the current step shows a **Running** badge; a step that failed on the last run shows a red warning icon with the error message.
 
 Steps are picked from a searchable **Action Type** list, organized into five groups.
 

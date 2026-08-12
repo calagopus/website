@@ -14,7 +14,7 @@ The table lists every mount available to your server: **Name**, **Description**,
 Use the green **+** at the end of a row to attach a mount, or the red **-** to detach one. Both ask for confirmation first ("Do you want to attach **name** to `target`?") and confirm with a toast once done.
 
 ::: info
-Users only toggle mounts on and off. Which mounts exist, where they point, and whether they are read-only is defined by administrators, and every mounted path must also be whitelisted in the node's [`allowed_mounts`](../../../wings/configuration.md#allowed_mounts) Wings setting.
+Users only toggle mounts on and off. Which mounts exist, where they point, and whether they are read-only is defined by administrators under [Mounts](../admin/mounts.md), and every mounted path must also be whitelisted in the node's [`allowed_mounts`](../../../wings/configuration.md#allowed_mounts) Wings setting.
 :::
 
 Attaching and detaching are gated by the `mounts.attach` and `mounts.detach` permissions, viewing by `mounts.read`. See the [Permissions Reference](../dashboard/permissions.md).

@@ -7,7 +7,7 @@ description: Create classic databases on shared database hosts or fully managed 
 
 Calagopus has two kinds of server databases. **Classic Databases** are single databases provisioned on a shared database host, the familiar setup from other panels. **Managed Databases** are full database instances run for you by [DB Agent](../../../db-agent/index.md), with their own container, power controls, and live stats.
 
-Both kinds count toward the same limit, shown at the top of the page as "6 of 15 maximum databases created." If your panel only offers one kind, the page shows a single list; with both available, it splits into a **Classic Databases** and a **Managed Databases** section, each with its own search box and create button.
+Both kinds count toward the same limit, shown at the top of the page as "6 of 15 maximum databases created."; the limit is part of the server's [feature limits](../admin/servers.md#feature-limits). If your panel only offers one kind, the page shows a single list; with both available, it splits into a **Classic Databases** and a **Managed Databases** section, each with its own search box and create button.
 
 ![](./images/databases/overview.webp)
 
@@ -50,7 +50,7 @@ Managed databases are dedicated Redis, MongoDB, PostgreSQL, or MariaDB instances
 Click **Create Managed Database**. Choose a **Database Name** and a **Template**; templates are grouped by database type, and each one defines the instance's resource limits (memory, swap, disk, CPU, and IO weight). If the template offers more than one **Docker Image**, you pick one too.
 
 ::: info
-Templates, the resource limits they carry, and the per-instance database and user caps are all configured by administrators. See the [DB Agent docs](../../../db-agent/index.md) for how instances are provisioned.
+Templates and the resource limits they carry are configured by administrators under [Database Agent Templates](../admin/database-agent-templates.md); the per-instance database and user caps live in [Settings > Server](../admin/settings.md#server). See the [DB Agent docs](../../../db-agent/index.md) for how instances are provisioned.
 :::
 
 ### The Instance Page

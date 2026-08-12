@@ -24,5 +24,5 @@ The **IP** column shows the address the request came from, or "N/A" for events w
 ![](./images/activity/details-modal.webp)
 
 ::: info
-Server activity is pruned automatically. Retention defaults to 90 days; instance administrators can change it, cap the number of entries kept, and toggle whether admin and schedule actions are logged at all.
+Server activity is pruned automatically. Retention defaults to 90 days; instance administrators can change it, cap the number of entries kept, and toggle whether admin and schedule actions are logged at all under [Settings > Activity](../admin/settings.md#activity).
 :::

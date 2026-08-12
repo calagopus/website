@@ -70,7 +70,7 @@ Everything needed to connect wings to this node entry. The page starts collapsed
 
 1. **Settings**: Panel URL ("The URL wings uses to reach this panel."), API Port ("The port wings listens on."), and SFTP Port. These generate the config below; a warning appears if the node URL's port doesn't match the API port.
 2. **Apply Configuration**: the generated YAML to place into `/etc/pterodactyl/config.yml`, or a copyable `calagopus-wings configure --join-data <...>` one-liner that does it for you.
-3. **Verify Connection**: checks **Backend to Wings** (panel reaches the node) and **Frontend to Wings** (your browser reaches it - the console, downloads, and uploads depend on this one).
+3. **Verify Connection**: checks **Backend to Wings** (panel reaches the node) and **Frontend to Wings** (your browser reaches it; the console, downloads, and uploads depend on this one).
 
 ![](./images/nodes/configuration.webp)
 
