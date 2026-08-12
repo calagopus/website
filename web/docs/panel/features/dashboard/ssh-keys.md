@@ -5,28 +5,28 @@ description: Add public SSH keys to your Calagopus account to use for SFTP and S
 
 # SSH Keys
 
-SSH keys added here are used for SFTP and SSH logins to Wings, the node daemon. The list shows each key's name, fingerprint, and when it was created; it's empty until you add your first one.
+SSH keys added here are used for SFTP and SSH logins to Wings, the node daemon, instead of your panel password; the connection details themselves live on each server's [SSH Details](../server/console.md#ssh-details) and [SFTP](../server/files.md#connect) views. The list shows each key's name, fingerprint, and when it was created, with a counter against your key limit.
 
 ![](./images/ssh-keys/list.webp)
 
 ## Adding a Key
 
-**Create** lets you paste or upload a public key file (`.pub`) and give it a name.
+**Create** takes a name plus the public key itself: paste it, or pick a `.pub` file to fill the field.
 
 ![](./images/ssh-keys/create-form.webp)
 
-**Import** does the same thing but is meant for grabbing a key straight from a `.pub` file without typing anything else in.
+**Import** skips the copy-pasting entirely: pick **GitHub**, **GitLab**, or **Launchpad**, enter your **Username** there, and the panel imports the public keys published on that account, all of them at once if there are several.
 
 ![](./images/ssh-keys/import-form.webp)
 
-Either way, once the key is added it can be used for SFTP or SSH logins to Wings right away.
+Keys work for SFTP and SSH logins immediately after being added.
+
+::: info
+The maximum number of SSH keys per account is set by the instance administrator under [Settings > User](../admin/settings.md#user).
+:::
 
 ## Editing and Removing
 
-Right-click a key to edit or delete it.
+Right-click a key (or open the menu at the end of its row) to edit or delete it. Editing only changes the key's name, not the key material itself; add a new key instead if the underlying key pair changed.
 
 ![](./images/ssh-keys/context-menu.webp)
-
-Editing only lets you change the key's name, not the key material itself. Add a new key instead if the underlying key pair changed.
-
-![](./images/ssh-keys/edit-form.webp)

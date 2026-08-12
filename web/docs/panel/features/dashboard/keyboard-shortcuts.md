@@ -45,17 +45,9 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 
 ## Rebinding, Disabling, and Resetting
 
-Each shortcut has three buttons next to it: rebind, disable, and reset to default.
+Each shortcut has three buttons next to it. The pencil rebinds: click it and press the new key combination, which is captured as soon as you press it. The circle-slash disables the shortcut entirely, and the reset button restores it to its shipped default.
 
 ![](./images/keyboard-shortcuts/rebind-hover.webp)
-
-Click the pencil and press the new key combination you want; it's captured as soon as you press it.
-
-![](./images/keyboard-shortcuts/rebind-listening.webp)
-
-The circle-slash button disables a shortcut entirely, and the reset button restores it to its shipped default.
-
-![](./images/keyboard-shortcuts/disabled.webp)
 
 ## Copy, Paste, and Reset All
 

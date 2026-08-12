@@ -25,13 +25,24 @@ Switch to the **Grouped Servers** tab and click **Create**. Give the group a nam
 
 ![](./images/servers/create-group.webp)
 
-### Adding and Removing Servers
+### The Group Header
 
-Open a group's menu to add a server to it, then search for and pick the server you want to add.
+Each group's header holds a search box that filters the servers inside it, followed by four controls:
 
-![](./images/servers/add-server-picker.webp)
+| Control | Does |
+| --- | --- |
+| **Group Actions** (the three dots) | **Start**, **Restart**, or **Stop** every server in the group at once |
+| **Add Server to Group** (plus) | Search for and pick a server to add |
+| **Edit** (pencil) | Rename the group via the **Edit Server Group** modal |
+| **Delete** (trash) | Remove the group after a **Confirm Server Group Deletion** prompt |
 
-Groups are collapsible; click the chevron to expand or collapse one.
+![](./images/servers/group-actions.webp)
+
+Deleting a group never deletes the servers inside it, it just ungroups them.
+
+### Inside a Group
+
+Groups are collapsible; click the chevron to expand or collapse one, and drag servers to reorder them within the group.
 
 ![](./images/servers/group-collapsed.webp)
 ![](./images/servers/group-expanded.webp)
@@ -39,10 +50,3 @@ Groups are collapsible; click the chevron to expand or collapse one.
 Click a server inside a group to select it. A small action bar appears with power controls (start, stop, restart) and an option to remove it from the group without deleting the server itself.
 
 ![](./images/servers/bulk-power-actions.webp)
-
-### Renaming and Deleting a Group
-
-Open the group's menu for **Edit** to rename it, or **Delete** to remove the group. Deleting a group never deletes the servers inside it, it just ungroups them.
-
-![](./images/servers/group-actions.webp)
-![](./images/servers/edit-group.webp)

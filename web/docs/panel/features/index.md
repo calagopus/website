@@ -1,3 +1,8 @@
+---
+title: Features
+description: Feature documentation for every part of the Calagopus panel, from login to the admin area.
+---
+
 # Features
 
 A closer look at what Calagopus can do, organized by area of the panel.

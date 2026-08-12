@@ -26,6 +26,6 @@ The sidebar lists every page above, plus **Servers** and **Admin** (if you have 
 
 ![](./images/nav-search.webp)
 
-The three dots next to your name open a small menu to jump to your **Account** page, switch to the **Admin** area, toggle light/dark mode, or log out.
+The three dots next to your name open a small menu to jump to your **Account** page, switch to the **Admin** area (admins only), pick a **Theme**, or log out. **Auto** follows your browser's theme, **Dark** and **Light** force one; the panel starts on **Dark** until you pick.
 
 ![](./images/nav-menu.webp)

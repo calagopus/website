@@ -19,8 +19,12 @@ Then enter the command it should paste. For example, a snippet named `hello` wit
 
 ![](./images/command-snippets/example.webp)
 
-Typing `!hello` in the console and pressing enter pastes `say hello world!` in its place, so you don't have to type the full command every time.
+Typing `!hello` in the console and pressing enter pastes `say hello world!` in its place, so you don't have to type the full command every time. Typing just `!` shows all your snippets as autocomplete suggestions; see [Sending Commands](../server/console.md#sending-commands).
 
 ![](./images/command-snippets/usage-example.gif)
 
-Right-click an existing snippet to edit or delete it.
+Right-click an existing snippet (or open the menu at the end of its row) to edit or delete it.
+
+::: info
+The maximum number of command snippets per account is set by the instance administrator under [Settings > User](../admin/settings.md#user).
+:::

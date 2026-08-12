@@ -27,7 +27,7 @@ Once you're happy with the selection, scroll down and hit **Save**, or **Close**
 
 ## Editing, Recreating, and Removing
 
-Right-click a key for **Edit**, **Recreate**, or **Remove**.
+Right-click a key (or open the menu at the end of its row) for **Edit**, **Recreate**, or **Remove**.
 
 ![](./images/api-keys/context-menu.webp)
 
@@ -38,5 +38,5 @@ Right-click a key for **Edit**, **Recreate**, or **Remove**.
 **Recreate** issues a new key value with the same name and permissions, immediately invalidating the old value. Use this if a key may have leaked. **Remove** deletes the key outright.
 
 ::: info
-A key can never edit itself or grant permissions it doesn't already have, even with `api-keys.update`.
+A key can never edit itself or grant permissions it doesn't already have, even with `api-keys.update`. The maximum number of API keys per account is set by the instance administrator under [Settings > User](../admin/settings.md#user).
 :::

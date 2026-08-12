@@ -19,4 +19,6 @@ You're sent to that provider to authorize the connection; accepting links it to 
 
 ## Removing a Link
 
-Right-click a linked account and select **Delete**.
+Right-click a linked account (or open the menu at the end of its row) and select **Delete**.
+
+![](./images/oauth-links/context-menu.webp)
