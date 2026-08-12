@@ -107,7 +107,7 @@ Attach to your server's console as an integrated terminal. Output streams in rea
 
 Besides **Calagopus: Open Server Console**, the extension registers a **Calagopus Console** terminal profile - pick it from the dropdown next to the terminal's `+` button to choose a mounted server and attach.
 
-![](./images/vscode/integrated-terminal.png)
+![](./images/vscode/integrated-terminal.webp)
 
 ### Command snippets
 
