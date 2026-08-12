@@ -1,6 +1,6 @@
 # Updating DB Agent
 
-Updating DB Agent periodically gets you bug fixes, security patches, and new features. The process is quick to do whenever a new release comes out.
+Updating DB Agent periodically gets you bug fixes, security patches, and new features.
 
 ::: warning Active connections will be interrupted
 Database containers run independently of the DB Agent daemon, so they stay up and keep their data intact across an update. However, all client connections go through DB Agent's proxies, so restarting it will drop every active connection to every database. Plan updates around a moment where a brief reconnect is acceptable.

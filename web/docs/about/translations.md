@@ -4,7 +4,7 @@ This guide explains how to contribute translations using [Crowdin](https://crowd
 
 ## Prerequisites
 
-Before you begin, you will need:
+You will need:
 
 - A Crowdin account
 - Basic understanding of both English and your target language
@@ -14,7 +14,7 @@ Before you begin, you will need:
 1. Open the [Calagopus Crowdin project](https://crowdin.com/project/calagopus).
 2. Sign in to Crowdin.
 3. Select the language you want to translate.
-4. Click `en.json`. Don't worry, this indicates the source, not the target language.
+4. Click `en.json`. This indicates the source, not the target language.
 
 If your language is not available, open a GitHub issue requesting support for it.
 
@@ -27,7 +27,7 @@ Each source string consists of:
 - **Suggestions** - Existing translations or machine translation suggestions.
 - **Comments** - Context from developers or other translators.
 
-Always read the surrounding context before translating. Automated suggestions may be incorrect, please be careful before submitting.
+Always read the surrounding context before translating. Automated suggestions may be incorrect; review them before submitting.
 
 ![Picture of the Crowdin User Interface](./crowdin-ui.webp)
 
@@ -125,9 +125,7 @@ Generally leave these unchanged:
 
 ### Machine Translation
 
-Machine translation can be a useful starting point, but every suggestion should be reviewed by a human.
-
-Please ensure translations sound natural to native speakers.
+Machine translation can be a useful starting point, but every suggestion should be reviewed by a human. Ensure translations sound natural to native speakers.
 
 ## Need Help?
 
@@ -136,5 +134,3 @@ If you are unsure about a translation:
 - Leave a comment on the string in Crowdin.
 - Ask other translators.
 - Open a discussion or issue on GitHub.
-
-It is better to ask than to guess.

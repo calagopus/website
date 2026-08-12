@@ -76,4 +76,4 @@ Re-sync the repository, then head to **Admin → Nests** and open the nest. Sele
 ![](./images/egg-repos/nest-update.webp)
 ![](./images/egg-repos/massupdate.webp)
 
-Keep in mind that egg updates may require updating server configurations or reinstalling servers to take effect.
+Egg updates may require updating server configurations or reinstalling servers to take effect.

@@ -145,7 +145,7 @@ APP_USE_DECRYPTION_CACHE=false
 
 ## APP_USE_INTERNAL_CACHE
 
-Whether the Panel uses an in-memory cache for frequently accessed data with short TTLs. Reduces Redis load and can significantly improve response times. Memory usage implications should be considered on resource-constrained systems.
+Whether the Panel uses an in-memory cache for frequently accessed data with short TTLs. Reduces Redis load and can significantly improve response times. Consider memory usage on resource-constrained systems.
 
 Default:
 ```plaintext
@@ -162,7 +162,7 @@ APP_TRUSTED_PROXIES=192.168.178.0/24,10.0.0.0/8
 
 ## APP_LOG_DIRECTORY
 
-Directory where the Panel writes log files. Unset by default (logs are not persisted to disk). Set to a directory the Panel process has write access to in order to enable log files.
+Directory where the Panel writes log files. Unset by default (logs are not persisted to disk). Set it to a directory writable by the Panel process to enable log files.
 
 ## APP_ENCRYPTION_KEY
 

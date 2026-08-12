@@ -5,11 +5,11 @@ Extensions are split into three main parts: Frontend, Backend, and Database.
 All Extensions have a package name, which is defined in the backend `Cargo.toml` file, and is also required in the `Metadata.toml` file.
 These are semi-java-like package names, so they should be all lowercase, and can contain dots, for example `dev.0x7d8.test`.
 
-Package name with underscores (also referred to as package identifiers) simply means dots are replaced with underscores, so `dev.0x7d8.test` turns into `dev_0x7d8_test`.
+Package name with underscores (also referred to as package identifiers) means dots are replaced with underscores, so `dev.0x7d8.test` turns into `dev_0x7d8_test`.
 
 ## Initializing an Extension
 
-If you want to save some time, you can use the extension templates to quickly get an extension up and running.
+Use the extension templates to get an extension up and running quickly.
 
 ```bash
 # create a new extension from the template, replace the name with your package name with underscores
@@ -32,7 +32,7 @@ frontend/extensions/
 
 ### package.json
 
-You can add dependencies to your frontend extension code by adding them to this `package.json` file, or you can leave it like this. This will give you access to the required extension code and all dependencies of the base panel already.
+Add dependencies for your frontend extension code to this `package.json`, or leave it as-is - the required extension code and all dependencies of the base panel are already available.
 
 ```json
 {
@@ -159,7 +159,7 @@ database/extension-migrations/
 ```
 
 ::: info
-If you want it easy, you can auto-generate the migration files by running `panel-rs database-migrator create <package_name>`, this will create a new migration with the correct timestamp and file structure for you to fill in.
+Auto-generate the migration files by running `panel-rs database-migrator create <package_name>` - this creates a new migration with the correct timestamp and file structure for you to fill in.
 :::
 
 ### up.sql

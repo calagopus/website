@@ -48,7 +48,7 @@ At the bottom, you should see the warning below:
 ![](./files/images/discord/image-5.webp)
 Click on the `Save Changes` button below.
 
-#### Issue a OAuth Client ID and Secret
+#### Issue an OAuth Client ID and Secret
 On the same `OAuth2` page, look for the Client information section. Reset your Client Secret by clicking on the `Reset Secret` button.
 ![](./files/images/discord/image-6.webp)
 
@@ -62,7 +62,7 @@ On the switches below, choose if you want to enable Discord OAuth, only allow lo
 It should normally look like this:
 ![Discord Config](./files/images/discord/page.webp)
 
-Finally, save your changes, and you should be done!
+Finally, save your changes.
 
 ### Test the configuration
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Discord account.
@@ -74,7 +74,7 @@ If everything works correctly, you should now be able to see your Discord accoun
 ### Troubleshooting
 
 #### Error: "Invalid OAuth2 redirect_uri"
-You may have put the wrong redirect URL in Discord than the one Calagopus Panel has provided you.
+The redirect URL in Discord doesn't match the one provided by Calagopus Panel.
 
 **Solution:**
 
@@ -86,7 +86,7 @@ You may have put the wrong redirect URL in Discord than the one Calagopus Panel 
 6. Click `Save Changes`
 
 #### Error: "Unknown application"
-The Client ID and Client Secret set on the panel is invalid.
+The Client ID or Client Secret set on the panel is invalid.
 
 **Solution:**
 

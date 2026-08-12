@@ -69,7 +69,7 @@ chmod +x /usr/local/bin/wings
 ```bash
 wings version
 ```
-Check the output against the [latest release](https://github.com/calagopus/wings/releases/latest) to confirm the update actually applied before starting it back up.
+Check the output against the [latest release](https://github.com/calagopus/wings/releases/latest) to confirm the update applied.
 
 #### 4. Start the service
 

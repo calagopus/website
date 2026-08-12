@@ -296,7 +296,7 @@ The `t` / `tExt` split makes it obvious at a glance whether a key lives in the b
 
 ## A Note on Sample File Generation
 
-The earlier "Sample Generated JSON Translation File" section showed what the generator produces from your `translations.ts`. As of the example earlier on this page, with `helloWorld`, `fileCount`, the `pages.home.*` block, and the `file` item, the generated `en/dev.yourname.extension.json` would look like:
+For the example `translations.ts` on this page, with `helloWorld`, `fileCount`, the `pages.home.*` block, and the `file` item, the generated `en/dev.yourname.extension.json` would look like:
 
 ```json
 {
