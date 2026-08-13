@@ -15,15 +15,27 @@ The full installation walkthrough, including switching to the heavy image that e
 
 Each installed extension gets a card with its name, package name, **Version**, **Authors**, and description. Badges flag incomplete states: **Frontend missing**, **Backend missing**, **Pending build**, and **Pending removal**.
 
+![](./images/extensions/frontend-missing.webp) ![](./images/extensions/backend-missing.webp) ![](./images/extensions/pending-build.webp) ![](./images/extensions/pending-removal.webp)
+
 ![Extensions page](./images/extensions/list.webp)
 
-**Configure** on a card opens the extension's own settings page at `/admin/extensions/<packageName>`; it's disabled when the extension doesn't ship a configuration page. The trash icon removes an extension (with an option to also remove its database migrations); removal takes effect on the next rebuild.
+**Configure** on a card opens the extension's own settings page at `/admin/extensions/<packageName>`; it's disabled when the extension doesn't ship a configuration page. The trash icon removes an extension (with a switch to also remove and roll back its database migrations); removal takes effect on the next rebuild.
+
+![](./images/extensions/extension-configuration-example.webp)
+
+![](./images/extensions/remove-extension.webp)
+
+::: info
+The extension pictured across this page is [Custom Footer](https://www.sourcexchange.net/products/custom-footer-for-calagopus) by mrbeenopro, available on SourceXchange and [GitHub](https://github.com/mrbeeenopro/custom-footer-for-calagopus).
+:::
 
 ## Installing and Building
 
 - **Install extension** uploads an extension `.zip`; you can also drag and drop files onto the page. If the extension ships a license, you have to **Accept** it before it's added.
 - Newly added extensions land under **Pending extensions** until you hit **Rebuild extensions**, which compiles everything and restarts the panel. Progress phases are shown live, and a running build can be stopped with **Cancel build**.
 - **View build logs** opens the log of the current or last build. If a build fails, an alert shows the reason and the **Rebuild** button becomes **Retry build**.
+
+![](./images/extensions/build-logs.webp)
 
 ::: warning
 Extensions can only be built when the panel runs the heavy Docker image and its extension supervisor is reachable; the page warns you when either is missing. See [Installing Extensions](../../extensions/installing-extensions.md).

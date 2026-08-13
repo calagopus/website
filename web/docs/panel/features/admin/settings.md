@@ -64,13 +64,13 @@ The emails the panel sends, editable per template. The tab requires `email-templ
 
 ![](./images/settings/mail-templates.webp)
 
-Pick a template from the **Templates** sidebar to edit its **Subject**, an **Enabled** toggle, and the HTML content in the editor. The **Available Variables** box lists everything you can reference in that template. Templates use the [MiniJinja](https://github.com/mitsuhiko/minijinja) syntax: variables as `{{ variable }}`, control structures like `{% if %}` and `{% for %}`.
+Pick a template from the **Templates** sidebar to edit its **Subject**, an **Enabled** toggle, and the HTML content in the editor. The built-in templates cover account creation, password resets, the connection test, being added to or removed from a server, and server installs and restores. The **Available Variables** box lists everything you can reference in that template. Templates use the [MiniJinja](https://github.com/mitsuhiko/minijinja) syntax: variables as `{{ variable }}`, control structures like `{% if %}` and `{% for %}`.
 
 **Reset to default** discards your custom template and restores the built-in one. This cannot be undone.
 
 ## Captcha
 
-Captcha protection for the panel; set this up before you [enable registration](#application). Pick a **Provider**:
+Captcha protection for the panel; set this up before you [enable registration](#application). When configured, the captcha renders on the [login, register, and forgot-password pages](../auth/index.md) and in the server [subuser invite modal](../server/subusers.md). Pick a **Provider**:
 
 | Provider | Fields |
 | --- | --- |
@@ -82,7 +82,9 @@ Captcha protection for the panel; set this up before you [enable registration](#
 
 ## Webauthn
 
-The settings behind [Security Keys](../dashboard/security-keys.md).
+![](./images/settings/webauthn.webp)
+
+The settings behind [Security Keys](../dashboard/security-keys.md) and the login page's [passkey options](../auth/login.md#sign-in-with-a-passkey).
 
 | Field | Description |
 | --- | --- |
@@ -100,6 +102,8 @@ Changing the **RP Id** breaks all existing WebAuthn credentials and forces users
 :::
 
 ## Server
+
+![](./images/settings/server.webp)
 
 Limits and behavior toggles that apply to all servers on the panel.
 
@@ -123,6 +127,8 @@ The database instance limits apply to [managed databases](../../../db-agent/inde
 
 ## User
 
+![](./images/settings/user.webp)
+
 Per-account limits for [Dashboard](../dashboard/index.md) features.
 
 | Field | Description |
@@ -134,9 +140,15 @@ Per-account limits for [Dashboard](../dashboard/index.md) features.
 | **Max SSH Keys** | Cap on [SSH keys](../dashboard/ssh-keys.md) per user |
 | **Allow Changing Language** | If enabled, users can change their language preferences |
 
-Below the limits, **Client Route Order** is a collapsible section: enable it to reorder the pages of the user dashboard sidebar for everyone.
+Below the limits, **Client Route Order** is a collapsible section: enable it to reorder the pages of the user dashboard sidebar for everyone. Drag entries to reorder, and use the row at the bottom to insert extra entries: a **Route**, a **Divider**, or a **Redirect** (a name plus an external URL). It's the same editor egg configurations use for the [server sidebar](./egg-configurations.md#route-configuration).
+
+![](./images/settings/client-route-order.webp)
+
+![](./images/settings/route-divider-redirect.webp)
 
 ## Activity
+
+![](./images/settings/activity.webp)
 
 Retention for the three activity logs and what gets logged.
 
@@ -148,6 +160,8 @@ Retention for the three activity logs and what gets logged.
 | **Log Server Schedule Activity** | Log activity done by server schedules |
 
 ## Ratelimits
+
+![](./images/settings/ratelimits.webp)
 
 Per-endpoint API rate limits. Each endpoint card has two values: **Hits**, the maximum number of requests allowed per window, and **Window**, the window duration in seconds.
 
