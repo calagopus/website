@@ -24,8 +24,8 @@ The Dashboard is what every user lands on after logging in. It covers your own a
 
 The sidebar lists every page above, plus **Servers** and **Admin** (if you have admin permissions) at the top. At the bottom, the profile box doubles as a search box: if you have more than a handful of servers, click into it to search and jump straight to one.
 
-![](./images/nav-search.webp)
+![](./images/index/nav-search.webp)
 
 The three dots next to your name open a small menu to jump to your **Account** page, switch to the **Admin** area (admins only), pick a **Theme**, or log out. **Auto** follows your browser's theme, **Dark** and **Light** force one; the panel starts on **Dark** until you pick.
 
-![](./images/nav-menu.webp)
+![](./images/index/nav-menu.webp)

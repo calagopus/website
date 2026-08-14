@@ -28,6 +28,8 @@ Click **Create** in the top right (requires `locations.create`).
 | **Description** | Optional notes. |
 | **Flag** | Optional country flag shown next to the name across the admin area. |
 
+![](./images/locations/flags.webp)
+
 Hit **Save**, or **Save & Stay** to keep the form open for creating another.
 
 ::: info
@@ -39,6 +41,8 @@ Picking a backup configuration requires the `backup-configurations.read` admin p
 Opening a location shows four tabs: **General**, **Database Hosts**, **Database Agent Hosts**, and **Nodes**.
 
 ### General
+
+![](./images/locations/general.webp)
 
 The same form as creating, plus:
 
@@ -57,6 +61,10 @@ See [Setting up Database Hosts](../../../additional/database-hosts/index.md) for
 
 Same pattern for [database agent](../../../db-agent/index.md) hosts: **Add** attaches an existing agent host to the location, deleting a row detaches it.
 
+![](./images/locations/database-agent-hosts.webp)
+
 ### Nodes
 
 A read-only list of the nodes assigned to this location, in the same format as the main [Nodes](./nodes.md) list.
+
+![](./images/locations/nodes.webp)

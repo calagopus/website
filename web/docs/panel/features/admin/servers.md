@@ -11,11 +11,13 @@ description: Create servers, look them up, and manage every server on the panel 
 
 Next to **Create** sits **Find by External ID**: enter the external identifier (for example one set by your billing system), hit **Search**, and a **Server Found** card shows the matching server's name, owner, and node with a **View Server** button. If nothing matches, you get "No server found with that external ID."
 
+![](./images/servers/lookup-external-id.webp)
+
 ## Creating a Server
 
 Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an **Advanced mode** toggle in the top right reveals the fields marked *advanced* below and is remembered across admin forms.
 
-![Create Server form](./images/servers/create.webp)
+![Create Server form](./images/servers/create-form.webp)
 
 ### Basic Information
 
@@ -109,17 +111,25 @@ The **Update Server** form: the same cards as [creating a server](#creating-a-se
 
 Changing the **Owner** hands the server to another user.
 
+![](./images/servers/general.webp)
+
 ### Allocations
 
 The server's allocations: primary marker, IP, IP Alias, Port, Notes, and Created. Notes are edited inline in the table and save automatically. **Add** opens a modal to attach free allocations from the server's node (multi-select). Right-click a row for **Set Primary** / **Unset Primary** and **Remove**. The owner-facing equivalent is the [Network](../server/network.md) page.
 
+![](./images/servers/allocations.webp)
+
 ### Variables
 
-The same variable grid as the client [Startup](../server/startup.md) page, but every variable is editable regardless of its user-editable flag. Edit values and hit **Save** (Ctrl+S also works).
+The same variable grid as the client [Startup](../server/startup.md) page, but every variable is editable regardless of its user-editable flag; variables users can't touch just carry a **Read-Only** badge here. Edit values and hit **Save** (Ctrl+S also works).
+
+![](./images/servers/variables.webp)
 
 ### Mounts
 
 Mounts attached to this server: ID, Name, Source, Target, and Added. **Add** attaches one of the mounts available to this server from the admin **Mounts** area; right-click for **Remove**. The owner sees and toggles these on their [Mounts](../server/mounts.md) page.
+
+![](./images/servers/mounts.webp)
 
 ### Backups
 
@@ -127,13 +137,19 @@ All backups of this server: Name, Node, Checksum, Size, Files, and Created, with
 
 Right-click a completed backup for **Download** (with a format submenu for streaming backups), **Restore**, **Export to Files**, **View Metadata** (raw JSON), and **Delete**. The owner-facing side is the [Backups](../server/backups.md) page.
 
+![](./images/servers/backups.webp)
+
 ### Databases
 
 Two tables. **Classic Databases** lists databases on [database hosts](../../../additional/database-hosts/index.md) (name, host, type, address, username, size, created; right-click to **Delete**). **Managed Databases** lists instances provisioned through the [Database Agent](../../../db-agent/index.md), shown when you have `database-agent-hosts.read`. The client view is the [Databases](../server/databases.md) page.
 
+![](./images/servers/databases.webp)
+
 ### Logs
 
 Fetch the server's recent **Console** or **Install** logs: pick the **Log Type**, how many **Lines** (default 1000), and hit **Load Logs**. Output opens in a read-only viewer with ANSI colors stripped. Handy for diagnosing a failed install without leaving the admin area.
+
+![](./images/servers/logs.webp)
 
 ### Management
 
@@ -148,7 +164,7 @@ Moves the server and its data to another node (requires `servers.transfer` and `
 - **Node** (required; the current node is excluded, and the All-In-One node is not a valid target)
 - **Primary Allocation** and **Additional Allocations** on the target node
 - **Backups to transfer**, plus a **Delete source backups** switch to remove the transferred copies from the source node afterwards
-- **Archive Format** (`.tar` family or `.itaf` family, each with gzip/xz/lzip/bz2/lz4/zstd variants), **Compression Level** (Best Speed to Best Compression; disabled for uncompressed `.tar` and `.itaf`), and **Multiplex Channels** (0 to 16 extra HTTP connections for split archives)
+- **Archive Format** (`.tar` or `.itaf`, plain or compressed as `.gz`, `.xz`, `.lz`, `.bz2`, `.lz4`, or `.zst`), **Compression Level** (**Best Speed**, **Good Speed**, **Good Compression**, or **Best Compression**; disabled for uncompressed `.tar` and `.itaf`), and **Multiplex Channels** (0 to 16 extra HTTP connections for split archives)
 
 ::: warning
 Backups you don't select stay on the source node and become partially detached once the transfer completes. They remain visible on the [Backups](#backups) tab (filter with the partially detached switch), but not from the client API.

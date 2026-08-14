@@ -21,7 +21,7 @@ Each installed extension gets a card with its name, package name, **Version**, *
 
 **Configure** on a card opens the extension's own settings page at `/admin/extensions/<packageName>`; it's disabled when the extension doesn't ship a configuration page. The trash icon removes an extension (with a switch to also remove and roll back its database migrations); removal takes effect on the next rebuild.
 
-![](./images/extensions/extension-configuration-example.webp)
+![](./images/extensions/configure-example.webp)
 
 ![](./images/extensions/remove-extension.webp)
 

@@ -47,7 +47,7 @@ Pick **Create Backup Group** from the **Create** menu. Give it a name and option
 - **Keep count**: maximum number of usable backups to keep in this group. Leave empty for no limit.
 - **Keep days**: delete backups in this group older than this many days. Leave empty for no limit.
 
-![](./images/backups/edit-backup-group-modal.webp)
+![](./images/backups/group-edit-modal.webp)
 
 With neither set, the group never deletes backups automatically. Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
 
@@ -96,7 +96,7 @@ Writes the backup as an archive file into the server's own file area. Pick a des
 
 Shown only for backups that captured metadata (startup command, image, variables); opens a JSON view of it.
 
-![](./images/backups/metadata.webp)
+![](./images/backups/metadata-modal.webp)
 
 ### Delete
 
