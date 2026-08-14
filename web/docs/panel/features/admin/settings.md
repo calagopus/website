@@ -26,7 +26,7 @@ The **Application** tab has an **Advanced mode** toggle in the top right. It rev
 | **URL** | The public URL of the panel |
 | **Session Cookie** | Name of the session cookie (*advanced*) |
 | **Session Duration (seconds)** | How long login sessions last (*advanced*) |
-| **Two-Factor Authentication Requirement** | Who must enable 2FA: **Admins**, **All Users**, or **None** |
+| **Two-Factor Authentication Requirement** | Who must enable 2FA: **Admins**, **All Users**, or **None**. Affected users without 2FA are blocked from everything except setting it up and logging out |
 | **Enable Telemetry** | Allow Calagopus to collect limited and anonymous usage data to help improve the application |
 | **Enable Registration** | Let anyone create an account on this panel |
 

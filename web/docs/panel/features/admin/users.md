@@ -13,9 +13,13 @@ Two icons next to the username tell you the account's state at a glance: a crown
 
 Next to **Create** (requires `users.create`) sits **Find by External ID** (requires `users.read`): enter the external identifier, for example one set by your billing system, hit **Search**, and a **User Found** card shows the matching username, email, and role with a **View User** button. If nothing matches, you get "No user found with that external ID."
 
+![](./images/users/lookup-external-id.webp)
+
 ## Creating a User
 
 Click **Create** (or go to `/admin/users/new`) and fill in the form:
+
+![](./images/users/create-form.webp)
 
 | Field | Notes |
 | --- | --- |
@@ -64,17 +68,27 @@ The **Update User** form, the same fields as [creating a user](#creating-a-user)
 
 Every server the user has access to, with the same columns as the admin [Servers](./servers.md) list. The **Only show users' owned servers** switch narrows the list to servers they own, hiding ones where they're only a [subuser](../server/subusers.md).
 
+![](./images/users/servers.webp)
+
 ### OAuth Links
 
 The user's connections to [OAuth providers](./oauth-providers.md): ID, OAuth Provider, Identifier, Last Used, and Created. **Add** (requires `oauth-providers.read`) opens a modal where you pick the provider and enter the user's **Identifier** at that provider; right-click a row to **Remove** a link. The user-facing side of this list is their [OAuth Links](../dashboard/oauth-links.md) page.
+
+![](./images/users/oauth-links.webp)
 
 ### Activity
 
 The user's account audit log, the same one they see on their own [Activity](../dashboard/activity.md) page: source (**Web** or **API**), Event, IP, and When, with an info button for entries carrying extra metadata. For the panel-wide admin log, see [Activity](./activity.md).
 
+![](./images/users/activity.webp)
+
 ## Impersonation
 
-**Impersonate** on the General tab logs you in as the user and drops you on their dashboard, useful for reproducing exactly what they see. While impersonating, the sidebar account menu shows **Stop Impersonating** in place of **Logout**; use it to return to your own session.
+**Impersonate** on the General tab logs you in as the user and drops you on their dashboard, useful for reproducing exactly what they see. A banner stays at the top the whole time: "You are currently impersonating a user. Please be aware that your actions may affect the impersonated user's account." While impersonating, the sidebar account menu shows **Stop Impersonating** in place of **Logout**; use it to return to your own session.
+
+![](./images/users/impersonation-banner.webp)
+
+![](./images/users/stop-impersonating.webp)
 
 Everything you do while impersonating is written to the activity logs with an "Impersonated by ..." marker next to the actor, so the audit trail always shows who really acted.
 

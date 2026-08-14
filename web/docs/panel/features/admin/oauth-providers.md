@@ -24,7 +24,7 @@ The last two control what users see on their own [OAuth Links](../dashboard/oaut
 
 **Create** (requires `oauth-providers.create`) opens the form. Name and an optional description come first, followed by a **Redirect URL** card: it reads "Available after creation" until the provider exists, then shows `<panel URL>/api/auth/oauth/<uuid>`, the callback URL you register with the external provider.
 
-![Provider form](./images/oauth-providers/edit.webp)
+![Provider form](./images/oauth-providers/create-form.webp)
 
 | Field | Notes |
 | --- | --- |
@@ -44,6 +44,10 @@ The path fields use JSONPath syntax (see [serdejsonpath.live](https://serdejsonp
 
 Finish with **Save** (or **Save & Stay** when creating). An existing provider also offers **Export** (as JSON or YAML), **Duplicate**, **Delete**, and a **View Documentation** shortcut to the setup guides.
 
+![Configured provider with censored credentials](./images/oauth-providers/general.webp)
+
+![](./images/oauth-providers/export.webp)
+
 ## Import
 
 Next to **Create**, **Import** (requires `oauth-providers.create`) accepts a provider definition as a `.json`, `.yml`, or `.yaml` file, either through the file picker or by dragging the file anywhere onto the list. This is the counterpart of **Export**: it recreates the whole provider configuration, endpoints, paths, scopes, and flags included.
@@ -54,10 +58,42 @@ Exports never contain the client credentials, so an imported provider comes in w
 
 ## Mappings
 
-The **Mappings** tab automates access: each mapping assigns a **Role** or adds the user as a **Server Subuser** when they log in through this provider and its matcher applies. Adding one requires `oauth-providers.update`; the table shows ID, Type, Target, Matcher, and Created.
+The **Mappings** tab automates access: whenever a user logs in through this provider, every mapping whose matcher applies takes effect. Adding one requires `oauth-providers.update`; the table shows ID, Type, Target, Matcher, and Created.
 
-A matcher decides whether the mapping applies, based on the login's data: **Granted Scopes**, **Field Exists**, **Field Equals**, **Field Contains**, **Field Starts With**, **Field Ends With** (fields again addressed by JSONPath), combinable with **AND**, **OR**, and **NOT**, or **None (Always applies)**. The **Revoke when not matched** switch "Removes the assigned role or server subuser again when the matcher no longer matches on a later login", handy for mirroring, say, a Discord role into a panel [role](./roles.md).
+![](./images/oauth-providers/mappings.webp)
+
+**Add** opens the mapping form:
+
+- **Mapping Type** decides what is granted:
+  - **Role** assigns a panel [role](./roles.md); pick the **Role**.
+  - **Server Subuser** adds the user as a [subuser](../server/subusers.md); pick the **Server**, the subuser **Permissions**, and optionally **Ignored Files**.
+- **Revoke when not matched**: "Removes the assigned role or server subuser again when the matcher no longer matches on a later login", handy for mirroring, say, a Discord role into a panel role.
+
+![](./images/oauth-providers/add-mapping.webp)
+
+### Matchers
+
+The **Matcher** decides whether the mapping applies to a login. Pick a **Matcher Type**:
+
+| Matcher Type | Applies when | Fields |
+| --- | --- | --- |
+| **None (Always applies)** | Every login through this provider | none |
+| **AND (All must match)** | Every nested matcher applies | nested matchers |
+| **OR (Any must match)** | At least one nested matcher applies | nested matchers |
+| **NOT (Must not match)** | Its nested matcher does not apply | one nested matcher |
+| **Granted Scopes** | The login granted the listed OAuth scopes | **Scopes** |
+| **Field Exists** | The profile response contains the field | **Field Path** |
+| **Field Equals** | The field equals the value | **Field Path**, value |
+| **Field Contains** | The field contains the value | **Field Path**, value |
+| **Field Starts With** | The field starts with the value | **Field Path**, value |
+| **Field Ends With** | The field ends with the value | **Field Path**, value |
+
+**AND**, **OR**, and **NOT** nest further matchers, so conditions can be combined freely. Field paths use the same JSONPath syntax as the provider's profile paths, evaluated against the Info URL response.
 
 ## Users
 
 The **Users** tab (requires `oauth-providers.read`) lists every account linked to this provider: ID, User, Identifier, Last Used, and Created. **Find by Identifier** looks up which panel user owns a given provider-side identifier, useful when all you have is, for example, a Discord user ID.
+
+![](./images/oauth-providers/users.webp)
+
+![](./images/oauth-providers/lookup-by-identifier.webp)

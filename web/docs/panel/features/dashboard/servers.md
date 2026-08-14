@@ -9,7 +9,7 @@ The Servers page is the landing page for most users and lists every server you h
 
 ![](./images/servers/all-servers.webp)
 
-Each server card shows its power state, name, address, and live CPU, memory, and disk usage. If you have access to servers owned by other users (for example as a subuser), a **Show other user's servers** toggle appears in the top right; it's off by default.
+Each server card shows its power state, name, address, and live CPU, memory, and disk usage. Servers owned by someone else carry a **Foreign** badge ("This server is owned by another user, you have access to it as a subuser or administrator"). If you have access to servers owned by other users, a **Show other user's servers** toggle appears in the top right; it's off by default.
 
 ![](./images/servers/other-users-toggle.webp)
 
