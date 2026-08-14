@@ -1,4 +1,14 @@
-export type YamlValue = string | number | boolean | YamlValue[] | { [key: string]: YamlValue };
+export class YamlFloat {
+  value: number;
+
+  constructor(value: number) {
+    this.value = value;
+  }
+}
+
+export const float = (value: number): YamlFloat => new YamlFloat(value);
+
+export type YamlValue = string | number | boolean | YamlFloat | YamlValue[] | { [key: string]: YamlValue };
 
 export type NoteType = 'info' | 'tip' | 'warning' | 'danger';
 

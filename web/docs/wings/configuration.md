@@ -1238,6 +1238,14 @@ Default value:
 tmpfs_size: 100
 ```
 
+### docker.shm_size
+The size (in `MiB`) of `/dev/shm` inside containers. `0` leaves Docker's own default (64 MiB) in place. Raise it for games that map large amounts of shared memory.
+
+Default value:
+```yaml
+shm_size: 0
+```
+
 ### docker.container_pid_limit
 The maximum number of processes (PIDs) allowed to run simultaneously within a single container.
 
@@ -1252,6 +1260,38 @@ Whether to apply a modified seccomp profile with additional syscalls toggled fro
 Default value:
 ```yaml
 container_apply_seccomp: true
+```
+
+### docker.numa_memory_binding
+Whether to bind a container's memory to the NUMA nodes its pinned CPU threads live on, keeping allocations local instead of spread across sockets. Only takes effect on a multi-node host for servers that have CPU pinning set; single-node machines and unpinned servers are unaffected.
+
+Default value:
+```yaml
+numa_memory_binding: true
+```
+
+### docker.cpu_period
+The CFS scheduling period (in microseconds) used for container CPU limits. A server's CPU limit is turned into a quota of `limit% × cpu_period`, so a shorter period hands out CPU time in smaller, more frequent slices, at the cost of more scheduler overhead. Values are clamped to the kernel's accepted range of `1000` - `1000000`.
+
+Default value:
+```yaml
+cpu_period: 100000
+```
+
+### docker.cfs_burst.enabled
+Whether to grant containers CFS burst, letting a server bank unused CPU time within a period and spend it on a later spike instead of being throttled. Requires a kernel with CFS burst support (`cpu.max.burst` on cgroup v2, `cpu.cfs_burst_us` on v1); where it is unsupported, Wings skips it silently. Servers without a CPU limit are unaffected, they are not throttled to begin with.
+
+Default value:
+```yaml
+enabled: true
+```
+
+### docker.cfs_burst.multiple
+The fraction of a server's CPU quota that may be banked as burst. `1.0` allows a full extra period's worth of CPU time, `0.5` half of it, `0` disables bursting for the same effect as turning `enabled` off. The kernel refuses a burst larger than the quota, so values above `1.0` are clamped.
+
+Default value:
+```yaml
+multiple: 1.0
 ```
 
 ### docker.installer_limits.timeout
@@ -1451,6 +1491,18 @@ Default value:
 ```yaml
 ignore_panel_config_updates: false
 ```
+
+::: info Options the panel can never change
+Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so they can only be changed by editing `config.yml` on the node itself:
+
+- Node identity: `uuid`, `token`, `token_id`, `remote`, `remote_headers`
+- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.mounting.path`
+- Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `allowed_mounts`
+- Listener and egress: `api.host`, `api.port`, `api.ssl`, `api.trusted_proxies`, `api.disable_remote_download`, `api.remote_download_blocked_cidrs`, `api.schedule.steps.http_request`
+- The flags themselves: `ignore_panel_config_updates`, `ignore_panel_wings_upgrades`
+
+The rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.
+:::
 
 ### ignore_panel_wings_upgrades
 When set to `true`, Wings will ignore remote upgrade commands sent by the Panel.
@@ -1698,8 +1750,14 @@ docker:
     enabled: true
     duration: 300
   tmpfs_size: 100
+  shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
+  numa_memory_binding: true
+  cpu_period: 100000
+  cfs_burst:
+    enabled: true
+    multiple: 1.0
   installer_limits:
     timeout: 1800
     memory: 1024
@@ -1933,8 +1991,14 @@ docker:
     enabled: true
     duration: 300
   tmpfs_size: 100
+  shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
+  numa_memory_binding: true
+  cpu_period: 100000
+  cfs_burst:
+    enabled: true
+    multiple: 1.0
   installer_limits:
     timeout: 1800
     memory: 1024

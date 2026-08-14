@@ -1,12 +1,22 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import type { ConfigDoc, ConfigNote, ConfigOption, ConfigSection, YamlValue } from '../data/config/types.ts';
+import {
+  type ConfigDoc,
+  type ConfigNote,
+  type ConfigOption,
+  type ConfigSection,
+  YamlFloat,
+  type YamlValue,
+} from '../data/config/types.ts';
 
 /** Plain scalars that YAML would read back as something other than a string. */
 const AMBIGUOUS_SCALAR = /^(?:[-+]?\d+(?:\.\d+)?|true|false|null|~|yes|no|on|off)$/i;
 const NEEDS_QUOTING = /^[{[*&!%@`#>|'"]|^\s|\s$|:\s|\s#/;
 
-function scalar(value: string | number | boolean): string {
+function scalar(value: string | number | boolean | YamlFloat): string {
+  if (value instanceof YamlFloat) {
+    return Number.isInteger(value.value) ? value.value.toFixed(1) : String(value.value);
+  }
   if (typeof value !== 'string') return String(value);
   if (value === '' || AMBIGUOUS_SCALAR.test(value) || NEEDS_QUOTING.test(value)) {
     return `'${value.replace(/'/g, "''")}'`;
@@ -14,7 +24,8 @@ function scalar(value: string | number | boolean): string {
   return value;
 }
 
-const isScalar = (value: YamlValue): value is string | number | boolean => typeof value !== 'object';
+const isScalar = (value: YamlValue): value is string | number | boolean | YamlFloat =>
+  typeof value !== 'object' || value instanceof YamlFloat;
 
 /**
  * Serializes a value the way `serde_norway` writes it: two-space indented maps,
