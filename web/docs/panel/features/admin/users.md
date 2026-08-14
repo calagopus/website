@@ -72,7 +72,7 @@ Every server the user has access to, with the same columns as the admin [Servers
 
 ### OAuth Links
 
-The user's connections to [OAuth providers](./oauth-providers.md): ID, OAuth Provider, Identifier, Last Used, and Created. **Add** (requires `oauth-providers.read`) opens a modal where you pick the provider and enter the user's **Identifier** at that provider; right-click a row to **Remove** a link. The user-facing side of this list is their [OAuth Links](../dashboard/oauth-links.md) page.
+The user's connections to [OAuth providers](./oauth-providers.md): ID, OAuth Provider, Identifier, Last Used, and Created. **Add** (shown with `oauth-providers.read`, since it lists providers; the write itself falls under this tab's `users.oauth-links`) opens a modal where you pick the provider and enter the user's **Identifier** at that provider; right-click a row to **Remove** a link. The user-facing side of this list is their [OAuth Links](../dashboard/oauth-links.md) page.
 
 ![](./images/users/oauth-links.webp)
 

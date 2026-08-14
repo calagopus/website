@@ -17,17 +17,21 @@ A nest is just three fields: **Name**, **Author**, and an optional **Description
 
 Opening an existing nest shows two tabs: **General**, the same form plus a **Delete** button, and **Eggs**. Deleting a nest asks whether you also want to delete all eggs inside it, via the **Do you want to delete all eggs in this nest?** switch in the confirmation.
 
+![](./images/nests/general.webp)
+
 ## Eggs
 
 The **Eggs** tab lists the nest's eggs with the same columns as the nest list (ID, Name, Author, Description, Created) plus a selection checkbox per row.
 
-![](./images/nests/eggs-list.webp)
+![](./images/nests/eggs.webp)
 
 Eggs support bulk operations: drag across rows to select, Ctrl/Cmd-click or use the checkboxes, Ctrl/Cmd+A to select everything, Escape to clear. With eggs selected, an action bar appears with **Update from Repository**, **Move** (to another nest), and **Delete**.
 
 ### Creating an Egg
 
 **Create** opens the egg form described under [General](#general) below. New eggs start with a stub install script (a `debian:latest` container running `/bin/bash`) that you fill in afterwards.
+
+![](./images/nests/egg-create-form.webp)
 
 ### Importing Eggs
 
@@ -54,7 +58,11 @@ Below that, three configuration cards:
 
 - **Startup Configuration**: **Startup Done**, one or more console messages indicating startup completion (the panel marks the server as running when one appears), and **Strip ANSI from startup messages**, which removes ANSI control characters before matching.
 - **Stop Configuration**: **Stop Type** is **Send Command** (with a **Stop Command** field), **Send Signal** (with a **Stop Signal** picker: `SIGABRT`, `SIGINT`, `SIGTERM`, `SIGQUIT`, `SIGKILL`), or **Docker Stop**.
-- **Config Files Configuration**: files the panel rewrites on boot. Each entry has a **File Path**, a **Parser** (File, YAML, Properties, INI, JSON, XML, TOML), a **Create New File** switch, and a list of replacements (**Match**, optional **If Value**, **Replace With**, plus **Insert New** and **Update Existing** switches controlling whether unmatched values get inserted and matched ones replaced).
+- **Config Files Configuration**: files the panel rewrites on boot. Each entry has a **File Path**, a **Parser** (File, YAML, Properties, INI, JSON, XML, TOML), a **Create New File** switch, and a list of replacements (**Match**, optional **If Value**, **Replace With** as either **Text** or **JSON**, plus **Insert New** and **Update Existing** switches controlling whether unmatched values get inserted and matched ones replaced).
+
+![](./images/nests/config-files.webp)
+
+![](./images/nests/config-files-replacement.webp)
 
 The rest of the form:
 
@@ -67,6 +75,10 @@ The rest of the form:
 | **File Deny List** | File patterns users cannot touch in the file manager. |
 | **Docker Images** | Named Docker images as key/value pairs (label to image). Users switch between them on the Startup page. |
 
+The tag-style inputs (Startup Done, Features, File Deny List) share a clipboard menu with **Copy All** and **Paste (Replace)** for carrying lists between eggs.
+
+![](./images/nests/clipboard.webp)
+
 At the bottom, next to **Save**:
 
 - **Update**: dropdown with **from File** (upload a `.json`/`.yml`/`.yaml` egg to overwrite this one) and **from Repository** (re-pull from the linked egg repository egg; disabled if none is linked).
@@ -77,6 +89,8 @@ At the bottom, next to **Save**:
 
 The script that runs when a server using this egg is installed or reinstalled. **Installation Container** is the Docker image the script runs in, **Container Entrypoint** the shell that executes it, and below both sits a code editor for the script itself.
 
+![](./images/nests/egg-script.webp)
+
 ### Variables
 
 Each variable is a card in a grid; drag cards to reorder them, which sets the order users see on the Startup page. **Add** creates a blank card.
@@ -86,7 +100,7 @@ Each variable is a card in a grid; drag cards to reorder them, which sets the or
 | Field | What it does |
 |---|---|
 | **Name** / **Description** | Shown to users. Both are translatable per language, and the description supports Markdown. |
-| **Environment Variable** | The `ENV_VAR` passed to the container. Typed input is uppercased automatically. |
+| **Environment Variable** | The `ENV_VAR` passed to the container. Typed input is uppercased automatically, with spaces and hyphens converted to underscores. |
 | **Default Value** | Value used when the user hasn't set one. |
 | **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page. |
 | **Secret** | Hides the value like a password. |
@@ -96,11 +110,15 @@ Each card has its own **Save**, **Duplicate**, and **Remove** buttons.
 
 ### Mounts
 
-Mounts attached here become available to every server using this egg, on top of any per-server mounts. The table lists ID, Name, Source, Target, and Added; **Add** opens a modal to pick one of the panel's configured mounts. See the server-side [Mounts page](../server/mounts.md) for how users interact with them.
+Mounts attached here become available to every server using this egg, on top of any per-server mounts. The searchable table lists ID, Name, Source, Target, and Added; **Add** opens a modal to pick one of the panel's configured [mounts](./mounts.md), and each row's context menu offers **Remove**. See the server-side [Mounts page](../server/mounts.md) for how users interact with them.
+
+![](./images/nests/egg-mounts.webp)
 
 ### Servers
 
-A read-only list of all servers currently using this egg, handy before deleting or heavily editing one.
+A read-only, searchable list of all servers currently using this egg, with the same columns as the [Servers](./servers.md) list, handy before deleting or heavily editing one.
+
+![](./images/nests/egg-servers.webp)
 
 ::: info
 Nest and egg actions are gated by the `nests.*` and `eggs.*` admin permissions (the Mounts tab additionally needs `eggs.mounts`). See the [Permissions Reference](../dashboard/permissions.md).
