@@ -23,7 +23,7 @@ Groups are personal and only affect how servers are organized for you, they don'
 
 Switch to the **Grouped Servers** tab and click **Create**. Give the group a name.
 
-![](./images/servers/create-group.webp)
+<img src="./images/servers/create-group.webp" width="220" alt="" />
 
 ### The Group Header
 
@@ -36,7 +36,7 @@ Each group's header holds a search box that filters the servers inside it, follo
 | **Edit** (pencil) | Rename the group via the **Edit Server Group** modal |
 | **Delete** (trash) | Remove the group after a **Confirm Server Group Deletion** prompt |
 
-![](./images/servers/group-actions.webp)
+<img src="./images/servers/group-actions.webp" width="200" alt="" />
 
 Deleting a group never deletes the servers inside it, it just ungroups them.
 
@@ -49,4 +49,4 @@ Groups are collapsible; click the chevron to expand or collapse one, and drag se
 
 Click a server inside a group to select it. A small action bar appears with power controls (start, stop, restart) and an option to remove it from the group without deleting the server itself.
 
-![](./images/servers/bulk-power-actions.webp)
+<img src="./images/servers/bulk-power-actions.webp" width="200" alt="" />

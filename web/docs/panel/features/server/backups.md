@@ -15,7 +15,7 @@ Each row shows the backup's **Name**, **Checksum** (e.g. `sha256:...`), **Size**
 
 Click **Create** in the top right. If backup groups are available, the button opens a menu instead, with **Create Backup** and **Create Backup Group**.
 
-![](./images/backups/create-modal.webp)
+<img src="./images/backups/create-modal.webp" width="220" alt="" />
 
 The form has three fields:
 
@@ -47,7 +47,7 @@ Pick **Create Backup Group** from the **Create** menu. Give it a name and option
 - **Keep count**: maximum number of usable backups to keep in this group. Leave empty for no limit.
 - **Keep days**: delete backups in this group older than this many days. Leave empty for no limit.
 
-![](./images/backups/group-edit-modal.webp)
+<img src="./images/backups/group-edit-modal.webp" width="221" alt="" />
 
 With neither set, the group never deletes backups automatically. Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
 
@@ -59,13 +59,13 @@ Click the trash icon in the group header and type the group's name to confirm. T
 
 Right-click a backup (or use the menu at the end of the row) for its actions.
 
-![](./images/backups/context-menu.webp)
+<img src="./images/backups/context-menu.webp" width="200" alt="" />
 
 ### Edit
 
 Rename the backup, move it to another group, or toggle **Locked**. A locked backup cannot be deleted and is never rotated out by group retention.
 
-![](./images/backups/edit-modal.webp)
+<img src="./images/backups/edit-modal.webp" width="220" alt="" />
 
 ### Browse
 
@@ -84,19 +84,19 @@ Restores the backup onto the server. Two switches control how:
 
 The server switches into a restoring state and you're taken back to the console while it runs.
 
-![](./images/backups/restore-modal.webp)
+<img src="./images/backups/restore-modal.webp" width="220" alt="" />
 
 ### Export to Files
 
 Writes the backup as an archive file into the server's own file area. Pick a destination directory, file name, and archive format (fixed for backups whose stored format can't be converted); the modal shows the resulting path under `/home/container/` before you hit **Export**.
 
-![](./images/backups/export-modal.webp)
+<img src="./images/backups/export-modal.webp" width="310" alt="" />
 
 ### Backup Metadata
 
 Shown only for backups that captured metadata (startup command, image, variables); opens a JSON view of it.
 
-![](./images/backups/metadata-modal.webp)
+<img src="./images/backups/metadata-modal.webp" width="310" alt="" />
 
 ### Delete
 

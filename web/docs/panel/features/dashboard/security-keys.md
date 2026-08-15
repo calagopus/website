@@ -15,11 +15,11 @@ Existing keys are listed with their name, credential ID, last used, and created 
 
 Click **Create** in the top right and give the key a name.
 
-![](./images/security-keys/create-form.webp)
+<img src="./images/security-keys/create-form.webp" width="220" alt="" />
 
 After confirming, the browser takes over and asks where to save the credential: a password manager extension like Bitwarden, a platform prompt (Windows Hello, iCloud Keychain, Android), or a physical key. Closing that prompt cancels the creation.
 
-![](./images/security-keys/save-prompt.webp)
+<img src="./images/security-keys/save-prompt.webp" width="432" alt="" />
 
 ## Editing and Removing
 
@@ -30,4 +30,4 @@ Whether security keys and usernameless login are available at all, and how many 
 :::
 
 ![](./images/security-keys/context-menu.webp)
-![](./images/security-keys/edit-form.webp)
+<img src="./images/security-keys/edit-form.webp" width="220" alt="" />

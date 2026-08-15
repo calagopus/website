@@ -48,13 +48,13 @@ Typing `!` suggests your [Command Snippets](../dashboard/command-snippets.md); p
 
 **Command History** opens a drawer of every command sent to this server, pulled from the [Activity](./activity.md) log (so it needs the `activity.read` permission). Click an entry to see the full command, who sent it (a user, a schedule, or the system), and when. From there, **Send Command** runs it again and **Copy Command** copies it.
 
-![](./images/console/command-history.webp)
+<img src="./images/console/command-history.webp" width="200" alt="" />
 
 ### SSH Details
 
 **SSH Details** shows everything needed to open a shell on the server over SSH: protocol, host, port, the username (your panel username followed by the server's short ID, like `<username>.<server-id>`), and a ready-made **SSH Command**. The password is your panel password, or add an [SSH Key](../dashboard/ssh-keys.md) to skip it. Every field copies on click, and **Launch** opens the connection in your system's SSH client.
 
-![](./images/console/ssh-details.webp)
+<img src="./images/console/ssh-details.webp" width="220" alt="" />
 
 ## Stats
 

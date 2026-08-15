@@ -23,7 +23,7 @@ Each installed extension gets a card with its name, package name, **Version**, *
 
 ![](./images/extensions/configure-example.webp)
 
-![](./images/extensions/remove-extension.webp)
+<img src="./images/extensions/remove-extension.webp" width="220" alt="" />
 
 ::: info
 The extension pictured across this page is [Custom Footer](https://www.sourcexchange.net/products/custom-footer-for-calagopus) by mrbeenopro, available on SourceXchange and [GitHub](https://github.com/mrbeeenopro/custom-footer-for-calagopus).
@@ -35,7 +35,7 @@ The extension pictured across this page is [Custom Footer](https://www.sourcexch
 - Newly added extensions land under **Pending extensions** until you hit **Rebuild extensions**, which compiles everything and restarts the panel. Progress phases are shown live, and a running build can be stopped with **Cancel build**.
 - **View build logs** opens the log of the current or last build. If a build fails, an alert shows the reason and the **Rebuild** button becomes **Retry build**.
 
-![](./images/extensions/build-logs.webp)
+<img src="./images/extensions/build-logs.webp" width="311" alt="" />
 
 ::: warning
 Extensions can only be built when the panel runs the heavy Docker image and its extension supervisor is reachable; the page warns you when either is missing. See [Installing Extensions](../../extensions/installing-extensions.md).

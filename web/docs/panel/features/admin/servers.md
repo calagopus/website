@@ -11,7 +11,7 @@ description: Create servers, look them up, and manage every server on the panel 
 
 Next to **Create** sits **Find by External ID**: enter the external identifier (for example one set by your billing system), hit **Search**, and a **Server Found** card shows the matching server's name, owner, and node with a **View Server** button. If nothing matches, you get "No server found with that external ID."
 
-![](./images/servers/lookup-external-id.webp)
+<img src="./images/servers/lookup-external-id.webp" width="220" alt="" />
 
 ## Creating a Server
 

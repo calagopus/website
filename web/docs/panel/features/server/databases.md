@@ -27,7 +27,7 @@ Database hosts are set up by administrators and attached to locations, see [Data
 
 Right-click a database and choose **Details** to open the **Database connection details** modal: database name, host, username, password, and a ready-made **JDBC Connection String** in the form `jdbc:mysql://<username>:<password>@192.0.2.1:3306/<database>`.
 
-![](./images/databases/details-modal.webp)
+<img src="./images/databases/details-modal.webp" width="220" alt="" />
 
 The password is only visible with the `databases.read-password` permission. From the same modal, **Rotate Password** generates a new password immediately, invalidating the old one.
 
@@ -89,7 +89,7 @@ Per-instance database users, also capped ("0 of 10 maximum users created."). **C
 
 Right-click a user for **Details**, which opens the **Database Credentials** modal: address, username, password, and a **JDBC Connection String**, plus the same **Rotate Password** button classic databases have. **Delete** removes the user.
 
-![](./images/databases/instance-credentials.webp)
+<img src="./images/databases/instance-credentials.webp" width="220" alt="" />
 
 ### Logs Tab
 

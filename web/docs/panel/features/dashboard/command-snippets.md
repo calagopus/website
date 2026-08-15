@@ -13,11 +13,11 @@ Command snippets are shortcuts for commands you type often into a server console
 
 Click **Create** and give it a short name, since that name is what you'll actually type in the console. Optionally pick an egg to restrict the snippet to servers using it; leave it empty to make the snippet available on every server.
 
-![](./images/command-snippets/create-form.webp)
+<img src="./images/command-snippets/create-form.webp" width="220" alt="" />
 
 Then enter the command it should paste. For example, a snippet named `hello` with the command `say hello world!`:
 
-![](./images/command-snippets/example.webp)
+<img src="./images/command-snippets/example.webp" width="221" alt="" />
 
 Typing `!hello` in the console and pressing enter pastes `say hello world!` in its place, so you don't have to type the full command every time. Typing just `!` shows all your snippets as autocomplete suggestions; see [Sending Commands](../server/console.md#sending-commands).
 

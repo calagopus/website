@@ -19,7 +19,7 @@ Click **Create** in the top right. Give it a name, optionally an expiry date, an
 
 Expiry uses a calendar picker with an optional time:
 
-![](./images/api-keys/expires-picker.webp)
+<img src="./images/api-keys/expires-picker.webp" width="201" alt="" />
 
 Below that are the permission categories: **User**, **Server**, and **Admin** (the last only shown if your own account has admin permissions). Check individual permissions, or toggle an entire category at once. Everything you've selected shows up on the right under **Selected Permissions**, where you can also copy the full list or clear it with **Deselect All**. See the [Permissions Reference](./permissions.md) for what every permission does.
 

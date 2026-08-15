@@ -21,7 +21,7 @@ Click **Create**, or open a configuration's ID to edit it. The base fields are *
 
 ![](./images/egg-configurations/create-form.webp)
 
-![](./images/egg-configurations/eggs-select.webp)
+<img src="./images/egg-configurations/eggs-select.webp" width="399" alt="" />
 
 Below are three collapsible sections. Each has an enable toggle; a disabled section simply isn't defined by this configuration, so a lower-priority one (or the default behavior) applies.
 
@@ -54,7 +54,7 @@ Reorders the server sidebar for affected servers. Each entry shows its path and 
 
 ![](./images/egg-configurations/route-config.webp)
 
-![](./images/egg-configurations/route-divider-redirect.webp)
+<img src="./images/egg-configurations/route-divider-redirect.webp" width="200" alt="" />
 
 ::: warning
 Pages left out of the list are not just hidden from the sidebar, they become inaccessible for those servers. Only remove pages you genuinely want to cut off.

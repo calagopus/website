@@ -17,7 +17,7 @@ server:create        oauth-provider:update node:allocation.create
 location:create      nest:create           egg-configuration:update
 ```
 
-![](./images/activity/details.webp)
+<img src="./images/activity/details.webp" width="310" alt="" />
 
 Per-account activity lives on each user's [Activity tab](./users.md#activity), and per-server activity on each server's [Activity page](../server/activity.md).
 

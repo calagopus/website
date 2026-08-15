@@ -53,7 +53,7 @@ Each shortcut has three buttons next to it. The pencil rebinds: click it and pre
 
 The toolbar at the top has four actions:
 
-![](./images/keyboard-shortcuts/toolbar.webp)
+<img src="./images/keyboard-shortcuts/toolbar.webp" width="289" alt="" />
 
 - **Copy All** copies every current binding as text, in a format you can edit directly and paste back in to apply changes. It's also the easiest way to carry your keybinds over to another Calagopus panel: copy from one, paste into the other.
 - **Paste** applies a previously copied (and optionally edited) set of bindings.

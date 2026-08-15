@@ -25,7 +25,7 @@ Clicking a server on the [Servers](../dashboard/servers.md) page opens the serve
 
 The sidebar stays the same on every tab. At the top, a status card shows the server's name, its current state (**Running**, **Starting**, **Stopping**, **Offline**, or a special status like installing or transferring), and its uptime while running. Below that sit quick power buttons: **Start** while the server is offline, **Stop** while it runs, and a restart button. While the server is stopping, the button becomes **Kill**, with the same force-stop confirmation as on the [Console](./console.md).
 
-![](./images/index/status-card.webp)
+<img src="./images/index/status-card.webp" width="200" alt="" />
 
 Above the tabs, **Servers** takes you back to the dashboard.
 

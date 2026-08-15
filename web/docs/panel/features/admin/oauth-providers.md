@@ -69,7 +69,7 @@ The **Mappings** tab automates access: whenever a user logs in through this prov
   - **Server Subuser** adds the user as a [subuser](../server/subusers.md); pick the **Server**, the subuser **Permissions**, and optionally **Ignored Files**.
 - **Revoke when not matched**: "Removes the assigned role or server subuser again when the matcher no longer matches on a later login", handy for mirroring, say, a Discord role into a panel role.
 
-![](./images/oauth-providers/add-mapping.webp)
+<img src="./images/oauth-providers/add-mapping.webp" width="310" alt="" />
 
 ### Matchers
 
@@ -96,4 +96,4 @@ The **Users** tab (requires `oauth-providers.read`) lists every account linked t
 
 ![](./images/oauth-providers/users.webp)
 
-![](./images/oauth-providers/lookup-by-identifier.webp)
+<img src="./images/oauth-providers/lookup-by-identifier.webp" width="220" alt="" />

@@ -13,7 +13,7 @@ Two icons next to the username tell you the account's state at a glance: a crown
 
 Next to **Create** (requires `users.create`) sits **Find by External ID** (requires `users.read`): enter the external identifier, for example one set by your billing system, hit **Search**, and a **User Found** card shows the matching username, email, and role with a **View User** button. If nothing matches, you get "No user found with that external ID."
 
-![](./images/users/lookup-external-id.webp)
+<img src="./images/users/lookup-external-id.webp" width="220" alt="" />
 
 ## Creating a User
 
@@ -88,7 +88,7 @@ The user's account audit log, the same one they see on their own [Activity](../d
 
 ![](./images/users/impersonation-banner.webp)
 
-![](./images/users/stop-impersonating.webp)
+<img src="./images/users/stop-impersonating.webp" width="200" alt="" />
 
 Everything you do while impersonating is written to the activity logs with an "Impersonated by ..." marker next to the actor, so the audit trail always shows who really acted.
 

@@ -11,4 +11,4 @@ Activity is a log of everything that's happened on your account: the source (**W
 
 Click the info button on a row to see the full details for that event.
 
-![](./images/activity/details-modal.webp)
+<img src="./images/activity/details-modal.webp" width="310" alt="" />

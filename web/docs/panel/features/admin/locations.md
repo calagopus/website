@@ -28,7 +28,7 @@ Click **Create** in the top right (requires `locations.create`).
 | **Description** | Optional notes. |
 | **Flag** | Optional country flag shown next to the name across the admin area. |
 
-![](./images/locations/flags.webp)
+<img src="./images/locations/flags.webp" width="399" alt="" />
 
 Hit **Save**, or **Save & Stay** to keep the form open for creating another.
 

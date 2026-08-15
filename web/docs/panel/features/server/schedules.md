@@ -13,7 +13,7 @@ The list shows each schedule's name, **Last Run**, **Last Failure**, **Status** 
 
 **View Calendar** opens the **Upcoming Runs Calendar**, which plots upcoming cron runs in a day, week, or month view. Click an entry to jump to its schedule.
 
-![](./images/schedules/calendar.webp)
+<img src="./images/schedules/calendar.webp" width="390" alt="" />
 
 ::: info
 What a subuser can do here is controlled by the `schedules` permission group. See the [Permissions Reference](../dashboard/permissions.md#schedules).
@@ -23,7 +23,7 @@ What a subuser can do here is controlled by the `schedules` permission group. Se
 
 Click **Create**. A schedule starts with a **Schedule Name**, an **Enabled** toggle, and any number of triggers added via **Add Trigger**. Saving takes you straight to the schedule's page, where you add actions. The same form opens later via **Edit** on the schedule's page.
 
-![](./images/schedules/create-form.webp)
+<img src="./images/schedules/create-form.webp" width="310" alt="" />
 
 A disabled schedule ignores its triggers and can't be run manually until re-enabled.
 
@@ -66,7 +66,7 @@ The **Schedule Actions** tab is the heart of a schedule: an ordered list of step
 
 Steps are picked from a searchable **Action Type** list, organized into five groups.
 
-![](./images/schedules/step-picker.webp)
+<img src="./images/schedules/step-picker.webp" width="310" alt="" />
 
 Most steps have an **Ignore Failure** switch to let the schedule carry on if that step fails. Long-running operations (backups, file copies, archives) additionally have **Run in Foreground**, which makes the schedule wait for the operation to finish before moving on.
 

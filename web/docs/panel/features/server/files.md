@@ -30,7 +30,7 @@ The **Connect** menu offers two ways to work on your files outside the browser:
 - **via SFTP** opens the **SFTP Details** modal with the connection info: **Protocol**, **Host**, **Port**, **Username** (your panel username plus the server's short ID, like `user.1a2b3c4d`), and your panel password. Every field copies on click, and **Launch** opens an `sftp://` link for clients registered to handle it. Holding Shift while clicking **via SFTP** skips the modal and launches directly. Requires the `files.sftp` permission.
 - **via VS Code** mounts the server as a workspace folder in your editor. See the [VS Code integration](../../../integrations/vscode.md) for setup and everything it can do.
 
-![SFTP details modal](./images/files/sftp-details.webp)
+<img src="./images/files/sftp-details.webp" width="220" alt="SFTP details modal" />
 
 ### New
 
@@ -60,7 +60,7 @@ Below the toolbar, a **Disk Usage** bar shows how much of the server's disk limi
 
 Results replace the listing, with a banner summarizing the query and active filters; close the banner to return to normal browsing. The content-search size cap is limited by a panel-wide maximum under [Settings > Server](../admin/settings.md#server), and the **File Content** section only appears on filesystems where the daemon supports fast content scanning.
 
-![Search modal with advanced filters](./images/files/search-modal.webp)
+<img src="./images/files/search-modal.webp" width="310" alt="Search modal with advanced filters" />
 
 ### Analyzing Disk Usage
 
@@ -112,7 +112,7 @@ Right-click a row (or use its menu button) for the single-file context menu:
 
 **File Permissions** shows the current mode as both **Symbolic** (`-rw-r--r--`) and **Octal** (`644`), with Read/Write/Execute checkboxes for **Owner**, **Group**, and **Other** and a breakdown of what each bit means. For directories, a switch applies the change recursively to everything inside. Changes can be undone straight from the confirmation toast.
 
-![File permissions modal](./images/files/permissions.webp)
+<img src="./images/files/permissions.webp" width="310" alt="File permissions modal" />
 
 ### Renaming
 
@@ -163,7 +163,7 @@ The clock icon ("File History") in the editor header opens a drawer listing the 
 - **Compare to previous revision**, a read-only `Revision #N vs #M` diff.
 - **Restore this revision into the editor**, which loads the old content into the editor as an unsaved change so you can review before saving.
 
-![File history drawer](./images/files/history-drawer.webp)
+<img src="./images/files/history-drawer.webp" width="311" alt="File history drawer" />
 ![Revision diff view](./images/files/revision-diff.webp)
 
 ::: info

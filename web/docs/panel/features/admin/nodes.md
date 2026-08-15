@@ -34,7 +34,7 @@ Click **Create** in the top right (requires `nodes.create`). If no location exis
 | **SFTP Host** | Optional. Custom SFTP hostname shown to users; defaults to the URL's hostname. |
 | **SFTP Port** | Required, default `2022`. |
 
-![](./images/nodes/no-port-specified.webp)
+<img src="./images/nodes/no-port-specified.webp" width="398" alt="" />
 
 **Resources** section:
 
@@ -106,13 +106,13 @@ The node's IP:port pool that servers draw from (requires `nodes.allocations`). C
 
 Click **Create** to bulk-create allocations: an **IP**, an optional **IP Alias**, and **Port Ranges** (single ports or ranges like `3000-4000`). The button shows how many allocations will be created.
 
-![](./images/nodes/allocations-create.webp)
+<img src="./images/nodes/allocations-create.webp" width="220" alt="" />
 
 Select allocations (drag, checkboxes, or `Ctrl+A`) for the action bar: **Update** rewrites the IP or IP Alias of all selected at once, **Delete** removes them (also on the `Delete` key). See [Setting up Allocations](../../../wings/next-steps/setting-up-allocations.md) for guidance on choosing IPs.
 
 ![](./images/nodes/allocations-selection.webp)
 
-![](./images/nodes/allocations-update.webp)
+<img src="./images/nodes/allocations-update.webp" width="220" alt="" />
 
 ## Mounts
 
@@ -177,7 +177,7 @@ The six **Allocation Mode** options, with the caveats their dropdown entries sta
 - **Assign allocations based on Egg deployment configuration**: only works if the egg has a [deployment configuration](./egg-configurations.md#allocation-configuration) and the destination node has compatible allocations.
 - **Self-assign new allocations based on Egg port range**: only works if the egg has a port range and the destination node has compatible allocations.
 
-![](./images/nodes/transfer-modal.webp)
+<img src="./images/nodes/transfer-modal.webp" width="220" alt="" />
 
 After confirming, you're taken to the **Outgoing Transfers** tab. Transfers cannot be undone.
 
