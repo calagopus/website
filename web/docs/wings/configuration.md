@@ -522,6 +522,14 @@ Default value:
 websocket_log_count: 150
 ```
 
+### system.tcp_congestion_control
+The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel - Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.
+
+Default value:
+```yaml
+tcp_congestion_control: bbr
+```
+
 ## SFTP Configuration
 
 ### system.sftp.enabled
@@ -1230,6 +1238,14 @@ Default value:
 duration: 300
 ```
 
+### docker.registry_image_fetch_cache.background_refresh
+Whether a stale image is refreshed in the background instead of holding up the server boot. When enabled and the image already exists on the host, Wings boots the server from the local copy right away and pulls the newer image in a background task, so the update only takes effect on the next start. Images that are not on the host yet are still pulled before the server boots.
+
+Default value:
+```yaml
+background_refresh: false
+```
+
 ### docker.tmpfs_size
 The size (in `MiB`) of the `/tmp` directory mounted as a tmpfs in containers.
 
@@ -1262,6 +1278,41 @@ Default value:
 container_apply_seccomp: true
 ```
 
+### docker.container_apparmor_profile
+The name of an AppArmor profile to confine server containers with, passed to Docker as `apparmor=<profile>`. The profile must already be loaded on the host. Leaving this empty lets Docker apply its own `docker-default` profile.
+
+Default value:
+```yaml
+container_apparmor_profile: ''
+```
+
+### docker.container_ulimits
+Per-container resource limits, applied to every server container Wings creates. Each entry is a `name`, a `soft` limit and a `hard` limit, matching the `--ulimit` flag of `docker run` (`-1` means unlimited). An empty list leaves the daemon defaults in place. A `nofile` hard limit larger than what the host lets Wings raise its own limit to is clamped down to that ceiling, with a warning logged once.
+
+Default value:
+```yaml
+container_ulimits: []
+```
+
+::: info
+Each entry is a map, so a raised file descriptor limit looks like this:
+
+```yaml
+container_ulimits:
+- name: nofile
+  soft: 65535
+  hard: 65535
+```
+:::
+
+### docker.container_sysctls
+Kernel parameters set inside every server container, matching the `--sysctl` flag of `docker run`. Only namespaced sysctls can be set this way; the Docker daemon rejects the container outright for anything else. Entries starting with `net.` are skipped for containers that share a foreign network namespace (`host` or `container:<id>` network modes), since those sysctls belong to the namespace owner.
+
+Default value:
+```yaml
+container_sysctls: {}
+```
+
 ### docker.numa_memory_binding
 Whether to bind a container's memory to the NUMA nodes its pinned CPU threads live on, keeping allocations local instead of spread across sockets. Only takes effect on a multi-node host for servers that have CPU pinning set; single-node machines and unpinned servers are unaffected.
 
@@ -1292,6 +1343,30 @@ The fraction of a server's CPU quota that may be banked as burst. `1.0` allows a
 Default value:
 ```yaml
 multiple: 1.0
+```
+
+### docker.startup_boost.enabled
+Whether to lift a server's CPU limit while it is booting. With this on, a starting container runs without a CPU quota until it reports as running (or `docker.startup_boost.timeout` elapses), after which the configured limit and CFS burst are put back. This mainly helps single-threaded boot work like world generation or mod loading. Servers without a CPU limit are unaffected, they are already unthrottled.
+
+Default value:
+```yaml
+enabled: false
+```
+
+### docker.startup_boost.timeout
+The maximum time (in seconds) a server may stay boosted. Once the server leaves the starting state or this many seconds pass, whichever comes first, its CPU quota is restored.
+
+Default value:
+```yaml
+timeout: 120
+```
+
+### docker.startup_boost.max_concurrent
+The number of servers that may be boosted at the same time on this node. Servers that start while this many boosts are already active simply boot with their normal CPU limit, so a mass restart cannot hand out unlimited CPU to every server at once.
+
+Default value:
+```yaml
+max_concurrent: 3
 ```
 
 ### docker.installer_limits.timeout
@@ -1635,6 +1710,7 @@ system:
   check_permissions_on_boot: true
   check_permissions_on_boot_threads: 4
   websocket_log_count: 150
+  tcp_congestion_control: bbr
   sftp:
     enabled: true
     bind_address: 0.0.0.0
@@ -1749,15 +1825,23 @@ docker:
   registry_image_fetch_cache:
     enabled: true
     duration: 300
+    background_refresh: false
   tmpfs_size: 100
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
+  container_apparmor_profile: ''
+  container_ulimits: []
+  container_sysctls: {}
   numa_memory_binding: true
   cpu_period: 100000
   cfs_burst:
     enabled: true
     multiple: 1.0
+  startup_boost:
+    enabled: false
+    timeout: 120
+    max_concurrent: 3
   installer_limits:
     timeout: 1800
     memory: 1024
@@ -1876,6 +1960,7 @@ system:
   check_permissions_on_boot: true
   check_permissions_on_boot_threads: 4
   websocket_log_count: 150
+  tcp_congestion_control: bbr
   sftp:
     enabled: true
     bind_address: 0.0.0.0
@@ -1990,15 +2075,23 @@ docker:
   registry_image_fetch_cache:
     enabled: true
     duration: 300
+    background_refresh: false
   tmpfs_size: 100
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
+  container_apparmor_profile: ''
+  container_ulimits: []
+  container_sysctls: {}
   numa_memory_binding: true
   cpu_period: 100000
   cfs_burst:
     enabled: true
     multiple: 1.0
+  startup_boost:
+    enabled: false
+    timeout: 120
+    max_concurrent: 3
   installer_limits:
     timeout: 1800
     memory: 1024

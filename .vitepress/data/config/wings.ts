@@ -408,6 +408,12 @@ export const wingsConfigDoc: ConfigDoc = {
             'The number of lines to send when a user connects to the server websocket. This provides the initial "backlog" of console history visible in the Panel.',
           default: 150,
         },
+        {
+          key: 'system.tcp_congestion_control',
+          description:
+            'The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel - Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
+          default: 'bbr',
+        },
       ],
     },
     {
@@ -930,6 +936,12 @@ export const wingsConfigDoc: ConfigDoc = {
           default: 300,
         },
         {
+          key: 'docker.registry_image_fetch_cache.background_refresh',
+          description:
+            'Whether a stale image is refreshed in the background instead of holding up the server boot. When enabled and the image already exists on the host, Wings boots the server from the local copy right away and pulls the newer image in a background task, so the update only takes effect on the next start. Images that are not on the host yet are still pulled before the server boots.',
+          default: false,
+        },
+        {
           key: 'docker.tmpfs_size',
           description: 'The size (in `MiB`) of the `/tmp` directory mounted as a tmpfs in containers.',
           default: 100,
@@ -951,6 +963,30 @@ export const wingsConfigDoc: ConfigDoc = {
           description:
             'Whether to apply a modified seccomp profile with additional syscalls toggled from the panel, this can break on podman.',
           default: true,
+        },
+        {
+          key: 'docker.container_apparmor_profile',
+          description:
+            'The name of an AppArmor profile to confine server containers with, passed to Docker as `apparmor=<profile>`. The profile must already be loaded on the host. Leaving this empty lets Docker apply its own `docker-default` profile.',
+          default: '',
+        },
+        {
+          key: 'docker.container_ulimits',
+          description:
+            'Per-container resource limits, applied to every server container Wings creates. Each entry is a `name`, a `soft` limit and a `hard` limit, matching the `--ulimit` flag of `docker run` (`-1` means unlimited). An empty list leaves the daemon defaults in place. A `nofile` hard limit larger than what the host lets Wings raise its own limit to is clamped down to that ceiling, with a warning logged once.',
+          default: [],
+          notesAfter: [
+            {
+              type: 'info',
+              body: 'Each entry is a map, so a raised file descriptor limit looks like this:\n\n```yaml\ncontainer_ulimits:\n- name: nofile\n  soft: 65535\n  hard: 65535\n```',
+            },
+          ],
+        },
+        {
+          key: 'docker.container_sysctls',
+          description:
+            'Kernel parameters set inside every server container, matching the `--sysctl` flag of `docker run`. Only namespaced sysctls can be set this way; the Docker daemon rejects the container outright for anything else. Entries starting with `net.` are skipped for containers that share a foreign network namespace (`host` or `container:<id>` network modes), since those sysctls belong to the namespace owner.',
+          default: {},
         },
         {
           key: 'docker.numa_memory_binding',
@@ -975,6 +1011,24 @@ export const wingsConfigDoc: ConfigDoc = {
           description:
             "The fraction of a server's CPU quota that may be banked as burst. `1.0` allows a full extra period's worth of CPU time, `0.5` half of it, `0` disables bursting for the same effect as turning `enabled` off. The kernel refuses a burst larger than the quota, so values above `1.0` are clamped.",
           default: float(1),
+        },
+        {
+          key: 'docker.startup_boost.enabled',
+          description:
+            "Whether to lift a server's CPU limit while it is booting. With this on, a starting container runs without a CPU quota until it reports as running (or `docker.startup_boost.timeout` elapses), after which the configured limit and CFS burst are put back. This mainly helps single-threaded boot work like world generation or mod loading. Servers without a CPU limit are unaffected, they are already unthrottled.",
+          default: false,
+        },
+        {
+          key: 'docker.startup_boost.timeout',
+          description:
+            'The maximum time (in seconds) a server may stay boosted. Once the server leaves the starting state or this many seconds pass, whichever comes first, its CPU quota is restored.',
+          default: 120,
+        },
+        {
+          key: 'docker.startup_boost.max_concurrent',
+          description:
+            'The number of servers that may be boosted at the same time on this node. Servers that start while this many boosts are already active simply boot with their normal CPU limit, so a mass restart cannot hand out unlimited CPU to every server at once.',
+          default: 3,
         },
         {
           key: 'docker.installer_limits.timeout',
