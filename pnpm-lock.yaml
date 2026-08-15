@@ -62,6 +62,9 @@ importers:
       typescript:
         specifier: ^7.0.2
         version: 7.0.2
+      viewerjs:
+        specifier: ^1.11.8
+        version: 1.11.8
       vite:
         specifier: ^8.2.0
         version: 8.2.0(@types/node@24.13.3)(esbuild@0.28.1)
@@ -80,6 +83,9 @@ importers:
       vitepress-plugin-tabs:
         specifier: ^0.9.1
         version: 0.9.1(vitepress@2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2))(vue@3.5.41(typescript@7.0.2))
+      vitepress-plugin-viewerjs:
+        specifier: ^2.0.1
+        version: 2.0.1(vitepress@2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2))(vue@3.5.41(typescript@7.0.2))
       vue:
         specifier: ^3.5.41
         version: 3.5.41(typescript@7.0.2)
@@ -2386,6 +2392,9 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
+  viewerjs@1.11.8:
+    resolution: {integrity: sha512-PLO477UwNThzMek7EQhr7+YONfbgFKj+E6J/+Vr+USzY6cN1WNGQcft0mlIepQXATquvDmH1dOx7aokNyOx/vw==}
+
   vite-imagetools@10.0.1:
     resolution: {integrity: sha512-JfM1rUSLQoPAA+8RB9TFxxpfSjmBpLTkU5zaSFPlWYlgfc3g2gFfYH+u+HghqNy+6HCw6zJBmq+2exx6pMJFOg==}
     engines: {node: '>=22.0.0'}
@@ -2459,6 +2468,12 @@ packages:
     peerDependencies:
       vitepress: ^1.0.0 || ^2.0.0-alpha.17
       vue: ^3.5.0
+
+  vitepress-plugin-viewerjs@2.0.1:
+    resolution: {integrity: sha512-b5gT6hk7ZOViz/wGhEjzw1HNDlu4v5diTiDH2fGijtSA+/OlaxL9CtyjrNZx2cFv5nxUFEtoz25sHnF+6xK/CA==}
+    peerDependencies:
+      vitepress: ^1.0.0 || ^2.0.0-alpha.0
+      vue: ^3.4.0
 
   vitepress@2.0.0-alpha.19:
     resolution: {integrity: sha512-WnBsb0Bwr43kXKyiis+lld/7ri3hnMbthS8N3hpFtjjwsdLO4IRmiAE08D7aud4q6oMDf9uwRowxzNqRFe/amw==}
@@ -4581,6 +4596,8 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.3
 
+  viewerjs@1.11.8: {}
+
   vite-imagetools@10.0.1(@types/node@24.13.3)(rollup@4.62.2)(vite@8.2.0(@types/node@24.13.3)(esbuild@0.28.1)):
     dependencies:
       '@rollup/pluginutils': 5.4.0(rollup@4.62.2)
@@ -4621,6 +4638,12 @@ snapshots:
 
   vitepress-plugin-tabs@0.9.1(vitepress@2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2))(vue@3.5.41(typescript@7.0.2)):
     dependencies:
+      vitepress: 2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2)
+      vue: 3.5.41(typescript@7.0.2)
+
+  vitepress-plugin-viewerjs@2.0.1(vitepress@2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2))(vue@3.5.41(typescript@7.0.2)):
+    dependencies:
+      viewerjs: 1.11.8
       vitepress: 2.0.0-alpha.19(@types/node@24.13.3)(esbuild@0.28.1)(postcss@8.5.25)(typescript@7.0.2)
       vue: 3.5.41(typescript@7.0.2)
 
