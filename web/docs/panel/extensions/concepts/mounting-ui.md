@@ -1,3 +1,8 @@
+---
+title: Mounting UI
+description: Render your extension React components inside the Panel pages.
+---
+
 # Mounting UI
 
 So far the docs have covered the backend side - routes, permissions, settings, activity. But none of that is any use unless the Panel's UI actually *shows* something to a user. This page is about the frontend entry point: how your extension gets React components onto actual pages in the Panel.

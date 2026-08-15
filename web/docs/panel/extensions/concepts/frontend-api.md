@@ -1,3 +1,8 @@
+---
+title: Frontend API Calls
+description: Make HTTP requests from your extension React components to its backend routes.
+---
+
 # Frontend API Calls
 
 So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually *talk* to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.

@@ -1,3 +1,8 @@
+---
+title: Translations
+description: How to contribute Calagopus translations through Crowdin, from joining the project to seeing your language ship in the panel.
+---
+
 # Translating Calagopus with Crowdin
 
 This guide explains how to contribute translations using [Crowdin](https://crowdin.com).

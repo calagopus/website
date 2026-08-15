@@ -1,3 +1,8 @@
+---
+title: Wings Configuration
+description: Reference for every Wings configuration option in config.yml, with defaults, explanations, and a full example file.
+---
+
 <!-- Generated from .vitepress/data/config/wings.ts by .vitepress/plugins/config-docs.ts - do not edit by hand. -->
 
 # Configuration

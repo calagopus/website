@@ -1,3 +1,8 @@
+---
+title: Email Templates
+description: Add or override the MiniJinja templates Calagopus renders its emails from.
+---
+
 # Email Templates
 
 Calagopus sends emails for things like password resets, account creation notifications, and SMTP connection tests. Each of those emails is rendered from a **template** - a chunk of HTML with [MiniJinja](https://docs.rs/minijinja) placeholders for variable substitution. By default the Panel ships its own templates baked into the binary, but operators can override them through the admin UI (different brand voice, different language, different layout entirely if they want), and **extensions can register their own templates** so that emails their extension sends are subject to the same override flow as the core ones.

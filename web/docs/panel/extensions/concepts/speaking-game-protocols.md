@@ -1,3 +1,8 @@
+---
+title: Speaking Game Protocols
+description: Talk to the game running inside a server container directly, below the high-level Wings API.
+---
+
 # Speaking Game Protocols
 
 Most of what an extension does to a server goes through the high-level Wings API - start it, stop it, read a file, pull a backup. But sometimes you want to talk to the *game* running inside the container, not the container itself. Render a live Minecraft MOTD on a server card, scrape the current player count for a stats page, ping a server to check whether it's actually accepting connections rather than just "running" from Docker's point of view - all of these mean speaking the game's own wire protocol over a raw socket.

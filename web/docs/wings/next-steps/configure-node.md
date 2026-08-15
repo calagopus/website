@@ -1,3 +1,8 @@
+---
+title: Configuring a New Node
+description: Connect Wings to the panel by creating a location and node, installing Wings, and applying the node configuration.
+---
+
 # Configuring a New Node
 
 A node connects Wings (running on a remote or local host) to the panel. Creating one takes four steps: create a location, create the node, install Wings, and apply the node's configuration to it.

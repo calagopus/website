@@ -1,3 +1,8 @@
+---
+title: Paymenter
+description: The Calagopus Paymenter module provisions servers from your billing workflow, creating, suspending, upgrading, and terminating them automatically, with optional OAuth account linking.
+---
+
 # Paymenter
 
 The **Calagopus Paymenter module** is a server provisioning extension for [Paymenter](https://paymenter.org). It lets Paymenter automatically create, suspend, unsuspend, upgrade, and terminate Calagopus servers as part of your billing workflow, and can optionally link customer accounts to the panel via OAuth so they log in with their Paymenter credentials.

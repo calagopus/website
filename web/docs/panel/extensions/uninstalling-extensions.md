@@ -1,3 +1,8 @@
+---
+title: Uninstalling Extensions
+description: Remove an extension from your Calagopus Panel, and what happens to its data when you do.
+---
+
 # Uninstalling Extensions
 
 This page covers how to remove an extension from your Calagopus Panel - and what happens to its data when you do (it stays put).

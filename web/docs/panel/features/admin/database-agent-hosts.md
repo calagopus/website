@@ -19,6 +19,8 @@ The list at `/admin/database-agent-hosts` shows each host's ID, Name, and Create
 
 Click **Create** in the top right.
 
+![Create database agent host form](./images/database-agent-hosts/create-form.webp)
+
 | Field | Description |
 | ----- | ----------- |
 | **Name** | Display name for the host. |
@@ -52,6 +54,8 @@ Click **Verify Connection** to check the panel can reach the agent; the result a
 
 Below the setup steps, **Live Configuration** shows the running agent's full config in a YAML editor; edit it and hit **Save Configuration** to push changes without touching the machine. This is the same config the bulk **Update Config** action patches across many hosts.
 
+![Live configuration editor](./images/database-agent-hosts/live-config.webp)
+
 ## Host View
 
 ### Overview
@@ -64,13 +68,19 @@ Badges show the host's deployment and maintenance state. The **Host Details** ca
 
 The edit form, plus **Test Connection**, **Reset Token** (invalidates the agent's current token; you'll need to update the config file on the host afterwards), and **Delete**.
 
+![General tab](./images/database-agent-hosts/general.webp)
+
 ### Instances
 
-Every managed database on this host: Name, Server (linked), Type, Address, Template (linked), and Created. Right-click an instance to **Edit** or **Delete** it. Editing lets you pin a specific **Docker Image** (leave empty to follow the template, including future template updates), set **Environment Overrides**, and override the template's Memory, Swap, Disk, CPU, and IO Weight per instance.
+Every managed database on this host, searchable: Name, Server (linked), Type, Address, Template (linked), and Created. Right-click an instance to **Edit** or **Delete** it. Editing lets you pin a specific **Docker Image** (leave empty to follow the template, including future template updates), set **Environment Overrides**, and override the template's Memory, Swap, Disk, CPU, and IO Weight per instance.
+
+![Instances tab](./images/database-agent-hosts/instances.webp)
 
 ### Statistics
 
-Live host metrics streamed from the agent: CPU, memory, disk, and network cards plus **CPU Load**, **Memory Usage**, **Disk I/O**, and **Network Traffic** graphs.
+Live host metrics streamed from the agent: CPU, memory, disk, and network cards plus **CPU Load**, **Memory Usage**, **Disk I/O**, and **Network Traffic** graphs. The memory card also notes the agent's own footprint.
+
+![Statistics tab](./images/database-agent-hosts/statistics.webp)
 
 ## How Instances Are Placed
 

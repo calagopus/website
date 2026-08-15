@@ -1,3 +1,8 @@
+---
+title: DB Agent Configuration
+description: Reference for every DB Agent configuration option in config.yml, with defaults, explanations, and a full example file.
+---
+
 <!-- Generated from .vitepress/data/config/db-agent.ts by .vitepress/plugins/config-docs.ts - do not edit by hand. -->
 
 # Configuration

@@ -1,3 +1,8 @@
+---
+title: Switching to the Heavy Image
+description: Swap from the regular Docker image to the heavy variant that supports extensions.
+---
+
 # Switching to the Heavy Image
 
 If you're running the regular `:latest` (or `:nightly`) Docker image and want to start using extensions, you'll need to switch to the heavy variant - `:heavy` (or `:nightly-heavy`). This page walks through the swap.

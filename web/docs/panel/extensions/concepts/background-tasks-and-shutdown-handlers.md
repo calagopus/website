@@ -1,3 +1,8 @@
+---
+title: Background Tasks and Shutdown Handlers
+description: Run extension work on your own schedule with background tasks, and clean up properly when the Panel shuts down.
+---
+
 # Background Tasks and Shutdown Handlers
 
 Routes and CLI commands both run in response to someone asking for something - a user hits an endpoint, an operator types a command. But sometimes your extension needs to do work on its own schedule: poll an external API every few minutes, expire stale cache entries hourly, or flush pending writes before the process exits. That's what background tasks and shutdown handlers are for.

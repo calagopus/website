@@ -1,3 +1,8 @@
+---
+title: Backup Configurations
+description: Set up backup configurations that tell the Panel and Wings where server backups go, from local disk and S3 to restic, Proxmox Backup Server, Kopia, and filesystem snapshots.
+---
+
 # Setting up Backup Configurations
 
 This guide explains how to set up backup configurations in your Calagopus Panel. Backup configurations tell the Panel (and Wings) where and how to store server backups - whether that's the local node disk, an S3 bucket, a restic repository, a Proxmox Backup Server, a Kopia repository, or a native filesystem snapshot.

@@ -1,3 +1,8 @@
+---
+title: Environment
+description: Reference for every environment variable the Calagopus Panel is configured through, in a .env file or the system environment.
+---
+
 # Environment
 
 The Panel is configured through environment variables, either in a `.env` file in the installation directory or directly in the system environment. This page documents every variable.

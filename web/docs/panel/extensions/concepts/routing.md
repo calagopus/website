@@ -1,3 +1,8 @@
+---
+title: Routing
+description: Register backend HTTP routes for your extension and wire the frontend to them.
+---
+
 # Routing
 
 Okay so you have an extension, cool. But unless you want it to sit there looking pretty, you probably want the frontend to actually talk to the backend at some point. Maybe you want to expose a list of servers, let an admin update a setting, or just return a cheeky "hello world". This is where routing comes in, and Calagopus makes it pretty painless - you register your routes through an `ExtensionRouteBuilder` in your `lib.rs`, and then the Panel mounts them onto the main app for you. No plumbing, no middleware wiring, no authentication code to write. Nice.

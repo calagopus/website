@@ -1,3 +1,8 @@
+---
+title: MongoDB Database Host
+description: Install and configure a MongoDB server as a Calagopus database host, so users can create MongoDB databases for their game servers from the panel.
+---
+
 # MongoDB
 
 This guide explains how to install and configure a **MongoDB** database server to use as a database host in the Calagopus Panel. Once set up, your users will be able to create MongoDB databases for their game servers directly from the panel.

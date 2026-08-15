@@ -1,3 +1,8 @@
+---
+title: Updating the Panel
+description: Update the Calagopus Panel for bug fixes, security patches, and new features, with a brief restart of the web interface and API.
+---
+
 # Updating the Panel
 
 Updating the panel gets you bug fixes, security patches, and new features. Unlike Wings, the panel's web interface and API will be briefly unavailable while it restarts, so plan around a short interruption rather than zero downtime.

@@ -1,3 +1,8 @@
+---
+title: Updating DB Agent
+description: Update the Calagopus DB Agent for bug fixes, security patches, and new features. Database containers keep running, but client connections briefly drop while the agent restarts.
+---
+
 # Updating DB Agent
 
 Updating DB Agent periodically gets you bug fixes, security patches, and new features.

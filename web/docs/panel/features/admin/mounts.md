@@ -26,6 +26,8 @@ Click **Create** in the top right.
 
 ::: warning
 Mounts are a powerful and potentially dangerous feature. A badly chosen source path can lead to data loss or security vulnerabilities, including container escapes. Make sure you understand the implications before creating one.
+
+![](./images/mounts/warning.webp)
 :::
 
 Finish with **Save**, or **Save & Stay** to keep creating.
@@ -38,11 +40,17 @@ Defining a mount in the panel is not enough on its own: Wings refuses any mount 
 
 Opening a mount shows four tabs: **General** (the edit form, plus **Duplicate** and **Delete**), **Eggs**, **Nodes**, and **Servers**.
 
-**Eggs** and **Nodes** control eligibility: use **Add** to assign the mount to an egg or node, and right-click a row for **Remove**. A mount can only be attached to a server whose node *and* egg are both assigned here.
+![Mount general tab](./images/mounts/general.webp)
 
-**Servers** is a read-only list of every server the mount is currently attached to.
+**Eggs** and **Nodes** control eligibility: use **Add** to assign the mount to an egg or node, and right-click a row for **Remove**; both lists are searchable. A mount can only be attached to a server whose node *and* egg are both assigned here.
 
-![Mount nodes tab](./images/mounts/nodes-tab.webp)
+![Mount eggs tab](./images/mounts/eggs.webp)
+
+![Mount nodes tab](./images/mounts/nodes.webp)
+
+**Servers** is a read-only, searchable list of every server the mount is currently attached to, with the same columns as the [Servers](./servers.md) list.
+
+![Mount servers tab](./images/mounts/servers.webp)
 
 ## How Mounts Reach Users
 

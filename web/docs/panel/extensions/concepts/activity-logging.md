@@ -1,3 +1,8 @@
+---
+title: Activity Logging
+description: Write audit log entries from your extension so operators can see who did what, using the same activity system the Panel uses.
+---
+
 # Activity Logging
 
 Let's say you just shipped an admin endpoint that lets operators update a critical setting, or a server endpoint that nukes a user's files. Great. Now imagine six months later someone goes "who the hell deleted my world folder" and you have absolutely no way to answer. Awkward. This is why every mutation in the Panel ends with an activity log entry, and it's why your extension should do the same.

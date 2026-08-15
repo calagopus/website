@@ -1,3 +1,8 @@
+---
+title: Reverse Proxies
+description: Put a reverse proxy in front of the Calagopus Panel running in Docker, serving it securely over the standard HTTP and HTTPS ports.
+---
+
 # Setting up a Reverse Proxy
 
 This guide walks through putting a reverse proxy in front of the Calagopus Panel running in Docker. A reverse proxy lets the Panel's internal web server (default port `8000`) be served securely over the standard `HTTP`/`HTTPS` ports (80/443), instead of exposing port 8000 directly.

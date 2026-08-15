@@ -6,6 +6,8 @@ export const dbAgentConfigDoc: ConfigDoc = {
   outFile: 'docs/db-agent/configuration.md',
   sourceFile: '.vitepress/data/config/db-agent.ts',
   title: 'Configuration',
+  pageTitle: 'DB Agent Configuration',
+  description: 'Reference for every DB Agent configuration option in config.yml, with defaults, explanations, and a full example file.',
   intro:
     'This page is a reference for all DB Agent configuration options. The configuration file is located at `/etc/calagopus-db-agent/config.yml` by default (override with `-c`/`--config`).',
   sections: [

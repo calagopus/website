@@ -1,3 +1,8 @@
+---
+title: SSL Certificates
+description: Generate the SSL certificates that passkeys and several other Calagopus features require for your Panel and Wings.
+---
+
 # Generating SSL Certificates
 
 Passkeys and several other Calagopus features require a valid SSL certificate for your Panel and Wings. This guide walks you through generating one.

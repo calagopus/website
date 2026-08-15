@@ -1,3 +1,8 @@
+---
+title: Translations
+description: Declare and use translated strings in your extension with the Panel integrated translation system.
+---
+
 # Translations
 
 The Panel ships with an integrated translation system, and your extension gets to use it for free - no backend wiring, no separate i18n library, no string-bundle nightmares. You declare your translation keys once with their English values, the framework handles type-safe lookup at runtime, and operators (or you, if you're shipping translations yourself) can ship JSON files for other languages that automatically get picked up when a user has that language selected.

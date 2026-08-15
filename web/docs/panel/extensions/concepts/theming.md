@@ -1,3 +1,8 @@
+---
+title: Theming
+description: Restyle the Panel from an extension, beyond slotting components into existing pages.
+---
+
 # Theming
 
 Most extensions are happy with how the Panel already looks. You slot a card onto a page, register a route, and you inherit the surrounding chrome for free (see [Mounting UI](./mounting-ui.md)). But sometimes you need to change the *look* itself: recolor the whole Panel to match your brand, restyle every `Button` at once, or replace a stock component with your own everywhere it shows up.

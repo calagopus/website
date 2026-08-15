@@ -88,7 +88,7 @@ Right-clicking a selected row opens the mass action menu:
 
 **Copy** and **Move** work like cut and paste: the marked files stay highlighted while you navigate to the target directory, then the action bar offers **Copy ... here** or **Move ... here** (or `Ctrl+V`), with a cancel button to back out. If names collide while copying, a **Resolve Copy Conflicts** modal lists each clash with the source and destination details and lets you **Skip**, **Overwrite**, or **Rename** each file individually, or **Skip all** / **Overwrite all** at once.
 
-You can also simply drag rows onto a directory row or a breadcrumb segment to move them; dragging any selected row drags the whole selection.
+Drag rows onto a directory row or a breadcrumb segment to move them; dragging any selected row drags the whole selection.
 
 ## Per-File Actions
 

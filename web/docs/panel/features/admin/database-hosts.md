@@ -11,7 +11,7 @@ A database host is an external MySQL, PostgreSQL, or MongoDB server the panel co
 This page covers the panel side. Preparing the database server itself, creating the privileged account, and allowing remote access is covered in [Setting up Database Hosts](../../../additional/database-hosts/index.md), with dedicated guides for MySQL (MariaDB), PostgreSQL, and MongoDB. Do that first.
 :::
 
-The list at `/admin/database-hosts` shows each host's ID, Name, Type, and Created date. Click a host's ID to open it.
+The list at `/admin/database-hosts` shows each host's ID, Name, Type, and Created date. Click a host's ID to open it, and use the search box to filter.
 
 ![Database hosts list](./images/database-hosts/list.webp)
 
@@ -30,6 +30,8 @@ Click **Create** in the top right.
 | **Deployment Enabled** | Whether new databases may be placed on this host. On by default. |
 | **Maintenance Enabled** | Puts the host into maintenance mode, see below. Off by default. |
 
+![Details credential fields](./images/database-hosts/connection-credentials.webp)
+
 **Save** creates the host and returns to the list; **Save & Stay** keeps you on the form. **View Documentation** links to the setup guides mentioned above.
 
 ## Making a Host Available
@@ -44,13 +46,13 @@ The **Connection Credentials** section starts collapsed when editing; leave it c
 
 ## Databases
 
-The **Databases** tab lists every database that servers have created on this host: Name, Server (linked to the server's admin page), Type, Address, Username, Size, and Created. Right-click a row to **Delete** a database.
+The **Databases** tab lists every database that servers have created on this host: Name, Server (linked to the server's admin page), Type, Address, Username, Size, and Created. Use the search box to filter; right-click a row to **Delete** a database.
 
-![Databases on a host](./images/database-hosts/databases-tab.webp)
+![Databases on a host](./images/database-hosts/databases.webp)
 
 ## Maintenance Mode
 
-While **Maintenance Enabled** is on, database operations against the host are rejected: users cannot create, delete, or recreate databases on it, rotate their passwords, or fetch database sizes. Use it while you work on the underlying database server.
+While **Maintenance Enabled** is on, database operations against the host are rejected: users cannot create, delete, or recreate databases on it, rotate their passwords, fetch database sizes, or use the Data Explorer. Use it while you work on the underlying database server.
 
 ## Deleting a Host
 

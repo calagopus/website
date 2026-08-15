@@ -1,3 +1,8 @@
+---
+title: Google OAuth Setup
+description: Set up Google OAuth login for your Calagopus Panel, from creating the Google Cloud project and consent screen to configuring the provider in the admin area.
+---
+
 # Google OAuth Setup
 This guide walks through setting up Google OAuth for your Calagopus Panel.
 

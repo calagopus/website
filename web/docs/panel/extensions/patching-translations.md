@@ -1,3 +1,8 @@
+---
+title: Patching and Adding Translations
+description: Patch the Panel translations or add whole languages from the heavy image, with JSON override files deep-merged over the shipped strings.
+---
+
 # Patching and Adding Translations
 
 The heavy image lets you patch the Panel's own translations - reword a label, fix a phrasing you don't like, or fill in keys for a language - without forking the Panel or rebuilding the image yourself. You drop small JSON override files into a directory, trigger a rebuild, and the heavy image deep-merges your changes on top of the base translations the Panel ships.

@@ -1,3 +1,8 @@
+---
+title: BTRFS Subvolume
+description: Enforce per-server disk limits with native Btrfs subvolumes and qgroups, kernel-enforced with no user-space overhead.
+---
+
 # BTRFS subvolume
 
 ## What is it?

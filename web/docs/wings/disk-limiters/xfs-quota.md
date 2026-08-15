@@ -1,3 +1,8 @@
+---
+title: XFS Quota
+description: Enforce per-server disk limits with XFS project quotas, which apply to existing directory trees without moving data.
+---
+
 # XFS Quota
 
 ## What is it?

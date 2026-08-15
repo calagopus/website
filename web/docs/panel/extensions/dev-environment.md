@@ -1,3 +1,8 @@
+---
+title: Development Environment
+description: Set up a development environment for building Calagopus Panel extensions.
+---
+
 # Setting up your Development Environment
 
 This guide walks through setting up a development environment for creating extensions for the Calagopus Panel.

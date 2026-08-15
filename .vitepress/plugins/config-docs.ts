@@ -121,6 +121,7 @@ function renderExample(doc: ConfigDoc): string[] {
 
 export function renderConfigDoc(doc: ConfigDoc): string {
   const blocks = [
+    `---\ntitle: ${doc.pageTitle}\ndescription: ${doc.description}\n---`,
     `<!-- Generated from ${doc.sourceFile} by .vitepress/plugins/config-docs.ts - do not edit by hand. -->`,
     `# ${doc.title}`,
     doc.intro,

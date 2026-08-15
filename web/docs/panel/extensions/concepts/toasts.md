@@ -1,3 +1,8 @@
+---
+title: Toasts
+description: Show transient feedback from your extension with the Panel toast system.
+---
+
 # Toasts
 
 Toasts are the Panel's transient feedback channel: the little cards that slide into a corner after you save a form or hit an error. Every "Settings saved." and "Something went wrong." in the Panel is a toast, and your extension raises them through the same API core pages use. There's no separate notification system for extensions, so your feedback lands in the corner the user is already watching.

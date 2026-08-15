@@ -1,3 +1,8 @@
+---
+title: Security
+description: How Calagopus defends its trust boundaries, from isolating untrusted game servers to protecting the panel and daemon.
+---
+
 # Security
 
 This page describes how Calagopus defends its trust boundaries: what isolates an

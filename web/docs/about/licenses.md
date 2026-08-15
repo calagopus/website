@@ -1,3 +1,8 @@
+---
+title: Licenses
+description: License information for every Calagopus component. Everything is MIT licensed unless stated otherwise.
+---
+
 # Licenses
 
 Calagopus is open source. Unless a component states otherwise below, it is

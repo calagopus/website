@@ -1,3 +1,8 @@
+---
+title: VS Code
+description: Browse and edit server files and attach to the live console from VS Code, with your server mounted as a workspace folder over a virtual filesystem.
+---
+
 # VS Code
 
 The **Calagopus** extension lets you browse and edit your server's files and attach to its live console directly from your editor. Files are mounted as a workspace folder over a virtual `calagopus://` filesystem, so multi-cursor editing, search, extensions, and the integrated terminal all work against your server like a local project.

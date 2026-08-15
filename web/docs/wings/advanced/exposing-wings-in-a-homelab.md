@@ -1,3 +1,8 @@
+---
+title: Exposing Wings in a Homelab
+description: Ways to expose a homelab Wings node to the internet, with the trade-offs of each approach.
+---
+
 # Exposing Wings in a Homelab
 
 This guide covers the available methods for exposing a Wings node to the internet from a homelab, along with the trade-offs of each approach.

@@ -1,3 +1,8 @@
+---
+title: MySQL (MariaDB) Database Host
+description: Install and configure a MariaDB or MySQL server as a Calagopus database host, so users can create databases for their game servers from the panel.
+---
+
 # MySQL (MariaDB)
 
 This guide explains how to install and configure a **MariaDB** (or MySQL) database server to use as a database host in the Calagopus Panel. Once set up, your users will be able to create databases for their game servers directly from the panel.

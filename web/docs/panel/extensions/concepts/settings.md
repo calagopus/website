@@ -1,3 +1,8 @@
+---
+title: Settings
+description: Store your extension configuration with the Panel settings system instead of hardcoding values.
+---
+
 # Settings
 
 Let's say you're making the best extension in the universe. Impossible? Maybe. But you're facing a BIG issue - you need an API key to make it work. So where do you put it? Hardcoding is out, environment variables mean the operator has to restart the Panel to change them, and storing a config file next to your binary is a nightmare to keep in sync across deployments. What you actually want is for the operator to open the admin panel, paste the key into a text field, click Save, and have it Just Work.

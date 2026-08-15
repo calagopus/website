@@ -1,3 +1,8 @@
+---
+title: Permissions
+description: Gate your extension routes and UI behind the Panel permission system with your own permission keys.
+---
+
 # Permissions
 
 Every mutating route in your extension should be gated on a permission check - something like `permissions.has_server_permission("settings.egg-changer")?` at the top of the handler. The routing docs already covered *how* to do that check; this page is about the other side, which is **where those permission strings come from** and how you register them so admins can actually grant or revoke them in the UI.

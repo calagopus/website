@@ -1,3 +1,8 @@
+---
+title: Events
+description: Listen to panel events from your extension and run code when they fire.
+---
+
 # Events
 
 You may be writing an extension and wondering, how can I delete all of my systems files when someone renames their account? Or maybe not, but still, you want to be able to listen to an event and run some code when it happens. This is where the Panel's event system comes in.

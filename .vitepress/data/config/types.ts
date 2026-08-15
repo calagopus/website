@@ -48,6 +48,8 @@ export interface ConfigDoc {
   outFile: string;
   sourceFile: string;
   title: string;
+  pageTitle: string;
+  description: string;
   intro: string;
   sections: ConfigSection[];
   example: {

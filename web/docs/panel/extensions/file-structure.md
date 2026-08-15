@@ -1,3 +1,8 @@
+---
+title: Extension File Structure
+description: How an extension is laid out on disk across its frontend, backend, and database parts.
+---
+
 # Extension File Structure
 
 Extensions are split into three main parts: Frontend, Backend, and Database.

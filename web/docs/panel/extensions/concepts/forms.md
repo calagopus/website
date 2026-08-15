@@ -1,3 +1,8 @@
+---
+title: Forms
+description: Let your extension participate in the Panel form system.
+---
+
 # Forms
 
 Panel forms are used everywhere: creating servers, editing users, configuring nodes, defining backup targets, tweaking application settings. The forms extension system lets your extension participate in any of those forms, adding new fields, providing their validation rules and default values, or tweaking properties of existing fields, without touching the built-in form components.

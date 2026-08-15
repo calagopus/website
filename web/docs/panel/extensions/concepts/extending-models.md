@@ -1,3 +1,8 @@
+---
+title: Extending Models
+description: Attach your extension data to the Panel models and API objects.
+---
+
 # Extending Models
 
 So you've read the rest of the docs and you're feeling pretty good - you can add routes, register settings, ship a UI, the whole nine yards. But everything you've built so far has been *next to* the Panel's existing data model, never *part* of it. You can store a setting that says "the subdomain limit for server X is 5", but you can't put a column directly on the `servers` table that everyone else who queries servers will see. And you can't get that column to appear in API responses, or get the existing admin "create server" form to know about it, without a lot of glue code.

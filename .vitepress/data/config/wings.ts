@@ -4,6 +4,8 @@ export const wingsConfigDoc: ConfigDoc = {
   outFile: 'docs/wings/configuration.md',
   sourceFile: '.vitepress/data/config/wings.ts',
   title: 'Configuration',
+  pageTitle: 'Wings Configuration',
+  description: 'Reference for every Wings configuration option in config.yml, with defaults, explanations, and a full example file.',
   intro:
     "This page is a reference for all Wings configuration options. The configuration file is located at `/etc/calagopus-wings/config.yml` on Linux (`C:\\ProgramData\\Calagopus-Wings\\config.yml` on Windows).\n\n::: info Migrating from Pterodactyl/Pelican\nIf no `-c`/`--config` flag is passed and `/etc/calagopus-wings/config.yml` doesn't exist, Wings automatically looks for a config at `/etc/pterodactyl/config.yml`, then `/etc/pelican/config.yml`, then `./config.yml`, in that order, and uses the first one it finds. This means an existing Pterodactyl or Pelican Wings install keeps working without moving its config file, though it's recommended to migrate to the `calagopus-wings` path when convenient.\n:::",
   sections: [

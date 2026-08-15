@@ -1,3 +1,8 @@
+---
+title: Updating Wings
+description: Update Calagopus Wings for bug fixes, security patches, and new features, without planned downtime for running servers.
+---
+
 # Updating Wings
 
 Updating Wings periodically gets you bug fixes, security patches, and new features. The process is quick and safe to do whenever a new release comes out, you don't need to plan downtime around it.

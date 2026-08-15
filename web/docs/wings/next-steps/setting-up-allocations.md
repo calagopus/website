@@ -1,3 +1,8 @@
+---
+title: Setting up Allocations
+description: Create the IP and port allocations that determine how players connect to servers on a node.
+---
+
 # Setting up Allocations
 
 An allocation is an IP address and port combination that you assign to a server. It's how players connect to their game server - the allocation determines what address and port appear in the panel.

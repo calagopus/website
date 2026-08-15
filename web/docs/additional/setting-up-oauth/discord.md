@@ -1,3 +1,8 @@
+---
+title: Discord OAuth Setup
+description: Set up Discord OAuth login for your Calagopus Panel, from registering the application on the Discord developer portal to configuring the provider in the admin area.
+---
+
 # Discord OAuth Setup
 This guide walks through setting up Discord OAuth for your Calagopus Panel.
 

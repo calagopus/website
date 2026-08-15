@@ -1,3 +1,8 @@
+---
+title: CLI Commands
+description: Ship operator-facing shell commands with your extension instead of HTTP routes.
+---
+
 # CLI Commands
 
 Sometimes the right way to ship a feature isn't an HTTP route - it's a command the operator runs from the shell. Maybe you want a way to regenerate cached data without hitting an HTTP endpoint, a one-off migration helper, a support tool to disable 2FA for a locked-out user, or a `version` command that prints build info. Calagopus lets extensions add their own top-level commands to the `panel-rs` CLI, and this page is about how.

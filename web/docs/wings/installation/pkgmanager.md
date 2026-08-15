@@ -1,3 +1,8 @@
+---
+title: Package Manager Wings Installation
+description: Install Calagopus Wings from the APT, RPM, or APK repository, or from the AUR.
+---
+
 # Package Manager Wings Installation
 
 Install Wings directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager:

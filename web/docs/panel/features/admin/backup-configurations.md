@@ -19,15 +19,35 @@ The list shows each configuration's **ID**, **Name**, **Disk**, and **Created**.
 
 Click **Create**. The common fields are **Name**, **Backup Disk** (Local, S3, Ddup-Bak, Btrfs, ZFS, Restic, Proxmox Backup Server, or Kopia), **Description**, and two switches:
 
+![Create backup configuration form](./images/backup-configurations/create.webp)
+
 - **Maintenance Enabled**: "If enabled, any server using this backup configuration will not be able to create new backups, or manage existing ones."
 - **Shared**: "If enabled, backups on this backup configuration will not be transferred between nodes, they will be assumed to be accessible by all nodes."
 
 Picking S3, Restic, Proxmox Backup Server, or Kopia reveals a disk-specific settings section; the node-local disks need none. See the [per-disk field reference](../../../wings/advanced/backup-configurations.md#backup-disks) for what goes in each. Btrfs, ZFS, and Ddup-Bak show a warning with extra requirements when selected.
 
+Finish with **Save** or **Save & Stay**; **View Documentation** links to the walkthrough above.
+
 ## Where Configurations Attach
 
 A configuration takes effect once it's assigned to a **location**, **node**, or **server**; the panel picks the most specific one when a backup is created (server first, then node, then location). Assignment happens on those resources' own edit forms, each of which has a **Backup Configuration** field. See [Assigning a Backup Configuration](../../../wings/advanced/backup-configurations.md#assigning-a-backup-configuration).
 
-Opening a configuration shows tabs for **General** (the edit form, plus **Duplicate** and **Delete**), **Stats**, **Backups** (every backup stored on it), and read-only **Locations**, **Nodes**, and **Servers** lists showing where it's currently assigned.
+Opening a configuration shows tabs for **General** (the edit form, plus **Duplicate** and **Delete**), **Stats**, **Backups**, and read-only **Locations**, **Nodes**, and **Servers** lists showing where it's currently assigned; the tab lists are all searchable.
+
+![Configuration general tab](./images/backup-configurations/general.webp)
+
+**Stats** counts total, successful, failed, and deleted backups, with stored sizes, across all time, today, this week, and this month.
+
+![Stats tab](./images/backup-configurations/stats.webp)
+
+**Backups** lists every backup stored on the configuration: Name, Server, Node, Checksum, Size, Files, and Created.
+
+![Backups tab](./images/backup-configurations/backups.webp)
+
+![Locations tab](./images/backup-configurations/locations.webp)
+
+![Nodes tab](./images/backup-configurations/nodes.webp)
+
+![Servers tab](./images/backup-configurations/servers.webp)
 
 Managing configurations requires the `backup-configurations.create`, `backup-configurations.update`, and `backup-configurations.delete` admin permissions; the Backups tab uses `backup-configurations.backups`. See the [Permissions Reference](../dashboard/permissions.md).

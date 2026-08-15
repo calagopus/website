@@ -1,3 +1,8 @@
+---
+title: Adding Egg Repositories
+description: Connect Git repositories full of eggs to your panel, then browse, import, and update eggs directly from the admin UI.
+---
+
 # Egg Repositories
 
 Egg repositories are Git repositories that store collections of eggs - the configuration files that tell the panel how to install and run a specific game server type. Calagopus has a built-in egg repository system that lets you browse and import eggs directly from the admin UI, similar to what Blueprint's Eggify extension provided for Pterodactyl.

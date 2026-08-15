@@ -1,3 +1,8 @@
+---
+title: Fusequota
+description: Enforce per-server disk limits with the user-space fuse_quota limiter, strongly discouraged on Docker Wings installations.
+---
+
 # Fusequota
 
 ::: warning

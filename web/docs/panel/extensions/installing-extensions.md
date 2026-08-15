@@ -1,3 +1,8 @@
+---
+title: Installing Extensions
+description: Install a .c7s.zip extension into your Calagopus Panel.
+---
+
 # Installing Extensions
 
 Extensions ship as `.c7s.zip` files - a single archive containing both backend and frontend code. This page covers how to install one in your Calagopus Panel.

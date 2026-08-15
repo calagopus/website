@@ -1,3 +1,8 @@
+---
+title: Getting your Extension ready
+description: Pre-export checks and packaging steps that turn a finished extension into the .c7s.zip file users install.
+---
+
 # Getting your Extension ready
 
 Once you've finished developing your extension, there are a few things to do before it's ready to ship. This guide walks through the pre-export checks you should run, then how to produce the `.c7s.zip` file that users will install.

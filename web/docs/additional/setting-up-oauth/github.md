@@ -1,3 +1,8 @@
+---
+title: GitHub OAuth Setup
+description: Set up GitHub OAuth login for your Calagopus Panel, from registering the OAuth app on GitHub to configuring the provider in the admin area.
+---
+
 # GitHub OAuth Setup
 This guide walks through setting up GitHub OAuth for your Calagopus Panel.
 
