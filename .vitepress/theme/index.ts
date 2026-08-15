@@ -27,6 +27,7 @@ export default {
     app.component('FeatureTable', FeatureTable);
   },
   setup() {
+    // biome-ignore lint/correctness/useHookAtTopLevel: React rule; the VitePress theme setup() is the Vue composition context
     useImageViewer();
   },
 } satisfies Theme;
