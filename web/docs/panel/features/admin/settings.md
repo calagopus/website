@@ -64,7 +64,9 @@ The emails the panel sends, editable per template. The tab requires `email-templ
 
 ![](./images/settings/mail-templates.webp)
 
-Pick a template from the **Templates** sidebar to edit its **Subject**, an **Enabled** toggle, and the HTML content in the editor. The built-in templates cover account creation, password resets, the connection test, being added to or removed from a server, and server installs and restores. The **Available Variables** box lists everything you can reference in that template. Templates use the [MiniJinja](https://github.com/mitsuhiko/minijinja) syntax: variables as `{{ variable }}`, control structures like `{% if %}` and `{% for %}`.
+Pick a template from the **Templates** sidebar to edit its **Subject**, an **Enabled** toggle, and the HTML content in the editor. The built-in templates cover account creation, password resets, the connection test, being added to or removed from a server, and server installs and restores.
+
+The **Available Variables** box lists everything you can reference in that template. Templates use the [MiniJinja](https://github.com/mitsuhiko/minijinja) syntax: variables as `{{ variable }}`, control structures like `{% if %}` and `{% for %}`.
 
 **Reset to default** discards your custom template and restores the built-in one. This cannot be undone.
 

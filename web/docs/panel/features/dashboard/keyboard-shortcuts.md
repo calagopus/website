@@ -5,13 +5,17 @@ description: View and rebind keyboard shortcuts for navigating and interacting w
 
 # Keyboard Shortcuts
 
-Keyboard shortcuts let you navigate and interact with the panel without reaching for the mouse, grouped by where they apply: the file manager, the server console, and table navigation.
+Keyboard shortcuts let you navigate and interact with the panel without reaching for the mouse, grouped by where they apply: general, the file manager, the server console, and table navigation.
 
 ![](./images/keyboard-shortcuts/overview.webp)
 
 The panel detects whether you're on Windows/Linux or macOS and shows the matching modifier keys automatically.
 
 ## Default Bindings
+
+| General | Binding |
+| --- | --- |
+| Undo the last action | `Ctrl+Z` |
 
 | File Manager | Binding |
 | --- | --- |
@@ -21,9 +25,9 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | Paste files | `Ctrl+V` |
 | Duplicate selected file | `D` |
 | Search files | `Ctrl+K` |
-| Move up a directory | `Alt+↑` |
-| Move up the selection | `↑` |
-| Move down the selection | `↓` |
+| Move Up a directory | `Alt+↑` |
+| Move Up the selection | `↑` |
+| Move Down the selection | `↓` |
 | Rename file | `F2` |
 | Deselect all files | `Esc` |
 | Delete selected files | `Del` |
@@ -45,13 +49,11 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 
 ## Rebinding, Disabling, and Resetting
 
-Each shortcut has three buttons next to it. The pencil rebinds: click it and press the new key combination, which is captured as soon as you press it. The circle-slash disables the shortcut entirely, and the reset button restores it to its shipped default.
-
-![](./images/keyboard-shortcuts/rebind-hover.webp)
+Each shortcut has three buttons next to it. The pencil rebinds: click it and press the new key combination, which is captured as soon as you press it; `Esc` aborts the recording. The circle-slash disables the shortcut (and flips to a play icon that re-enables it), and the reset button restores the shipped default. Anything that differs from its default carries a **Modified** badge.
 
 ## Copy, Paste, and Reset All
 
-The toolbar at the top has four actions:
+The toolbar at the top shows which layout was detected ("Windows/Linux detected" or "macOS detected") next to three actions:
 
 <img src="./images/keyboard-shortcuts/toolbar.webp" width="289" alt="" />
 
@@ -69,27 +71,50 @@ The toolbar at the top has four actions:
 # Lines starting with "#" and unknown ids are ignored.
 
 [files] # File Manager
+# Select all files
 files.selectAll         = Mod+A
+# Cut selected files
 files.cut               = Mod+X
+# Copy selected files
 files.copy              = Mod+C
+# Paste files
 files.paste             = Mod+V
+# Duplicate selected file
 files.duplicate         = D
+# Search files
 files.search            = Mod+K
+# Move Up a directory
 files.moveUpDirectory   = Alt+ArrowUp
+# Move Up the selection
 files.moveUpSelection   = ArrowUp
+# Move Down the selection
 files.moveDownSelection = ArrowDown
+# Rename file
 files.rename            = F2
+# Deselect all files
 files.deselectAll       = Escape
+# Delete selected files
 files.delete            = Delete
 
+[general] # General
+# Undo the last action
+general.undo            = Mod+Z
+
 [console] # Server Console
+# Search in console output
 console.search          = Mod+F
+# Previous command in history
 console.previousCommand = ArrowUp
+# Next command in history
 console.nextCommand     = ArrowDown
 
 [table] # Table Navigation
+# Previous page
 table.previousPage      = ArrowLeft
+# Next page
 table.nextPage          = ArrowRight
+# First page
 table.firstPage         = Shift+ArrowLeft
+# Last page
 table.lastPage          = Shift+ArrowRight
 ```

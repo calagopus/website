@@ -11,7 +11,9 @@ Forgot your password? The reset is two pages: request an email, then set the new
 
 The **Forgot Password** link on the [login page](./login.md) leads to `/auth/forgot-password` ("Enter your email to receive instructions on how to reset your password"). Enter your **Email** and hit **Request Password Reset**.
 
-A **Success** toast always reports "An email has been sent to you with instructions on how to reset your password.", whether or not the address belongs to an account, so it can't be used to check which emails are registered. When a captcha is configured, it has to be solved first.
+A green **Success** alert above the card always reports "An email has been sent to you with instructions on how to reset your password.", whether or not the address belongs to an account, so it can't be used to check which emails are registered. Repeat requests for the same account within 20 minutes are silently dropped behind the same message.
+
+When a captcha is configured, it has to be solved first; after a successful request the button stays disabled until you reload, and **Login** below the separator leads back.
 
 ::: warning
 The email only goes out if the panel has a [mail provider](../admin/settings.md#mail) configured. Admins can edit the message itself under [Mail Templates](../admin/settings.md#mail-templates).

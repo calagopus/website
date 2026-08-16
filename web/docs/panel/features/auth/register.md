@@ -5,13 +5,13 @@ description: Creating an account on a Calagopus panel, what the Register form as
 
 # Register
 
-When registration is enabled, the **Create account** link on the [login page](./login.md) leads to `/auth/register` ("Please enter your details to register").
+When registration is enabled, the **Create account** link on the [login page](./login.md) leads to `/auth/register` ("Please enter your details to register"). The page itself stays reachable with registration off, only the link is hidden, and submitting then fails with "registration is disabled".
 
 ![](./images/register/form.webp)
 
 The form asks for **Username**, **Email**, **First Name**, **Last Name**, and **Password** (with a visibility toggle). Usernames are 3 to 15 characters of letters, numbers, and underscores; passwords need at least 8 characters. Hit **Register** to create the account, or **Login** below the separator to go back.
 
-Registering logs you in immediately. There is no email verification step; your session starts the moment the account is created. If the username or email is already taken, you get an error instead.
+Registering logs you in immediately. There is no email verification step; your session starts the moment the account is created. If the username or email is already taken, you get an error instead. The first account ever registered on a fresh panel automatically becomes a root admin.
 
 When a captcha is configured, it renders below the card and **Register** stays disabled until it's solved.
 

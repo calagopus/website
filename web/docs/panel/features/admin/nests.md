@@ -77,7 +77,6 @@ The rest of the form:
 
 The tag-style inputs (Startup Done, Features, File Deny List) share a clipboard menu with **Copy All** and **Paste (Replace)** for carrying lists between eggs.
 
-![](./images/nests/clipboard.webp)
 
 At the bottom, next to **Save**:
 

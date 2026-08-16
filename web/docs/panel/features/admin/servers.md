@@ -11,8 +11,6 @@ description: Create servers, look them up, and manage every server on the panel 
 
 Next to **Create** sits **Find by External ID**: enter the external identifier (for example one set by your billing system), hit **Search**, and a **Server Found** card shows the matching server's name, owner, and node with a **View Server** button. If nothing matches, you get "No server found with that external ID."
 
-<img src="./images/servers/lookup-external-id.webp" width="220" alt="" />
-
 ## Creating a Server
 
 Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an **Advanced mode** toggle in the top right reveals the fields marked *advanced* below and is remembered across admin forms.
@@ -107,7 +105,9 @@ Read-only summary cards. Status badges at the top flag special states: **Suspend
 
 ### General
 
-The **Update Server** form: the same cards as [creating a server](#creating-a-server) minus node, allocations, and variables (those have their own tabs). Two differences: the Docker image is a free-text field with a separate **Predefined Docker Images** dropdown above it, so you can set an image the egg doesn't list, and the install-time switches (Start on Completion, Skip Installer) are gone. Changing the egg re-prefills the image and startup command. A suspended server shows a "This server is suspended." alert here.
+The **Update Server** form: the same cards as [creating a server](#creating-a-server) minus node, allocations, and variables (those have their own tabs). Two differences: the Docker image is a free-text field with a separate **Predefined Docker Images** dropdown above it, so you can set an image the egg doesn't list, and the install-time switches (Start on Completion, Skip Installer) are gone.
+
+Changing the egg re-prefills the image and startup command. A suspended server shows a "This server is suspended." alert here.
 
 Changing the **Owner** hands the server to another user.
 

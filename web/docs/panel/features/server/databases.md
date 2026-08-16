@@ -37,9 +37,22 @@ The rest of the right-click menu:
 
 | Action | What it does |
 | --- | --- |
+| **Explore Data** | Opens the [Data Explorer](#data-explorer). |
 | **Edit** | Toggle **Locked**. A locked database can't be recreated or deleted, and its password can't be rotated. |
 | **Recreate** | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. |
 | **Delete** | Permanently deletes the database and all data. Type the database name to confirm. |
+
+## Data Explorer
+
+**Explore Data** on a database opens a database browser built into the panel, no external tool needed. The same explorer opens from a managed instance's [Databases tab](#databases-tab); MongoDB databases cannot be explored, nor can Redis instances.
+
+A searchable **Tables** sidebar (collapsible via **Hide Tables**) lists the database's tables with estimated row counts; views carry a **View** badge. Three tabs work on the selected table:
+
+- **Rows**: browse with pagination and stackable column filters (equals, contains, starts with, greater or less than, and more); column headers show each column's type and sort the listing. Edit cells inline and hit **Save**, insert with **New Row** (columns can keep their **Database default**), or select rows and delete them after confirmation.
+- **Structure**: the column list shows Name, Type, Nullable, Key, Default, and Attributes. Create tables (columns with **Type**, **Nullable**, **Primary Key**, and **Auto Increment**), add, rename, and delete columns, and rename or delete whole tables; deleting a table or column permanently destroys its data, and adding a non-nullable column to a table that already has rows fails.
+- **Query**: a SQL console with syntax highlighting, a **Row Limit** (default 100), and **Run**. **Read-only** is on by default ("Rejects statements that change data or structure."); turn it off to run writes.
+
+Browsing needs the `databases.query` permission (`database-instances.query` inside instances); editing rows, editing structure, deleting structure, and the Query tab each map to their own key, see the [Permissions Reference](../dashboard/permissions.md). Treat `query-raw` like handing out the database credentials themselves, and note that a [database host in maintenance mode](../admin/database-hosts.md#maintenance-mode) blocks the explorer entirely. SQLite files in the file manager get the same treatment via the [files page](./files.md#sqlite-databases).
 
 ## Managed Databases
 
@@ -67,7 +80,7 @@ Along the top:
 - **Edit** to rename the instance or toggle **Locked**. A locked instance can't be deleted, template updates can't be applied, and its user passwords can't be rotated.
 - **Delete** to remove the instance and all its data. Type the name to confirm.
 
-Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance is offline" overlay when it's off) and stat tiles for Address, Uptime, CPU Load, Memory Load, and Disk Usage. Tiles show usage against the template's limits; a limit of zero displays as Unlimited. If a background operation like a remote import is running, a progress ring appears next to the power buttons where you can watch or cancel it.
+Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance is offline" overlay when it's off) and stat tiles for Address, Uptime, CPU Load, Memory Load, and Disk Usage. Tiles show usage against the template's limits; a limit of zero displays as Unlimited. If a background operation like a remote import is running, a progress ring appears next to the power buttons where you can watch or cancel it, or **Cancel all operations** at once.
 
 ### Databases Tab
 
@@ -79,7 +92,7 @@ Right-click a database for:
 | --- | --- |
 | **Export** | Downloads a dump of this database. |
 | **Import** | Uploads a **Dump File**, optionally wiping existing data first. MongoDB imports also need the **Source Database** name the dump was taken from. |
-| **Import from Remote** | Dumps another database server over a **Connection String** and imports the result. The connection string is only used to take the dump, it is never stored. Runs in the background as a cancellable operation. |
+| **Import from Remote** | Dumps another database server over a **Connection String** and imports the result. An optional **Source Database** field "Overrides the database named in the connection string", and a wipe toggle clears the target first. The connection string is only used to take the dump, it is never stored. Runs in the background as a cancellable operation. |
 | **Recreate** | Wipes all data and recreates an empty database with the same name and user access. Type the name to confirm. |
 | **Delete** | Permanently deletes the database and its data. |
 

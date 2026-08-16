@@ -46,7 +46,6 @@ Finish with **Save** (or **Save & Stay** when creating). An existing provider al
 
 ![Configured provider with censored credentials](./images/oauth-providers/general.webp)
 
-![](./images/oauth-providers/export.webp)
 
 ## Import
 
@@ -96,4 +95,3 @@ The **Users** tab (requires `oauth-providers.read`) lists every account linked t
 
 ![](./images/oauth-providers/users.webp)
 
-<img src="./images/oauth-providers/lookup-by-identifier.webp" width="220" alt="" />

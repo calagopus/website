@@ -27,7 +27,9 @@ Right after enabling, a **Recovery Codes** dialog appears: "Below are your recov
 
 <img src="./images/account/2fa-recovery-codes.webp" width="220" alt="" />
 
-Once enabled, the card reads "Two-Factor Verification is currently enabled." with a **Disable Two-Factor** button. Disabling asks for a valid authentication code and your password again.
+Once enabled, the card reads "Two-Factor Verification is currently enabled." with a **Disable Two-Factor** button and a line showing when 2FA was last used. Disabling asks for a valid authentication code and your password again.
+
+If your role or the panel requires 2FA and you haven't set it up, an alert at the top of the page says so; a frozen account shows an alert explaining that account details cannot be changed.
 
 <img src="./images/account/2fa-disable.webp" width="220" alt="" />
 

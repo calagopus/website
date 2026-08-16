@@ -22,7 +22,7 @@ The Dashboard is what every user lands on after logging in. It covers your own a
 
 ## Navigating the Dashboard
 
-The sidebar lists every page above, plus **Servers** and **Admin** (if you have admin permissions) at the top. At the bottom, the profile box doubles as a search box: if you have more than a handful of servers, click into it to search and jump straight to one.
+The sidebar lists every page above, plus **Servers** and **Admin** (if you have admin permissions) at the top. At the bottom sits a server switcher: click into it to search and jump straight to one of your servers. The profile box below it leads to your [Account page](./account.md).
 
 <img src="./images/index/nav-search.webp" width="200" alt="" />
 

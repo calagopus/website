@@ -13,7 +13,9 @@ The list shows ID, **Order**, Name, **Eggs** (how many eggs the configuration co
 
 ## How Configurations Stack
 
-An egg can appear in multiple configurations. All configurations containing a server's egg apply, sorted by their **Order** value (lowest first, creation date as tie-breaker), and each section (allocation, startup, page order) is taken from the last configuration in that ordering that defines it. If no configuration defines a section, the built-in defaults apply: self-assign off, primary allocation required, custom startup commands off, sidebar in its normal order. In practice: put your broad defaults at a low Order and targeted overrides at a higher one.
+An egg can appear in multiple configurations. All configurations containing a server's egg apply, sorted by their **Order** value (lowest first, creation date as tie-breaker), and each section (allocation, startup, page order) is taken from the last configuration in that ordering that defines it.
+
+If no configuration defines a section, the built-in defaults apply: self-assign off, primary allocation required, custom startup commands off, sidebar in its normal order. In practice: put your broad defaults at a low Order and targeted overrides at a higher one.
 
 ## Creating and Editing
 
@@ -23,7 +25,7 @@ Click **Create**, or open a configuration's ID to edit it. The base fields are *
 
 <img src="./images/egg-configurations/eggs-select.webp" width="399" alt="" />
 
-Below are three collapsible sections. Each has an enable toggle; a disabled section simply isn't defined by this configuration, so a lower-priority one (or the default behavior) applies.
+Below are three collapsible sections. Each has an enable toggle; a disabled section isn't defined by this configuration, so a lower-priority one (or the default behavior) applies.
 
 ### Allocation Configuration
 
@@ -54,7 +56,6 @@ Reorders the server sidebar for affected servers. Each entry shows its path and 
 
 ![](./images/egg-configurations/route-config.webp)
 
-<img src="./images/egg-configurations/route-divider-redirect.webp" width="200" alt="" />
 
 ::: warning
 Pages left out of the list are not just hidden from the sidebar, they become inaccessible for those servers. Only remove pages you genuinely want to cut off.

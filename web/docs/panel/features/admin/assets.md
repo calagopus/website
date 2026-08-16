@@ -7,7 +7,7 @@ description: Host public files on your panel, like the icons and banners referen
 
 Assets (**System** > **Assets**) is a small file browser for publicly served files. Anything you upload here gets a public URL, which is exactly what the **Icon** and **Banner** fields in [Settings > Application](./settings.md#application) expect: those fields autocomplete from your uploaded assets.
 
-The browser shows a breadcrumb (starting at `assets`) and a table with **Name**, **Size**, and **Created**. Click a directory to enter it, click a file name to open it in a new tab.
+The browser shows a breadcrumb (starting at `assets`) and a table with **Name**, **Size**, and **Created**. Click a directory to enter it, click a file name to open it in a new tab, and use the search box to find assets in the current directory by name.
 
 ![Assets browser](./images/assets/list.webp)
 

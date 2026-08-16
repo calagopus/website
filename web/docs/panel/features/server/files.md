@@ -27,7 +27,7 @@ The gear next to the page title opens the file manager settings:
 
 The **Connect** menu offers two ways to work on your files outside the browser:
 
-- **via SFTP** opens the **SFTP Details** modal with the connection info: **Protocol**, **Host**, **Port**, **Username** (your panel username plus the server's short ID, like `user.1a2b3c4d`), and your panel password. Every field copies on click, and **Launch** opens an `sftp://` link for clients registered to handle it. Holding Shift while clicking **via SFTP** skips the modal and launches directly. Requires the `files.sftp` permission.
+- **via SFTP** opens the **SFTP Details** modal with the connection info: **Protocol**, **Host**, **Port**, **Username** (your panel username plus the server's short ID, like `user.1a2b3c4d`), and a **Password** field that just reads "Your Control Panel Password". Every field except the password copies on click, and **Launch** opens an `sftp://` link for clients registered to handle it. Holding Shift while clicking **via SFTP** skips the modal and launches directly. Requires the `files.sftp` permission.
 - **via VS Code** mounts the server as a workspace folder in your editor. See the [VS Code integration](../../../integrations/vscode.md) for setup and everything it can do.
 
 <img src="./images/files/sftp-details.webp" width="220" alt="SFTP details modal" />
@@ -50,7 +50,7 @@ Below the toolbar, a **Disk Usage** bar shows how much of the server's disk limi
 
 ### Search
 
-**Search** (or `Ctrl+K`) opens the **Search Files** modal. The plain text box matches file names anywhere below the current directory. **Advanced Filters** adds three optional sections:
+**Search** (or `Ctrl+K`) opens the **Search Files** modal, which remembers your last query when reopened. The plain text box matches file names anywhere below the current directory. **Advanced Filters** adds three optional sections:
 
 | Filter | Fields |
 |---|---|
@@ -116,7 +116,7 @@ Right-click a row (or use its menu button) for the single-file context menu:
 
 ### Renaming
 
-A single **Rename** is a simple name prompt (also `F2`), undoable from the toast. Renaming a selection opens **Rename Files**, a batch tool with **Find** / **Replace with** (optionally as a regular expression with `$1` group references), an **Apply to** scope (**Name**, **Extension**, **Full name**), prefix/suffix, case conversion, and automatic numbering via a `{n}` token. A live preview shows every resulting name and flags conflicts before anything is renamed.
+A single **Rename** is a simple name prompt (also `F2`), undoable from the toast. Renaming a selection opens **Rename Files**, a batch tool with **Find** / **Replace with** (optionally as a regular expression with `$1` group references, with **Case sensitive** and **Replace all occurrences** toggles), an **Apply to** scope (**Name**, **Extension**, **Full name**), prefix/suffix, case conversion, and automatic numbering via a `{n}` token with **Start at**, **Step**, and **Minimum digits** controls. A live preview shows every resulting name and flags conflicts before anything is renamed.
 
 ### Remote Copy
 
@@ -124,7 +124,7 @@ A single **Rename** is a simple name prompt (also `F2`), undoable from the toast
 
 ### Archives
 
-**Archive** opens **Create Archive** with an optional **Archive Name** (a timestamped name is generated if you leave it empty) and a **Format**: `.tar`, `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.bz2`, `.tar.lz4`, `.tar.zst`, `.zip`, or `.7z`. **Extract** unpacks an archive into any directory you pick in the browser. Both run in the background; progress appears next to the toolbar, where individual operations (compressing, extracting, pulling, copying) can be cancelled.
+**Archive** opens **Create Archive** with an optional **Archive Name** (a timestamped name is generated if you leave it empty) and a **Format**: `.tar`, `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.bz2`, `.tar.lz4`, `.tar.zst`, `.zip`, or `.7z`. **Extract** unpacks an archive into any directory you pick in the browser. `.zip`, `.7z`, and `.ddup` archives can also be browsed in place, double-click one to navigate into it like a directory (where the filesystem supports it). Both run in the background; progress appears next to the toolbar, where operations (compressing, extracting, pulling, copying) can be cancelled individually or all at once via **Cancel all operations**.
 
 ## Uploading
 
@@ -154,6 +154,10 @@ Openable files launch a code editor at `/files/edit` with syntax highlighting, a
 While you type, the editor keeps a local draft in your browser (for up to three days). If you come back to a file with an abandoned draft, a **Restore Draft** modal offers to **Restore** or **Discard** it, and warns if the file changed on the server in the meantime. A revert button next to the title discards your unsaved changes and reloads the file from disk.
 
 Files above the panel-wide view-size limit ([Settings > Server](../admin/settings.md#server)) show a warning instead of opening; images open in a zoomable viewer (its own gear has a **Smoothen Image (Anti-Aliasing)** toggle, turn it off to inspect pixel art), and audio files open in a player with a waveform, 15-second skips, and playback speed control.
+
+## SQLite Databases
+
+SQLite files (`.db`, `.db3`, `.sqlite`, `.sqlite3`) don't open in the editor: they open a database explorer at `/files/sqlite`, where you can browse the file's tables and run SQL against it in a query console. This requires the `files.query-raw` permission, which grants full read and write access to the file's contents.
 
 ## File History
 

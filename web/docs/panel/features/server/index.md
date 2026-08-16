@@ -5,7 +5,9 @@ description: A tour of the Calagopus server view, the tabs you use to run, confi
 
 # Server
 
-Clicking a server on the [Servers](../dashboard/servers.md) page opens the server view, where everything about that one server lives. Each tab only appears if you have the matching [permission](../dashboard/permissions.md) on that server.
+Clicking a server on the [Servers](../dashboard/servers.md) page opens the server view, where everything about that one server lives. Each tab only appears if you have the matching [permission](../dashboard/permissions.md) on that server, and admins can reshape the tab set per egg via [route configurations](../admin/egg-configurations.md#route-configuration): hiding pages, grouping them under dividers, or adding external links.
+
+Above every tab, the panel surfaces server-wide state: dismissible per-server announcements, status banners while the server is transferring (with progress, ETA, and an admin-only **Cancel**), suspended, restoring a backup, installing (cancellable with the `settings.cancel-install` permission), under node maintenance, or pending a restart, plus a websocket banner with a reconnect countdown if the live connection drops.
 
 | Page | Description |
 | --- | --- |
@@ -23,7 +25,9 @@ Clicking a server on the [Servers](../dashboard/servers.md) page opens the serve
 
 ## Server Header
 
-The sidebar stays the same on every tab. At the top, a status card shows the server's name, its current state (**Running**, **Starting**, **Stopping**, **Offline**, or a special status like installing or transferring), and its uptime while running. Below that sit quick power buttons: **Start** while the server is offline, **Stop** while it runs, and a restart button. While the server is stopping, the button becomes **Kill**, with the same force-stop confirmation as on the [Console](./console.md).
+The sidebar stays the same on every tab. At the top, a status card shows the server's name, its current state (**Running**, **Starting**, **Stopping**, **Offline**, or a special status like installing or transferring), and its uptime while running.
+
+Below that sit quick power buttons: **Start** while the server is offline, **Stop** while it runs, and a restart button. While the server is stopping, the button becomes **Kill**, with the same force-stop confirmation as on the [Console](./console.md).
 
 <img src="./images/index/status-card.webp" width="200" alt="" />
 

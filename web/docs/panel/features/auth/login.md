@@ -22,11 +22,11 @@ If registration is enabled, a "Not registered? **Create account**" link points t
 
 ## Step 2: Passkey or Password
 
-If your account has [security keys](../dashboard/security-keys.md) registered, **Continue** takes you to **Authenticate with Passkey** first ("We found a passkey associated with `<username>`"). **Use Passkey** triggers the browser's passkey prompt and logs you in on success; **Use Password** and **Back** below the separator let you fall back to the normal flow.
+If your account has [security keys](../dashboard/security-keys.md) registered and passkeys are enabled panel-wide, **Continue** takes you to **Authenticate with Passkey** first ("We found a passkey associated with `<username>`"). **Use Passkey** triggers the browser's passkey prompt and logs you in on success; **Use Password** and **Back** below the separator let you fall back to the normal flow.
 
 ![](./images/login/step-passkey.webp)
 
-Otherwise (or after **Use Password**) you land on **Enter Password** ("Please enter your password for `<username>`"). Type your password, it has a visibility toggle, and hit **Sign In**. **Forgot Password** and **Back** sit below the separator here too.
+Otherwise (or after **Use Password**) you land on **Enter Password** ("Please enter your password for `<username>`"). Type your password, it has a visibility toggle, and hit **Sign In**. **Forgot Password** and **Back** sit below the separator here too. There is no remember-me option; sessions last seven days by default (an instance setting).
 
 ## Sign in with a Passkey
 
@@ -46,7 +46,9 @@ For admins: providers, their **Bypass 2FA on Login** and **Only allow Login** fl
 
 ## Two-Factor Checkpoint
 
-Accounts with [two-factor authentication](../dashboard/account.md) get one more step after the password, at `/auth/login/checkpoint`: the **Two-Factor Authentication** page greets you with your avatar and username and asks you to "Enter the 6-digit code from your authenticator app". Fill the six boxes and hit **Verify Code**. Each code works only once; if your device's clock is off, the page warns you, since TOTP codes depend on correct time.
+Accounts with [two-factor authentication](../dashboard/account.md) get one more step after the password, at `/auth/login/checkpoint`: the **Two-Factor Authentication** page greets you with your avatar and username and asks you to "Enter the 6-digit code from your authenticator app". Fill the six boxes and hit **Verify Code**.
+
+The checkpoint stays valid for five minutes after the password step; take longer and login fails with "invalid confirmation token" and starts over. Each code works only once; if your device's clock is more than a few seconds off, a warning appears (on the login page too), since TOTP codes and passkeys depend on correct time.
 
 ![](./images/login/checkpoint.webp)
 

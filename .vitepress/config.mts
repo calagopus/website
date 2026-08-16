@@ -371,6 +371,7 @@ export default withMermaid({
                     items: [
                       { text: 'Mounts', link: '/docs/panel/features/admin/mounts' },
                       { text: 'Backup Configurations', link: '/docs/panel/features/admin/backup-configurations' },
+                      { text: 'System Backup Policies', link: '/docs/panel/features/admin/system-backup-policies' },
                     ],
                   },
                 ],

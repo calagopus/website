@@ -38,6 +38,7 @@ Finish with **Save** (or **Save & Stay** when creating). An existing role also o
 Selecting `users.impersonate` shows a warning for good reason: it lets holders of this role impersonate other users. Be cautious assigning it to roles with less trusted users, see [Impersonation](./users.md#impersonation) for the exact rules.
 
 ![](./images/roles/impersonate-warning.webp)
+
 :::
 
 ## Users Tab

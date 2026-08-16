@@ -5,7 +5,7 @@ description: Logging in, registering, and resetting your password on a Calagopus
 
 # Authentication
 
-Everything you can do without a session lives under `/auth/`. All of these pages share the same centered card layout: the panel icon and name on top, a heading and subtitle, the form itself, an **OR** separator, and alternate actions below it.
+Everything you can do without a session lives under `/auth/`. These pages share the same centered card layout: the panel icon and name (or the configured banner) on top, a heading and subtitle, and the form, with an **OR** separator and alternate actions below it everywhere except the final reset-password form. If the panel's configured application URL doesn't match the address in your browser, a warning banner shows above the card on every auth page.
 
 | Page | Description |
 | --- | --- |
@@ -25,4 +25,4 @@ What actually shows up on these pages depends on panel settings:
 | Passkeys and usernameless login | [Settings > Webauthn](../admin/settings.md#webauthn) |
 | OAuth login buttons | [OAuth Providers](../admin/oauth-providers.md) |
 | Reset and other outgoing email | [Settings > Mail](../admin/settings.md#mail) |
-| Rate limits on the auth endpoints | [Settings > Ratelimits](../admin/settings.md#ratelimits) |
+| Rate limits on the auth endpoints | [Settings > Ratelimits](../admin/settings.md#ratelimits); the OAuth callback has a fixed limit of 6 attempts per 5 minutes |

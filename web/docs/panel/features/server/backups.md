@@ -9,7 +9,7 @@ The Backups page lists every backup of your server, with a counter like "2 of 15
 
 ![](./images/backups/list.webp)
 
-Each row shows the backup's **Name**, **Checksum** (e.g. `sha256:...`), **Size**, **Files** (file count), **Created**, and **Locked?** (a green closed lock when locked, a red open one when not). A backup that is still running shows a progress bar instead; a failed one shows a **Failed** badge.
+Each row shows the backup's **Name**, **Checksum** (e.g. `sha256:...`), **Size**, **Files** (file count), **Created**, and **Locked?** (a green closed lock when locked, a red open one when not). A backup that is still running shows a progress bar instead; a failed one shows a **Failed** badge. Deletion is asynchronous: the row dims under a **Deleting...** badge, which turns into **Deletion failed** if it goes wrong.
 
 ## Creating a Backup
 
@@ -29,13 +29,13 @@ The **Ignored Files** field shows a live match count next to each pattern, suppo
 
 ## Backup Groups
 
-Groups organize backups and can rotate them automatically. Each group is a collapsible card with its own search box, and any backups outside a group collect under **Ungrouped**.
+Groups organize backups and can rotate them automatically. Each group is a collapsible card with its own search box, and any backups outside a group collect under **Ungrouped**. An empty group reads "This group has no backups yet." with a **Create backup in this group** button.
 
 The group header shows retention at a glance:
 
 | Badge | Meaning |
 | --- | --- |
-| `1/5` | Usable backups versus the group's **Keep count**. Turns yellow when over the limit. |
+| `1/5` | Usable backups versus the group's **Keep count**. Turns yellow when over the limit. Groups without a Keep count show a plain "N Backups" badge instead. |
 | **Keep 7 Days** | The group's **Keep days** retention. |
 | **No auto-deletion** | No retention set; the group is just a label. |
 | **All locked** | Every backup in the group is locked, so nothing can be rotated out. |
@@ -54,6 +54,12 @@ With neither set, the group never deletes backups automatically. Use the pencil 
 ### Deleting a Group
 
 Click the trash icon in the group header and type the group's name to confirm. The backups inside are not deleted, they become ungrouped and follow standard rotation. A **Lock backups** switch locks all backups in the group first, so they cannot be rotated out automatically afterwards.
+
+## System Backups
+
+When the panel has taken automatic backups of this server through a [system backup policy](../admin/system-backup-policies.md), a sub-navigation appears with a **System Backups** tab at `/backups/system`: "Backups taken automatically by the panel. They cannot be modified or deleted." The rows are read-only, with no lock column and no edit or delete actions.
+
+![System backups tab](./images/backups/system-backups.webp)
 
 ## Backup Actions
 

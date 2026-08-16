@@ -44,12 +44,12 @@ A schedule runs whenever any one of its triggers fires.
 
 ### Cron Triggers
 
-By default the cron trigger uses friendly controls: pick how often it **Runs** (**Every few minutes**, **Every few hours**, **Daily**, **Weekly**, **Monthly**) plus the matching interval, weekday, day, and **At** time fields. A plain-language description of the resulting schedule is shown underneath, along with the hint "Times use the server timezone".
+By default the cron trigger uses friendly controls: pick how often it **Runs** (**Every few minutes**, **Every few hours**, **Daily**, **Weekly**, **Monthly**) plus the matching interval, weekday, day, and **At** time fields. A plain-language description of the resulting schedule is shown underneath, along with a "Times use the server timezone" hint naming the zone (or UTC).
 
 Flip **Edit as cron expression** to write the expression yourself; clicking the field opens a small per-segment editor.
 
 ::: warning
-Calagopus cron expressions have **six** fields, and the first one is **seconds**: `second minute hour day month weekday`. So `0 0 0 * * *` is daily at midnight, and a classic five-field crontab line needs a `0` prepended.
+Calagopus cron expressions put **seconds** first: `second minute hour day month weekday`. So `0 0 0 * * *` is daily at midnight. Classic five-field crontab lines work as-is (5 to 7 fields are accepted); the seconds field only applies when present.
 :::
 
 ## The Schedule Page
@@ -62,7 +62,9 @@ Opening a schedule shows its name with an **Active**/**Inactive** badge, a **Run
 
 ### Actions
 
-The **Schedule Actions** tab is the heart of a schedule: an ordered list of steps. Add one with **Add Step** (or **Create First Step** on an empty schedule), drag the handle to reorder, and click a step's chevron to expand its full configuration. The maximum number of steps per schedule is a panel-wide setting under [Settings > Server](../admin/settings.md#server). Each step's menu offers **Edit**, **Duplicate**, and **Delete**. While the schedule executes, the current step shows a **Running** badge; a step that failed on the last run shows a red warning icon with the error message.
+The **Schedule Actions** tab is the heart of a schedule: an ordered list of steps. Add one with **Add Step** (or **Create First Step** on an empty schedule), drag the handle to reorder, and click a step's chevron to expand its full configuration. The maximum number of steps per schedule is a panel-wide setting under [Settings > Server](../admin/settings.md#server).
+
+Each step's menu offers **Edit**, **Duplicate**, and **Delete**. While the schedule executes, the current step shows a **Running** badge; a step that failed on the last run shows a red warning icon with the error message.
 
 Steps are picked from a searchable **Action Type** list, organized into five groups.
 

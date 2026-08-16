@@ -5,7 +5,7 @@ description: Rename your server, configure auto-kill, auto-start, and timezone, 
 
 # Settings
 
-The Settings page is a set of cards: debug information, rename, auto-kill, auto-start, timezone, and reinstall. Each card has its own **Save** button; nothing here restarts your server on save.
+The Settings page is a set of cards: debug information, rename, auto-kill, auto-start, timezone, and reinstall. Each editable card has its own **Save** button (debug information is read-only, and reinstall uses **Reinstall Server** instead); nothing here restarts your server on save.
 
 ![Settings page with all cards](./images/settings/overview.webp)
 
@@ -45,6 +45,7 @@ Runs the egg's install script again, as if the server were being set up fresh.
 
 Clicking **Reinstall Server** opens a confirmation with one switch: "Do you want to delete all files of this server before performing this action? This cannot be undone." Leave it off to keep your files (the install script may still touch some of them), or turn it on to wipe the server first. Confirm with **Reinstall**; the server switches into an installing state and you're returned to the console.
 
-<img src="./images/settings/reinstall-modal.webp" width="220" alt="Reinstall confirmation modal" />
+<img src="./images/settings/reinstall-modal.webp" width="220" alt="" />
 
-Each card maps to its own subuser permission (`settings.rename`, `settings.auto-kill`, `settings.auto-start`, `settings.timezone`, `settings.install`). See the [Permissions Reference](../dashboard/permissions.md).
+
+Each card maps to its own subuser permission (`settings.rename`, `settings.auto-kill`, `settings.auto-start`, `settings.timezone`, `settings.install`), and `settings.cancel-install` separately gates the **Cancel** button on the installing banner. See the [Permissions Reference](../dashboard/permissions.md).

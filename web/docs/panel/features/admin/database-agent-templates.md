@@ -55,7 +55,6 @@ Applying updates restarts the affected databases to pick up the new configuratio
 
 On a template's **General** tab: **Export** downloads the template **as JSON** or **as YAML**, in the same format **Import** accepts, which makes it easy to move templates between panels. **Duplicate** creates a copy under a **New Name**, and **Delete** removes the template after confirmation.
 
-![Export menu](./images/database-agent-templates/export.webp)
 
 ::: info
 The buttons on these pages follow the `database-agent-templates.*` admin permission keys (`create`, `read`, `update`, `delete`). See the [Permissions Reference](../dashboard/permissions.md).

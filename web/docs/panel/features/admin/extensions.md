@@ -13,7 +13,7 @@ The full installation walkthrough, including switching to the heavy image that e
 
 ## Installed Extensions
 
-Each installed extension gets a card with its name, package name, **Version**, **Authors**, and description. Badges flag incomplete states: **Frontend missing**, **Backend missing**, **Pending build**, and **Pending removal**.
+Each installed extension gets a card with its name, package name, **Version**, **Authors**, and description. Badges flag incomplete states:
 
 ![](./images/extensions/frontend-missing.webp) ![](./images/extensions/backend-missing.webp) ![](./images/extensions/pending-build.webp) ![](./images/extensions/pending-removal.webp)
 

@@ -142,6 +142,7 @@ Permissions that control the ability to modify the filesystem for this server.
 | `files.delete` | Allows deleting files or directories. |
 | `files.archive` | Allows archiving the contents of a directory and decompressing files. |
 | `files.sftp` | Allows connecting via SFTP to manage files. |
+| `files.query-raw` | Allows running arbitrary SQL against a SQLite database file on this server. This grants full read and write access to that file's contents, equivalent to reading and updating it directly. |
 
 ### Backups
 
@@ -212,6 +213,11 @@ Permissions that control the ability to manage databases on this server.
 | `databases.update` | Allows rotating the password on a database instance. Users without `read-password` won't see the new value. |
 | `databases.recreate` | Allows deleting and recreating a database, wiping all data. |
 | `databases.delete` | Allows removing database instances from this server. |
+| `databases.query` | Allows browsing a database's tables and reading their rows through the panel. |
+| `databases.query-raw` | Allows running arbitrary SQL against a database. This grants full read and write access to its contents and structure, equivalent to the database's own credentials. |
+| `databases.edit-rows` | Allows inserting, updating and deleting individual table rows through the panel. Statements are built by the panel, so this cannot alter a database's structure. |
+| `databases.edit-structure` | Allows creating and renaming tables and columns through the panel. Statements are built by the panel from validated names and types, so this cannot read or destroy stored data. |
+| `databases.delete-structure` | Allows deleting tables and columns through the panel, permanently destroying any data they contain. |
 
 ### Database Instances
 
@@ -229,6 +235,11 @@ Permissions that control the ability to manage agent-managed database instances 
 | `database-instances.databases` | Allows managing the databases inside database instances. |
 | `database-instances.recreate` | Allows deleting and recreating databases inside database instances, wiping all data. |
 | `database-instances.users` | Allows managing the users inside database instances, including viewing their credentials. |
+| `database-instances.query` | Allows browsing an instance database's tables and reading their rows through the panel. |
+| `database-instances.query-raw` | Allows running arbitrary SQL against an instance database. The agent connects as the instance administrator, so this grants full access to every database of the instance. |
+| `database-instances.edit-rows` | Allows inserting, updating and deleting individual table rows through the panel. Statements are built by the panel, so this cannot alter a database's structure. |
+| `database-instances.edit-structure` | Allows creating and renaming tables and columns through the panel. Statements are built by the panel from validated names and types, so this cannot read or destroy stored data. |
+| `database-instances.delete-structure` | Allows deleting tables and columns through the panel, permanently destroying any data they contain. |
 | `database-instances.import` | Allows importing data into database instances. |
 | `database-instances.export` | Allows exporting data from database instances. |
 
@@ -353,6 +364,18 @@ Permissions that control the ability to view the activity log on this server.
 | `backup-configurations.update` | Allows modifying backup configurations and their passwords. |
 | `backup-configurations.delete` | Allows deleting backup configurations. |
 | `backup-configurations.backups` | Allows viewing backups associated with a backup configuration. |
+
+### System Backup Policies
+
+Permissions that control the ability to manage [system backup policies](../admin/system-backup-policies.md) for the panel.
+
+| Permission | Description |
+| --- | --- |
+| `system-backup-policies.create` | Allows creating new system backup policies. |
+| `system-backup-policies.read` | Allows viewing system backup policies. |
+| `system-backup-policies.update` | Allows modifying system backup policies and their attached nodes, locations and servers. |
+| `system-backup-policies.delete` | Allows deleting system backup policies. |
+| `system-backup-policies.backups` | Allows viewing backups associated with a system backup policy. |
 
 ### Nodes
 

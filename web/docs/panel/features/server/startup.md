@@ -19,7 +19,7 @@ If the egg ships predefined commands, a **Predefined Startup Commands** dropdown
 
 A searchable dropdown of the images the egg offers: "The Docker image used to run this server. This can be changed to use a different image." Selecting one saves immediately.
 
-If an administrator assigned an image outside the egg's list, the selector locks and shows "The Docker image used to run this server. This has been set by an administrator and cannot be changed."
+If an administrator assigned an image outside the egg's list, the selector locks and shows "The Docker image used to run this server. This has been set by an administrator and cannot be changed.", unless the panel-wide [**Allow Overwriting Custom Docker Image**](../admin/settings.md#server) setting keeps it editable.
 
 ## Variables
 
@@ -33,7 +33,7 @@ Each variable is a card with its name, a description, and an input. The input ty
 | Secret | Password-style input that hides the value |
 | Anything else | Text input with a **Reset to default** button |
 
-Required variables are marked with an asterisk, and the input's placeholder shows the default value. Variables the egg does not let users change carry a **Read-Only** badge.
+Required variables are marked with an asterisk (toggle-style boolean variables never are), and the input's placeholder shows the default value. Variables the egg does not let users change carry a **Read-Only** badge.
 
 ![Variables grid with different input types](./images/startup/variables.webp)
 
