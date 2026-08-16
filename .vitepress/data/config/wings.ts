@@ -300,19 +300,19 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.user.rootless.enabled',
           description:
-            'Enables rootless container execution, allowing Wings to run containers without requiring root privileges on the host.',
+            'Enables rootless container execution, allowing Wings to run containers without requiring root privileges on the host. When enabled, Wings takes `system.username`, `system.user.uid` and `system.user.gid` from the user it runs as and derives `docker.userns_mode` from the container UID/GID below.',
           default: false,
         },
         {
           key: 'system.user.rootless.container_uid',
           description:
-            'The UID used inside rootless containers. This is typically set to `0` so the internal container user maps correctly to the user running Wings.',
+            "The UID the server process runs as inside rootless containers. Left at `0` the server runs as container root, which the default rootless mapping already points at the user running Wings; setting it to that user's own UID works too, since Wings derives a matching `docker.userns_mode`. Unlike the other user settings, this one is never filled in automatically.",
           default: 0,
         },
         {
           key: 'system.user.rootless.container_gid',
           description:
-            'The GID used inside rootless containers. This is typically set to `0` so the internal container group maps correctly to the group running Wings.',
+            'The GID the server process runs as inside rootless containers. Follows the same rules as `system.user.rootless.container_uid`.',
           default: 0,
         },
         {
@@ -1071,7 +1071,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'docker.userns_mode',
           description:
-            'The user namespace mode for containers, used to isolate container users from host users for enhanced security.',
+            'The user namespace mode for containers, used to isolate container users from host users for enhanced security. Left empty with `system.user.rootless.enabled` on, Wings derives `keep-id:uid=<container_uid>,gid=<container_gid>` from the rootless settings; setting it explicitly opts out of that and is passed through untouched.',
           default: '',
         },
         {

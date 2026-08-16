@@ -101,8 +101,25 @@ Set `system.user.rootless.enabled` to `true`:
 ```
 
 ::: info
-When `rootless.enabled` is `true`, Wings automatically fills in `container_uid`, `container_gid`, `system.user.uid`, `system.user.gid`, `system.username`, and `docker.userns_mode` from the user Wings is running as. You do not need to set any of these manually - they will be written into `config.yml` on the next start.
+When `rootless.enabled` is `true`, Wings fills in `system.username`, `system.user.uid`, and `system.user.gid` from the user Wings is running as, and derives `docker.userns_mode` as `keep-id:uid=<container_uid>,gid=<container_gid>`. These are written into `config.yml` on the next start.
+
+`container_uid` and `container_gid` are **not** filled in for you - they stay at whatever you set, defaulting to `0`. If you set `docker.userns_mode` yourself it is left alone, so you can opt out of the derived mapping.
 :::
+
+### Container UID and GID
+
+`container_uid` and `container_gid` decide which UID the server process runs as inside the container. Either of the two common values works, as long as it matches the user namespace mapping:
+
+- **`0`** - the server runs as container root, which the default rootless mapping already points at your host user. This is the simplest option and the default.
+- **your host UID** (`id -u`) - the server runs as that UID inside the container, and the derived `keep-id` mapping points it back at your host user.
+
+Both end up with server files owned by your user on the host. Do not set these to a UID that nothing maps to, or containers will see the server directory as owned by `nobody` and be unable to enter it.
+
+### File ownership
+
+Wings chowns server files to `system.user.uid`/`system.user.gid`, which in rootless mode is the user Wings itself runs as, so the chown succeeds as a no-op and still reconciles anything an installer left behind as a different owner.
+
+If the chown is refused - which happens when `system.user.uid` does not match the UID Wings actually runs as - Wings logs a single debug line per server and leaves ownership as written rather than failing the operation. If servers behave oddly and you see `chown refused under a rootless engine` in the logs, that mismatch is what to fix.
 
 ### File paths
 
@@ -174,3 +191,31 @@ docker:
   log_config:
     type: json-file
 ```
+
+## SELinux
+
+On SELinux hosts - RHEL, AlmaLinux, Rocky, Fedora - every container is confined with its own MCS category pair, and a container is denied access to files carrying a different container's categories no matter what their ownership or permissions are.
+
+Wings detects SELinux and asks the engine to relabel the bind mounts it creates with the shared `z` option, so server, installer and script containers can all reach their own volumes. Kernel filesystems (`/dev`, `/proc`, `/sys`) are never relabelled. Nothing changes on hosts without SELinux.
+
+### Running Wings itself in a container
+
+If you run Wings in a container, be careful which relabel option you give its data volume. Uppercase `Z` stamps the directory with the **Wings container's private categories**, which then locks out every server container Wings creates - installs fail with `cd: /mnt/server: Permission denied` and servers fail with `cd: /home/container: Permission denied`, while the file manager keeps working because Wings itself still has access.
+
+Use lowercase `z`, which applies the shared label:
+
+```diff
+ volumes:
+-  - "./wings/data:/var/lib/calagopus-wings:rw,Z,U"
++  - "./wings/data:/var/lib/calagopus-wings:rw,z,U"
+```
+
+If a directory was already stamped with the private label, clear it once:
+
+```bash
+chcon -R -t container_file_t -l s0 ./wings/data
+```
+
+::: warning
+Also make sure `WINGS_UID` and `WINGS_GID` match the user the Wings container runs as. Wings takes its ownership settings from those environment variables when containerized, and if they disagree with the actual process UID, every chown is refused.
+:::
