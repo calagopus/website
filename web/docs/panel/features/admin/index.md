@@ -7,7 +7,7 @@ description: A tour of the Calagopus Admin area, the instance-wide side of the p
 
 The Admin area is the instance-wide side of the panel: nodes, servers, users, eggs, databases, and panel settings all live here. It's only visible to administrators: root admins (accounts with the **Admin** toggle, see [Users](./users.md)) and users granted admin permissions through a [Role](./roles.md). See the [Permissions Reference](../dashboard/permissions.md) for what each admin key covers.
 
-The sidebar starts with **Back** (returns to the dashboard) and **Home**, followed by these groups:
+The sidebar starts with **Back** (returns to the dashboard) and **Home**, followed by these groups, and the [Quick actions](../dashboard/index.md#quick-actions) palette (`Ctrl+Space`) jumps to any of these pages by name:
 
 ## System
 

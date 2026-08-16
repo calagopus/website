@@ -16,6 +16,7 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | General | Binding |
 | --- | --- |
 | Undo the last action | `Ctrl+Z` |
+| Open quick actions | `Ctrl+Space` |
 
 | File Manager | Binding |
 | --- | --- |
@@ -99,6 +100,8 @@ files.delete            = Delete
 [general] # General
 # Undo the last action
 general.undo            = Mod+Z
+# Open quick actions
+general.quickActions    = Mod+Space
 
 [console] # Server Console
 # Search in console output

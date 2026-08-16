@@ -25,7 +25,7 @@ Above every tab, the panel surfaces server-wide state: dismissible per-server an
 
 ## Server Header
 
-The sidebar stays the same on every tab. At the top, a status card shows the server's name, its current state (**Running**, **Starting**, **Stopping**, **Offline**, or a special status like installing or transferring), and its uptime while running.
+The sidebar stays the same on every tab. Above it, the [Quick actions](../dashboard/index.md#quick-actions) palette (`Ctrl+Space`) carries the server's pages and its state-aware power actions. At the top, a status card shows the server's name, its current state (**Running**, **Starting**, **Stopping**, **Offline**, or a special status like installing or transferring), and its uptime while running.
 
 Below that sit quick power buttons: **Start** while the server is offline, **Stop** while it runs, and a restart button. While the server is stopping, the button becomes **Kill**, with the same force-stop confirmation as on the [Console](./console.md).
 
