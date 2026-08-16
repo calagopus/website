@@ -1,4 +1,4 @@
-import type { ConfigDoc, YamlValue } from './types.ts';
+import { type ConfigDoc, float, type YamlValue } from './types.ts';
 
 const TLS_DEFAULTS: YamlValue = { enabled: false, ktls_enabled: false, cert: 'cert.pem', key: 'key.pem' };
 
@@ -53,6 +53,12 @@ export const dbAgentConfigDoc: ConfigDoc = {
           description:
             'The number of log lines to send when a client connects to a database instance websocket. This provides the initial "backlog" of console history and also sizes the buffer of live log lines a slow client may fall behind by before it starts missing output.',
           default: 150,
+        },
+        {
+          key: 'tcp_congestion_control',
+          description:
+            'The TCP congestion control algorithm applied to the listeners DB Agent owns: the management API and every enabled database proxy. Linux only, and the algorithm has to be available to the kernel - DB Agent looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
+          default: 'bbr',
         },
       ],
     },
@@ -160,10 +166,40 @@ export const dbAgentConfigDoc: ConfigDoc = {
           default: 100,
         },
         {
+          key: 'docker.shm_size',
+          description:
+            "The size (in `MiB`) of `/dev/shm` inside database containers. `0` leaves Docker's own default (64 MiB) in place. Raise it for engines that lean on shared memory, PostgreSQL puts the dynamic shared memory segments its parallel query workers use there and the 64 MiB default is a common source of `could not resize shared memory segment` errors.",
+          default: 0,
+        },
+        {
           key: 'docker.container_pid_limit',
           description:
             'The maximum number of processes (PIDs) allowed to run simultaneously within a single database container.',
           default: 512,
+        },
+        {
+          key: 'docker.container_apparmor_profile',
+          description:
+            'The name of an AppArmor profile to confine database containers with, passed to Docker as `apparmor=<profile>`. The profile must already be loaded on the host. Leaving this empty lets Docker apply its own `docker-default` profile.',
+          default: '',
+        },
+        {
+          key: 'docker.container_ulimits',
+          description:
+            'Per-container resource limits, applied to every database container DB Agent creates. Each entry is a `name`, a `soft` limit and a `hard` limit, matching the `--ulimit` flag of `docker run` (`-1` means unlimited). An empty list leaves the daemon defaults in place. A `nofile` hard limit larger than what the host lets DB Agent raise its own limit to is clamped down to that ceiling (and the soft limit with it), with a warning logged once.',
+          default: [],
+          notesAfter: [
+            {
+              type: 'info',
+              body: 'Each entry is a map, so a raised file descriptor limit looks like this:\n\n```yaml\ncontainer_ulimits:\n- name: nofile\n  soft: 65535\n  hard: 65535\n```',
+            },
+          ],
+        },
+        {
+          key: 'docker.container_sysctls',
+          description:
+            'Kernel parameters set inside every database container, matching the `--sysctl` flag of `docker run`. Only namespaced sysctls can be set this way; the Docker daemon rejects the container outright for anything else.',
+          default: {},
         },
         {
           key: 'docker.timezone',
@@ -175,6 +211,24 @@ export const dbAgentConfigDoc: ConfigDoc = {
           description:
             'The user namespace mode for database containers, used to isolate container users from host users for enhanced security. Ignored when `docker.rootless.enabled` is `true`.',
           default: '',
+        },
+        {
+          key: 'docker.cpu_period',
+          description:
+            "The CFS scheduling period (in microseconds) used for container CPU limits. A database's CPU limit is turned into a quota of `limit% × cpu_period`, so a shorter period hands out CPU time in smaller, more frequent slices, at the cost of more scheduler overhead. Values are clamped to the kernel's accepted range of `1000` - `1000000`.",
+          default: 100000,
+        },
+        {
+          key: 'docker.cfs_burst.enabled',
+          description:
+            'Whether to grant containers CFS burst, letting a database bank unused CPU time within a period and spend it on a later spike instead of being throttled. Requires a kernel with CFS burst support (`cpu.max.burst` on cgroup v2, `cpu.cfs_burst_us` on v1); where it is unsupported, DB Agent leaves it alone and warns about it once. Databases without a CPU limit are unaffected, they are not throttled to begin with.',
+          default: true,
+        },
+        {
+          key: 'docker.cfs_burst.multiple',
+          description:
+            "The fraction of a database's CPU quota that may be banked as burst. `1.0` allows a full extra quota's worth of CPU time, so one more period at the database's own limit, `0.5` half of it, `0` disables bursting for the same effect as turning `enabled` off. The kernel refuses a burst larger than the quota, so values above `1.0` are clamped, and negative values are treated as `0`.",
+          default: float(1),
         },
         {
           key: 'docker.registry_image_fetch_cache.enabled',
@@ -189,9 +243,15 @@ export const dbAgentConfigDoc: ConfigDoc = {
           default: 300,
         },
         {
+          key: 'docker.registry_image_fetch_cache.background_refresh',
+          description:
+            'Whether a stale image is refreshed in the background instead of holding up the database boot. When enabled and the image already exists on the host, DB Agent starts the database from the local copy right away and pulls the newer image in a background task, so the update only takes effect on the next start. Images that are not on the host yet are still pulled before the database boots. With `registry_image_fetch_cache.enabled` set to `false` the background pull fires on every start instead of being rate-limited by `duration`.',
+          default: false,
+        },
+        {
           key: 'docker.rootless.enabled',
           description:
-            "Enables rootless container execution. When enabled, each database container is started with a `keep-id` user namespace mapping derived from that database's own image UID/GID, so it maps correctly to the unprivileged user running DB Agent, and DB Agent skips `chown`-ing the database's host data directories (which would fail without root).",
+            "Enables rootless container execution. When enabled, each database container is started with a `keep-id` user namespace mapping derived from that database's own image UID/GID, so it maps correctly to the unprivileged user running DB Agent. `chown` on the database's host data directories is still attempted, but a refusal from the rootless engine is absorbed instead of failing the start, the files are already owned by the mapped user in that case, and every later `chown` is skipped.",
           default: false,
         },
         {
@@ -270,18 +330,19 @@ export const dbAgentConfigDoc: ConfigDoc = {
           description:
             'When set to `true`, DB Agent will ignore configuration update requests sent to the management API.',
           default: false,
+          notesAfter: [
+            {
+              type: 'info',
+              title: 'Options the Panel can never change',
+              body: 'Even with config updates enabled, a set of paths is stripped out of every patch the Panel sends, so they can only be changed by editing `config.yml` on the node itself:\n\n- Paths: `socket_dir`, `data_dir`, `log_dir`\n- Host access: `docker.socket`\n- Listener and authentication: `api.bind`, `api.tls`, `api.token`, `api.trusted_proxies`\n- Remote imports: `api.disable_remote_import`, `api.remote_import_blocked_cidrs`\n- The flags themselves: `ignore_config_updates`, `ignore_upgrades`\n\nThe rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.',
+            },
+          ],
         },
         {
           key: 'ignore_upgrades',
           description:
             'When set to `true`, DB Agent will ignore remote upgrade requests sent to the management API, reporting the upgrade as not applied instead of replacing its own binary. Upgrades are unsupported in containerized environments regardless of this option.',
           default: false,
-          notesAfter: [
-            {
-              type: 'info',
-              body: 'This option used to live under `api.ignore_upgrades`. An existing config file is migrated automatically on startup, moving the value to the top level and logging a warning about it.',
-            },
-          ],
         },
       ],
     },
@@ -298,7 +359,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'tls.ktls_enabled',
           description:
-            "Whether to hand connections off to the kernel's TLS implementation (kTLS) once the handshake completes, so the kernel encrypts and decrypts records instead of userspace. This mainly helps with bulk transfers. Linux only, and it requires the `tls` kernel module; DB Agent probes for kernel support on boot and silently falls back to userspace TLS if the kernel or the negotiated cipher suite doesn't support it. Has no effect unless `enabled` is `true`.",
+            "Whether to hand connections off to the kernel's TLS implementation (kTLS) once the handshake completes, so the kernel encrypts and decrypts records instead of userspace. This mainly helps with bulk transfers. Linux only, and it requires the `tls` kernel module; DB Agent probes for kernel support on boot, warns once and stays on userspace TLS if the kernel cannot do it, and falls back per connection when the negotiated cipher suite isn't kTLS compatible. Has no effect unless `enabled` is `true`.",
           default: false,
         },
         {

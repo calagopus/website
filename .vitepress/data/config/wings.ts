@@ -64,7 +64,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'api.ssl.ktls_enabled',
           description:
-            "Whether to hand HTTPS connections off to the kernel's TLS implementation (kTLS) once the handshake completes, so the kernel encrypts and decrypts records instead of userspace. This mainly speeds up large file transfers and backup downloads. Linux only, and it requires the `tls` kernel module; Wings probes for kernel support on boot and silently falls back to userspace TLS if the kernel or the negotiated cipher suite doesn't support it. Has no effect unless `api.ssl.enabled` is `true`.",
+            "Whether to hand HTTPS connections off to the kernel's TLS implementation (kTLS) once the handshake completes, so the kernel encrypts and decrypts records instead of userspace. This mainly speeds up large file transfers and backup downloads. Linux only, and it requires the `tls` kernel module; Wings probes for kernel support on boot, warns once and stays on userspace TLS if the kernel cannot do it, and falls back per connection when the negotiated cipher suite isn't kTLS compatible. Has no effect unless `api.ssl.enabled` is `true`.",
           default: false,
         },
         {
@@ -1006,7 +1006,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'docker.cfs_burst.enabled',
           description:
-            'Whether to grant containers CFS burst, letting a server bank unused CPU time within a period and spend it on a later spike instead of being throttled. Requires a kernel with CFS burst support (`cpu.max.burst` on cgroup v2, `cpu.cfs_burst_us` on v1); where it is unsupported, Wings skips it silently. Servers without a CPU limit are unaffected, they are not throttled to begin with.',
+            'Whether to grant containers CFS burst, letting a server bank unused CPU time within a period and spend it on a later spike instead of being throttled. Requires a kernel with CFS burst support (`cpu.max.burst` on cgroup v2, `cpu.cfs_burst_us` on v1); where it is unsupported, Wings leaves it alone and warns about it once. Servers without a CPU limit are unaffected, they are not throttled to begin with.',
           default: true,
         },
         {
