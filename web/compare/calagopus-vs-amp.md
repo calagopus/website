@@ -1,6 +1,6 @@
 ---
-title: Calagopus vs AMP (Application Management Panel) - Comparison
-description: A detailed comparison of Calagopus and CubeCoders AMP for game server management. See how the free, open-source Calagopus stacks up against AMP's commercial feature set.
+title: Calagopus vs AMP - Game Server Panel Comparison
+description: A detailed comparison of Calagopus and CubeCoders AMP. See how the free, open-source, Rust-based Calagopus panel compares to AMP's commercial, closed-source C#/.NET platform.
 head:
   - - meta
     - name: robots
@@ -11,111 +11,91 @@ aside: false
 
 # Calagopus vs AMP
 
-AMP (Application Management Panel) by CubeCoders is a commercial, closed-source game server management solution with deep integrations for specific games. Calagopus is free, open-source, and built in Rust. This page covers the key differences to help you decide which fits your use case.
+AMP (Application Management Panel) by CubeCoders has been in active development since 2014, and it takes a noticeably different approach from the Pterodactyl family. It runs natively on both Windows and Linux, without requiring Docker for most applications, and offers deep, per-game integrations instead of relying on a generic server console. It also includes WebAuthn and OIDC single sign-on out of the box. The trade-off is that AMP is closed-source and commercially licensed, with pricing based on the number of game-server instances rather than being freely available.
+
+Calagopus takes the opposite approach when it comes to licensing: it's MIT-licensed, free to use at any scale, and follows the same Docker-per-server model used by Pterodactyl and Pelican. It's also built from the ground up in Rust. This comparison focuses on the areas that matter most when choosing between the two - licensing, architecture, and feature depth - rather than treating them as identical products solving the problem in exactly the same way.
 
 ## Quick Summary
 
-| | Calagopus | AMP |
-| --- | --- | --- |
-| **Language** | Rust | C# (.NET) |
-| **License** | MIT (open source) | Commercial (closed source) |
-| **Price** | Free | Paid (per-instance licensing) |
-| **Extension System** | Native (Rust traits) | None publicly documented |
-| **Game-specific Features** | Community eggs | Deep built-in integrations |
-| **Windows Panel Support** | ✅ | ✅ |
-| **ARM64 Support** | ✅ | ✅ |
+|                           | Calagopus            | AMP                                      |
+| ------------------------- | -------------------- | ---------------------------------------- |
+| **Language**              | Rust                 | C# (.NET)                                |
+| **First release**         | June 2025            | 2014                                     |
+| **License**               | MIT (open source)    | Proprietary (closed source)              |
+| **Price**                 | Free                 | Paid, per-instance                       |
+| **Commercial Use**        | Allowed              | Requires Enterprise Edition              |
+| **Extension System**      | ✅                   | ✅                                       |
+| **Windows Panel Support** | ✅                   | ✅                                       |
+| **ARM64 Support**         | ✅                   | ✅                                       |
 
-## The Core Tradeoff: Open Source vs Commercial
+## Architecture
 
-The most fundamental difference between Calagopus and AMP is the licensing model.
+Calagopus uses the same basic architecture as Pterodactyl and Pelican: a panel communicates with a Wings node daemon, which runs each game server inside its own Docker container.
 
-**Calagopus** is MIT-licensed and free for any use - personal, commercial, or otherwise - with no feature gating, no instance caps, and no licensing cost at any scale. You can inspect, modify, and contribute to the source code on GitHub.
+AMP takes a different route. By default, it manages applications as native processes on the host operating system and only uses Docker when it's useful for a particular scenario. Neither approach is inherently better. Docker gives Calagopus strong per-server isolation out of the box, while AMP's process-based model avoids Docker for the common case, which can be especially appealing to operators running Windows environments.
 
-**AMP** is proprietary software sold under a commercial license. Pricing is per-instance; running many game servers or many nodes increases cost. You cannot inspect or modify the source code.
-
-For self-hosters and budget-conscious hosting providers, this is often the decisive factor. For operators who prioritize vendor support and specific game-level integrations, AMP's commercial model may be a reasonable trade-off.
+AMP isn't included in our [benchmarking suite](/docs/about/benchmarks). It doesn't use the same kind of API-based, scriptable deployment that the suite is designed around, so we don't have a direct throughput comparison like we do for Pterodactyl and Pelican.
 
 ## Feature Comparison
 
-| Feature | Calagopus | AMP |
-| --- | --- | --- |
-| Free & Open Source | ✅ | ❌ |
-| Native Extension System | ✅ | ❌ |
-| Uncommon Game-specific Features | ❌ | ✅ |
-| Live Console | ✅ | ✅ |
-| File Manager | ✅ | ✅ |
-| File Edit History | ✅ | ❌ |
-| Backup Browsing Support | ✅ | ✅ |
-| Archive Browsing Support | ✅ | ❌ |
-| SFTP Support | ✅ | ✅ |
-| SSH (Shell) Support | ✅ | ❌ |
-| Schedule Tasks | ✅ | ✅ |
-| Advanced Schedule Triggers | ✅ | ✅ |
-| Database Management | ✅ | ✅ |
-| Subuser Management | ✅ | ✅ |
-| Backups | ✅ | ✅ |
-| Advanced Backup Drivers | ✅ | ✅ |
-| Extra Allocations | ✅ | ✅ |
-| WebAuthn Authentication | ✅ | ✅ |
-| OAuth Support | ✅ | ✅ |
-| Asset Management | ✅ | ✅ |
-| User Management | ✅ | ✅ |
-| User Impersonation | ✅ | ❌ |
-| Support for Multiple Nodes | ✅ | ✅ |
-| Egg Repository System | ✅ | ❌ |
-| MySQL Server-Database Support | ✅ | ❌ |
-| PostgreSQL Server-Database Support | ✅ | ❌ |
-| MongoDB Server-Database Support | ✅ | ❌ |
-| Dynamic Backup Configuration | ✅ | ❌ |
-| Mount Management | ✅ | ✅ |
-| Role Management | ✅ | ✅ |
-| Admin Activity Log | ✅ | ✅ |
+The table below is based on the [full feature reference](/docs/about/features) and focuses specifically on Calagopus and AMP.
 
-## Where Each Panel Leads
+| Feature                       | Calagopus | AMP |
+| ----------------------------- | --------- | --- |
+| Free & Open Source            | ✅         | ❌   |
+| Live Console                  | ✅         | ✅   |
+| File Manager                  | ✅         | ✅   |
+| Backup Browsing Support       | ✅         | ✅   |
+| Database Management           | ✅         | ✅   |
+| Redis Server-Database Support | ✅         | ❌   |
+| Backups                       | ✅         | ✅   |
+| Schedule Tasks                | ✅         | ✅   |
+| Advanced Schedule Triggers    | ✅         | ✅   |
+| Extra Allocations             | ✅         | ✅   |
+| SFTP Support                  | ✅         | ✅   |
+| Collaborative File Editing    | ✅         | ❌   |
+| Subuser Management            | ✅         | ✅   |
+| WebAuthn Authentication       | ✅         | ✅   |
+| OAuth Support                 | ✅         | ✅   |
+| User Management               | ✅         | ✅   |
+| Support for Multiple Nodes    | ✅         | ✅   |
 
-### AMP's Advantage: Deep Game Integrations
+AMP is particularly strong when it comes to server management. It integrates heavily with the games it supports, while Calagopus offers a more generic approach out of the box.
 
-AMP's primary differentiator is game-specific feature depth. For games like Minecraft, AMP ships integrations that surface game-native data - online players, in-game events, world management tools - directly in the panel UI without relying on a generic console approach. For hosting providers whose entire business is one or two specific games, AMP's native integrations can be genuinely useful.
+## Where Calagopus Goes Further
 
-Calagopus takes a more generalist approach. The egg system supports any Linux-containerizable game, and community eggs handle configuration for hundreds of games. What you don't get is the same level of game-native UI integration. If you need to serve game-specific configuration dialogs for specific titles, AMP has the lead.
+### Licensing and Cost
 
-### Where Calagopus Leads: Open Source and Extensibility
+This is arguably the biggest difference between the two.
 
-**Extension system.** Calagopus ships a native Rust extension API. Extensions can add backend logic, custom routes, database migrations, UI elements, CLI commands, event handlers, and more. Because extension points are defined in the Rust type system, integrations are stable and type-checked. AMP has no public extension system.
+Calagopus is MIT-licensed and completely free for personal or commercial use. There are no per-instance fees and no limits on the number of servers or nodes you can operate.
 
-**No licensing cost at any scale.** Calagopus has no per-instance, per-node, or per-user pricing. Whether you're running a three-server homelab or a multi-node commercial operation, the cost is zero.
+AMP's Standard, Professional, and Advanced editions are one-time purchases rather than subscriptions. They're licensed by instance count, with standard pricing. However, those tiers cannot be used to commercially resell game-server hosting.
 
-**File management depth.** Calagopus adds file edit history, archive browsing, and backup browsing - features AMP doesn't offer in the file manager. Being able to browse inside a `.zip` or a backup snapshot without extracting it first saves meaningful time during server maintenance.
+Commercial reselling requires AMP Enterprise Edition, which is covered by a separate commercial agreement. So if you're running a hosting business rather than a personal or community server, that distinction is considerably more important than the entry-level price alone.
 
-**Shell access.** Calagopus gives users direct SSH shell access to their server container from the web UI. AMP provides console access but not a full interactive shell.
+### File Management
 
-**Database type flexibility.** Calagopus supports MySQL/MariaDB, PostgreSQL, and MongoDB as server-managed database types. AMP supports none of these as game database hosts.
+Both panels provide a file manager, but Calagopus goes further with file-edit history and a diff viewer, the ability to browse `.zip`, `.tar`, and `.7z` archives without extracting them first, cross-server file copying, and real-time collaborative file editing.
 
-**User impersonation.** Calagopus lets admins impersonate any user - useful for support workflows and debugging permission configurations. AMP does not have this feature.
+AMP's file manager doesn't offer these same capabilities, but does have built-in configuration editors tailored to specific games.
 
-**Egg ecosystem.** Calagopus ships with a built-in egg repository browser. Hundreds of community-maintained eggs are available for Minecraft variants (Java, Bedrock, Paper, Fabric, Forge, Velocity, BungeeCord), Rust, ARK: Survival Evolved, Valheim, FiveM/RedM, CS2, Garry's Mod, 7 Days to Die, Factorio, Terraria, and many more. The egg format is also compatible with the wider Pterodactyl/Pelican ecosystem.
+### Database Types
 
-**Dynamic backup configuration.** Calagopus's backup system lets administrators define multiple named backup targets (different S3 buckets, different retention policies) and assign servers to specific targets. This is useful for tiered storage or compliance requirements. AMP uses a single backup configuration.
+Through its dedicated [database agent](/docs/db-agent/overview), Calagopus can provision PostgreSQL, MongoDB, MySQL/MariaDB and Redis as server-attached database types.
 
-## Who Should Use What
+AMP can also run these databases (except Redis) as seperate instances, but does offer less flexibility in terms of deployment on seperate servers.
 
-**Choose Calagopus if:**
-- You want a free, open-source solution with no licensing cost
-- You're self-hosting or running a multi-game hosting operation
-- You want an extension system to add custom functionality
-- You value transparency and community contributions
-- You need database-host functionality with PostgreSQL or MongoDB
-- You're migrating from Pterodactyl or Pelican and want to keep your egg library
+## Migrating from AMP
 
-**AMP may be worth evaluating if:**
-- Your operation is heavily focused on a specific game that AMP integrates natively
-- You have budget for commercial software and prioritize vendor support
-- You prefer a closed-source solution
+There isn't currently an automated AMP importer like the ones available for Pterodactyl or Pelican. AMP's instance model doesn't map neatly onto Calagopus's node-and-server structure, so migrating requires setting up Calagopus from scratch and recreating your server configurations.
 
-<CompareFaq />
+For most small-to-medium-sized setups, that's a manageable, if somewhat manual, process. The best place to start is the [installation guide](/docs/panel/installation/).
 
----
+## Ready to Switch?
 
-Ready to try Calagopus? [Install it](/docs/panel/installation/) or check the [live demo](https://demo.calagopus.com).
+If you're moving away from AMP because of its cost, closed-source model, or another reason, you can [install Calagopus from scratch](/docs/panel/installation/) and manually recreate your existing server configurations.
+
+On the other hand, if AMP's per-game integrations or native Windows process model are important to your workflow, those are perfectly valid reasons to stick with it. There isn't a reason to pick one over the other, they simply do different things. Pick what is right for you.
 
 **More comparisons:** [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl) · [Calagopus vs Pelican](/compare/calagopus-vs-pelican)

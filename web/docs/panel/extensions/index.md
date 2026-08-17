@@ -35,6 +35,7 @@ Extensions are built around several core systems:
 - [Activity Logging](./concepts/activity-logging.md) - Record extension-related actions
 - [Translations](./concepts/translations.md) - Provide multi-language support
 - [Mounting UI](./concepts/mounting-ui.md) - Inject UI elements into the Panel interface
+- [Quick Actions](./concepts/quick-actions.md) - Add entries, categories and prefix modes to the command palette
 - [Toasts](./concepts/toasts.md) - Show transient feedback to the user
 - [Extending Models](./concepts/extending-models.md) - Add fields to existing data models
 - [Email Templates](./concepts/email-templates.md) - Define custom email templates for notifications and communications

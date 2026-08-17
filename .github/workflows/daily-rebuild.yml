@@ -24,10 +24,6 @@ jobs:
       - name: Wait for deployment to publish
         run: sleep 300
 
-      # IndexNow (Bing/Yandex/Naver; Google does not participate) - submit
-      # pages whose sitemap lastmod changed in the last 2 days so search
-      # engines recrawl updated content promptly instead of on their own
-      # schedule. The key file is served from web/public/.
       - name: Submit recently changed URLs to IndexNow
         run: |
           python3 - <<'EOF'
@@ -38,8 +34,13 @@ jobs:
 
           KEY = "c0b4e7b671f31efb78845322dce3f516"
           NS = {"sm": "http://www.sitemaps.org/schemas/sitemap/0.9"}
+          UA = "calagopus-indexnow/1.0 (+https://calagopus.com)"
 
-          with urllib.request.urlopen("https://calagopus.com/sitemap.xml", timeout=30) as res:
+          req = urllib.request.Request(
+              "https://calagopus.com/sitemap.xml",
+              headers={"User-Agent": UA},
+          )
+          with urllib.request.urlopen(req, timeout=30) as res:
               tree = ET.fromstring(res.read())
 
           cutoff = datetime.now(timezone.utc) - timedelta(days=2)
@@ -65,7 +66,10 @@ jobs:
           req = urllib.request.Request(
               "https://api.indexnow.org/indexnow",
               data=payload,
-              headers={"Content-Type": "application/json; charset=utf-8"},
+              headers={
+                  "Content-Type": "application/json; charset=utf-8",
+                  "User-Agent": UA,
+              },
           )
           with urllib.request.urlopen(req, timeout=30) as res:
               print(f"Submitted {len(urls)} URL(s), IndexNow responded {res.status}")

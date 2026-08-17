@@ -25,7 +25,7 @@ export const featureCategories: FeatureCategory[] = [
     title: 'Core & Extensibility',
     rows: [
       { name: 'Free & Open Source', calagopus: true, pterodactyl: true, pelican: true, amp: false },
-      { name: 'Native Extension System', calagopus: true, pterodactyl: false, pelican: true, amp: null },
+      { name: 'Native Extension System', calagopus: true, pterodactyl: false, pelican: true, amp: true },
       {
         name: 'First-Party UI Component Interception API',
         calagopus: true,

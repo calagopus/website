@@ -144,7 +144,7 @@ The definition types form a small hierarchy, each level adding fields. These are
 
 **Additionally for permissioned routes (`AdminRouteDefinition`, `ServerRouteDefinition`):**
 
-- **`permission?: string | string[] | null`** - the permission node(s) required to see this route. A single string requires that permission; an array requires all of them. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend - see [Permissions](./permissions.md) for how permission nodes map to what the user can do. `null` or omitted means no permission required (which is the right default for most user-facing features; reach for `permission` when you have something gated).
+- **`permission?: string | string[] | null`** - the permission node(s) required to see this route. A single string requires that permission; an array passes if the user holds *any* of them, so use it for "this page is reachable through more than one grant", not to require a combination. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend - see [Permissions](./permissions.md) for how permission nodes map to what the user can do. `null` or omitted means no permission required (which is the right default for most user-facing features; reach for `permission` when you have something gated).
 
 **Additionally for admin routes (`AdminRouteDefinition`):**
 
