@@ -17,7 +17,7 @@ Click **Create** and fill in **Name**, **Git Repository** (the repository URL), 
 
 ![](./images/egg-repositories/general.webp)
 
-For private repositories, enable the **Repository Credentials** section and pick a **Credential Type**: **None**, **Password** (a **Username** plus a **Password or Access Token**), or **Private Key** (a **Username** plus an SSH **Private Key** with optional **Passphrase**). Password credentials require an `https` repository URL; private keys require an `ssh` one.
+For private repositories, enable the **Repository Credentials** section and pick a **Credential Type**: **None**, **Password** (a **Username** plus a **Password or Access Token**), or **Private Key** (a **Username** plus an SSH **Private Key** with optional **Passphrase**). Password credentials work with both `https` and `ssh` repository URLs; private keys require an `ssh` one.
 
 ![](./images/egg-repositories/repository-credentials.webp)
 

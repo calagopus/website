@@ -14,7 +14,7 @@ The browser shows a breadcrumb (starting at `assets`) and a table with **Name**,
 ## Uploading and Organizing
 
 - **Upload** picks files from your machine; you can also drag and drop files anywhere on the page ("Drop files here to upload").
-- **New Directory** creates a folder inside the current one; the modal previews the full path it will be created at.
+- **New Directory** previews the full path for a new folder inside the current one; the folder itself isn't created until you upload a file into it.
 
 ## Managing Assets
 

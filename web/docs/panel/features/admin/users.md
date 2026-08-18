@@ -94,5 +94,5 @@ The user's account audit log, the same one they see on their own [Activity](../d
 Everything you do while impersonating is written to the activity logs with an "Impersonated by ..." marker next to the actor, so the audit trail always shows who really acted.
 
 ::: warning
-You cannot impersonate yourself, and nobody can impersonate a root admin. Role-based admins can only impersonate users whose role permissions are a subset of their own.
+You cannot impersonate yourself. Root admins can impersonate anyone, including other root admins; role-based admins cannot impersonate root admins, and can only impersonate users whose role permissions are a subset of their own.
 :::

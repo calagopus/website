@@ -5,6 +5,4 @@ onlyBuiltDependencies:
   - esbuild
   - sharp
 minimumReleaseAge: 4320 # 3 days
-minimumReleaseAgeExclude:
-  - vitepress-plugin-viewerjs # (github.com/Lovinoes/vitepress-plugin-image-viewer)
 blockExoticSubdeps: true

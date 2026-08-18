@@ -11,7 +11,7 @@ The Account page covers everything about your own user profile: password, email,
 
 ## Password
 
-Enter your current password, then your new password twice, and hit **Update**. You always have to confirm your current password first, even if you're already logged in.
+Enter your current password, then your new password twice, and hit **Update**. You always have to confirm your current password first, even if you're already logged in. If your account was created through an OAuth provider and has no password set, this section doesn't apply to you.
 
 ## Email
 
