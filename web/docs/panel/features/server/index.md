@@ -37,4 +37,4 @@ Above the tabs, **Servers** takes you back to the dashboard.
 Admins also see an **Admin** link and a **View in Admin Area** link, the latter jumping straight to this server in the Admin area.
 :::
 
-At the bottom, a server switcher shows the current server's name; click it to search your servers and switch to another one without going back to the dashboard. The profile box below doubles as a search box, just like on the [Dashboard](../dashboard/index.md).
+At the bottom, a server switcher shows the current server's name; click it to search your servers and switch to another one without going back to the dashboard, landing on the same page you were on. The `#` search in [Quick actions](../dashboard/index.md#quick-actions) does the same, and picking the server you are already on takes you back to its console. The profile box below doubles as a search box, just like on the [Dashboard](../dashboard/index.md).

@@ -38,6 +38,8 @@ What it offers follows where you are:
 - Inside a server: the server's pages plus **Power** actions matching its state and your permissions (**Start** while offline, **Stop** and **Restart** while running, **Kill** while stopping).
 - In the admin area: **Back**, **Home**, and every admin page.
 
+Whatever page you are on, its own tabs are listed too, under **Page Navigation** - the tabs of a node, an egg or your backups, without reaching for them.
+
 <img src="./images/index/quick-actions-modal.webp" width="310" alt="Quick actions palette" />
 
 A **Logout** action is available everywhere, under **Account**.
