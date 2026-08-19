@@ -14,7 +14,6 @@
     ".vitepress/data/**/*.ts",
     ".vitepress/data/**/*.mts",
     ".vitepress/plugins/**/*.ts",
-    ".vitepress/lib/**/*.ts",
-    "functions/**/*.ts"
+    ".vitepress/lib/**/*.ts"
   ]
 }

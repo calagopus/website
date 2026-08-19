@@ -2,7 +2,7 @@
   "$schema": "https://biomejs.dev/schemas/2.4.16/schema.json",
   "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
   "files": {
-    "includes": ["web/**", ".vitepress/**", "!!**/dist", "!!.vitepress/cache"]
+    "includes": ["web/**", ".vitepress/**", "worker/**", "!!**/dist", "!!.vitepress/cache"]
   },
   "formatter": {
     "enabled": true,

@@ -11,8 +11,13 @@
     "docs:dev": "vitepress dev",
     "docs:build": "node scripts/ensure-git-history.mjs && vitepress build",
     "docs:preview": "vitepress preview",
-    "typecheck": "tsc --noEmit",
+    "worker:dev": "wrangler dev --local",
+    "worker:deploy": "wrangler deploy",
+    "worker:types": "wrangler types --path worker/worker-configuration.d.ts",
+    "typecheck": "pnpm run worker:types && tsc --noEmit && tsc --noEmit -p worker/tsconfig.json",
     "check-config-docs": "node scripts/check-config-docs.mjs",
+    "check-worker-routes": "node scripts/check-worker-routes.mjs",
+    "sync-ai-search": "node scripts/sync-ai-search.mjs",
     "biome:validate": "biome format --css-parse-tailwind-directives=true && biome lint --css-parse-tailwind-directives=true && biome check",
     "biome:fix": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write",
     "biome:fix-unsafe": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write --unsafe"
@@ -23,9 +28,11 @@
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/vue-fontawesome": "^3.3.3",
+    "@modelcontextprotocol/server": "^2.0.0",
     "@types/markdown-it": "^14.1.2",
     "@types/node": "^24.13.3",
     "@unhead/vue": "^3.3.1",
+    "agents": "^0.20.1",
     "cytoscape": "^3.34.0",
     "cytoscape-cose-bilkent": "^4.1.0",
     "dayjs": "^1.11.21",
@@ -45,6 +52,8 @@
     "vitepress-plugin-tabs": "^0.9.1",
     "vitepress-plugin-viewerjs": "^2.0.1",
     "vue": "^3.5.41",
-    "vue-echarts": "^8.0.1"
+    "vue-echarts": "^8.0.1",
+    "wrangler": "^4.123.0",
+    "zod": "^4.4.3"
   }
 }

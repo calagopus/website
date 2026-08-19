@@ -11,6 +11,7 @@ import { acceptMarkdownPlugin } from './plugins/accept-markdown.ts';
 import { aiDocPlugin } from './plugins/ai-doc.ts';
 import { writeConfigDocs } from './plugins/config-docs.ts';
 import { generateLlmsArtifacts } from './plugins/llms.ts';
+import { recordPage, writePageManifest } from './plugins/mcp-manifest.ts';
 import { expandReleaseMarkdown } from './plugins/releases.ts';
 import { expandSponsorsMarkdown } from './plugins/sponsors.ts';
 
@@ -606,11 +607,20 @@ export default withMermaid({
     await generateLlmsArtifacts(siteConfig, SITE_URL);
     await expandReleaseMarkdown(siteConfig.outDir);
     await expandSponsorsMarkdown(siteConfig.outDir);
+    await writePageManifest(siteConfig.outDir, SITE_URL);
   },
 
   transformPageData(pageData, { siteConfig }) {
     const urlPath = `/${pageData.relativePath}`.replace(/index\.md$/, '').replace(/\.md$/, '');
     const canonicalUrl = `${SITE_URL}${urlPath}`;
+
+    recordPage({
+      name: urlPath === '/' ? '/' : urlPath.replace(/\/$/, ''),
+      relativePath: pageData.relativePath,
+      title: pageData.title ?? '',
+      description: pageData.description ?? '',
+      lastUpdated: pageData.lastUpdated,
+    });
 
     pageData.frontmatter.head ??= [];
     pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);

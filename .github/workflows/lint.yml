@@ -52,3 +52,11 @@ jobs:
       - name: Run docs:build
         run: |
           pnpm run docs:build
+
+      - name: Check Worker route coverage
+        run: |
+          pnpm run check-worker-routes
+
+      - name: Validate Worker deployment
+        run: |
+          pnpm exec wrangler deploy --dry-run

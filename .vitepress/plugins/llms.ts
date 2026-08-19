@@ -57,17 +57,36 @@ function featureTableMarkdown(id: string): string {
   return parts.join('\n\n');
 }
 
-function cleanMarkdownExport(source: string): string {
-  return source
+export function pageUrlPath(page: string): string {
+  return `/${page}`.replace(/index\.md$/, '').replace(/\.md$/, '');
+}
+
+function absoluteLinks(markdown: string, page: string): string {
+  const base = new URL(pageUrlPath(page), 'https://site.invalid');
+
+  return markdown.replace(/\]\(([^)\s]+)\)/g, (whole, target: string) => {
+    if (/^[a-z][a-z\d+.-]*:/i.test(target) || target.startsWith('/') || target.startsWith('#')) return whole;
+
+    try {
+      const url = new URL(target, base);
+      const path = url.pathname.replace(/\.md$/, '').replace(/\/index$/, '');
+      return `](${path === '' ? '/' : path}${url.hash})`;
+    } catch {
+      return whole;
+    }
+  });
+}
+
+function cleanMarkdownExport(source: string, page: string): string {
+  const body = source
+    .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n+/, '')
     .replace(/<script setup(?:\s[^>]*)?>[\s\S]*?<\/script>\s*/g, '')
     .replace(/<style(?:\s[^>]*)?>[\s\S]*?<\/style>\s*/g, '')
     .replace(/<FeatureTable\s+id="([^"]+)"\s*\/>/g, (_, id) => featureTableMarkdown(id));
+
+  return absoluteLinks(body, page);
 }
 
-/**
- * Emits `llms.txt` (generated from the sidebar) and copies every markdown
- * source into the output dir, so each page is also served as raw `.md`.
- */
 export async function generateLlmsArtifacts(siteConfig: SiteConfig, siteUrl: string): Promise<void> {
   const { outDir, srcDir, pages, site } = siteConfig;
 
@@ -75,7 +94,7 @@ export async function generateLlmsArtifacts(siteConfig: SiteConfig, siteUrl: str
     const dest = join(outDir, page);
     await mkdir(dirname(dest), { recursive: true });
     const source = await readFile(join(srcDir, page), 'utf8');
-    await writeFile(dest, cleanMarkdownExport(source));
+    await writeFile(dest, cleanMarkdownExport(source, page));
   }
 
   const sections: string[] = [];
@@ -104,7 +123,7 @@ export async function generateLlmsArtifacts(siteConfig: SiteConfig, siteUrl: str
 
 Calagopus is free for personal and commercial use (MIT-licensed core), supports any game that runs in a Linux Docker container, and provides migration tooling for Pterodactyl and Pelican. Source code: https://github.com/calagopus
 
-Every page below links to its raw Markdown version; the rendered HTML lives at the same URL without the \`.md\` suffix (for \`index.md\`, drop the filename).
+Every page below links to its raw Markdown version. Appending \`.md\` to any page URL returns that page as Markdown, as does requesting it with an \`Accept: text/markdown\` header; the rendered HTML lives at the same URL without the \`.md\` suffix.
 
 - [Homepage](${siteUrl}/index.md)
 

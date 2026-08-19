@@ -11,7 +11,8 @@ interface MiddlewareRequest {
 
 type MiddlewareResponse = { setHeader(k: string, v: string): void; end(b: string): void };
 
-function acceptsMarkdown(req: MiddlewareRequest): boolean {
+function wantsMarkdown(req: MiddlewareRequest, pathname: string): boolean {
+  if (pathname.endsWith('.md')) return true;
   const accept = req.headers.accept;
   const value = Array.isArray(accept) ? accept.join(',') : accept;
   return !!value && value.includes('text/markdown');
@@ -47,7 +48,6 @@ export function acceptMarkdownPlugin(): PluginOption {
     configureServer(server) {
       server.middlewares.use(async (req: MiddlewareRequest, res: MiddlewareResponse, next) => {
         if (req.method !== 'GET' && req.method !== 'HEAD') return next();
-        if (!acceptsMarkdown(req)) return next();
 
         let pathname: string;
         try {
@@ -55,6 +55,7 @@ export function acceptMarkdownPlugin(): PluginOption {
         } catch {
           return next();
         }
+        if (!wantsMarkdown(req, pathname)) return next();
 
         const candidates = markdownCandidates(pathname)
           .map((rel) => resolveWithinRoot(root, rel))

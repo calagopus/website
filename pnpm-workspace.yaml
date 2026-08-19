@@ -1,8 +1,11 @@
 allowBuilds:
+  core-js-pure: false
   esbuild: true
   sharp: true
+  workerd: true
 onlyBuiltDependencies:
   - esbuild
   - sharp
+  - workerd
 minimumReleaseAge: 4320 # 3 days
 blockExoticSubdeps: true
