@@ -50,6 +50,14 @@ jobs:
         run: |
           pnpm run check-worker-routes
 
+      - name: Apply ClickHouse schema
+        env:
+          CLICKHOUSE_URL: ${{ secrets.CLICKHOUSE_URL }}
+          CLICKHOUSE_USER: ${{ secrets.CLICKHOUSE_DDL_USER }}
+          CLICKHOUSE_PASSWORD: ${{ secrets.CLICKHOUSE_DDL_PASSWORD }}
+        run: |
+          pnpm run apply-clickhouse-schema
+
       - name: Deploy
         uses: cloudflare/wrangler-action@v3
         with:

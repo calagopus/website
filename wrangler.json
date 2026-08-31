@@ -26,7 +26,9 @@
     }
   ],
   "triggers": {
-    "crons": ["0 * * * *"]
+    "crons": [
+      "0 * * * *"
+    ]
   },
   "ai_search_namespaces": [
     {
@@ -36,12 +38,36 @@
     }
   ],
   "vars": {
-    "AI_SEARCH_INSTANCE": "website"
+    "AI_SEARCH_INSTANCE": "website",
+    "CLICKHOUSE_DATABASE": "telemetry"
   },
   "secrets": {
-    "required": ["GITHUB_TOKEN"]
+    "required": [
+      "GITHUB_TOKEN",
+      "CLICKHOUSE_URL",
+      "CLICKHOUSE_USER",
+      "CLICKHOUSE_PASSWORD"
+    ]
   },
   "observability": {
     "enabled": true
-  }
+  },
+  "ratelimits": [
+    {
+      "name": "TELEMETRY_UUID_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 5,
+        "period": 60
+      }
+    },
+    {
+      "name": "TELEMETRY_IP_LIMITER",
+      "namespace_id": "1002",
+      "simple": {
+        "limit": 60,
+        "period": 60
+      }
+    }
+  ]
 }

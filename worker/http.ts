@@ -40,3 +40,24 @@ export function markdown(text: string, status = 200): Response {
     },
   });
 }
+
+export function noStore(body: unknown, status: number): Response {
+  return new Response(JSON.stringify(body), {
+    status,
+    headers: {
+      'Content-Type': 'application/json',
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'no-store',
+    },
+  });
+}
+
+export function accepted(): Response {
+  return new Response(null, {
+    status: 202,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Cache-Control': 'no-store',
+    },
+  });
+}

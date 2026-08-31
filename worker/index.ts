@@ -11,7 +11,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === MCP_ROUTE) return mcpHandler(env)(request, env, ctx);
-    if (url.pathname.startsWith(API_PREFIX)) return apiHandler(request, env);
+    if (url.pathname.startsWith(API_PREFIX)) return apiHandler(request, env, ctx);
 
     if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request);
 

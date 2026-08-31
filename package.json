@@ -17,6 +17,7 @@
     "typecheck": "pnpm run worker:types && tsc --noEmit && tsc --noEmit -p worker/tsconfig.json",
     "check-config-docs": "node scripts/check-config-docs.mjs",
     "check-worker-routes": "node scripts/check-worker-routes.mjs",
+    "apply-clickhouse-schema": "node scripts/apply-clickhouse-schema.mjs",
     "sync-ai-search": "node scripts/sync-ai-search.mjs",
     "biome:validate": "biome format --css-parse-tailwind-directives=true && biome lint --css-parse-tailwind-directives=true && biome check",
     "biome:fix": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write",
