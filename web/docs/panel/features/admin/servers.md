@@ -62,7 +62,7 @@ Size fields take a value plus a unit (B through PiB).
 
 ### Feature Limits
 
-How many **Allocations**, **Databases**, **Backups**, and **Schedules** the server may have; each defaults to 5. These are the caps the owner runs into on the client-side [Network](../server/network.md), [Databases](../server/databases.md), [Backups](../server/backups.md), and [Schedules](../server/schedules.md) pages.
+How many **Allocations**, **Databases**, **Backups**, and **Schedules** the server may have; each defaults to 5. These are the caps the owner runs into on the client-side [Network](../server/network/index.md), [Databases](../server/databases.md), [Backups](../server/backups.md), and [Schedules](../server/schedules.md) pages.
 
 ### Allocations
 
@@ -115,7 +115,7 @@ Changing the **Owner** hands the server to another user.
 
 ### Allocations
 
-The server's allocations: primary marker, IP, IP Alias, Port, Notes, and Created. Notes are edited inline in the table and save automatically. **Add** opens a modal to attach free allocations from the server's node (multi-select). Right-click a row for **Set Primary** / **Unset Primary** and **Remove**. The owner-facing equivalent is the [Network](../server/network.md) page.
+The server's allocations: primary marker, IP, IP Alias, Port, Notes, and Created. Notes are edited inline in the table and save automatically. **Add** opens a modal to attach free allocations from the server's node (multi-select). Right-click a row for **Set Primary** / **Unset Primary** and **Remove**. The owner-facing equivalent is the [Network](../server/network/index.md) page.
 
 ![](./images/servers/allocations.webp)
 

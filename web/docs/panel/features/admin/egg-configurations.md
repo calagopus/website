@@ -31,7 +31,7 @@ Below are three collapsible sections. Each has an enable toggle; a disabled sect
 
 ![](./images/egg-configurations/allocation-config.webp)
 
-The top half controls what users can do on their server's [Network page](../server/network.md):
+The top half controls what users can do on their server's [Network page](../server/network/index.md):
 
 - **User Self Assign**: lets users create their own allocations, drawn from the **Automatic Allocation Start** / **Automatic Allocation End** port range. Without a configuration enabling this, the client-side create button is rejected.
 - **Require Primary Allocation**: whether users must always have a primary allocation.

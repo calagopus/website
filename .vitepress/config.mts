@@ -319,8 +319,16 @@ export default withMermaid({
                   { text: 'Schedules', link: '/docs/panel/features/server/schedules' },
                   { text: 'Subusers', link: '/docs/panel/features/server/subusers' },
                   { text: 'Backups', link: '/docs/panel/features/server/backups' },
-                  { text: 'Network', link: '/docs/panel/features/server/network' },
-                  { text: 'Firewall', link: '/docs/panel/features/server/firewall' },
+                  {
+                    text: 'Network',
+                    link: '/docs/panel/features/server/network/',
+                    collapsed: true,
+                    items: [
+                      { text: 'Allocations', link: '/docs/panel/features/server/network/allocations' },
+                      { text: 'Firewall', link: '/docs/panel/features/server/network/firewall' },
+                      { text: 'Connections', link: '/docs/panel/features/server/network/connections' },
+                    ],
+                  },
                   { text: 'Startup', link: '/docs/panel/features/server/startup' },
                   { text: 'Mounts', link: '/docs/panel/features/server/mounts' },
                   { text: 'Settings', link: '/docs/panel/features/server/settings' },

@@ -60,9 +60,11 @@ How the panel sends email. Pick a **Provider**:
 | Provider | Fields |
 | --- | --- |
 | **None** | Outgoing email disabled |
-| **SMTP** | **Host**, **Port**, **TLS Mode** (**None**, **STARTTLS**, or **Implicit TLS**), **Skip Certificate Validation**, **Username**, **Password**, **From Address**, **From Name** |
+| **SMTP** | **Host**, **Port**, **TLS Mode** (**None**, **STARTTLS**, or **Implicit TLS**), **Skip Certificate Validation**, **HELO/EHLO Domain**, **Username**, **Password**, **From Address**, **From Name** |
 | **Sendmail Command** | **Command**, **From Address**, **From Name** |
 | **Filesystem** | **Path**, **From Address**, **From Name**; writes messages to files under the path instead of sending them |
+
+**HELO/EHLO Domain** is the name the panel announces itself with when it opens the SMTP connection. Left empty it sends `[127.0.0.1]`, which providers like Google Workspace reject; set it to the panel's own domain in that case.
 
 **Send Test Email** opens a small modal, prefilled with your own address, to verify the configuration actually delivers.
 
@@ -127,8 +129,10 @@ Limits and behavior toggles that apply to all servers on the panel.
 | **Max Backup Groups per Server** | Maximum backup groups each server can have |
 | **Max Databases per Database Instance** | Database cap per managed database instance |
 | **Max Users per Database Instance** | User cap per managed database instance |
-| **Max Firewall Rules** | Maximum [firewall](../server/firewall.md) rules per server |
+| **Max Firewall Rules** | Maximum [firewall](../server/network/firewall.md) rules per server |
 | **Max Firewall Rule Sources** | Maximum sources a single firewall rule may list |
+| **Max Private Connections per Server** | Maximum [private network](../server/network/connections.md) connections a server may open to other servers |
+| **Max Private Ports per Server** | Maximum ports a server may offer to the servers connected to it privately |
 | **Allow Overwriting Custom Docker Image** | Users can pick a different Docker image from the Eggs list even when an admin has set a custom image |
 | **Allow Viewing Installation Logs** | Users with console read permission can watch installation logs; otherwise they're admin-only |
 | **Allow Acknowledging Installation Failure** | Users can acknowledge a failed install and try starting the server instead of waiting for an admin |

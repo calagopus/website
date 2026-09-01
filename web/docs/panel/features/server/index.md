@@ -27,8 +27,7 @@ Suspension, node maintenance and an in-progress transfer block the view in the s
 | [Schedules](./schedules.md) | Automated action steps with triggers and conditions |
 | [Subusers](./subusers.md) | Give other users scoped access to the server |
 | [Backups](./backups.md) | Server backups, with groups and automatic retention |
-| [Network](./network.md) | The server's IP and port allocations |
-| [Firewall](./firewall.md) | Restrict which sources may reach the server's allocations |
+| [Network](./network/index.md) | Allocations, firewall rules, and private connections to other servers |
 | [Startup](./startup.md) | Startup command, Docker image, and egg variables |
 | [Mounts](./mounts.md) | Toggle extra directories mounted into the server |
 | [Settings](./settings.md) | Rename, reinstall, auto-kill, auto-start, and timezone |

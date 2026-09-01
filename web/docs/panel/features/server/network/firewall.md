@@ -5,7 +5,7 @@ description: Restrict which sources may reach a server's allocations with ordere
 
 # Firewall
 
-The Firewall page controls who is allowed to reach this server's allocations. It lives under [Network](./network.md) as a second tab, at `/server/<id>/network/firewall`, and needs the `firewall.read` permission to view and `firewall.update` to change.
+The Firewall page controls who is allowed to reach this server's allocations. It lives under [Network](./index.md) as a second tab, at `/server/<id>/network/firewall`, and needs the `firewall.read` permission to view and `firewall.update` to change.
 
 With no rules configured, the page tells you as much: "Every connection to this server's allocations is allowed. Add a rule to start restricting who can reach it." Nothing is filtered until you add the first rule.
 
@@ -51,8 +51,8 @@ On top of the default-allow notice above, the page raises these:
 | **Not enforced** | "This node will not enforce firewall rules. Rules are saved but have no effect, and **this server may refuse to start while any are configured.**" The node either runs Wings rootless or has its firewall backend disabled. Don't leave rules configured on a node like that. |
 | **Shadowed rule** | "Rule *N* can never match, an earlier rule already covers everything it does." Harmless, but that rule is doing nothing; reorder or remove it. |
 | **Unallocated ports** | The ruleset names ports that aren't allocated to this server. The node ignores them until matching allocations exist. |
-| **Limitations** | "Rules cover traffic reaching this server from elsewhere, both through its published ports and directly on its container address. Connections opened by the node itself are not filtered." |
+| **Limitations** | "Rules cover traffic reaching this server from elsewhere, both through its published ports and directly on its container address. Connections opened by the node itself are not filtered." Traffic arriving over a [private connection](./connections.md) is not filtered either; that connection is its own access grant. |
 
 ::: info
-How many rules a server may have, and how many sources each rule may list, are set by the administrator under [Settings > Server](../admin/settings.md#server). Whether a node can enforce rules at all depends on its Wings configuration.
+How many rules a server may have, and how many sources each rule may list, are set by the administrator under [Settings > Server](../../admin/settings.md#server). Whether a node can enforce rules at all depends on its Wings configuration.
 :::

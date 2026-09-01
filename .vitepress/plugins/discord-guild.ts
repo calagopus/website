@@ -1,7 +1,7 @@
 import { fetchJson } from '../lib/fetch-retry.ts';
 
 const NAME = 'Calagopus';
-const API_URL = 'https://bot.calagopus.com/api/guild';
+const API_URL = 'https://calagopus.com/api/guild';
 
 interface ApiGuild {
   name: string;

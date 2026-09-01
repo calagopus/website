@@ -209,6 +209,17 @@ Permissions that control the ability to restrict which sources may reach this se
 | `firewall.read` | Allows viewing the firewall rules of the server. |
 | `firewall.update` | Allows adding, reordering, modifying and removing firewall rules. |
 
+### Connections
+
+Permissions that control the ability to connect this server privately to other servers, bypassing the public network.
+
+| Permission | Description |
+| --- | --- |
+| `connections.create` | Allows putting the server on the private network and connecting it to another server. |
+| `connections.read` | Allows viewing the server's private network membership, its connections and the ports it offers them. |
+| `connections.update` | Allows changing the server's hostname and which ports it offers to the servers connected to it. |
+| `connections.delete` | Allows removing one of the server's connections, and taking the server off the private network. |
+
 ### Startup
 
 Permissions that control the ability to view and modify this server's startup parameters.
@@ -411,6 +422,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `nodes.database-hosts` | Allows viewing and managing a node's database hosts. |
 | `nodes.database-agent-hosts` | Allows viewing and managing a node's database agent hosts. |
 | `nodes.backups` | Allows viewing and managing a node's backups. |
+| `nodes.tunnel` | Allows viewing and managing a node's private network membership. |
 | `nodes.power` | Allows executing mass-power actions on nodes. |
 | `nodes.transfers` | Allows viewing and managing mass-server transfers between nodes. |
 

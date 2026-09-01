@@ -187,6 +187,37 @@ Live view of transfers currently leaving this node (requires `nodes.transfers`):
 
 ![](./images/nodes/outgoing-transfers.webp)
 
+## Private Network
+
+This tab puts the node on the **private network** (requires `nodes.tunnel`). Once it is on, the servers it hosts can join and be [connected privately](../server/network/connections.md) to servers on any other node that is also on the network: "Traffic goes node to node over an encrypted tunnel and never touches the public internet." The tab is hidden on All-in-One nodes.
+
+The tunnel daemon has to be turned on for the node first, and it is off by default: see [`tundra.enabled`](../../../wings/configuration.md#tundra-enabled). Three alerts cover the cases where the node cannot take part:
+
+| Alert | Meaning |
+| --- | --- |
+| **Unreachable** | "The node could not be reached, so its side of the network could not be checked." |
+| **Not supported** | "This node **cannot run the private network**. It is either turned off in the node configuration, or the node uses rootless Docker, which is unsupported." |
+| **No certificate** | "This node has **not reported a certificate**, so no peer can open a connection to it. Restart the node's tunnel daemon to re-enrol it." Peers dial a node by its certificate, so until one is reported nothing can connect to it. |
+
+![](./images/nodes/tunnel.webp)
+
+**Network Settings** holds the two fields peers need to find this node, and **Enable** puts it on the network:
+
+| Field | Description |
+|---|---|
+| **Host** | "The hostname or IP other nodes dial this one on. Resolved at connection time." Defaults to the hostname from the node's URL. |
+| **Port** | "The UDP port the node listens on for other nodes. Must be reachable from them." Default `7100`. It is a UDP port, not the wings API port. |
+
+**Node State** below reports whether the daemon is **Connected**, the state version it is on, and the certificate fingerprint it enrolled with.
+
+**Rotate Identity** replaces that certificate: "Peers sever their connections to this node immediately. It re-admits itself with a fresh certificate within a minute, and connections re-establish on their own."
+
+**Disable** takes the node back off, and it is disruptive: "Every connection to and from the servers on this node is dropped, and those servers lose their private addresses."
+
+### Live Peer Links
+
+While the node is reachable, the page streams the daemon's own metrics over a websocket. Five tiles across the top give **Peers Connected**, **Daemon Uptime**, **Control Link**, **Bound Frontends** and **Same-Node Drops**. Below them there is a row per peer node, with its **Role** (**Dialled Out** if this node opened the connection, **Accepted** if the peer did), its **Address**, and then **Path** (RTT and MTU), **Loss**, **Transferred**, **Streams**, **Flows**, **Drops**, and how long it has been **Connected**.
+
 ::: info
 All `nodes.*` admin permission keys are listed in the [Permissions Reference](../dashboard/permissions.md).
 :::

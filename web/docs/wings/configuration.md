@@ -1642,6 +1642,64 @@ Default value:
 line_reset_interval: 100
 ```
 
+## Private Network
+
+Tundra is the daemon that carries the [private network](../panel/features/server/network/connections.md), the encrypted node-to-node tunnel servers use to reach each other without going over the public internet. It runs as a privileged container Wings manages, and it is **off by default** on every node.
+
+Turning it on here only makes the node capable of it. An administrator still has to put the node on the network from its [Private Network](../panel/features/admin/nodes.md#private-network) tab in the panel. That tab is also where you set the host and UDP port other nodes dial this one on.
+
+::: warning
+The private network is Linux only, and is not supported with a rootless container engine - the daemon needs a privileged container to build the tunnel interfaces. A node running rootless Wings reports itself as unsupported in the panel no matter what you set here.
+:::
+
+### tundra.enabled
+Whether Wings runs the tundra daemon on this node. With this off, servers on the node cannot join the private network, and the panel reports the node as unable to run it.
+
+Default value:
+```yaml
+enabled: false
+```
+
+### tundra.data_directory
+Where the daemon's persistent state lives, including the node's local CA, its identity and the control socket Wings talks to it over.
+
+Default value:
+```yaml
+data_directory: '{root_directory}/tundra'
+```
+
+### tundra.binary
+Path to a tundra binary to run instead of the bundled one. Leave empty and Wings extracts the binary from `source_image`.
+
+Default value:
+```yaml
+binary: ''
+```
+
+### tundra.image
+The base image the daemon container runs on.
+
+Default value:
+```yaml
+image: debian:trixie-slim
+```
+
+### tundra.source_image
+The image the tundra binary is extracted from when `binary` is empty. Pin this to control which tundra version the node runs.
+
+Default value:
+```yaml
+source_image: ghcr.io/calagopus/tundra:1.0.0
+```
+
+### tundra.metrics_port
+The loopback port the daemon serves its metrics on, which is what feeds the node's live peer links in the panel. It is not the port peers connect on; that one is set per node in the panel.
+
+Default value:
+```yaml
+metrics_port: 7101
+```
+
 ## Remote Configuration
 
 ### remote
@@ -1722,8 +1780,8 @@ ignore_panel_config_updates: false
 Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so they can only be changed by editing `config.yml` on the node itself:
 
 - Node identity: `uuid`, `token`, `token_id`, `remote`, `remote_headers`
-- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.mounting.path`
-- Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `allowed_mounts`
+- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.mounting.path`, `tundra.data_directory`, `tundra.binary`
+- Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `tundra.image`, `tundra.source_image`, `allowed_mounts`
 - Listener and egress: `api.host`, `api.port`, `api.ssl`, `api.trusted_proxies`, `api.disable_remote_download`, `api.remote_download_blocked_cidrs`, `api.schedule.steps.http_request`
 - The flags themselves: `ignore_panel_config_updates`, `ignore_panel_wings_upgrades`
 
@@ -2046,6 +2104,13 @@ throttles:
   enabled: true
   lines: 2000
   line_reset_interval: 100
+tundra:
+  enabled: false
+  data_directory: '{root_directory}/tundra'
+  binary: ''
+  image: debian:trixie-slim
+  source_image: ghcr.io/calagopus/tundra:1.0.0
+  metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}
 remote_query:
@@ -2329,6 +2394,13 @@ throttles:
   enabled: true
   lines: 2000
   line_reset_interval: 100
+tundra:
+  enabled: false
+  data_directory: '{root_directory}\tundra'
+  binary: ''
+  image: debian:trixie-slim
+  source_image: ghcr.io/calagopus/tundra:1.0.0
+  metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}
 remote_query:
