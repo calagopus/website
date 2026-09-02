@@ -60,12 +60,14 @@ The table below is based on the [full feature reference](/docs/about/features) a
 | PostgreSQL Server-Database Support | ✅        | ❌      |
 | MongoDB Server-Database Support    | ✅        | ❌      |
 | Redis Server-Database Support      | ✅        | ❌      |
+| In-Panel Database Explorer         | ✅        | ❌      |
 | Subuser Management                 | ✅        | ✅      |
 | Role Management                    | ✅        | ✅      |
 | Backups                            | ✅        | ✅      |
 | Advanced Backup Drivers            | ✅        | ❌      |
 | Dynamic Backup Configuration       | ✅        | ✅      |
 | Extra Allocations                  | ✅        | ✅      |
+| Private Server-to-Server Network   | ✅        | ❌      |
 | WebAuthn Authentication            | ✅        | ✅      |
 | OAuth Support                      | ✅        | ✅      |
 | User Management                    | ✅        | ✅      |

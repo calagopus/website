@@ -98,6 +98,11 @@ export const featureCategories: FeatureCategory[] = [
           'Per-layer image pull and extraction progress renders as live progress bars in the console whenever the container image is pulled - not just a wall of status text.',
       },
       {
+        name: 'Pop-Out Console Window',
+        description:
+          'The console can be opened in its own browser window, so it keeps streaming on a second screen while the rest of the panel is used elsewhere.',
+      },
+      {
         name: 'Server Power & Stats Commands over SSH',
         description:
           'The SSH shell used for console access also accepts commands to start, stop, restart, or check resource stats, for users with the matching permissions.',
@@ -130,6 +135,21 @@ export const featureCategories: FeatureCategory[] = [
         name: 'Cross-Server File Copy',
         description:
           'Copy files or directories directly to a different server, with a remote directory browser, without a manual download/upload round trip.',
+      },
+      {
+        name: 'Tree View with a Tabbed Editor',
+        description:
+          'The file manager switches between a list and a tree view that keeps the file tree beside the editor, holds several files open as tabs, and splits into side-by-side resizable editor panes when a tab is dragged aside.',
+      },
+      {
+        name: 'SQLite Files Open in the Database Explorer',
+        description:
+          'A .db, .db3, .sqlite or .sqlite3 file opens the same database explorer the panel uses for provisioned databases rather than a text editor, so its tables can be browsed, edited and queried in place.',
+      },
+      {
+        name: 'Image and Audio Preview',
+        description:
+          'Images open in a zoomable viewer with an anti-aliasing toggle for inspecting pixel art, and audio files open in a player with a waveform, 15-second skips and playback speed control.',
       },
       {
         name: 'Advanced File Search',
@@ -181,6 +201,7 @@ export const featureCategories: FeatureCategory[] = [
       { name: 'PostgreSQL Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       { name: 'MongoDB Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       { name: 'Redis Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: false },
+      { name: 'In-Panel Database Explorer', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       {
         name: 'Containerized Database Provisioning ("Database Agent")',
         calagopus: true,
@@ -190,6 +211,11 @@ export const featureCategories: FeatureCategory[] = [
       },
     ],
     bullets: [
+      {
+        name: 'Browse, Edit and Query Databases Without an External Tool',
+        description:
+          'MySQL/MariaDB and PostgreSQL databases open in a built-in explorer: paginated row browsing with stackable column filters, inline cell editing, table and column creation, renaming and deletion, and a SQL console that rejects writes until read-only mode is turned off. Browsing, row edits, structure changes, destructive structure changes and raw SQL are five separate permissions.',
+      },
       {
         name: 'Dedicated Database Instance Controls',
         description:
@@ -317,12 +343,28 @@ export const featureCategories: FeatureCategory[] = [
       { name: 'SFTP Support', calagopus: true, pterodactyl: true, pelican: true, amp: true },
       { name: 'SSH (Shell) Support', calagopus: true, pterodactyl: false, pelican: false, amp: false },
       { name: 'Per-Server Firewall Rules', calagopus: true, pterodactyl: false, pelican: false, amp: null },
+      { name: 'Private Server-to-Server Network', calagopus: true, pterodactyl: false, pelican: false, amp: null },
     ],
     bullets: [
       {
         name: 'Built-in Port Tunneling',
         description:
           "Wings can proxy a TCP or UDP connection to a container's internal, unpublished port over an authenticated WebSocket - a building block for extensions that avoids opening extra ports on the host.",
+      },
+      {
+        name: 'Encrypted Private Network Between Servers',
+        description:
+          'Servers can join a private network and reach each other by hostname over an mTLS QUIC tunnel that runs node to node, including across datacenters. Nothing has to be published on a public game port, and it costs neither side a public allocation.',
+      },
+      {
+        name: 'Directional Connections with Offered Ports',
+        description:
+          'A private connection is granted in one direction at a time, and needs permission on both servers. The destination decides which of its ports are reachable over the private network at all, and that list is not limited to its allocations: anything it listens on inside the container can be offered, such as a database or RCON port that was deliberately never published.',
+      },
+      {
+        name: 'Live Peer Link Metrics per Node',
+        description:
+          "Each node's tunnel peers stream to the admin UI over a websocket, with RTT and MTU, packet loss, bytes transferred, open streams and flows, and how long each link has been up.",
       },
       {
         name: 'Per-Egg Allocation Policy',
@@ -395,7 +437,7 @@ export const featureCategories: FeatureCategory[] = [
       {
         name: 'Session Management',
         description:
-          'View all active login sessions with IP, device, and last-used time, and revoke any of them individually.',
+          'View all active login sessions with IP, device, and last-used time, and revoke any of them individually. A password reset revokes every other session automatically, and changing your password offers to do the same.',
       },
       {
         name: 'Scoped, Expiring API Keys',

@@ -36,6 +36,7 @@ Three projects come up in almost every search for a replacement. **Pelican** is 
 | **Extension system**             | None (Blueprint, unofficial) | First-party PHP plugins       | Yes                         | Native Rust extension API          |
 | **Panel database**               | MySQL/MariaDB               | MySQL, PostgreSQL, SQLite      | Built in                    | PostgreSQL (read replicas supported) |
 | **Game-server database types**   | MySQL/MariaDB               | MySQL/MariaDB                  | MySQL, PostgreSQL, MongoDB  | MySQL, PostgreSQL, MongoDB, Redis  |
+| **Private server network**       | No                          | No                             | Not compared                | Encrypted node-to-node tunnel      |
 | **Passkeys / OAuth**             | No / No                     | Yes / Yes                      | Yes / Yes (OIDC)            | Yes / Yes (any OAuth2/OIDC)        |
 | **Admin roles / audit log**      | No / No                     | Yes / No                       | Yes / not compared          | Yes / Yes                          |
 | **Windows panel host**           | No                          | No                             | Yes                         | Yes                                |
@@ -72,7 +73,7 @@ Read the detailed [Calagopus vs AMP](/compare/calagopus-vs-amp) comparison.
 
 ### Calagopus
 
-Calagopus keeps what works about Pterodactyl, the egg format and the panel/Wings split, and rewrites both halves in Rust. The practical differences are a native extension API whose extensions can replace built-in UI instead of patching it, event-driven schedule triggers (crashes, resource thresholds, console output, other schedules), file edit history with diffs, archive and backup browsing, an in-browser SSH shell, eight backup drivers, and role-based admin with an audit log. It also runs the panel on Windows and ARM64. The trade-off is age: the first release was June 2025, so the community and third-party extension catalog are smaller than Pterodactyl's. A built-in importer reads a Pterodactyl or Pelican database directly, so users, servers, nodes and eggs come across without moving server data.
+Calagopus keeps what works about Pterodactyl, the egg format and the panel/Wings split, and rewrites both halves in Rust. The practical differences are a native extension API whose extensions can replace built-in UI instead of patching it, event-driven schedule triggers (crashes, resource thresholds, console output, other schedules), file edit history with diffs, archive and backup browsing, an in-browser SSH shell, eight backup drivers, and role-based admin with an audit log. Two more recent additions are a private network that lets servers on different nodes reach each other over an encrypted node-to-node tunnel, and a database explorer that browses, edits and queries a server's MySQL or PostgreSQL databases from the panel. It also runs the panel on Windows and ARM64. The trade-off is age: the first release was June 2025, so the community and third-party extension catalog are smaller than Pterodactyl's. A built-in importer reads a Pterodactyl or Pelican database directly, so users, servers, nodes and eggs come across without moving server data.
 
 Read the detailed [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl) comparison.
 
