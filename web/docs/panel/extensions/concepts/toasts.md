@@ -13,7 +13,7 @@ Everything goes through one hook, `useToast`, exported from the Panel's `ToastPr
 
 ```tsx
 import { useToast } from '@/providers/ToastProvider.tsx';
-import Button from '@/elements/Button.tsx';
+import Button from '@/elements/buttons/Button.tsx';
 
 export default function MyCard() {
   const { addToast } = useToast();
@@ -136,7 +136,7 @@ Actions live and die with the toast, which disappears on its own after a few sec
 The hook takes a scope and returns an `addUndoableToast(message, undo)` function:
 
 ```tsx
-import { useUndoableToast } from '@/plugins/useUndoableToast.ts';
+import { useUndoableToast } from '@/plugins/toast/useUndoableToast.ts';
 
 export default function RenameModal({ server, file }: Props) {
   const addUndoableToast = useUndoableToast(`server:${server.uuid}:my-extension`);
@@ -337,7 +337,7 @@ The fetch-error toasts fire from an effect on `error`, so a query that keeps fai
 Toasts render through the Panel's `Notification` element, which is a [hookable component](./theming.md#hookable-components). If you're building a theme extension and want every toast restyled, intercept `Notification` rather than trying to reach into the toast provider:
 
 ```ts
-import Notification from '@/elements/Notification.tsx';
+import Notification from '@/elements/feedback/Notification.tsx';
 
 // inside initialize():
 Notification.addPropsInterceptor((props) => ({ ...props, radius: 'xl' }));

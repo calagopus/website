@@ -84,7 +84,7 @@ Core works the same way, and where it registers an action tells you its lifetime
 
 ```tsx
 import { useNavigate } from 'react-router';
-import { useQuickActions } from '@/plugins/useQuickActions.ts';
+import { useQuickActions } from '@/plugins/quick-actions/useQuickActions.ts';
 import { useServerStore } from '@/stores/server.ts';
 
 export default function MyServerWidget() {
@@ -161,8 +161,8 @@ An action that only makes sense on one page shouldn't be registered globally wit
 ```tsx
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuickActions } from '@/plugins/useQuickActions.ts';
-import { CORE_QUICK_ACTION_CATEGORIES } from '@/lib/coreQuickActions.tsx';
+import { useQuickActions } from '@/plugins/quick-actions/useQuickActions.ts';
+import { CORE_QUICK_ACTION_CATEGORIES } from '@/lib/quickActions/coreQuickActions.tsx';
 
 export default function MyServerPage() {
   const [selected, setSelected] = useState<string[]>([]);
@@ -226,7 +226,7 @@ A mode's items are a plain array, built from the query the user has typed. That 
 ```tsx
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuickActionModes, useQuickActionTerm } from '@/plugins/useQuickActions.ts';
+import { useQuickActionModes, useQuickActionTerm } from '@/plugins/quick-actions/useQuickActions.ts';
 import { useQuickActionsStore } from '@/stores/quickActions.ts';
 
 const PREFIX = '%';

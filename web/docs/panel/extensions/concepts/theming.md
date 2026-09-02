@@ -164,7 +164,7 @@ Every element in the Panel's component library - `Button`, `Card`, `Modal`, `Spi
 export default makeComponentHookable(Button);
 ```
 
-`makeComponentHookable` returns a thin wrapper that's a **process-wide singleton**. Importing `@/elements/Button.tsx` from anywhere - core code or your extension - gives you the *same* wrapper instance. It exposes three methods, and because the instance is shared, registering a hook changes every render of that component across the whole Panel:
+`makeComponentHookable` returns a thin wrapper that's a **process-wide singleton**. Importing `@/elements/buttons/Button.tsx` from anywhere - core code or your extension - gives you the *same* wrapper instance. It exposes three methods, and because the instance is shared, registering a hook changes every render of that component across the whole Panel:
 
 ```ts
 Button.addPropsInterceptor((props) => props); // transform incoming props
@@ -178,7 +178,7 @@ Register hooks in your extension's `initialize()`. It runs once, before React re
 
 ```ts
 import { Extension, ExtensionContext } from 'shared';
-import Button from '@/elements/Button.tsx';
+import Button from '@/elements/buttons/Button.tsx';
 
 class MyExtension extends Extension {
   public initialize(ctx: ExtensionContext): void {
@@ -233,7 +233,7 @@ You can also `cloneElement(element, ...)` to tweak the element rather than wrap 
 The blunt one. `replaceBaseComponent` swaps out the underlying component the wrapper renders, leaving the singleton wrapper (and any interceptors already registered on it) in place. Every import site now renders your version instead of the Panel's:
 
 ```tsx
-import Button, { type ButtonProps } from '@/elements/Button.tsx';
+import Button, { type ButtonProps } from '@/elements/buttons/Button.tsx';
 
 function MyButton(props: ButtonProps) {
   // your own implementation - has to honor the same props contract
@@ -259,7 +259,7 @@ Replace a base component only when intercepting props or wrapping the render gen
 Some elements ship sub-components, and each is independently hookable. `Spinner` carries `Spinner.Centered` and `Spinner.Suspense`, for instance, and `Modal` is exported alongside `ModalFooter`. Each is its own hookable wrapper, so hook them separately:
 
 ```ts
-import Spinner from '@/elements/Spinner.tsx';
+import Spinner from '@/elements/feedback/Spinner.tsx';
 
 Spinner.Centered.addPropsInterceptor((props) => ({ ...props, size: 48 }));
 ```

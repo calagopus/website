@@ -23,10 +23,10 @@ Earlier builds auto-camelCased every JSON response in an interceptor and shipped
 
 ## Schemas and the Transform Helpers
 
-Every response and request body flows through a Zod schema plus one of these helpers from `@/lib/api-transform.ts`:
+Every response and request body flows through a Zod schema plus one of these helpers from `@/lib/serialization/api-transform.ts`:
 
 ```ts
-import { parseFromApi, parsePaginationFromApi, serializeForApi } from '@/lib/api-transform.ts';
+import { parseFromApi, parsePaginationFromApi, serializeForApi } from '@/lib/serialization/api-transform.ts';
 ```
 
 You define a schema per resource with **camelCase keys**, matching the snake_case keys your backend returns:
@@ -62,7 +62,7 @@ Here's the canonical shape for a GET:
 ```ts
 import { z } from 'zod';
 import { axiosInstance } from '@/api/axios.ts';
-import { parseFromApi } from '@/lib/api-transform.ts';
+import { parseFromApi } from '@/lib/serialization/api-transform.ts';
 import { itemSchema } from '../lib/schemas.ts';
 
 export default async (serverUuid: string, itemType: string): Promise<z.infer<typeof itemSchema>[]> => {
@@ -78,7 +78,7 @@ For a paginated list:
 ```ts
 import { z } from 'zod';
 import { axiosInstance } from '@/api/axios.ts';
-import { parsePaginationFromApi } from '@/lib/api-transform.ts';
+import { parsePaginationFromApi } from '@/lib/serialization/api-transform.ts';
 import { itemSchema } from '../lib/schemas.ts';
 
 export default async (page: number, search?: string): Promise<Pagination<z.infer<typeof itemSchema>>> => {
@@ -94,7 +94,7 @@ And for a mutation that takes a request body:
 ```ts
 import { z } from 'zod';
 import { axiosInstance } from '@/api/axios.ts';
-import { serializeForApi } from '@/lib/api-transform.ts';
+import { serializeForApi } from '@/lib/serialization/api-transform.ts';
 
 export const updateItemSchema = z.object({
   name: z.string().optional(),
@@ -196,14 +196,14 @@ That said, arrays of objects are still usually the better shape - they preserve 
 
 Writing raw `useEffect` + `useState` fetches is tedious and error-prone. The Panel ships five hooks that cover the common patterns; they handle loading state, error toasts, and TanStack Query wiring for you. Because they toast internally, adding your own toast around one of them double-reports the same event - see [Toasts the data hooks already raise](./toasts.md#toasts-the-data-hooks-already-raise) for what each one covers and how to opt out.
 
-All five are in `@/plugins/`:
+All five are in `@/plugins/resource/`:
 
 ```ts
-import { useResource } from '@/plugins/useResource.ts';
-import { usePollingResource } from '@/plugins/usePollingResource.ts';
-import { useSearchableResource } from '@/plugins/useSearchableResource.ts';
-import { useSearchablePaginatedTable } from '@/plugins/useSearchablePaginatedTable.ts';
-import { useResourceForm } from '@/plugins/useResourceForm.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
+import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 ```
 
 ### Query Keys
@@ -226,7 +226,7 @@ The hooks append their own dynamic segments to the key you supply - your `deps` 
 Use this when you need to fetch a resource and don't need search or pagination. It wraps TanStack Query's `useQuery`, automatically shows an error toast on failure, and returns `refetch` and `invalidate` helpers.
 
 ```tsx
-import { useResource } from '@/plugins/useResource.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
 import getFeatureSettings from '@/api/getFeatureSettings.ts';
 
 export default function FeatureSettings({ serverUuid }: { serverUuid: string }) {
@@ -277,7 +277,7 @@ const { data, error } = useResource({
 Use this when you need to re-fetch a resource on a fixed interval - a build status, a transfer's progress, anything that changes on the backend while the user watches. It's `useResource` plus an `interval`, and an optional `stopWhen` predicate that halts the polling once the data reaches a terminal state. It returns the same `{ data, loading, error, refetch, invalidate }` as `useResource`.
 
 ```tsx
-import { usePollingResource } from '@/plugins/usePollingResource.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 import getJobStatus from '@/api/getJobStatus.ts';
 
 export default function JobStatus({ jobId }: { jobId: string }) {
@@ -332,7 +332,7 @@ interface Pagination<T> {
 This is exactly what `parsePaginationFromApi` returns, so a paginated API file plugs straight in. The hook unwraps `data?.data ?? []` for you, so the returned `items` field is directly `T[]`.
 
 ```tsx
-import { useSearchableResource } from '@/plugins/useSearchableResource.ts';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 import getItems from '@/api/getItems.ts';
 import Select from '@/elements/input/Select.tsx';
 
@@ -384,9 +384,9 @@ const items = useSearchableResource<Item>({
 Use this for full table pages with search and pagination. It manages page and search state, syncs both to URL search params, renders previous data while the next page loads via TanStack Query's `placeholderData: keepPreviousData`, and calls `setStoreData` when fresh data arrives. The actual paginated data lives in your store, not in the hook's return value - the hook drives the store, and the component reads from the store directly.
 
 ```tsx
-import { useSearchablePaginatedTable } from '@/plugins/useSearchablePaginatedTable.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import getMyItems from '@/api/getMyItems.ts';
-import Table from '@/elements/Table.tsx';
+import Table from '@/elements/data-display/Table.tsx';
 import { useMyStore } from '@/stores/myStore.ts';
 import { useTranslations } from '@/providers/TranslationProvider.tsx';
 
@@ -451,7 +451,7 @@ Use this for forms that manage a single resource's full lifecycle. It takes a Ma
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
-import { useResourceForm } from '@/plugins/useResourceForm.ts';
+import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 import createItem from '@/api/createItem.ts';
 import updateItem from '@/api/updateItem.ts';
 import deleteItem from '@/api/deleteItem.ts';

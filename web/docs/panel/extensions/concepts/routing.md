@@ -446,6 +446,6 @@ export default async (uuid: string, item: string) => {
 };
 ```
 
-`axiosInstance` does no key conversion itself - responses arrive with the exact `snake_case` keys your backend sent. To work with idiomatic `camelCase` on the frontend, define a Zod schema for the response and run it through `parseFromApi` from `@/lib/api-transform.ts` (and `serializeForApi` for request bodies), which remaps and validates the data in one step.
+`axiosInstance` does no key conversion itself - responses arrive with the exact `snake_case` keys your backend sent. To work with idiomatic `camelCase` on the frontend, define a Zod schema for the response and run it through `parseFromApi` from `@/lib/serialization/api-transform.ts` (and `serializeForApi` for request bodies), which remaps and validates the data in one step.
 
 For a full guide on structuring frontend API calls, see [Frontend API Calls](./frontend-api.md).
