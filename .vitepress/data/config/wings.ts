@@ -1245,7 +1245,7 @@ export const wingsConfigDoc: ConfigDoc = {
       notes: [
         {
           type: 'warning',
-          body: 'The private network is Linux only, and is not supported with a rootless container engine - the daemon needs a privileged container to build the tunnel interfaces. A node running rootless Wings reports itself as unsupported in the panel no matter what you set here.',
+          body: 'The private network is Linux only, and is not supported with a rootless container engine: the daemon enters container network namespaces from the host, which a user namespace cannot see into. Wings does not check for this, so a rootless node with `enabled` set still reports itself as supported in the panel, and the daemon then fails to bind any private address.',
         },
       ],
       options: [

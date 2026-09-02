@@ -515,6 +515,7 @@ export default withMermaid({
             items: [
               { text: 'Backup Configurations', link: '/docs/wings/advanced/backup-configurations' },
               { text: 'Exposing Wings in a Homelab', link: '/docs/wings/advanced/exposing-wings-in-a-homelab' },
+              { text: 'The Private Network', link: '/docs/wings/advanced/private-network' },
               { text: 'Running Wings with Podman', link: '/docs/wings/advanced/running-wings-with-podman' },
             ],
           },
