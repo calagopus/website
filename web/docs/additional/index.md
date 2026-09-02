@@ -12,6 +12,6 @@ A collection of optional setup guides that aren't required to get the panel runn
 | --- | --- |
 | [Database Hosts](./database-hosts/index.md) | Let users provision their own databases for game servers |
 | [Migrations](./migrations/index.md) | Moving from another panel, or changing how your Calagopus install is deployed |
-| [SSL Certificates](./ssl-certificates.md) | Generate a certificate for use with a reverse proxy or directly on Wings |
-| [Reverse Proxies](./reverse-proxies.md) | Serve the panel over standard HTTP/HTTPS ports instead of exposing it directly |
+| [SSL Certificates](./ssl-certificates.md) | Get a free Let's Encrypt certificate, keep it renewing, and wire it into Wings on bare metal or in Docker |
+| [Reverse Proxies](./reverse-proxies.md) | Put Nginx, Apache, Caddy, Traefik or Nginx Proxy Manager in front of the Panel and Wings |
 | [Setting up OAuth](./setting-up-oauth/index.md) | Let users sign in with GitHub, Google, Discord, or any OIDC provider |

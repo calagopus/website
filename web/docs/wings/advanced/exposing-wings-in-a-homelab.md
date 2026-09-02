@@ -1,56 +1,80 @@
 ---
 title: Exposing Wings in a Homelab
-description: Ways to expose a homelab Wings node to the internet, with the trade-offs of each approach.
+description: Three ways to make a Wings node on a home network reachable by the Panel, your users and their players, with the trade-offs, the node settings and the router ports for each.
 ---
 
 # Exposing Wings in a Homelab
 
-This guide covers the available methods for exposing a Wings node to the internet from a homelab, along with the trade-offs of each approach.
+A node at home sits behind a router that hands out private addresses. Nothing outside your network can reach it until you open a path in, and the path you pick decides how much of the node ends up on the internet, whether you need a domain, and where the certificate goes. This page walks through the three options.
+
+## What Needs to Reach the Node
+
+Four kinds of traffic arrive at a Wings node, and an HTTP reverse proxy only carries the first two:
+
+| Who connects | What for | Default port | Carried by a reverse proxy? |
+| --- | --- | --- | --- |
+| The Panel | Wings API: power actions, installs, backups, file operations | `8080` TCP | Yes |
+| Your users' browsers | Console, live statistics, uploads and downloads (WebSockets) | `8080` TCP | Yes |
+| SFTP clients | File access over SFTP | `2022` TCP | No |
+| Players | The game servers' allocations | Per server, TCP and UDP | No |
+
+Player and SFTP ports are forwarded on the router no matter which method you choose. The methods below differ in how the first two rows get in.
 
 ## Prerequisites
 
-Make sure you have:
+- A working Calagopus Panel. It can run at home on the same network as Wings, or elsewhere; the second case is called out where it matters.
+- A working Wings node that the Panel can already reach. Two machines on the same LAN reach each other on their LAN addresses; a Panel hosted elsewhere needs one of the methods below first.
+- Admin access to your router to forward ports.
+- A domain name, or a dynamic DNS name if your home IP changes. Optional for port forwarding, needed for anything with a certificate.
 
-- A working Calagopus Panel
-- A working Calagopus Wings machine (accessible by the Panel)
-- A domain name (optional, but recommended for easier access and SSL certificate generation)
+## Which Method
 
-## Methods
+| | Reverse proxy | Reverse proxy + Wings Proxy Mode | Port forwarding |
+| --- | --- | --- | --- |
+| Ports opened on the router for Wings | `80`, `443` | None for Wings (the Panel's `443` covers it) | `8080` |
+| Domain name | Required | Required for the Panel | Optional |
+| Certificate | On the proxy | On the Panel's proxy only | On Wings itself, or none |
+| Wings exposed to the internet | Behind the proxy | Not at all | Directly |
+| Fits best when | The node has a public hostname | Panel and Wings are on the same home network | You want the least setup and accept the trade-offs |
 
 :::: tabs
 === Reverse Proxy
-A reverse proxy sits in front of your Wings machine and forwards requests to it. This is the recommended method for most users: it makes SSL certificate management easy and adds a layer of security.
+
+A reverse proxy runs on the node (or another machine on your network) and answers on ports `80` and `443`. It terminates HTTPS and forwards to Wings on `8080`. Wings is never reachable from the internet on its own port.
 
 | Pros | Cons |
 | --- | --- |
-| Easy to set up with tools like Nginx or Caddy | Requires additional configuration and maintenance |
-| Allows for easy SSL certificate management | May introduce additional latency |
-| Provides an additional layer of security | Requires a domain name for best results |
-| Can be used to expose multiple services on the same domain | May require additional resources on your server |
-| | No support for SFTP (but you can still use SFTP by connecting to the Wings machine directly on the local network) |
+| Certificate lives in one place and renews with the proxy | One more service to configure and keep running |
+| Wings is only reachable through the proxy | Needs a domain name |
+| Several services can share ports 80 and 443 on the same public IP | Adds a hop, so slightly more latency on the console |
+| | SFTP does not go through it; forward `2022` separately or use it on the LAN only |
 
-See the [Reverse Proxy documentation](../../additional/reverse-proxies.md) for a full setup guide.
+**1. Forward ports 80 and 443** on your router to the machine that runs the proxy. Port 80 is what Let's Encrypt uses to issue the certificate; port 443 carries the traffic.
 
-Wings uses both HTTP and WebSocket connections, so your reverse proxy must be configured to support both. When entering the URL in the panel, use the reverse proxy URL without a port. For example, if your reverse proxy is at `https://wings.example.com`, enter `https://wings.example.com` - not `https://wings.example.com:8080`.
+**2. Set up the proxy and trust it in Wings.** Follow [Putting Wings behind a reverse proxy](../../additional/reverse-proxies.md#putting-wings-behind-a-reverse-proxy). It covers the Nginx, Apache and Caddy configurations, the upload size limit, and `api.trusted_proxies`, which Wings needs so it sees your users' real addresses instead of the proxy's.
+
+**3. Point the node at the proxy.** In **Admin → Nodes → (your node) → General**, set **URL** to the proxy's address without a port, for example `https://wings.example.com`. The form warns that no port was given and offers to add `:8080`. Ignore that here: the proxy listens on `443`, and `:8080` would go around it. Leave **Public URL** empty so browsers use the same address.
+
+![Node connection settings with the proxied URL and the no-port warning](./images/exposing-wings-in-a-homelab/reverse-proxy.webp)
+
+**4. Verify.** Open the node's **Configuration** tab and click **Verify Connection**. **Backend to Wings** proves the Panel reaches the node through the proxy; **Frontend to Wings** proves your browser does, which the console and file manager depend on.
+
+![Verify Connection with both checks passing](../../panel/features/admin/images/nodes/verify-connection.webp)
 
 === Reverse Proxy + Wings Proxy Mode
-This method builds on the Reverse Proxy approach by enabling Wings Proxy Mode in the panel. The panel proxies HTTP/WS connections to Wings directly, letting you use a single domain and port for both (e.g. `https://panel.example.com`). It's a good choice if you want a simpler reverse proxy setup and are comfortable with the panel handling the proxy traffic.
+
+In Wings Proxy Mode the Panel relays browser traffic to the node. Users' browsers only ever talk to the Panel's address, and the Panel talks to Wings over your LAN. The node needs no public hostname, no certificate and no open port of its own. The only thing exposed is the Panel, behind [its own reverse proxy](../../additional/reverse-proxies.md).
+
+This works when the Panel can reach Wings privately, which in a homelab means the Panel runs on the same network as the node, or the two are joined by a VPN. A Panel hosted in a datacenter still needs port forwarding or a reverse proxy to reach a node at home, so this mode does not remove that step for split setups.
 
 | Pros | Cons |
 | --- | --- |
-| Simplifies reverse proxy configuration | Requires additional configuration in the panel |
-| Allows using the same domain and port for both panel and wings | May introduce additional latency due to the panel proxying connections |
-| Provides an additional layer of security | Requires a domain name for best results |
-| | Limits bandwidth: all connections to Wings are proxied through the panel, so heavy Wings traffic puts load on the panel |
-| | No support for SFTP (but you can still use SFTP by connecting to the Wings machine directly on the local network) |
+| Only the Panel is reachable from the internet | Every console line, upload and download passes through the Panel, so heavy use loads it |
+| One domain, one certificate, one proxy configuration | Slightly more latency, since the Panel sits in the middle |
+| No router changes for Wings | Needs `APP_ENABLE_WINGS_PROXY` on the Panel |
+| | SFTP still connects to the node directly; forward `2022` or use it on the LAN only |
 
-For the reverse proxy itself, see the [Reverse Proxy documentation](../../additional/reverse-proxies.md).
-
-### Enabling Wings Proxy Mode
-
-Set [`APP_ENABLE_WINGS_PROXY`](../../panel/environment.md#app-enable-wings-proxy) to `true` in your panel's `.env` file, then restart the panel. You can then enter the same URL for both the panel and Wings in the node configuration, and the panel proxies connections to Wings automatically.
-
-If you installed the Panel via Docker, add the variable to the `web` service in `compose.yml`, then run `docker compose up -d`:
+**1. Enable proxy mode on the Panel.** Set [`APP_ENABLE_WINGS_PROXY`](../../panel/environment.md#app-enable-wings-proxy) to `true`. On a Docker installation, add it to the `web` service in `compose.yml` and run `docker compose up -d`:
 
 ```yaml
 services:
@@ -59,22 +83,54 @@ services:
       - APP_ENABLE_WINGS_PROXY=true
 ```
 
-### Switching the Node to Proxy Mode
+The compose files shipped with the Panel already set this to `true`.
 
-After enabling Wings Proxy Mode in the panel, switch the node to proxy mode. On the node's configuration page, click the globe button at the right of the **Public URL** field - it fills in the correct proxy mode URL automatically. Save the changes.
+**2. Give the node its LAN address and the proxy URL.** In **Admin → Nodes → (your node) → General**, set **URL** to the address the Panel uses to reach Wings on your network, for example `http://192.168.1.50:8080`. Then click the globe button at the right of **Public URL** (**Use Wings Proxy URL**). It fills in `<panel URL>/wings-proxy/<node uuid>`, the address browsers will use from now on. Save.
+
+![Node connection settings with a LAN URL and the Wings proxy Public URL](./images/exposing-wings-in-a-homelab/proxy-mode.webp)
+
+**3. Verify.** On the **Configuration** tab, click **Verify Connection**. **Frontend to Wings** now goes through the Panel, so it passes as long as the Panel can reach the LAN address from step 2.
+
+::: info
+The All-in-One image uses this mode for its built-in Wings automatically, which is why a single reverse proxy in front of the Panel is enough there.
+:::
 
 === Port Forwarding
-Port forwarding forwards the Wings port(s) (default 8080) from your router to your Wings machine. It is less secure than a reverse proxy, since Wings is exposed directly to the internet, but simpler to set up and requires no domain name.
+
+Forward port `8080` on the router straight to the node and enter your public address in the Panel. There is no proxy and no certificate unless you add one to Wings yourself.
 
 | Pros | Cons |
 | --- | --- |
-| Simple to set up | Exposes your Wings machine directly to the internet |
-| Does not require a domain name | More difficult to manage SSL certificates |
-| No additional resources required on your server | May introduce security risks if not properly configured |
-| | Usually also requires a static IP or Dynamic DNS setup for best results |
+| Quickest to set up | Wings answers the internet directly on its own port |
+| Works without a domain name | Without a certificate, browsers refuse to open the console from a Panel that is served over HTTPS |
+| Nothing extra runs on the node | A changing home IP breaks the node URL unless you use dynamic DNS |
 
-Refer to your router's documentation for the exact steps; they vary by make and model.
+**1. Forward port 8080 (TCP)** on your router to the node's LAN address. Your router's manual has the exact steps; the feature is usually called port forwarding or virtual server.
 
-When using port forwarding, the Wings URL in the panel must include the port. For example, if port 8080 is forwarded to your Wings machine and your public IP is `217.33.3.3`, enter `http://217.33.3.3:8080`. If you have a Dynamic DNS domain, use that instead (e.g. `http://mywings.dyndns.org:8080`).
+**2. Enter the public address in the Panel.** In **Admin → Nodes → (your node) → General**, set **URL** to your public IP or dynamic DNS name **with the port**, for example `http://217.33.3.3:8080` or `http://mywings.dyndns.org:8080`.
+
+![Node connection settings with a public IP and port](./images/exposing-wings-in-a-homelab/port-forward.webp)
+
+**3. Add a certificate if the Panel uses HTTPS.** Browsers block plain `ws://` and `http://` connections from a page served over `https://`, so an HTTPS Panel cannot open the console on an `http://` node. Give the node a dynamic DNS or domain name, get a certificate for it with the [DNS challenge](../../additional/ssl-certificates.md) (port 80 is not needed), and [enable SSL in Wings](../configuration.md#ssl-configuration). Then use `https://mywings.dyndns.org:8080` as the URL. The DNS challenge needs a name, so a bare IP address will not do for this step.
+
+**4. Verify** on the **Configuration** tab with **Verify Connection**.
 
 ::::
+
+## Game Server and SFTP Ports
+
+Whichever method you chose, players still connect to the node directly. Forward each port range you hand out as [allocations](../next-steps/setting-up-allocations.md) on the router, TCP and UDP as the game requires. Create the allocations with the node's LAN IP and set the **IP Alias** to your public hostname, so users see an address they can actually connect to.
+
+SFTP on port `2022` follows the same rule. Forward it if users need SFTP from outside, and set the node's **SFTP Host** to the public hostname; on the LAN it works without any of that.
+
+The [private network](./private-network.md) between nodes also bypasses the proxy. Its UDP port has to be forwarded to the node when a homelab node talks to nodes elsewhere.
+
+## Troubleshooting
+
+**Backend to Wings passes, Frontend to Wings fails.** The Panel reaches the node but your browser does not. With port forwarding, this is almost always the mixed-content block described above: the Panel is on `https://` and the node on `http://`. Otherwise check that the hostname resolves publicly and the port is forwarded from outside your network, not only from the LAN.
+
+**Both checks pass, but the console never connects.** The WebSocket upgrade is not getting through. On a reverse proxy, check the `Upgrade` and `Connection` headers in the [proxy configuration](../../additional/reverse-proxies.md#putting-wings-behind-a-reverse-proxy).
+
+**The node worked yesterday and is unreachable today.** Your home IP changed. Use a dynamic DNS name in the node URL instead of the raw address.
+
+**Users cannot reach their servers.** The game ports are not forwarded, or the allocation shows the LAN IP with no alias. See [Game Server and SFTP Ports](#game-server-and-sftp-ports).
