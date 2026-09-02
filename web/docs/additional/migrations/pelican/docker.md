@@ -1,6 +1,7 @@
 ---
 prev: false
 next: false
+description: Step-by-step guide to migrating a Dockerized Pelican Panel install to Calagopus with the built-in importer and Pelican's .env database settings.
 ---
 
 # Migrating from Pelican (Dockerized)

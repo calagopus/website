@@ -1,6 +1,7 @@
 ---
 prev: true
 next: false
+description: Run Wings with Podman instead of Docker, covering socket setup and the configuration changes needed for rootful and rootless Podman.
 ---
 
 # Running Wings with Podman

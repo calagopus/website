@@ -1,6 +1,7 @@
 ---
 prev: false
 next: false
+description: Step-by-step guide to migrating a standalone (non-Docker) Pelican Panel install to Calagopus with the built-in importer, keeping users, servers and nodes.
 ---
 
 # Migrating from Pelican (Standalone)

@@ -1,6 +1,7 @@
 ---
 prev: true
 next: false
+description: Official Calagopus logos, icons and banners as SVG downloads, for referencing the project in your own materials.
 ---
 # Branding
 

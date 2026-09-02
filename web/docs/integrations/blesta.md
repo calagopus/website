@@ -1,6 +1,7 @@
 ---
 prev: true
 next: false
+description: The Calagopus Blesta module provisions, suspends, upgrades and terminates Calagopus servers from your Blesta billing workflow through the panel admin API.
 ---
 # Blesta
 

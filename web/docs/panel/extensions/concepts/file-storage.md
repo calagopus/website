@@ -1,6 +1,7 @@
 ---
 prev: true
 next: false
+description: How Calagopus extensions store and serve files through the Panel's Storage abstraction, which targets the local filesystem or an S3-compatible bucket.
 ---
 # File Storage
 

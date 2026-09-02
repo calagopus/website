@@ -116,6 +116,7 @@ export default withMermaid({
   },
 
   markdown: {
+    image: { lazyLoad: true },
     config(md) {
       md.use(tabsMarkdownPlugin);
 
@@ -193,7 +194,7 @@ export default withMermaid({
             name: 'Calagopus',
             description: 'An open-source game server management panel built in Rust.',
             applicationCategory: 'DeveloperApplication',
-            operatingSystem: 'Linux, Docker',
+            operatingSystem: 'Linux',
             offers: {
               '@type': 'Offer',
               price: '0',
@@ -656,10 +657,27 @@ export default withMermaid({
     );
 
     if (pageData.lastUpdated) {
-      pageData.frontmatter.head.push([
-        'meta',
-        { property: 'article:modified_time', content: new Date(pageData.lastUpdated).toISOString() },
-      ]);
+      const modified = new Date(pageData.lastUpdated).toISOString();
+      pageData.frontmatter.head.push(['meta', { property: 'article:modified_time', content: modified }]);
+
+      if (pageData.relativePath.startsWith('docs/')) {
+        pageData.frontmatter.head.push([
+          'script',
+          { type: 'application/ld+json' },
+          JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'TechArticle',
+            '@id': `${canonicalUrl}#article`,
+            headline: pageData.title,
+            description: pageData.description || undefined,
+            url: canonicalUrl,
+            dateModified: modified,
+            isPartOf: { '@id': `${SITE_URL}/#website` },
+            author: { '@id': `${SITE_URL}/#organization` },
+            publisher: { '@id': `${SITE_URL}/#organization` },
+          }),
+        ]);
+      }
     }
 
     const pageFaqs = compareFaqs[pageData.relativePath];

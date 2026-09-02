@@ -1,6 +1,7 @@
 ---
 prev: false
 next: false
+description: Step-by-step guide to migrating a Dockerized Pterodactyl or Blueprint install to Calagopus with the built-in importer and your existing .env file.
 ---
 
 # Migrating from Pterodactyl (Dockerized)

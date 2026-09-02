@@ -1,3 +1,6 @@
+---
+description: Add commands to the Calagopus quick actions palette (Mod+Space) from an extension, as global actions, page actions or prefix-activated modes.
+---
 # Quick Actions
 
 The quick actions palette is the Panel's command bar: the modal that opens on `Mod+Space` (or from the button above the sidebar) and lets a user type "restart", hit Enter, and be done. It aggregates everything the user can do from where they currently stand - power actions, navigation, page-specific operations, a server search - into one searchable list, and your extension can put its own entries in there.

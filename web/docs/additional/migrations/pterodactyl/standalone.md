@@ -1,6 +1,7 @@
 ---
 prev: false
 next: false
+description: Step-by-step guide to migrating a standalone Pterodactyl install to Calagopus with the built-in importer, keeping users, servers, nodes and eggs.
 ---
 
 # Migrating from Pterodactyl (Standalone)
