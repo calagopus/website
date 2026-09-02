@@ -78,6 +78,7 @@ import mobilePreviewSrcset from './mobile-preview.webp?w=360;500;720;1000&as=src
     </a>
   </div>
   <p class="switch-more">
+    <a href="/compare/">All Pterodactyl alternatives compared</a> ·
     <a href="/docs/additional/migrations/pterodactyl">Pterodactyl migration guide</a> ·
     <a href="/docs/additional/migrations/pelican">Pelican migration guide</a>
   </p>

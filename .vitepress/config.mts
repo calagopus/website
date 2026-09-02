@@ -222,9 +222,11 @@ export default withMermaid({
       {
         text: 'Compare',
         items: [
+          { text: 'Pterodactyl Alternatives Compared', link: '/compare/' },
           { text: 'Calagopus vs Pterodactyl', link: '/compare/calagopus-vs-pterodactyl' },
           { text: 'Calagopus vs Pelican', link: '/compare/calagopus-vs-pelican' },
           { text: 'Calagopus vs AMP', link: '/compare/calagopus-vs-amp' },
+          { text: 'Pterodactyl vs Pelican', link: '/compare/pterodactyl-vs-pelican' },
           { text: 'Benchmarks', link: '/docs/about/benchmarks' },
           { text: 'Feature Reference', link: '/docs/about/features' },
         ],
@@ -705,17 +707,17 @@ export default withMermaid({
     }
 
     if (pageData.relativePath.startsWith('compare/')) {
+      const trail = [
+        { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
+        { '@type': 'ListItem', position: 2, name: 'Compare', item: `${SITE_URL}/compare/` },
+      ];
+      if (pageData.relativePath !== 'compare/index.md') {
+        trail.push({ '@type': 'ListItem', position: 3, name: pageData.title, item: canonicalUrl });
+      }
       pageData.frontmatter.head.push([
         'script',
         { type: 'application/ld+json' },
-        JSON.stringify({
-          '@context': 'https://schema.org',
-          '@type': 'BreadcrumbList',
-          itemListElement: [
-            { '@type': 'ListItem', position: 1, name: 'Home', item: SITE_URL },
-            { '@type': 'ListItem', position: 2, name: pageData.title, item: canonicalUrl },
-          ],
-        }),
+        JSON.stringify({ '@context': 'https://schema.org', '@type': 'BreadcrumbList', itemListElement: trail }),
       ]);
     }
 

@@ -98,4 +98,4 @@ If you're moving away from AMP because of its cost, closed-source model, or anot
 
 On the other hand, if AMP's per-game integrations or native Windows process model are important to your workflow, those are perfectly valid reasons to stick with it. There isn't a reason to pick one over the other, they simply do different things. Pick what is right for you.
 
-**More comparisons:** [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl) · [Calagopus vs Pelican](/compare/calagopus-vs-pelican)
+**More comparisons:** [All Pterodactyl alternatives](/compare/) · [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl) · [Calagopus vs Pelican](/compare/calagopus-vs-pelican) · [Pterodactyl vs Pelican](/compare/pterodactyl-vs-pelican)

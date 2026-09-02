@@ -45,6 +45,46 @@ export const compareFaqs: Record<string, Faq[]> = {
       a: 'Calagopus, by a significant margin. The Rust-based backend produces over 32,800% higher throughput than PHP-based panels in benchmarks. For small deployments the difference is less critical; for production hosting providers it translates directly to hardware savings.',
     },
   ],
+  'compare/index.md': [
+    {
+      q: 'What is the best Pterodactyl alternative?',
+      a: 'It depends on what you want to change. Pelican keeps the PHP stack and adds plugins, OAuth and admin roles. AMP is a paid, closed-source panel with per-game integrations and native Windows support. Calagopus is a Rust rewrite that keeps the egg format and adds performance, an extension API, more database types and deeper administration. The page above maps each to the situations it fits.',
+    },
+    {
+      q: 'Is Pelican just Pterodactyl with a new interface?',
+      a: 'No. The Filament interface is the most visible change, but Pelican also adds a first-party plugin system, OAuth and passkey login, admin roles, webhooks and PostgreSQL or SQLite for the panel database. It keeps the PHP runtime, the Go Wings daemon and MySQL-only game-server databases.',
+    },
+    {
+      q: 'Do Pterodactyl eggs work on the alternatives?',
+      a: 'Pelican and Calagopus both read the Pterodactyl egg format without modification. AMP does not use eggs; it has its own per-game templates.',
+    },
+    {
+      q: 'Which alternatives are free for commercial hosting?',
+      a: 'Pterodactyl (MIT), Pelican (AGPL-3.0) and Calagopus (MIT) can all be used to sell hosting at no cost. AMP requires its Enterprise Edition for commercial reselling.',
+    },
+    {
+      q: 'Can I try an alternative without losing my Pterodactyl setup?',
+      a: 'Yes. Calagopus imports users, servers, nodes and eggs from a Pterodactyl database into a fresh install, and both panels can run side by side while you move nodes one at a time. See the <a href="/docs/additional/migrations/pterodactyl">Pterodactyl migration guide</a>.',
+    },
+  ],
+  'compare/pterodactyl-vs-pelican.md': [
+    {
+      q: 'Is Pelican a fork of Pterodactyl?',
+      a: 'Yes. Pelican started in March 2024 as a fork of the Pterodactyl panel. It rebuilt the interface with Filament and added features, but it shares the same PHP/Laravel lineage and uses the Go Wings daemon it inherited.',
+    },
+    {
+      q: 'Is Pelican faster than Pterodactyl?',
+      a: 'Not in a way that shows under load. Both panels are PHP applications behind PHP-FPM, so panel throughput is similar. The performance difference between the two and a Rust panel such as Calagopus is documented on the <a href="/docs/about/benchmarks">benchmarks page</a>.',
+    },
+    {
+      q: 'Do Blueprint extensions work on Pelican?',
+      a: 'No. Blueprint patches Pterodactyl source files and is not compatible with Pelican. Pelican has its own first-party plugin system, so extensions have to be rebuilt for it.',
+    },
+    {
+      q: 'What does the license change from MIT to AGPL-3.0 mean?',
+      a: 'For running the panel, nothing changes. If you modify Pelican and offer the modified panel to users over a network, the AGPL requires you to make your modifications available. Pterodactyl and Calagopus are MIT-licensed and carry no such requirement.',
+    },
+  ],
   'compare/calagopus-vs-amp.md': [
     {
       q: 'Is Calagopus really free for commercial use?',

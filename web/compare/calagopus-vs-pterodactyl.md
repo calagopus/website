@@ -131,4 +131,4 @@ For the complete standalone and Docker migration walkthroughs, see the [Pterodac
 
 If you're considering the move, the [Pterodactyl migration guide](/docs/additional/migrations/pterodactyl) is a good place to start. If you're setting up a new installation, you can also [install Calagopus from scratch](/docs/panel/installation/).
 
-**More comparisons:** [Calagopus vs Pelican](/compare/calagopus-vs-pelican) · [Calagopus vs AMP](/compare/calagopus-vs-amp)
+**More comparisons:** [All Pterodactyl alternatives](/compare/) · [Calagopus vs Pelican](/compare/calagopus-vs-pelican) · [Calagopus vs AMP](/compare/calagopus-vs-amp) · [Pterodactyl vs Pelican](/compare/pterodactyl-vs-pelican)
