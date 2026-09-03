@@ -1257,7 +1257,7 @@ export const wingsConfigDoc: ConfigDoc = {
       notes: [
         {
           type: 'warning',
-          body: 'The private network is Linux only, and is not supported with a rootless container engine: the daemon enters container network namespaces from the host, which a user namespace cannot see into. Wings does not check for this, so a rootless node with `enabled` set still reports itself as supported in the panel, and the daemon then fails to bind any private address.',
+          body: "The private network is Linux only. Rootless Podman carries it, because the daemon runs in the same user namespace that owns the server containers, so it can still bind sockets inside their network namespaces. Rootless Docker cannot: host networking there is RootlessKit's own namespace rather than the host's, so peers never reach the tunnel port. Wings does not check for this, so a rootless Docker node with `enabled` set still reports itself as supported in the panel.",
         },
       ],
       options: [

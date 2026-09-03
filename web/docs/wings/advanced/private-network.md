@@ -28,7 +28,7 @@ Nodes talk to each other directly on a UDP port, `7100` by default. That port ha
 ## Requirements
 
 - **Linux nodes.** Wings on Windows does not include the tunnel daemon. All-in-One nodes (wings built into the panel container) cannot take part either, and the panel hides the tab for them.
-- **A rootful container engine.** Rootless Docker and rootless Podman are not supported: the daemon enters container network namespaces from the host, which a user namespace cannot see into.
+- **A rootful container engine, or rootless Podman.** Under rootless Podman the daemon runs in the same user namespace that owns the server containers, so it can still bind sockets inside their network namespaces. Rootless Docker is not supported: host networking there is RootlessKit's own namespace rather than the host's, so peers never reach the tunnel port.
 - **Direct UDP reachability between every pair of nodes** on their tunnel ports. There is no NAT traversal and no relay, so nodes behind NAT need a port forward.
 - **Image access.** Wings pulls `ghcr.io/calagopus/tundra` for the daemon binary and `debian:trixie-slim` as the container base, unless you point [`tundra.binary`](../configuration.md#tundra-binary) at a binary of your own.
 - **Wings 1.2.0 or newer** with a panel of the same generation.
@@ -68,13 +68,13 @@ Wings is itself in a container here, but the daemon is still started on the host
 If you split `/var/lib/calagopus-wings` into separate volumes, the `tundra` and `vmounts` directories both have to stay covered by one, at an identical absolute path. Mount the **directory** that holds the daemon's control socket, never the socket file itself. A file bind mount pins the inode it was created from, so the daemon would keep talking to a dead socket after Wings restarts and rebinds it.
 
 === Podman
-Only **rootful** Podman can carry the private network; see [Running Wings with Podman](./running-wings-with-podman.md) for the base setup. The daemon container is created through the same Docker-compatible API, and Wings passes the socket path from [`docker.socket`](../configuration.md#docker-socket) to it, so the socket must be one the daemon can reach from the host.
+Podman carries the private network either rootful or rootless; see [Running Wings with Podman](./running-wings-with-podman.md) for the base setup. The daemon container is created through the same Docker-compatible API, and Wings passes the socket path from [`docker.socket`](../configuration.md#docker-socket) to it, so the socket must be one the daemon can reach from the host.
 
 ```bash
 sudo systemctl restart wings
 ```
 
-Rootless Podman does not work, whatever `tundra.enabled` says.
+Under rootless Podman, keep [`tundra.data_directory`](../configuration.md#tundra-data-directory) and [`system.vmount_directory`](../configuration.md#system-vmount-directory) on paths your own user owns, alongside the other paths the rootless setup moves. Wings mounts both into the daemon container by their host paths, so a path it cannot bind leaves the daemon without its state or the containers' hosts files.
 ::::
 
 After the restart Wings prepares the data directory, its local signing key and the token the daemon authenticates with. It does not start the daemon yet; that happens once the panel lists the node on the network.
@@ -176,7 +176,7 @@ docker rm -f calagopus-wings-tundra
 
 | Symptom | What to check |
 | --- | --- |
-| The tab says the node **cannot run the private network** | `tundra.enabled` is still `false`, or Wings was not restarted after changing it. On a rootless engine this stays unsupported. |
+| The tab says the node **cannot run the private network** | `tundra.enabled` is still `false`, or Wings was not restarted after changing it. |
 | The tab says the node **has not reported a certificate** | The daemon never enrolled. Read `docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `ghcr.io/calagopus/tundra` never gets a binary. |
 | `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log | Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself. |
 | **Peers Connected** stays at zero | The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy. |
