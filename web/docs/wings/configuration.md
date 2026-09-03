@@ -1301,6 +1301,22 @@ Server firewalls are Linux only, and are not supported with a rootless container
 When no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.
 :::
 
+### docker.firewall.source_file_max_entries
+The maximum number of entries Wings loads from the source file of a firewall rule. A file holding more than this is rejected as a whole, and the rule keeps the entries it last loaded.
+
+Default value:
+```yaml
+source_file_max_entries: 10000
+```
+
+### docker.firewall.source_file_max_bytes
+The maximum size (in bytes) of the source file of a firewall rule. A file larger than this is rejected as a whole, and the rule keeps the entries it last loaded.
+
+Default value:
+```yaml
+source_file_max_bytes: 1048576
+```
+
 ### docker.domainname
 The domain name assigned to containers, useful for internal networking resolution.
 
@@ -2054,6 +2070,8 @@ docker:
         gateway: fdba:17c8:6c94::1011
   firewall:
     backend: auto
+    source_file_max_entries: 10000
+    source_file_max_bytes: 1048576
   domainname: ''
   registries: {}
   registry_image_fetch_cache:
@@ -2344,6 +2362,8 @@ docker:
         gateway: fdba:17c8:6c94::1011
   firewall:
     backend: auto
+    source_file_max_entries: 10000
+    source_file_max_bytes: 1048576
   domainname: ''
   registries: {}
   registry_image_fetch_cache:

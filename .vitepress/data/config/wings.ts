@@ -992,6 +992,18 @@ export const wingsConfigDoc: ConfigDoc = {
           ],
         },
         {
+          key: 'docker.firewall.source_file_max_entries',
+          description:
+            'The maximum number of entries Wings loads from the source file of a firewall rule. A file holding more than this is rejected as a whole, and the rule keeps the entries it last loaded.',
+          default: 10000,
+        },
+        {
+          key: 'docker.firewall.source_file_max_bytes',
+          description:
+            'The maximum size (in bytes) of the source file of a firewall rule. A file larger than this is rejected as a whole, and the rule keeps the entries it last loaded.',
+          default: 1048576,
+        },
+        {
           key: 'docker.domainname',
           description: 'The domain name assigned to containers, useful for internal networking resolution.',
           default: '',

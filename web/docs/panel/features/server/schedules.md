@@ -106,6 +106,7 @@ Restoring stops the server and overwrites its files; avoid combining **Restore B
 | **Rename Files** | Rename or move files. | **Root Path**, file pairs (**from** / **to**) |
 | **Compress Files** | Compress files into an archive. | **Root Path**, **Files to Compress**, **Archive Format** (`.tar` family, `.zip`, `.7z`), **Archive Name**, **Run in Foreground** |
 | **Decompress File** | Extract an archive into a folder. | **Root Path**, **File**, **Run in Foreground** |
+| **Pull File** | Download a file from a URL into a folder. | **File URL**, **Root Path**, **File Name** (derived from the URL or the response when left empty), **Use Response File Name**, **Run in Foreground** |
 
 #### Startup Settings
 

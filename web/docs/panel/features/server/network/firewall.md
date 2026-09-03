@@ -21,22 +21,44 @@ The **Deny Everything Else** button next to that warning appends a deny rule wit
 
 ![](./images/firewall/rules.webp)
 
-The ruleset above does exactly that: one rule allowing a single address, with a catch-all deny beneath it.
+The ruleset above does exactly that: one rule allowing whatever a source file lists, one allowing a single address, and a catch-all deny beneath them.
 
 ## Rule Fields
 
-**Add Rule** opens a modal with four fields. An empty field means "match everything", so a rule with nothing filled in matches all traffic.
+**Add Rule** opens a modal with five fields. An empty field means "match everything", so a rule with nothing filled in matches all traffic.
 
 | Field | What it does |
 | --- | --- |
 | **Action** | **Allow** or **Deny** the traffic this rule matches. |
 | **Protocols** | **TCP**, **UDP**, or both. Leave empty to match both. |
 | **Sources** | IP addresses or networks such as `10.0.0.0/8`. A network must have its host bits zeroed, so `10.1.0.0/8` is rejected while `10.0.0.0/8` is fine. Leave empty to match any source. |
+| **Source File** | Path of a file in the server directory, such as `firewall/allowed.txt`, whose entries are added to the sources above. See [Source Files](#source-files). |
 | **Ports** | Allocation ports the rule applies to. Ranges like `25565-25570` are expanded into individual ports. Leave empty to match every allocation of the server. |
 
-Each rule card summarizes itself in the form *protocols* from *sources* to *ports*, falling back to "TCP & UDP", "any source" and "all allocations" for the empty cases. Right-click a rule to edit, or use its card menu to remove it.
+Each rule card summarizes itself in the form *protocols* from *sources* to *ports*, falling back to "TCP & UDP", "any source" and "all allocations" for the empty cases. A source file shows up in that summary as *file firewall/allowed.txt*. Right-click a rule to edit, or use its card menu to remove it.
 
 <img src="./images/firewall/rule-form.webp" width="220" alt="" />
+
+## Source Files
+
+A rule can take its sources from a text file inside the server directory instead of the modal, one IP address or network per line. Blank lines are skipped and everything after a `#` is a comment, so a file may look like this:
+
+```
+# staff
+203.0.113.4
+10.0.0.0/8  # office
+2001:db8::/32
+```
+
+The file's entries are unioned with the rule's inline sources, so a rule with a file and no inline sources matches only what the file lists. A rule with a source file is never a catch-all, even with everything else left empty.
+
+The node reads the file itself. Edit it any way you like, including from the game server, and the node picks the change up within a few seconds. Lines that do not parse are skipped, and the server console reports how many entries were loaded each time the file changes. When the file is missing or cannot be read, the rule keeps the entries it last loaded and the console says so. A file with no valid entries at all does clear the list.
+
+The path is relative to the server directory and cannot leave it. The panel never reads the file, so the same rule on two servers uses each server's own copy. To share a list, copy the file to the other servers.
+
+::: info
+Each node caps the size of a source file. By default a file may hold 10000 entries and 1 MiB, set through `docker.firewall.source_file_max_entries` and `docker.firewall.source_file_max_bytes` in the [Wings configuration](../../../../wings/configuration.md#docker-firewall-source-file-max-entries). A file over either cap is not loaded at all and the previous entries stay in place.
+:::
 
 ## Saving
 
