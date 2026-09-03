@@ -19,7 +19,7 @@ Once configured against a product, the module maps Paymenter's service lifecycle
 | --- | --- |
 | Create | Finds or creates a panel user for the customer, then provisions a server (on a specific node, or auto-deployed across locations). |
 | Suspend / Unsuspend | Toggles the server's suspended state. |
-| Upgrade / Change package | Updates the server's resource and feature limits to match the new product configuration. |
+| Upgrade / Change package | Updates the server's resource and feature limits to match the new product configuration and the service's configurable options. |
 | Terminate | Deletes the server (backups are removed). |
 
 Customers are matched to panel users by their Paymenter user ID (stored as the user's `external_id`), so each customer reuses the same panel account across all of their services. If a matching email or username already exists, the module links to it instead of creating a duplicate.
@@ -95,6 +95,54 @@ If no node is selected and no locations are provided, provisioning fails, so mak
 | **Backup Configuration UUID** | Optional backup configuration to assign to the server. |
 
 When a service is active, the module exposes a **Go to Server** button in the Paymenter client area that links straight to the server in your panel.
+
+::: tip
+The product configuration has no field for egg variables. To set them, use [configurable options](#overriding-settings-with-configurable-options) whose environment variable matches the egg variable.
+:::
+
+## Overriding settings with configurable options
+
+Paymenter's **configurable options** (Admin → Configurable options) let a customer choose values at checkout, such as a memory tier or a game version. When the module provisions or upgrades a server, it merges every option value on the service on top of the product configuration, so the option wins whenever both are set.
+
+The match is made on the option's **environment variable** name. Depending on what that name is, an option can do one of three things:
+
+### Override a product setting
+
+Name the environment variable after a product setting key and its value replaces the product's value for that service.
+
+| Environment variable | Overrides | Value |
+| --- | --- | --- |
+| `memory`, `swap`, `disk` | Memory / Swap / Disk | MiB |
+| `cpu` | CPU Limit | Percentage, `100` = one thread |
+| `memory_overhead` | Memory Overhead | MiB |
+| `io_weight` | IO Weight | `10`–`1000` |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Feature limits | Count |
+| `custom_feature_limits` | Custom Feature Limits | `key:value,key:value` |
+| `docker_image` | Docker Image | Image reference |
+| `startup_command` | Startup Command | Command string |
+| `server_name_prefix` | Server Name Prefix | Text |
+| `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | Checkboxes | `true`/`false`, `1`/`0`, `yes`/`no` |
+| `pinned_cpus` | Pinned CPUs | `0,1,2` |
+| `backup_configuration_uuid` | Backup Configuration UUID | UUID |
+| `node_uuid`, `location_uuids`, `nest_uuid`, `egg_uuid` | Deployment target and egg | UUIDs from your panel |
+
+For example, a configurable option named **Memory** with the environment variable `memory` and the choices `2048`, `4096`, and `8192` lets a customer pick their RAM tier at checkout, with the product's own Memory field acting as the default when the option is not on the service.
+
+### Set an egg variable
+
+Name the environment variable after one of the egg's variables, for example `MINECRAFT_VERSION` or `SERVER_JARFILE`, and the customer's choice is written to that variable on the new server. The match is case-insensitive. Egg variables without a matching option keep the egg's default value.
+
+### Name the server
+
+An option with the environment variable `server_name`, `custom_server_name`, or `SERVER_NAME` sets the server's name instead of the `<prefix><service id>` pattern. The value is trimmed, limited to letters, numbers, spaces, underscores, dots, and hyphens, and cut to 48 characters. If nothing is left after cleaning, the module falls back to the prefix pattern.
+
+### What applies on upgrade
+
+When a service is upgraded or changes package, the module re-reads the product configuration and the service's current options, then updates the server's resource limits, feature limits, IO weight, hugepages and KVM passthrough, pinned CPUs, and Docker image. Egg variables, the startup command, the server name, the deployment target, and the install and start flags are only used when the server is first created.
+
+::: warning
+The product setting keys and the egg variables share one lookup, and the egg variable match is case-insensitive. If an egg has a variable named `MEMORY` or `DISK`, it receives the product's memory or disk value. Give your configurable options unambiguous names to avoid surprises.
+:::
 
 ## Optional: OAuth account linking
 

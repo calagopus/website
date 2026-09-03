@@ -19,7 +19,7 @@ The module maps WHMCS's provisioning lifecycle onto the Calagopus admin API:
 | --- | --- |
 | Create | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). |
 | Suspend / Unsuspend | Toggles the server's suspended state. |
-| Change Package | Updates the server's resource limits, feature limits, and egg variables to match the new product configuration. |
+| Change Package | Updates the server's resource limits, feature limits, and egg variables to match the new product configuration and the service's configurable options. |
 | Terminate | Deletes the server (backups are removed). |
 
 Clients are matched to panel users by their WHMCS user ID (stored as the user's `external_id`), so each client reuses the same panel account across all of their services. If a matching email or username already exists, the module links to it instead of creating a duplicate.
@@ -104,6 +104,58 @@ At least one of **Node UUID** or **Location UUIDs** must be set, or provisioning
 | **Start on Completion** | Starts the server automatically once installation finishes (default: on). |
 | **Backup Configuration UUID** | Optional backup configuration to assign to the server. |
 | **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container. |
+
+## Overriding settings with configurable options
+
+Every product setting can be overwritten per service through WHMCS **Configurable Options** or **Custom Fields**, in the same way the Pterodactyl module works. For each setting the module looks for a value in this order and uses the first non-empty one:
+
+1. A configurable option named after the setting's friendly name, e.g. `Memory (MB)`.
+2. A configurable option named after the setting's key, e.g. `memory`.
+3. A custom field named after the friendly name.
+4. A custom field named after the key.
+5. The product's own module setting.
+6. The module default.
+
+WHMCS only passes the part of an option name before the `|` to the module, so an option named `Memory (MB)|Memory` matches as well.
+
+### Overridable settings
+
+| Key | Friendly name | Value |
+| --- | --- | --- |
+| `nest_uuid`, `egg_uuid` | Nest UUID, Egg UUID | UUID |
+| `node_uuid` | Node UUID (optional) | UUID |
+| `location_uuids` | Location UUIDs (deploy mode) | Comma-separated UUIDs |
+| `memory`, `swap`, `disk` | Memory (MB), Swap (MB), Disk (MB) | MiB |
+| `cpu` | CPU Limit (%) | Percentage, `100` = one thread |
+| `memory_overhead` | Memory Overhead (MB) | MiB |
+| `io_weight` | IO Weight (10-1000, blank=default) | `10`–`1000` |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Allocation Limit, Database Limit, Backup Limit, Schedule Limit | Count |
+| `custom_feature_limits` | Custom Feature Limits | `key:value,key:value` |
+| `docker_image` | Docker Image (optional) | Image reference |
+| `startup_command` | Startup Command (optional) | Command string |
+| `server_name_prefix` | Server Name Prefix | Text |
+| `variables` | Egg Variables | One `VAR_NAME=value` per line |
+| `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | Skip Installer, Start on Completion, Hugepages Passthrough, KVM Passthrough | `on`, `1`, `yes`, or `true` enables; anything else disables |
+| `backup_configuration_uuid` | Backup Configuration UUID (optional) | UUID |
+
+Two extra keys have no field on the product page but are honoured when supplied as a configurable option or custom field:
+
+| Key | Friendly name | Purpose |
+| --- | --- | --- |
+| `server_name` | Server Name | Full server name, replacing the `<prefix><service id>` pattern. |
+| `pinned_cpus` | - | Comma-separated core IDs, e.g. `0,1,2`. |
+
+### Egg variables
+
+Each egg variable can be overwritten by a configurable option or custom field named after the variable's **display name** or its **environment variable name**. For a variable shown as `Minecraft Version` with the environment variable `MC_VERSION`, either name works. The product's **Egg Variables** field supplies the base values, and a matching option or custom field wins over it.
+
+### Custom feature limits
+
+Each key defined in the product's **Custom Feature Limits** field, for example `plugins` in `plugins:5,worlds:3`, can be overwritten individually by a configurable option or custom field with the same name. The key has to be present in the product's definition, otherwise the override is ignored.
+
+### What applies on Change Package
+
+Change Package re-resolves the limits, feature limits, hugepages and KVM passthrough, pinned CPUs, Docker image, and egg variables from the new product and the service's current options and custom fields. The server name, startup command, deployment target, and the install and start flags are only used when the server is first created.
 
 ## Troubleshooting
 
