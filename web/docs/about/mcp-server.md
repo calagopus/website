@@ -50,6 +50,12 @@ Start with `query_pages` when you have a question and `list_pages` when you want
 
 Links inside a page body use the same form, so a link can be passed back to `get_pages` unchanged. Appending `#section-anchor` to a name reads that one section instead of the whole page, which is worth doing on the longer references. Screenshot paths in a page body work the same way with `get_images`.
 
+## Using it from the browser with WebMCP
+
+[WebMCP](https://webmachinelearning.github.io/webmcp/) is a draft W3C API through which a web page hands tools to an agent that lives in the browser, in the same shape MCP uses. Every page on this site registers the four tools above through `document.modelContext` as soon as it loads, so an agent that arrives at calagopus.com can search and read the documentation without anyone pointing it at the endpoint first. The calls are made from within the page to the same `/mcp` server, and the tools take the same input and return the same results as they do over MCP.
+
+Nothing on this site needs switching on, but the browser does have to expose the API. A browser without WebMCP ignores the registration, and one with it lists the tools in whatever agent surface it provides. Chrome and Edge currently ship the API behind an origin trial, and for local testing Chrome enables it with the `chrome://flags#enable-webmcp-testing` flag. The [implementation status page](https://github.com/webmachinelearning/webmcp/blob/main/implementation-status.md) tracks where each browser and agent stands.
+
 ## Reading the docs as Markdown
 
 You do not need an MCP client to get at the same content. Every page here is also available as plain Markdown, either by appending `.md` to its URL or by requesting the normal URL with an `Accept: text/markdown` header:

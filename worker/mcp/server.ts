@@ -13,6 +13,8 @@ const GET_IMAGES_MAX = 4;
 const DEFAULT_IMAGE_BYTES = 500_000;
 const SVG_MIME = 'image/svg+xml';
 
+const READ_ONLY = { readOnlyHint: true, idempotentHint: true, openWorldHint: false };
+
 const INSTRUCTIONS = `Documentation for Calagopus, an open-source game server management panel written in Rust.
 Covers the Panel (web interface and API), Wings (the node daemon that runs game servers in Docker),
 the DB Agent (database provisioning), extension development, installation, and migration from
@@ -56,6 +58,7 @@ function buildServer(env: Env): McpServer {
     'list_pages',
     {
       title: 'List documentation pages',
+      annotations: READ_ONLY,
       description:
         'Browse the documentation table of contents. Returns every page with its title, a one-line ' +
         'description, when it last changed and its size in bytes, so you can budget before reading. ' +
@@ -97,6 +100,7 @@ function buildServer(env: Env): McpServer {
     'get_pages',
     {
       title: 'Read documentation pages',
+      annotations: READ_ONLY,
       description:
         `Read the full Markdown of up to ${GET_PAGES_MAX} documentation pages. Takes page names as ` +
         'returned by list_pages or query_pages (site paths such as "/docs/wings/installation"), or a ' +
@@ -216,6 +220,7 @@ function buildServer(env: Env): McpServer {
     'get_images',
     {
       title: 'Read documentation screenshots',
+      annotations: READ_ONLY,
       description:
         `Look at up to ${GET_IMAGES_MAX} documentation images. Takes the image paths that appear in ` +
         'page bodies returned by get_pages (site paths such as ' +
@@ -300,6 +305,7 @@ function buildServer(env: Env): McpServer {
     'query_pages',
     {
       title: 'Search the documentation',
+      annotations: READ_ONLY,
       description:
         'Search the documentation by meaning and by keyword at once, and get back a ranked list of ' +
         'pages with the matching passage and its score as evidence for the ranking. Ask it a real ' +
@@ -343,6 +349,6 @@ function buildServer(env: Env): McpServer {
 let handler: StatelessMcpHandler | undefined;
 
 export function mcpHandler(env: Env): StatelessMcpHandler {
-  handler ??= createMcpHandler(() => buildServer(env), { route: '/mcp' });
+  handler ??= createMcpHandler(() => buildServer(env), { route: '/mcp', allowedOriginHostnames: '*' });
   return handler;
 }
