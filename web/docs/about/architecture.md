@@ -1,6 +1,6 @@
 ---
 title: Architecture
-description: Technical architecture of Calagopus, how the Panel, Wings, database, cache, and container runtime fit together in a deployment.
+description: Technical architecture of Calagopus, how the Panel, Wings, DB Agent, Tundra, database, cache, and container runtime fit together in a deployment.
 ---
 
 # Architecture
@@ -32,6 +32,18 @@ DB Agent authenticates and routes connections itself: the username sent by the c
 
 [More about DB Agent ›](../db-agent/overview.md)
 
+## Tundra
+
+Tundra is the daemon behind the [private network](../wings/advanced/private-network.md), the encrypted tunnel that lets servers on different nodes reach each other without going over the public internet. It is a separate Rust daemon that Wings runs in a privileged container (`calagopus-wings-tundra`) on every Linux node where it is enabled. Wings extracts the binary from a pinned image, writes its configuration and keeps it running, so there is nothing to install by hand. It is off by default.
+
+Every pair of nodes on the network shares one QUIC connection over a single UDP port per node (`7100` by default), which only has to be reachable between nodes. Both sides authenticate with mutual TLS and pin each other's certificate by the SHA-256 fingerprint the Panel publishes, so no certificate authority is involved. TCP between servers travels as QUIC streams, UDP as QUIC datagrams.
+
+The Panel decides which nodes are on the network and which server may reach which, but it never sees the traffic. Wings relays the Panel's state to the daemon over a Unix socket in the tundra data directory, and the daemon turns that state into connections to the peers it needs. For every server container and every peer server that container is allowed to reach, the daemon binds a loopback address (`127.0.x.y`) inside the source container's network namespace on the peer's service ports and writes a `<name>.tunnel` hostname for it into the container's `/etc/hosts`. Those bound addresses are the access list: a server that has not been granted a connection has nothing to connect to. The receiving node checks every incoming stream against its own copy of the state as well, so a peer cannot claim access it was not given.
+
+Because the Panel is not in the data path, established tunnels keep carrying traffic while the Panel is unreachable. Only changes wait until it is back. A planned restart of the daemon, for an update or a configuration change, hands its open sockets and flows to the new process in place, so upgrading a node does not disconnect anything.
+
+[More about the Private Network ›](../wings/advanced/private-network.md)
+
 ## Basic Architecture
 
 The Calagopus Panel consists of 3 main components:
@@ -54,7 +66,7 @@ graph TD
   B <--> D
 ```
 
-Once Wings and some Game servers are introduced, the architecture expands as follows:
+Once Wings, DB Agent and some game servers are introduced, the architecture expands as follows:
 
 ```mermaid
 graph TD
@@ -76,14 +88,26 @@ graph TD
     Backend <--> Cache
   end
 
-  %% Remote Node Subgraph
-  subgraph Node1 [Wings Node]
+  %% Remote Node Subgraphs
+  subgraph Node1 [Wings Node 1]
     direction TB
     Wings{{Wings Daemon 1}}:::logic
+    Tundra1{{Tundra 1}}:::logic
     GS1[Game Server 1]:::server
     GS2[Game Server 2]:::server
 
     Wings --> GS1 & GS2
+    Wings --> Tundra1
+  end
+
+  subgraph Node3 [Wings Node 2]
+    direction TB
+    Wings2{{Wings Daemon 2}}:::logic
+    Tundra2{{Tundra 2}}:::logic
+    GS3[Game Server 3]:::server
+
+    Wings2 --> GS3
+    Wings2 --> Tundra2
   end
 
   %% DB Agent Host Subgraph
@@ -97,13 +121,17 @@ graph TD
   end
 
   %% Cross-System Connections
-  Backend -->|Wings API| Wings
-  Wings -.->|Status Updates| Panel
+  Backend -->|Wings API| Wings & Wings2
+  Wings & Wings2 -.->|Status Updates| Panel
   Backend -->|DB Agent API| DBAgent
   GS1 & GS2 -.->|Native DB Protocol| DBAgent
+  Tundra1 <-->|QUIC over UDP| Tundra2
+  GS1 -.->|Private Network| GS3
 ```
 
 The Panel communicates with multiple Wings daemons, each managing its own set of game servers. The Wings daemons also require a route back to the panel for tasks such as authentication and status updates.
+
+Nodes on the private network run Tundra next to Wings. Wings feeds it the Panel's view of the network, and the daemons on two nodes hold one encrypted QUIC connection between them over UDP. A server that has been connected to a server on another node reaches it through a private address inside its own container, and that traffic goes node to node without passing through the Panel or Wings.
 
 DB Agent hosts are managed the same way: the Rust Backend uses the DB Agent REST API to provision and monitor database instances, but game servers connect to those databases directly over the native database protocol, DB Agent routes the connection to the right container itself rather than the traffic passing through the Panel or Wings.
 
