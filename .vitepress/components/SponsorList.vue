@@ -6,7 +6,9 @@ import {
   sponsorAvatarFallback as avatarFallback,
   sponsorAvatarUrl as avatarUrl,
   sponsorDisplayName as displayName,
+  sponsorKey as key,
   sponsorMonthlyMeta as monthlyMeta,
+  sponsorProviderLabel as providerLabel,
 } from '../lib/sponsor-display.ts';
 
 const monthly = computed(() =>
@@ -18,7 +20,12 @@ const monthly = computed(() =>
 const failedAvatars = ref<string[]>([]);
 
 const hasAvatar = (sponsor: Sponsor): boolean =>
-  !!sponsor.profile?.avatarUrl && !failedAvatars.value.includes(sponsor.profile.login);
+  !!sponsor.profile?.avatarUrl && !failedAvatars.value.includes(key(sponsor) ?? '');
+
+const markAvatarFailed = (sponsor: Sponsor): void => {
+  const sponsorKey = key(sponsor);
+  if (sponsorKey) failedAvatars.value.push(sponsorKey);
+};
 </script>
 
 <template>
@@ -53,7 +60,7 @@ const hasAvatar = (sponsor: Sponsor): boolean =>
           <component
             :is="sponsor.profile ? 'a' : 'div'"
             v-for="(sponsor, index) in monthly"
-            :key="sponsor.profile?.login ?? index"
+            :key="key(sponsor) ?? index"
             class="card"
             :href="sponsor.profile?.url"
             :target="sponsor.profile ? '_blank' : undefined"
@@ -66,11 +73,14 @@ const hasAvatar = (sponsor: Sponsor): boolean =>
               width="48"
               height="48"
               loading="lazy"
-              @error="sponsor.profile && failedAvatars.push(sponsor.profile.login)"
+              @error="markAvatarFailed(sponsor)"
             />
             <span v-else class="avatar-fallback" aria-hidden="true">{{ avatarFallback(sponsor) }}</span>
             <span class="card-text">
-              <span class="card-name">{{ displayName(sponsor) }}</span>
+              <span class="card-name">
+                {{ displayName(sponsor) }}
+                <span class="tag">{{ providerLabel(sponsor) }}</span>
+              </span>
               <span class="card-amount">{{ formatUsd(sponsor.monthlyCents) }}/month</span>
               <span v-if="sponsor.oneTimeCents" class="card-since">
                 + {{ formatUsd(sponsor.oneTimeCents) }} one-time
@@ -84,7 +94,7 @@ const hasAvatar = (sponsor: Sponsor): boolean =>
       <section>
         <h2>All-time leaderboard</h2>
         <ol class="rows">
-          <li v-for="(sponsor, index) in sponsors.sponsors" :key="sponsor.profile?.login ?? index">
+          <li v-for="(sponsor, index) in sponsors.sponsors" :key="key(sponsor) ?? index">
             <span class="rank" :class="{ top: sponsor.rank <= 3 }">{{ sponsor.rank }}</span>
             <img
               v-if="hasAvatar(sponsor)"
@@ -93,13 +103,14 @@ const hasAvatar = (sponsor: Sponsor): boolean =>
               width="28"
               height="28"
               loading="lazy"
-              @error="sponsor.profile && failedAvatars.push(sponsor.profile.login)"
+              @error="markAvatarFailed(sponsor)"
             />
             <span v-else class="avatar-fallback small" aria-hidden="true">{{ avatarFallback(sponsor) }}</span>
             <a v-if="sponsor.profile" :href="sponsor.profile.url" target="_blank" rel="noreferrer">
               {{ displayName(sponsor) }}
             </a>
             <span v-else>Anonymous</span>
+            <span class="tag">{{ providerLabel(sponsor) }}</span>
             <span v-if="sponsor.status === 'monthly'" class="tag tag-monthly">monthly</span>
             <span v-else-if="sponsor.status === 'former'" class="tag">former monthly</span>
             <span class="row-meta">{{ formatUsd(sponsor.lifetimeCents) }}</span>
@@ -213,6 +224,10 @@ a.card:hover {
 }
 
 .card-name {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
   font-weight: 600;
   color: var(--vp-c-text-1);
 }

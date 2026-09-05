@@ -2,11 +2,18 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { fetchJson } from '../lib/fetch-retry.ts';
 import { formatMonth, formatUsd } from '../lib/format.ts';
-import type { Sponsor, SponsorStatus, SponsorsData } from '../lib/sponsor-display.ts';
+import {
+  type Sponsor,
+  type SponsorProvider,
+  type SponsorStatus,
+  type SponsorsData,
+  sponsorProviderLabel,
+} from '../lib/sponsor-display.ts';
 
 export type {
   Sponsor,
   SponsorProfile,
+  SponsorProvider,
   SponsorStatus,
   SponsorsData,
 } from '../lib/sponsor-display.ts';
@@ -14,7 +21,9 @@ export type {
 const API_URL = 'https://calagopus.com/api/sponsors';
 
 interface ApiProfile {
+  account_id: string;
   github_id: number | null;
+  discord_user_id: string | null;
   login: string;
   name: string | null;
   url: string;
@@ -22,7 +31,8 @@ interface ApiProfile {
 }
 
 interface ApiSponsor {
-  status: 'monthly' | 'former' | 'one_time';
+  provider: SponsorProvider;
+  status: SponsorStatus;
   profile: ApiProfile | null;
   monthly_cents: number;
   one_time_cents: number;
@@ -53,6 +63,7 @@ function fetchSponsors(): Promise<ApiSponsors> {
 
 function toSponsor(sponsor: ApiSponsor): Sponsor {
   return {
+    provider: sponsor.provider,
     status: sponsor.status,
     profile: sponsor.profile && {
       login: sponsor.profile.login,
@@ -132,9 +143,10 @@ function sponsorsMarkdown(data: SponsorsData): string {
     blocks.push(
       '## Monthly sponsors',
       table(
-        ['Sponsor', 'Monthly', 'One-time', 'Lifetime', 'Since'],
+        ['Sponsor', 'Via', 'Monthly', 'One-time', 'Lifetime', 'Since'],
         monthly.map((sponsor) => [
           sponsorLabel(sponsor),
+          sponsorProviderLabel(sponsor),
           `${formatUsd(sponsor.monthlyCents)}/month`,
           sponsor.oneTimeCents > 0 ? formatUsd(sponsor.oneTimeCents) : '-',
           formatUsd(sponsor.lifetimeCents),
@@ -147,10 +159,11 @@ function sponsorsMarkdown(data: SponsorsData): string {
   blocks.push(
     '## All-time leaderboard',
     table(
-      ['#', 'Sponsor', 'Status', 'Total'],
+      ['#', 'Sponsor', 'Via', 'Status', 'Total'],
       data.sponsors.map((sponsor) => [
         `${sponsor.rank}`,
         sponsorLabel(sponsor),
+        sponsorProviderLabel(sponsor),
         STATUS_LABEL[sponsor.status],
         formatUsd(sponsor.lifetimeCents),
       ]),

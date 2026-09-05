@@ -1,5 +1,6 @@
 import { formatMonth, formatUsd } from './format.ts';
 
+export type SponsorProvider = 'github' | 'opencollective';
 export type SponsorStatus = 'monthly' | 'former' | 'one_time';
 
 export interface SponsorProfile {
@@ -10,6 +11,7 @@ export interface SponsorProfile {
 }
 
 export interface Sponsor {
+  provider: SponsorProvider;
   status: SponsorStatus;
   profile: SponsorProfile | null;
   monthlyCents: number;
@@ -23,6 +25,17 @@ export interface SponsorsData {
   monthlyCents: number;
   lifetimeCents: number;
   sponsors: Sponsor[];
+}
+
+// The same login can exist on more than one provider, so a login alone is not unique.
+export function sponsorKey(sponsor: Sponsor): string | undefined {
+  return sponsor.profile ? `${sponsor.provider}/${sponsor.profile.login}` : undefined;
+}
+
+const PROVIDER_LABEL: Record<SponsorProvider, string> = { github: 'GitHub', opencollective: 'Open Collective' };
+
+export function sponsorProviderLabel(sponsor: Sponsor): string {
+  return PROVIDER_LABEL[sponsor.provider];
 }
 
 export function sponsorDisplayName(sponsor: Sponsor): string {
