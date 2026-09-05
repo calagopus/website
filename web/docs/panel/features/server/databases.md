@@ -60,7 +60,7 @@ Templates and the resource limits they carry are configured by administrators un
 
 ### The Instance Page
 
-Each instance has its own page at `/server/<id>/databases/instances/<id>` with the instance name, its type badge, and badges for **Locked** and **Update Available** where relevant.
+Each instance has its own page at `/server/<id>/databases/instances/<id>` with the instance name, its type badge, and badges for **Locked**, **Update Available**, and **Restoring backup** where relevant.
 
 ![](./images/databases/instance-view.webp)
 
@@ -73,6 +73,10 @@ Along the top:
 - **Delete** to remove the instance and all its data. Type the name to confirm.
 
 Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance is offline" overlay when it's off) and stat tiles for Address, Uptime, CPU Load, Memory Load, and Disk Usage. Tiles show usage against the template's limits; a limit of zero displays as Unlimited. If a background operation like a remote import is running, a progress ring appears next to the power buttons where you can watch or cancel it, or **Cancel all operations** at once.
+
+While a [database backup](./backups.md#database-backups) is being restored into the instance, a banner at the top reads "A backup is currently being restored into this managed database. Please wait..." with a progress bar and time estimate, and **Start**, **Restart**, and **Stop** are disabled until it finishes. A toast tells you whether the restore completed or failed.
+
+![](./images/databases/instance-restoring.webp)
 
 ### Databases Tab
 
@@ -102,6 +106,18 @@ Right-click a user for:
 | **Details** | Opens the **Database Credentials** modal: address, username, password, and a **JDBC Connection String**, plus the same **Rotate Password** button classic databases have. When the user can reach more than one database, a selector switches which one the connection string is built for. |
 | **Permissions** | Opens **Database Permissions** - "Controls which databases **{username}** can access, and what it may do in them." - the same No Access / Read Only / Read & Write list used when creating the user. |
 | **Delete** | Removes the user. |
+
+### Backups Tab
+
+Shown with the `backups.read` permission. Lists the database backups taken from this instance, under a counter like "2 of 15 maximum backups created on this server, shared with server backups." - the same limit the server's [Backups](./backups.md) page counts against. Backups that belong to a [backup group](./backups.md#backup-groups) show the group's name under theirs.
+
+![](./images/databases/instance-backups.webp)
+
+**Create** asks for a **Name** and, when the server has groups, a **Backup Group**, then dumps the running instance. It is disabled while the instance is offline ("The managed database must be running to take a backup.") and while a restore is in progress.
+
+Flip **All MariaDB backups on this server** (the engine name follows the instance) to widen the list to every database backup of the same engine on this server. A **Source** column then names the managed database each dump was taken from, marking one whose database no longer exists as "Example (deleted)". Restoring one of those into this instance is how you move data between managed databases, or recover a dump whose database has been deleted.
+
+Right-click a backup for **Edit**, **Download**, **Restore**, and **Delete**; they work as described under [Backup Actions](./backups.md#backup-actions).
 
 ### Logs Tab
 

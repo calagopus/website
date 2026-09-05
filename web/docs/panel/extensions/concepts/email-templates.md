@@ -184,6 +184,7 @@ The core templates available for mutation, as of this writing, are:
 - `password_reset` - sent when a user requests a password reset. Variables: `user`, `reset_link`.
 - `email_verification` - sent when a user must confirm an email address (on registration or an email change). Variables: `user`, `email`, `verification_link`.
 - `two_factor_code` - sent when a user requests an email two-factor login code. Variables: `user`, `code`.
+- `session_created` - sent when a session is created for a user, on any successful login. Variables: `user`, `ip`, `user_agent`, `sessions_link`. Disabled by default.
 - `connection_test` - sent by the admin SMTP test feature. No variables (other than the implicit `settings`).
 - `added_to_server` - sent when a user is added as a subuser to a server. Variables: `server`, `server_link`.
 - `removed_from_server` - sent when a user is removed as a subuser from a server. Variables: `server`.

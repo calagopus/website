@@ -36,7 +36,8 @@ A schedule runs whenever any one of its triggers fires.
 | **Time Interval (Cron)** | On a time schedule, in the server's timezone |
 | **Power Action** | When a **Power Action** (**Start**, **Stop**, **Restart**, **Kill**) is requested |
 | **Server State** | When the server reaches a **Server State** (**Running**, **Offline**, **Starting**, **Stopping**) |
-| **Backup Status** | When a backup reaches a **Backup Status** (**Starting**, **Finished**, **Failed**) |
+| **Backup Status** | When a server backup reaches a **Backup Status** (**Starting**, **Finished**, **Failed**) |
+| **Database Backup Status** | When a [database backup](./backups.md#database-backups) reaches a **Backup Status** (**Starting**, **Finished**, **Failed**) |
 | **Schedule Completion** | When another **Schedule** finishes, filtered by **Completion Status** (**Successful** or **Failed**) |
 | **Resource Usage** | When a **Metric** (**CPU Usage**, **Memory Usage**, **Disk Usage**) passes a threshold continuously **For (seconds)** |
 | **Console Line** | When the console prints a line matching **Line Contains** (optionally **Case Insensitive**), with the line optionally stored into a variable via **Output into** |
@@ -88,11 +89,17 @@ Most steps have an **Ignore Failure** switch to let the schedule carry on if tha
 | **Restore Backup** | Stop the server and restore a backup of the server files. | **Backup to Restore**, **Delete all files before restore**, **Restore startup settings** |
 | **Delete Backup** | Delete a backup selected by the backup selector. | **Backup to Delete** |
 | **Move Backup** | Move a backup selected by the backup selector into a backup group. | **Backup to Move**, **Target Backup Group** |
+| **Create Database Backup** | Create a backup of a managed database. | **Managed Database**, **Backup Name**, **Backup Group**, **Output Backup UUID Into**, **Run in Foreground** |
+| **Restore Database Backup** | Restore a database backup into a managed database. | **Database Backup to Restore**, **Only Consider Backups From**, **Restore Into** |
+| **Delete Database Backup** | Delete a database backup selected by the backup selector. | **Database Backup to Delete**, **Only Consider Backups From** |
+| **Move Database Backup** | Move a database backup selected by the backup selector into a backup group. | **Database Backup to Move**, **Only Consider Backups From**, **Target Backup Group** |
 
 The backup selector picks the **Latest Backup**, the **Oldest Backup**, a **Specific Backup (UUID)**, or one **By Name** (optionally matching the oldest instead of the newest), and can be narrowed to a [backup group](./backups.md#backup-groups).
 
+The four database steps use the same selector, restricted to [database backups](./backups.md#database-backups). Each has an **Only Consider Backups From** picker that narrows the selector to dumps taken from one managed database; leave it at **Any managed database** to consider every dump on the server. **Restore Database Backup** also has **Restore Into**, which defaults to "The database the backup was taken from" - set it when that database no longer exists, or to copy data into a different managed database running the same engine.
+
 ::: warning
-Restoring stops the server and overwrites its files; avoid combining **Restore Backup** with power or server state triggers that could re-trigger the schedule. **Delete Backup** permanently deletes the backup and its files on the node, though locked backups are skipped.
+Restoring stops the server and overwrites its files; avoid combining **Restore Backup** with power or server state triggers that could re-trigger the schedule. **Restore Database Backup** overwrites the contents of the target database and does not wait for the import to finish, so later steps can run while it is still in progress. **Delete Backup** and **Delete Database Backup** permanently delete the backup and its files on the node, and fail if the selected backup is locked.
 :::
 
 #### Files
@@ -133,7 +140,7 @@ Creating an **If** step automatically adds its **End If**, and steps inside the 
 
 #### Variables
 
-Many step fields accept either plain text or a variable; the icon at the field's right edge toggles between the two ("Use a variable instead of plain text"). Variables are produced by outputs elsewhere in the schedule: the Console Line trigger's **Output into**, **Match Regex** captures, **Format**, **Create Backup**'s UUID output, and the HTTP Request outputs. A variable holds up to 16 KiB.
+Many step fields accept either plain text or a variable; the icon at the field's right edge toggles between the two ("Use a variable instead of plain text"). Variables are produced by outputs elsewhere in the schedule: the Console Line trigger's **Output into**, **Match Regex** captures, **Format**, the UUID outputs of **Create Backup** and **Create Database Backup**, and the HTTP Request outputs. A variable holds up to 16 KiB.
 
 #### HTTP Request
 

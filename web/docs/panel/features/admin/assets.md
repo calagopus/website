@@ -13,7 +13,7 @@ The browser shows a breadcrumb (starting at `assets`) and a table with **Name**,
 
 ## Uploading and Organizing
 
-- **Upload** picks files from your machine; you can also drag and drop files anywhere on the page ("Drop files here to upload"). There is no restriction on file type or size here - the panel stores whatever you give it and serves it publicly, so treat this as a trusted-admin surface and don't upload anything you wouldn't publish.
+- **Upload** picks files from your machine; you can also drag and drop files anywhere on the page ("Drop files here to upload"). Uploads continue if you navigate away, with a progress toast ("Uploading 3 files to the admin assets...") whose close button cancels them and whose **Show files** button brings you back here. There is no restriction on file type or size here - the panel stores whatever you give it and serves it publicly, so treat this as a trusted-admin surface and don't upload anything you wouldn't publish.
 - **New Directory** previews the full path for a new folder inside the current one; the folder itself isn't created until you upload a file into it.
 
 ## Managing Assets

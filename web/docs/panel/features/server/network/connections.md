@@ -23,7 +23,9 @@ A server that has not joined shows **Not on the Private Network**, with "Join to
 
 <img src="./images/connections/join-form.webp" width="220" alt="" />
 
-Leave it empty and the panel derives one from the server name, lowercasing it and turning anything that isn't a letter or digit into a dash, then appending `-1`, `-2` and so on if that is already taken. Type your own and it has to be lowercase letters, digits and dashes, 1 to 63 characters, not starting or ending with a dash, and free across the *whole* network rather than just this node. Eight hexadecimal characters are rejected, because that shape is reserved for the alias below.
+Leave it empty and the panel derives one from the server name, lowercasing it and turning anything that isn't a letter or digit into a dash. Type your own and it has to be lowercase letters, digits and dashes, 1 to 63 characters, not starting or ending with a dash. Eight hexadecimal characters are rejected, because that shape is reserved for the alias below; a derived name of that shape gets `-1` appended.
+
+Hostnames do not have to be unique across the network. Two servers can share one as long as no third server connects to both of them, since a server resolves `<hostname>.tunnel` among the servers it reaches. Connecting to a second server with a hostname you already reach is refused with "this server already reaches another server with that hostname", and renaming a server to a hostname that would collide for one of the servers reaching it is refused the same way.
 
 ## Addresses
 
@@ -103,7 +105,7 @@ An alert above the canvas spells this out:
 
 ## Renaming and Leaving
 
-**Change Hostname** in the server card's menu takes a new hostname under the same rules as joining. Nothing is disconnected and peers pick the new one up within a minute, but anything still pointing at the old hostname stops resolving, which is exactly what `<alias>.tunnel` avoids.
+**Change Hostname** in the server card's menu takes a new hostname under the same rules as joining, including the collision check against the servers that reach this one. Nothing is disconnected and peers pick the new one up within a minute, but anything still pointing at the old hostname stops resolving, which is exactly what `<alias>.tunnel` avoids.
 
 **Leave Private Network** takes the server back off entirely. It loses its private address, its offered ports and every connection in both directions, and rejoining afterwards assigns a new address rather than the old one.
 

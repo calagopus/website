@@ -24,11 +24,13 @@ export default function MyCard() {
 
 Before you reach for it, check whether something already toasts for you - the Panel's data-fetching hooks raise error and success toasts internally, so a lot of the obvious cases are already covered. See [Toasts the data hooks already raise](#toasts-the-data-hooks-already-raise).
 
-The hook hands you four things:
+The hook hands you five things:
 
 | Member | What it does |
 | ------ | ------------ |
 | `addToast(message, type?, actions?)` | Shows a toast, returns its numeric id |
+| `addProgressToast(message, options?)` | Shows a toast with a progress bar that stays until you dismiss it, returns its id |
+| `updateToast(id, update)` | Patches a toast that's already on screen |
 | `dismissToast(id)` | Removes a toast early |
 | `toastPosition` | The corner the current user has chosen |
 
@@ -201,7 +203,7 @@ Scope your extension's entries to something unique and stable - include the serv
 
 The store has a few properties worth knowing about:
 
-- **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Expired entries are pruned as new ones arrive.
+- **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Undo entries are always tied to that constant, even though [progress toasts](#progress-toasts) outlive it. Expired entries are pruned as new ones arrive.
 - **Entries are one-shot.** Running an undo removes it, whether it was triggered by the button or the shortcut, so there's no way to fire the same undo twice.
 - **The history holds 10 entries, globally.** It's shared across all scopes, and the oldest fall off. In practice the timeout expires entries long before the cap bites, but don't build anything that assumes a deep undo stack.
 - **There's no redo.** Undoing doesn't push an inverse entry. If you want "undo the undo", raise another undoable toast from inside your undo callback.
@@ -210,9 +212,120 @@ The store has a few properties worth knowing about:
 `useUndoableToast` is a convenience layer over the same `addToast` actions described above - nothing stops you from building your own Undo action by hand. Use the hook anyway when the semantics fit. Wiring it yourself means reimplementing the shortcut integration and the dismiss-on-undo behavior, and keeping your label and icon in sync with the ones users see everywhere else.
 :::
 
+## Progress Toasts
+
+An upload or an import runs long enough that the user wants to watch it, and two toasts saying "started" and "finished" leave a silent gap in between. `addProgressToast` fills that gap with a toast carrying a progress bar, no close button, and no timeout:
+
+```ts
+const { addProgressToast, updateToast, dismissToast } = useToast();
+
+const id = addProgressToast('Uploading world.zip', { progress: 0 });
+
+await upload(file, (percent) => updateToast(id, { progress: percent }));
+
+dismissToast(id);
+addToast('Upload complete.', 'success');
+```
+
+The options object is optional, and so is every key in it:
+
+| Option | Default | What it does |
+| ------ | ------- | ------------ |
+| `type` | `'info'` | The same four types as `addToast`. It colors the bar as well as the card |
+| `progress` | `null` | A percentage, or `null` for an indeterminate bar |
+| `actions` | none | The same `ToastAction[]` the [Actions](#actions) section describes |
+| `withCloseButton` | `false` | Set it to `true` when the user should be able to close the toast themselves |
+| `onClose` | none | Runs instead of the default dismiss when the user clicks the close button |
+
+`onClose` is what makes the close button worth having on a progress toast. Without it the button just removes the card and leaves the work running, which is rarely what someone clicking an X on a progress bar means. Point it at the cancel path instead, and let the toast come down as a consequence of the work stopping:
+
+```ts
+const id = addProgressToast('Uploading 3 files...', {
+  progress: 0,
+  withCloseButton: true,
+  onClose: () => cancelUpload(scope),
+});
+```
+
+The Panel's upload toasts work exactly this way: the X cancels every upload heading for that destination, and the toast disappears once nothing in that scope is still in flight. Note that `onClose` *replaces* the dismiss rather than running alongside it, so if your handler doesn't end up removing the toast one way or another, the card stays on screen.
+
+### Indeterminate and determinate
+
+`progress: null` gives you the sweeping indeterminate bar, which is the honest option when you know work is happening but not how much is left. A number gives you a determinate bar with the percentage written across it. The same toast can move between the two, so starting indeterminate and switching once you know the total is a normal thing to do:
+
+```ts
+const id = addProgressToast('Preparing the archive...');
+
+const files = await listFiles();
+updateToast(id, { progress: 0, message: `Archiving ${files.length} files...` });
+```
+
+Passing `progress: null` back later returns the bar to indeterminate.
+
+### Updating a toast
+
+`updateToast(id, update)` patches a toast that's already on screen. Message, type, progress and actions are all optional, and leaving a key out means "leave that one alone":
+
+```ts
+updateToast(id, { progress: 64, type: 'warning', message: 'Rate limited, still going...' });
+```
+
+You can call it as often as you like. It's a no-op on an id that's already gone, so there's no need to guard against a toast the user closed, and it bails out when nothing actually changed, so a callback firing ten times a second costs nothing while the numbers hold still.
+
+The bail-out has one catch. It compares values, and a freshly built `ReactNode` is never equal to the one before it. Rebuild your message on every tick and you defeat the bail-out entirely. Keep the rendered text around as a string, compare against it, and pass `message` only when it actually differs:
+
+```ts
+const next = t('myext:import.progress', { done, total });
+
+updateToast(id, { message: next === lastMessage ? undefined : next, progress });
+lastMessage = next;
+```
+
+`updateToast` works on ordinary toasts too, but it can't add a progress bar to a toast that was raised without one, and it can't take a close button away. Those are decided when the toast is created.
+
+### They don't leave on their own
+
+This is the part to get right. A progress toast has no timeout, and by default no close button, so the only thing that takes it off the screen is your `dismissToast(id)`. Forget that call and the toast sits in the user's corner until they reload the page, with no way for them to get rid of it.
+
+Put the dismissal somewhere that runs on every path, including the failure one:
+
+```ts
+const id = addProgressToast('Importing...');
+
+importEverything()
+  .then(() => addToast('Import finished.', 'success'))
+  .catch((err) => addToast(httpErrorToHuman(err), 'error'))
+  .finally(() => dismissToast(id));
+```
+
+When the work is driven by state rather than a promise, dismiss in an effect's cleanup, which covers unmount as well:
+
+```tsx
+useEffect(() => {
+  if (!isImporting) return;
+
+  const id = addProgressToast('Importing...');
+  return () => dismissToast(id);
+}, [isImporting]);
+```
+
+::: warning
+Don't convert a finished progress toast into a completion toast with `updateToast`. It keeps the missing timeout and the missing close button, so your green "Done." card stays on screen forever. Dismiss the progress toast and raise a normal one.
+:::
+
+### One owner, mounted once
+
+A progress toast outlives the thing that raised it, which makes *where* you raise it a real decision. Raise one from a component that remounts on navigation and the user watches it disappear and slide back in every time they click a tab. Raise one from a component that renders twice and they get two toasts.
+
+Pick something that outlives the operation and mounts once, keep the id in a ref rather than state, and let an effect handle raise and dismiss. The Panel does this in two places worth copying from: `ServerStatusToast` mounts once per server and holds a single toast across every navigation inside that server, and `useUploadProgressToasts` keeps one toast per upload destination and drops it when that destination has nothing left in flight.
+
+Two gotchas specific to the Panel. Anything that reads a **context-scoped store** - `useServerStore` is the one you'll hit - has to read it in the component that owns the toast, not inside the message. Toast messages render inside the `ToastProvider`, which sits above those providers, so a message component that subscribes to the server store throws. And if you mount your owner in a place that virtual windows also render, gate it, or every open window raises its own copy into the same stack.
+
 ## Dismissing and Lifetime
 
-Every toast auto-dismisses after `toastTimeout`, which is 7500ms. It's a module constant, not a per-toast option, so you can't make a toast stickier or shorter, and hovering doesn't pause the timer. If you need something to stay on screen until acknowledged, use a modal or an inline alert on the page instead.
+Toasts raised with `addToast` auto-dismiss after `toastTimeout`, which is 7500ms. It's a module constant, not a per-toast option, so you can't make one of them stickier or shorter, and hovering doesn't pause the timer.
+
+There are two lifetimes available and nothing in between: 7500ms, or until you take the toast down yourself. The second one is what [`addProgressToast`](#progress-toasts) gives you. If what you want is a normal toast that lingers a bit longer than the rest, that isn't on offer, so use a modal or an inline alert on the page instead.
 
 To take a toast down early, hold onto the id `addToast` gives you:
 
@@ -282,6 +395,8 @@ export default function MyWorkerBridge() {
 }
 ```
 
+A long-running job wants `updateToast` and `dismissToast` in that same bag, for the reasons the [progress toast](#progress-toasts) section covers - the module holds the id it got back and patches it from wherever the work happens.
+
 Note the optional call (`addToast?.(...)`). The module can run before any component has mounted, so treat "no toast available yet" as normal rather than an error - the same reason `copyToClipboard`'s helpers take `addToast` as an optional argument.
 
 ## Toasting API Errors
@@ -342,6 +457,8 @@ import Notification from '@/elements/feedback/Notification.tsx';
 // inside initialize():
 Notification.addPropsInterceptor((props) => ({ ...props, radius: 'xl' }));
 ```
+
+The bar inside a progress toast is the Panel's `Progress` element, which is hookable in the same way, so intercepting that restyles progress toasts along with every other bar in the Panel.
 
 The per-type colors (`green`, `red`, `yellow`, `teal`) come from the Mantine palette, so redefining those colors in `initializeMantineTheme()` reshades toasts along with everything else. See [Theming](./theming.md) for both layers.
 

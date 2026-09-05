@@ -62,7 +62,7 @@ Size fields take a value plus a unit (B through PiB).
 
 ### Feature Limits
 
-How many **Allocations**, **Databases**, **Backups**, and **Schedules** the server may have; each defaults to 5. These are the caps the owner runs into on the client-side [Network](../server/network/index.md), [Databases](../server/databases.md), [Backups](../server/backups.md), and [Schedules](../server/schedules.md) pages.
+How many **Allocations**, **Databases**, **Backups**, and **Schedules** the server may have; each defaults to 5. The backup cap counts server and [database backups](../server/backups.md#database-backups) together. These are the caps the owner runs into on the client-side [Network](../server/network/index.md), [Databases](../server/databases.md), [Backups](../server/backups.md), and [Schedules](../server/schedules.md) pages.
 
 ### Allocations
 
