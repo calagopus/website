@@ -20,6 +20,181 @@ The server speaks streamable HTTP, which is what most clients use for remote ser
 claude mcp add --transport http calagopus https://calagopus.com/mcp
 ```
 
+=== ChatGPT Codex
+
+```bash
+codex mcp add calagopus --url https://calagopus.com/mcp
+```
+
+=== OpenCode
+
+```bash
+opencode mcp add
+```
+
+Then follow the prompts:
+
+1. Choose the **location** where you want to add the MCP.
+2. Enter a name for the MCP, for example **Calagopus**.
+3. Set the MCP server type to **Remote**.
+4. Enter this URL:
+
+```bash
+https://calagopus.com/mcp
+```
+
+5. When asked if the server requires authentication, select **No**.
+
+=== Gemini CLI
+
+```bash
+gemini mcp add --transport http calagopus https://calagopus.com/mcp
+```
+
+=== Kimi Code
+
+Start Kimi Code:
+
+```bash
+kimi
+```
+
+Inside Kimi Code, open the MCP configuration:
+
+```text
+/mcp-config
+```
+
+Add a new MCP server with:
+
+- **Name:** `calagopus`
+- **URL:** `https://calagopus.com/mcp`
+
+Calagopus uses HTTP and does not require authentication.
+
+To check the connection, run:
+
+```text
+/mcp
+```
+
+You should see Calagopus listed as an MCP server.
+
+If the tools do not appear immediately, start a new Kimi Code session.
+
+**Manual configuration**
+
+You can also add Calagopus directly to Kimi Code's MCP configuration.
+
+For a global configuration, edit:
+
+```text
+~/.kimi-code/mcp.json
+```
+
+Or for the current project only:
+
+```text
+.kimi-code/mcp.json
+```
+
+Add:
+
+```json
+{
+  "mcpServers": {
+    "calagopus": {
+      "url": "https://calagopus.com/mcp"
+    }
+  }
+}
+```
+
+=== Grok Code
+
+```bash
+grok mcp add --transport http calagopus https://calagopus.com/mcp
+```
+
+=== ZCode
+
+Open **ZCode** and go to: Settings → MCP Servers
+
+Click **New MCP Server**.
+
+Then configure the server:
+
+1. Choose the **scope**:
+   - **User** to use Calagopus across all projects.
+   - **Workspace** to use it only in the current project.
+2. Set the name to **Calagopus**.
+3. Set the server type to **HTTP**.
+4. Enter the following URL:
+
+```text
+https://calagopus.com/mcp
+```
+
+5. Leave the authentication headers empty.
+6. Click **Add** and make sure the server is enabled.
+
+=== QWen Code
+
+```bash
+qwen mcp add --transport http calagopus https://calagopus.com/mcp
+```
+
+=== DeepSeek Harness
+
+```bash
+dsh mcp add calagopus https://calagopus.com/mcp
+```
+
+=== Cursor
+
+Open your Cursor MCP configuration and add:
+
+```json
+{
+  "mcpServers": {
+    "calagopus": {
+      "url": "https://calagopus.com/mcp"
+    }
+  }
+}
+```
+
+For a project-specific setup, save it as:
+
+```text
+.cursor/mcp.json
+```
+
+For a global setup, use:
+
+```text
+~/.cursor/mcp.json
+```
+
+Cursor should automatically connect to Calagopus after the config is saved.
+
+=== Kiro CLI 
+
+Open your Kiro MCP configuration and add:
+
+```json
+{
+  "mcpServers": {
+    "calagopus": {
+      "url": "https://calagopus.com/mcp",
+      "disabled": false
+    }
+  }
+}
+```
+
+Save the file and Kiro should automatically connect to Calagopus.
+
 === JSON configuration
 
 Clients configured through a JSON file usually want an entry along these lines. The exact key names differ between clients, so check yours if it rejects the block:
