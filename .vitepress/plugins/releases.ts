@@ -1,8 +1,6 @@
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import MarkdownIt from 'markdown-it';
-import type StateCore from 'markdown-it/lib/rules_core/state_core.mjs';
-import type Token from 'markdown-it/lib/token.mjs';
+import markdownit, { type MarkdownIt, type StateCore, type Token } from 'markdown-it';
 import { type ReleaseCallout, type ReleaseNote, releaseNotes } from '../data/release-notes.ts';
 import { fetchJson } from '../lib/fetch-retry.ts';
 
@@ -159,7 +157,7 @@ function githubMentions(md: MarkdownIt): void {
   });
 }
 
-const md = MarkdownIt({ html: false, linkify: true, breaks: false }).use(githubMentions);
+const md = markdownit({ html: false, linkify: true, breaks: false }).use(githubMentions);
 
 const pending = new Map<string, Promise<ApiProject>>();
 
