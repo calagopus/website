@@ -134,3 +134,5 @@ The [private network](./private-network.md) between nodes also bypasses the prox
 **The node worked yesterday and is unreachable today.** Your home IP changed. Use a dynamic DNS name in the node URL instead of the raw address.
 
 **Users cannot reach their servers.** The game ports are not forwarded, or the allocation shows the LAN IP with no alias. See [Game Server and SFTP Ports](#game-server-and-sftp-ports).
+
+For node problems that aren't about exposure, see [Troubleshooting](../../additional/troubleshooting.md#the-panel-can-t-reach-the-node).

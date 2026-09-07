@@ -1,5 +1,5 @@
 ---
-description: "Optional Calagopus setup guides: self-service database hosts, panel migrations, SSL certificates, reverse proxies, and OAuth login."
+description: "Optional Calagopus setup guides: self-service database hosts, panel migrations, SSL certificates, reverse proxies, OAuth login, and troubleshooting."
 prev: false
 next: true
 ---
@@ -15,3 +15,4 @@ A collection of optional setup guides that aren't required to get the panel runn
 | [SSL Certificates](./ssl-certificates.md) | Get a free Let's Encrypt certificate, keep it renewing, and wire it into Wings on bare metal or in Docker |
 | [Reverse Proxies](./reverse-proxies.md) | Put Nginx, Apache, Caddy, Traefik or Nginx Proxy Manager in front of the Panel and Wings |
 | [Setting up OAuth](./setting-up-oauth/index.md) | Let users sign in with GitHub, Google, Discord, or any OIDC provider |
+| [Troubleshooting](./troubleshooting.md) | The problems people bring to support most often, and the fixes that worked |

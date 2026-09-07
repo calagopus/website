@@ -733,3 +733,5 @@ Then open the node's **Configuration** tab and run **Verify Connection**. Both c
 **"Frontend to Wings" fails while "Backend to Wings" passes.** The Panel can reach the node but your browser can't. Usually the node's certificate isn't valid for the hostname, the hostname doesn't resolve publicly, or port 443 is blocked between you and the node.
 
 **Browser shows a certificate warning.** The certificate has expired or was issued for a different name. See [Generating SSL Certificates](ssl-certificates.md#troubleshooting) for renewal problems.
+
+Problems that aren't caused by the proxy, such as the node URL, tokens or clock skew, are collected on the [Troubleshooting](./troubleshooting.md) page.

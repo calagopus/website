@@ -604,6 +604,7 @@ export default withMermaid({
               { text: 'Generic', link: '/docs/additional/setting-up-oauth/generic' },
             ],
           },
+          { text: 'Troubleshooting', link: '/docs/additional/troubleshooting' },
         ],
       },
 

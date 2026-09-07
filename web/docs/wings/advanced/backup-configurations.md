@@ -222,3 +222,23 @@ Yes. A backup configuration is assigned at the **location**, **node**, or **serv
 ### How do I verify a new configuration works?
 
 There is no "test connection" button. Create a small test backup of a real server that the configuration is assigned to - if it succeeds, the credentials and connectivity are good.
+
+## Troubleshooting
+
+**S3 backups fail with `failed to initiate multipart upload`, `417 Expectation Failed`, or `SignatureDoesNotMatch`.** Three causes account for nearly all reports. The bucket name is in the **Endpoint** field as well as the **Bucket** field, which doubles it in the request path, so the endpoint should be the bare service URL. The clock on the Wings host or the panel host is off, which breaks request signing at a skew of a few seconds, so check `timedatectl` on both. Or the key doesn't have permission on the bucket. Endpoints with a path in them, such as `https://minio.example.com/s3`, aren't supported. Cloudflare R2 works through its S3 endpoint, not through a custom domain on the bucket.
+
+**Restic backups fail with `repository is already locked exclusively`, then succeed on retry.** Restic allows one writer per repository, so two servers backing up at the same time collide. Raise **Retry Lock Seconds** on the configuration so the second backup waits instead of failing, and stagger scheduled backups across the hour.
+
+**Restic storage keeps growing even though old backups are deleted.** Deleting a backup only forgets the snapshot. The data stays until `restic prune` runs, which Calagopus doesn't do for you. Turn on **Maintenance Enabled** for the configuration, run `restic prune` against the repository (and `restic unlock` first if a stale lock is reported), then turn maintenance off.
+
+**Restic says the repository doesn't exist.** The repository setting points at a directory inside the repository, or at a parent of it. It must be the repository root, the directory that contains `config` and `keys`.
+
+**A backup is stuck at "creating" or "deleting" with no way to remove it.** Restart Wings. Anything still in progress is marked failed, and failed backups can be deleted. Proxmox Backup Server deletions that got stuck because of missing permissions clear themselves after a while.
+
+**Backups disappeared after a server transfer or after deleting an old node.** Backups belong to the node that made them. When transferring a server, select the backups in the transfer dialog, or they stay behind and are lost when that node is deleted. For remote drivers, S3, restic and Kopia, turn on **Shared** on the configuration so every node can see the same backups and a transferred server keeps them without copying anything. It is off by default, so an existing configuration almost certainly needs the change.
+
+**ZFS or Btrfs backups fail with `failed to parse dataset name`, `server volume ... is not its own ZFS dataset`, or `Failed to get ZFS dataset name ...` followed by whatever `zfs list` printed.** Snapshot backups need the server to live on its own dataset or subvolume, which means `system.disk_limiter_mode` set to `zfs_dataset` or `btrfs_subvolume` and existing servers converted with `wings migrate-disk-limiter`. See [Disk Limiters](../disk-limiters/index.md). When Wings runs in a container, it also needs to see the pool. Bind-mount the dataset at its real mountpoint and pass `/dev/zfs` through to the container, otherwise `zfs list` fails inside the container and its complaint is what ends up in the error.
+
+**Backups drag the server's TPS down.** The first snapshot of a server is expensive whatever the driver, later ones are incremental. `system.backups.read_limit` and `system.backups.write_limit` throttle the local, S3, restic and Proxmox Backup Server drivers. Kopia, ddup-bak and the ZFS and Btrfs snapshot drivers ignore them.
+
+**Large backup downloads fail with a `524` from Cloudflare or a `504` from the proxy.** Cloudflare's proxy caps request time and upload size. Serve the node's hostname with the orange cloud off, or download through a hostname that bypasses Cloudflare. See [Cloudflare](../../additional/reverse-proxies.md#cloudflare).

@@ -24,6 +24,9 @@ If you're on the `:heavy` image or have limited disk space, old image layers can
 docker image prune -a
 ```
 
+#### 3. Still on the old version? (heavy image only)
+The heavy image keeps the last binary it built under `./build/binaries` and keeps running it until extensions have been rebuilt. If the version shown doesn't change, or extensions fail to build against the new release, see [Extensions troubleshooting](./extensions/installing-extensions.md#troubleshooting).
+
 === APT / RPM / APK
 
 #### 1. Upgrade the package
