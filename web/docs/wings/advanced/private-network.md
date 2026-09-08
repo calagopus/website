@@ -27,7 +27,7 @@ Nodes talk to each other directly on a UDP port, `7100` by default. That port ha
 
 ## Requirements
 
-- **Linux nodes.** Wings on Windows does not include the tunnel daemon. All-in-One nodes (wings built into the panel container) cannot take part either, and the panel hides the tab for them.
+- **Linux nodes.** Wings on Windows does not include the tunnel daemon. All-in-One nodes (wings built into the panel container) can take part: the daemon is a sibling container on the host, and a fresh All-in-One install has `tundra.enabled` turned on for it. An All-in-One install from before that got the default has it off like any other node, so turn it on the same way.
 - **A rootful container engine, or rootless Podman.** Under rootless Podman the daemon runs in the same user namespace that owns the server containers, so it can still bind sockets inside their network namespaces. Rootless Docker is not supported: host networking there is RootlessKit's own namespace rather than the host's, so peers never reach the tunnel port.
 - **Direct UDP reachability between every pair of nodes** on their tunnel ports. There is no NAT traversal and no relay, so nodes behind NAT need a port forward.
 - **Image access.** Wings pulls `ghcr.io/calagopus/tundra` for the daemon binary and `debian:trixie-slim` as the container base, unless you point [`tundra.binary`](../configuration.md#tundra-binary) at a binary of your own.

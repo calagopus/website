@@ -70,7 +70,7 @@ The same form as [creating a node](#creating-a-node), plus three extra buttons:
 
 ## Configuration
 
-Everything needed to connect wings to this node entry. The page starts collapsed behind **Reveal Configuration** because the output contains the node token (requires `nodes.read-token`). Hidden entirely on All-in-One nodes.
+Everything needed to connect wings to this node entry. The page starts collapsed behind **Reveal Configuration** because the output contains the node token (requires `nodes.read-token`). On an All-in-One node there is nothing to join, so **Initial Setup** is left out and the page opens straight on **Live Configuration**.
 
 ![](./images/nodes/configuration.webp)
 
@@ -189,9 +189,9 @@ Live view of transfers currently leaving this node (requires `nodes.transfers`):
 
 ## Private Network
 
-This tab puts the node on the **private network** (requires `nodes.tunnel`). Once it is on, the servers it hosts can join and be [connected privately](../server/network/connections.md) to servers on any other node that is also on the network: "Traffic goes node to node over an encrypted tunnel and never touches the public internet." The tab is hidden on All-in-One nodes.
+This tab puts the node on the **private network** (requires `nodes.tunnel`). Once it is on, the servers it hosts can join and be [connected privately](../server/network/connections.md) to servers on any other node that is also on the network: "Traffic goes node to node over an encrypted tunnel and never touches the public internet."
 
-The tunnel daemon has to be turned on for the node first, and it is off by default: see [`tundra.enabled`](../../../wings/configuration.md#tundra-enabled). Three alerts cover the cases where the node cannot take part:
+The tunnel daemon has to be turned on for the node first, and it is off by default on a standalone node: see [`tundra.enabled`](../../../wings/configuration.md#tundra-enabled). A fresh All-in-One install has it on already; an older one does not, and its **Configuration** tab is where you turn it on. **Host** defaults to the node URL's hostname, or the panel URL's on an All-in-One node, since its own URL is a loopback address. Three alerts cover the cases where the node cannot take part:
 
 | Alert | Meaning |
 | --- | --- |
