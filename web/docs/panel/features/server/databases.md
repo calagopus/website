@@ -95,9 +95,27 @@ Right-click a database for:
 
 ### Users Tab
 
-Per-instance database users, also capped ("0 of 10 maximum users created."). Each row lists the databases that user can reach as badges under a **Databases** column, blue for read and write access, grey for read-only.
+Per-instance database users, shown with the `database-instances.users` permission and capped by **Max Users per Database Instance** under [Settings > Server](../admin/settings.md#server) ("0 of 10 maximum users created."). Each row lists the databases that user can reach as badges under a **Databases** column, blue for read and write access, grey for read-only.
 
-**Create** takes a **Username** (letters and numbers only) and, for everything except Redis, a **Database Access** list: every database in the instance with a **No Access** / **Read Only** / **Read & Write** control next to it. A user can hold access to as many databases as you like, at a different level in each.
+**Create** takes a **Username** of 2 to 23 characters, letters and digits only, and for everything except Redis a **Database Access** list. What you type is a suffix rather than the final name: the agent prefixes it to keep users from different servers apart, so `appuser` is created as something like `ub3bf2a14_appuser`, and that prefixed form is what the table, the credentials and your connection string all use. You never choose a password either; the agent generates one and **Details** shows it.
+
+#### Database Access
+
+Access is granted per database rather than per instance. The list names every database in the instance with a **No Access** / **Read Only** / **Read & Write** control beside it, and one user can hold a different level in each. You get the same list whether you are creating a user or editing one through **Permissions**, and the **Databases** badges on the row summarize the result.
+
+<img src="./images/databases/instance-user-permissions-modal.webp" width="220" alt="" />
+
+**No Access** is the absence of a grant rather than a stored setting. Creating a database only takes a name, so a new one starts out unreachable until you grant somebody access to it. **Recreate** keeps the grants, so wiping a database does not change who can reach it.
+
+Redis instances have no databases, so their users are instance-wide and **Permissions** never appears for them. An instance whose databases you have not created yet says "This instance has no databases yet." and hides the action too.
+
+Editing access also needs `database-instances.databases`, since the panel has to read the instance's databases to draw the list. Without it, both the **Create** button and the **Permissions** action disappear.
+
+The instance also has to be running. While it is stopped, **Create**, **Permissions** and **Delete** are greyed out, and **Create** says why: "The instance must be running to create users." Redis is the exception again, since its users have no grants to apply, so they can be created and removed with the instance off.
+
+::: warning `database-instances.users` includes the passwords
+Classic databases keep their password behind a separate `databases.read-password` permission. Managed instances have no such split, so anyone who can open this tab can read every user's password from **Details**. Grant it as you would hand out the credentials themselves. See the [Permissions Reference](../dashboard/permissions.md).
+:::
 
 Right-click a user for:
 

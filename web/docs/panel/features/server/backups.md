@@ -42,33 +42,59 @@ A dump has no file tree, so **Browse**, **Export to Files**, and **Backup Metada
 
 ## Backup Groups
 
-Groups organize backups and can rotate them automatically. Each group is a collapsible card with its own search box, and any backups outside a group collect under **Ungrouped**. An empty group reads "This group has no backups yet." with a **Create backup in this group** button.
+Groups organize backups, and their retention rules decide which ones the panel keeps. Each group is a collapsible card with its own search box, and any backups outside a group collect under **Ungrouped**. An empty group reads "This group has no backups yet." with a **Create backup in this group** button.
 
-The group header shows retention at a glance:
+The group header shows:
 
 | Badge | Meaning |
 | --- | --- |
-| `1/5` | Usable backups versus the group's **Keep count**. Turns yellow when over the limit. Groups without a Keep count show a plain "N Backups" badge instead. |
-| **Keep 7 Days** | The group's **Keep days** retention. |
-| **No auto-deletion** | No retention set; the group is just a label. |
-| **All locked** | Every backup in the group is locked, so nothing can be rotated out. |
+| `N Backups` | How many backups the group holds. |
+| **Retention** | The group has retention rules. Hover it to see them. |
+| **No retention rules** | Nothing is set, so the group is only a label. |
+| **All locked** | Every backup in the group is locked, so nothing can be deleted automatically. |
+
+![The Retention badge hovered, showing "Keep latest: 5, Keep daily: 7"](./images/backups/group-retention-tooltip.webp)
+
+The tooltip lists only the rules that are switched on, so it doubles as a summary of what the group keeps without opening the edit form.
+
+### Retention Rules
+
+A group has six rules, each off when you leave it empty or set it to 0.
+
+| Rule | Keeps |
+| --- | --- |
+| **Keep latest** | The newest N backups. |
+| **Keep all within days** | Every backup taken in the last N days. |
+| **Keep daily** | The newest backup from each of the last N days that has one. |
+| **Keep weekly** | The newest backup from each of the last N weeks that has one. |
+| **Keep monthly** | The newest backup from each of the last N months that has one. |
+| **Keep yearly** | The newest backup from each of the last N years that has one. |
+
+A backup is kept when any one rule selects it, so the rules stack: **Keep latest** 5 alongside **Keep monthly** 12 gives you the five most recent backups plus one per month going back a year. Anything no rule selects is deleted. Periods follow UTC and weeks start on Monday.
+
+Empty periods don't use up a slot. **Keep daily** 7 holds the newest backup from each of the seven most recent days that actually have one, so a quiet week doesn't push your older dailies out.
+
+Every source has its own history: the server's files are one, and each managed database is another. **Keep latest** 3 in a group holding server backups and two database backups therefore keeps three of each. A locked backup fills a slot but is never deleted. Failed backups sit outside retention entirely, and the panel removes unlocked failed ones 24 hours after they finish, whether they are in a group or not.
+
+Retention is evaluated when a backup finishes, when you move one between groups, and once an hour for every group.
 
 ### Creating and Editing a Group
 
-Pick **Create Backup Group** from the **Create** menu. Give it a name and optionally set:
+Pick **Create Backup Group** from the **Create** menu. Give it a name and fill in whichever rules you want; **Retention** has a helper popover describing them.
 
-- **Keep count**: maximum number of usable backups to keep in this group. Leave empty for no limit.
-- **Keep days**: delete backups in this group older than this many days. Leave empty for no limit.
+<img src="./images/backups/group-edit-modal.webp" width="220" alt="" />
 
-<img src="./images/backups/group-edit-modal.webp" width="221" alt="" />
-
-With neither set, the group never deletes backups automatically. **Keep count** is applied to each kind separately, so a group with a Keep count of 5 holds up to five server backups and up to five database backups at once; **Keep days** applies to everything in the group. Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
+Leave them all empty and the modal tells you what that means: "With no retention set, this group is just a label and never deletes successful backups automatically." Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
 
 Once you have more than one group, each header grows a grip handle: drag it to reorder the groups on the page. This is display order only and doesn't affect retention.
 
+### Reaching the Backup Limit
+
+The server's backup limit is a hard cap that groups don't raise; retention only decides which backup goes when room is needed. At the limit, an automatic backup makes room for itself by deleting whatever your rules no longer keep. If there is nothing expendable it takes one more, preferring a failed backup, then an ungrouped one, and only then a backup a group still keeps. A manual backup is refused rather than delete something a rule still keeps, and locked backups are never touched. Every automatic deletion shows up in the server's [Activity](./activity.md) log with the rule and the group that caused it.
+
 ### Deleting a Group
 
-Click the trash icon in the group header and type the group's name to confirm. The backups inside are not deleted, they become ungrouped and follow standard rotation. A **Lock backups** switch locks all backups in the group first, so they cannot be rotated out automatically afterwards.
+Click the trash icon in the group header and type the group's name to confirm. The backups inside are not deleted, they become ungrouped, so no retention rule applies to them and they only go if the server reaches its backup limit. A **Lock backups** switch locks all backups in the group first, so they cannot be deleted automatically afterwards.
 
 ## System Backups
 
@@ -84,7 +110,7 @@ Right-click a backup (or use the menu at the end of the row) for its actions.
 
 ### Edit
 
-Rename the backup, move it to another group, or toggle **Locked**. A locked backup cannot be deleted and is never rotated out by group retention.
+Rename the backup, move it to another group, or toggle **Locked**. A locked backup cannot be deleted, and retention never removes it or evicts it to make room at the backup limit.
 
 <img src="./images/backups/edit-modal.webp" width="220" alt="" />
 
