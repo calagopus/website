@@ -5,7 +5,9 @@ description: Update the Calagopus Panel for bug fixes, security patches, and new
 
 # Updating the Panel
 
-Updating the panel gets you bug fixes, security patches, and new features. Unlike Wings, the panel's web interface and API will be briefly unavailable while it restarts, so plan around a short interruption rather than zero downtime.
+Updating the panel gets you bug fixes, security patches, and new features. Its web interface and API will be briefly unavailable while it restarts. An AIO update also restarts the bundled Wings, briefly interrupting console connections and server management.
+
+Read the [release notes](../releases/index.md) and back up the Panel database, configuration, and encryption key before updating. Keep standalone Panel and Wings installations on compatible releases; see [Versions and Clocks](../additional/troubleshooting.md#versions-and-clocks). AIO updates both components together.
 
 Pick the method matching how you installed the panel:
 
@@ -13,10 +15,17 @@ Pick the method matching how you installed the panel:
 === Docker (Recommended)
 
 #### 1. Pull and restart
+
+Return to the directory containing your existing `compose.yml`, then update the `web` service used by the supplied Compose files:
+
 ```bash
-docker compose pull
-docker compose up -d
+docker compose pull web
+docker compose up -d --no-deps web
+docker compose ps
+docker compose logs --tail 50 web
 ```
+
+This updates the Panel image, including bundled Wings for AIO. Database and cache updates are separate maintenance tasks. Keep your existing Compose file and encryption key.
 
 #### 2. Clean up old images (optional)
 If you're on the `:heavy` image or have limited disk space, old image layers can pile up quickly. Remove unused ones:
@@ -30,28 +39,35 @@ The heavy image keeps the last binary it built under `./build/binaries` and keep
 === APT / RPM / APK
 
 #### 1. Upgrade the package
-Run the command for your package manager:
+Run the command for your package manager. If you installed the AIO package, replace `calagopus-panel` with `calagopus-panel-aio` in the upgrade command:
 
 ::: code-group
 ```bash [APT]
 apt update
-apt upgrade -y
+apt install --only-upgrade calagopus-panel
 ```
 ```bash [RPM]
-dnf check-update
-dnf upgrade -y
+dnf upgrade calagopus-panel
 ```
 ```bash [APK]
 apk update
-apk upgrade
+apk upgrade calagopus-panel
 ```
 :::
 
+These commands target the named package and any required dependencies. Schedule OS-wide updates separately.
+
 #### 2. Restart the service
-The package upgrade alone doesn't restart the running daemon, do that explicitly:
-```bash
+Restart the service to load the updated binary:
+
+::: code-group
+```bash [systemd]
 systemctl restart calagopus-panel
 ```
+```bash [OpenRC (Alpine)]
+rc-service calagopus-panel restart
+```
+:::
 
 === Binary
 
@@ -102,3 +118,5 @@ nssm start "Calagopus Panel"
 :::
 
 ::::
+
+After updating, sign in, check the Panel version in Admin, and open a server console to confirm its connection works.

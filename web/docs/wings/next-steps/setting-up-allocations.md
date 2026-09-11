@@ -15,14 +15,16 @@ Click **Create** and a popup will appear:
 
 ![](./images/setting-up-allocations/allocation-popup.webp)
 
-**IP address**: Use the public IP of the node's network interface. To find it, run `hostname -I | awk '{print $1}'` on the node, or `ip addr | grep "inet "` to see all interfaces. You can also use `0.0.0.0` to bind all available interfaces.
+**IP address**: Use an IP assigned to an interface on the Wings host, or `0.0.0.0` to bind all its IPv4 interfaces. Run `ip addr` to inspect the host's addresses. `hostname -I` can include private and Docker addresses; its first result is not necessarily your public IP. If your provider routes a public IP to a private address on the VPS, bind the private address or `0.0.0.0` and enter the public address as the alias below.
 
 ::: info
-You can use `127.0.0.1` for allocations if you want the server to be accessible only from the same machine. This is useful for locally hosted services that shouldn't be exposed to the internet.
+`127.0.0.1` has special handling in Wings: it normally maps to [`docker.network.interface`](../configuration.md#docker-network-interface), and an internal network can leave it unpublished. It does not guarantee a host-loopback-only port. [`docker.network.disable_interface_binding`](../configuration.md#docker-network-disable-interface-binding) can also make ports bind to all interfaces. Check the game container's actual port bindings before relying on an allocation for isolation.
 :::
 
-**IP Alias**: An optional display name shown to users in the panel instead of the raw IP. Useful if you're behind NAT and don't want to expose the internal address.
+**IP Alias**: The public IP or hostname shown to players instead of the bind address. For example, bind `0.0.0.0` and use your VPS's public IP as the alias. The alias only changes what the Panel displays; it does not configure DNS, NAT, or firewall rules.
 
 **Port Ranges**: A single port (`10000`) or a range (`10000-11000`). These are the ports players use to connect.
 
 Fill in the fields and click **Create**. The allocations are now available to assign to servers.
+
+Allow the game's ports and protocols through the provider firewall and any host firewall or router in the path. Creating an allocation does not open those firewalls.

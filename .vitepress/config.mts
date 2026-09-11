@@ -421,6 +421,7 @@ export default withMermaid({
             link: '/docs/panel/installation/',
             collapsed: true,
             items: [
+              { text: 'Your first VPS', link: '/docs/panel/installation/first-vps' },
               { text: 'Docker', link: '/docs/panel/installation/docker' },
               { text: 'Binary', link: '/docs/panel/installation/binary' },
               { text: 'Package Manager', link: '/docs/panel/installation/pkgmanager' },

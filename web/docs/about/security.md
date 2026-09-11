@@ -15,6 +15,9 @@ bugs, but memory safety on its own does not protect a multi-tenant panel. That
 protection comes from isolation, authorization, credential handling, and
 resource bounding, which the rest of this page covers.
 
+The source links below pin the implementations checked for this page. They describe
+current development code; older supported releases may not include every control.
+
 ## Reporting a vulnerability
 
 Do **not** report security issues through public GitHub issues or Discord.
@@ -30,19 +33,16 @@ not access or modify data that is not yours, and act in good faith.
 
 ## Supported versions
 
-| Version | Supported |
-| --- | --- |
-| 1.2.x | Yes |
-| 1.1.x | Yes |
-| 1.0.x | No |
-| < 1.0.0 | No |
+See the [Panel security policy](https://github.com/calagopus/panel/blob/main/SECURITY.md)
+and [Wings security policy](https://github.com/calagopus/wings/blob/main/SECURITY.md)
+for the versions receiving security updates.
 
 ## Threat model
 
 The core assumption: **a game server is untrusted code.** Anything a tenant runs
 inside their container is treated as potentially hostile, and everyone else's
-safety on the node depends on that container not reaching the host or other
-tenants. The daemon (Wings) typically runs as root, so a second assumption
+safety on the node depends on that container not gaining unauthorized access to
+the host or other tenants. The daemon (Wings) typically runs as root, so a second assumption
 follows: **the daemon must never be tricked into acting outside a server's own
 directory or privileges**, even when the request originates from an authenticated
 but malicious user.
@@ -54,22 +54,16 @@ graph TD
   classDef trusted fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
   classDef host fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
 
-  subgraph Container ["Per-server container: non-root, dropped caps, seccomp, read-only rootfs"]
-    W[Untrusted game server]:::untrusted
-  end
+  W[Untrusted game-server container]:::untrusted
+  D[Wings daemon - usually root]:::daemon
+  P[Panel - identity and permissions]:::trusted
+  F[(Authorized server filesystems)]:::host
+  K[Shared host kernel]:::host
 
-  D{{Wings daemon - root}}:::daemon
-  P[Panel - identity and authz]:::trusted
-  DB[(Encrypted secrets)]:::trusted
-  H[Host kernel and filesystem]:::host
-
-  W -->|confined by cap-std + quota| D
-  D -->|node token auth| P
-  P <--> DB
-  D -->|only within server root| H
-
-  %% The container cannot address the host or the panel directly;
-  %% every privileged action is mediated by the daemon.
+  P -->|authenticated control API| D
+  D -->|capability-scoped file operations| F
+  W -->|direct volume writes and quota backend| F
+  W -->|namespaces, seccomp and cgroups| K
 ```
 
 Attacker goals defended against: container escape to the host, cross-tenant
@@ -77,10 +71,15 @@ access, coercing the root daemon into touching paths outside a server root,
 privilege escalation inside the panel, credential exfiltration, and
 denial-of-service against the node or panel.
 
+Containers share the host kernel. These controls reduce what a tenant can do;
+they do not turn a container into a virtual machine or protect it from a
+compromised host. Administrators, the Panel, Wings, and their configuration are
+trusted. Container network access is a separate boundary, covered below.
+
 ## Daemon isolation (Wings)
 
-Each server runs in its own container. Wings sets the following by default when
-creating a container (`application/src/server/executor/docker.rs`):
+Each game-server process runs in its own container. Wings applies the following
+controls to these runtime containers:
 
 - **No privilege escalation:** `no-new-privileges` is always set.
 - **Dropped capabilities:** `setpcap`, `mknod`, `audit_write`, `net_raw`,
@@ -88,22 +87,20 @@ creating a container (`application/src/server/executor/docker.rs`):
   `setfcap`, and `sys_ptrace`.
 - **Seccomp** profile applied by default (configurable per installation).
 - **Read-only root filesystem**, with a size-limited `/tmp` mounted `nosuid`.
+- **AppArmor** profile selectable when it is installed on the host.
 - **User-namespace remapping** supported and configurable.
-- **Rootless mode** supported: daemon and containers can run as a non-root user.
-  Otherwise containers still run as a configured non-root uid/gid, never as root.
+- **Rootless mode** supported: the daemon and container engine can run without
+  host root. The configured uid/gid inside the container may still be `0` in its
+  user namespace; container root and host root are different in that setup.
 - **cgroup resource limits:** memory (plus reservation/swap), CPU
   (quota/period/shares/cpuset), PID limit, block-IO weight, and OOM controls.
 
-All of the above are enforced by the **kernel**, not by Wings, which matters
-because they hold even against a fully compromised game server. A dropped
-capability makes the corresponding privileged syscall fail with `EPERM` (for
-example `mknod()` without `CAP_MKNOD`, or `ptrace()` without `CAP_SYS_PTRACE`);
-`no-new-privileges` is the `prctl(PR_SET_NO_NEW_PRIVS)` flag that stops a setuid
-binary from gaining privileges at `execve()`; the seccomp profile filters
-syscalls in-kernel; the PID cgroup makes `fork()`/`clone()` return `EAGAIN` past
-the limit while the memory cgroup hands runaway processes to the OOM killer; and
-the read-only rootfs makes writes outside the mounted volumes fail with `EROFS`.
-Wings sets these up, but it is not in the loop when they fire.
+The enabled isolation and resource controls are enforced by the kernel. Wings
+sets them up; it does not need to inspect each syscall for them to work.
+`no-new-privileges` prevents gaining privileges through a setuid executable,
+seccomp filters syscalls, and cgroups constrain the resources configured for the
+server. These controls still depend on host support: for example, an I/O weight
+has no effect without a supporting scheduler or I/O cost model.
 
 Defaults (see the [Wings configuration reference](../wings/configuration)):
 `no-new-privileges`, the dropped-capability set, and the read-only rootfs are
@@ -111,200 +108,148 @@ always applied. `docker.container_apply_seccomp` defaults to `true` (it can need
 disabling under Podman). `docker.userns_mode` is empty by default (remapping off
 until configured), and rootless mode (`system.user.rootless.enabled`) is opt-in.
 
-::: tip Recommended production baseline
-Enable rootless mode and user-namespace remapping, keep seccomp on, and run the
-daemon on a host dedicated to untrusted workloads.
+::: tip Production setup
+Keep seccomp enabled and use a host dedicated to untrusted workloads. Choose
+rootless mode or user-namespace remapping to suit the container engine. Check
+feature compatibility first: Wings server firewalls are not supported with a
+rootless container engine.
 :::
+
+These settings describe runtime containers. Installer images and scripts use a
+separate container configuration and are trusted administrator-supplied code.
+Administrator-approved host mounts and device passthrough also widen the resources
+available to a container; review them as part of the server's privileges.
+
+Sources: [runtime container configuration](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/executor/docker/mod.rs#L532-L644), [installer configuration](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/executor/docker/mod.rs#L2884-L2943), [device passthrough](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/executor/docker/mod.rs#L323-L354).
 
 ## Filesystem safety: keeping a root daemon in its lane
 
-Because the daemon runs as root, path handling is the highest-risk area: a naive
-implementation could be tricked (via `..`, absolute paths, or symlinks) into
-reading or writing anywhere on the host. Calagopus mitigates this structurally
-rather than by string-checking paths.
+Because the daemon usually runs as root, path handling is a critical boundary.
+Ordinary server file operations use capability-scoped directory handles
+(`cap-std`), so traversal and symlink resolution are confined to the filesystem
+root the daemon opened. Client-supplied paths are resolved relative to that root.
+The protection comes from filesystem operations through that handle, not a
+blocklist of suspicious path strings.
 
-- **Capability-based confinement (`cap-std`).** Every server filesystem is opened
-  as a capability-scoped directory (`Dir::open_ambient_dir` on the server root).
-  All subsequent operations go through that handle, so a path that resolves
-  outside the server root is rejected by construction, not by a blocklist. On
-  Linux kernels that support it (5.6+), cap-std resolves paths with the kernel's
-  `openat2()` using `RESOLVE_BENEATH`, so the **kernel itself** refuses to walk
-  out of the root (returning `EXDEV`) rather than Wings string-checking for `..`.
-  This is the primary defense against path traversal and symlink escape, and it
-  holds even though the process is root.
-- **Relative-path resolution.** Incoming paths are resolved relative to the
-  capability root before use, so client-supplied absolute paths cannot redirect
-  an operation.
-- **Symlinks cannot escape.** Because operations go through the capability root,
-  a symlink pointing outside the server root cannot be followed out of it. The
-  filesystem watcher is also configured not to follow symlinks
-  (`with_follow_symlinks(false)`), and metadata lookups use `symlink_metadata`
-  (the link itself, not its target).
-- **Ownership.** Files created inside a server root are `chown`ed to the server's
-  user, not left owned by root, so the container cannot inherit root-owned files.
+Wings also supports mounted and virtual filesystems. The boundary is the set of
+filesystems authorized for that server, not a promise that every operation touches
+one physical directory. This confinement applies to Wings file operations;
+container access to bind mounts is controlled by the container and host.
+
+Sources: [capability root and path handling](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/cap/mod.rs#L27-L118), [filesystem implementation](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/virtualfs/cap.rs).
 
 ## Disk quota enforcement
 
-Quota is enforced in two complementary layers: an in-process accounting gate that
-refuses an allocation *before* it happens, and an on-disk quota backend that
-enforces at the kernel or filesystem level.
+Wings tracks file growth in its own write paths and checks it against cached disk
+usage. Uploads, SFTP writes, extraction, and remote pulls can be stopped when that
+accounting rejects further growth. Uploads can also use a supplied total size for
+an early space check; that check is not a reservation.
 
-**1. In-process allocation gate.** Before a write that grows usage, Wings
-atomically checks projected usage against the limit using a compare-and-update
-(`fetch_update`) on the cached usage counter. If `current + delta > limit`, the
-allocation is refused and the write does not proceed. Being a single atomic
-update, this is race-free under concurrent writes (no check-then-write window).
-Note its scope: this gate governs writes **Wings itself performs** (SFTP, panel
-file writes, archive extraction, remote pulls). The game server process writes
-directly to its bind-mounted volume through the kernel and never passes through
-this accounting, which is why the on-disk backend below matters.
-
-**Allocation is incremental, not pre-allocated.** Uploads, archive extraction,
-and remote pulls have no length reliably known in advance, and Calagopus
-deliberately does not try to guess one. Rather than reserving quota up front, the
-server file writer (`ServerFile` / `AsyncServerFile`) charges quota as data is
-written:
-
-- Each write advances a high-water mark and counts only **newly grown** bytes
-  (`current_position - highest_position`). Overwriting existing content within a
-  file costs no additional quota.
-- Growth is accumulated and charged in batches once it crosses
-  `ALLOCATION_THRESHOLD` (1 MiB), instead of taking the atomic quota lock on
-  every small write, which keeps the write path cheap.
-- Each batch passes through the same atomic gate above. If a batch would exceed
-  the limit, the write fails mid-stream with `StorageFull` and stops, rather than
-  being rejected up front (impossible without a known length) or allowed to run
-  past the quota.
-- Leftover accumulated bytes are charged on flush, on seek, and on close/drop, so
-  accounting always reconciles even if the writer is dropped early.
-
-One honest consequence: because charging happens at 1 MiB batch boundaries, a
-server can overshoot its quota by at most roughly one threshold (plus any
-in-flight async batch) before the next check refuses further growth. That is a
-deliberate accuracy-for-throughput trade-off, not an unbounded overshoot.
-
-**2. On-disk backend.** One of several limiters enforces the quota at rest:
+**The write-time limit comes from the disk backend.** A game server writes to its
+volume directly, without passing through Wings' file writer. Choose a backend
+that covers those writes:
 
 | Mode | Mechanism |
 | ---- | --- |
-| `zfs_dataset` | Per-server ZFS dataset with a dataset quota. |
-| `btrfs_subvolume` | Per-server Btrfs subvolume with a quota. |
+| `zfs_dataset` | Per-server ZFS dataset quota. |
+| `btrfs_subvolume` | Per-server Btrfs subvolume quota. |
 | `xfs_quota` | XFS project quota. |
-| `fuse_quota` | Userspace FUSE quota daemon (see below). |
-| `none` | No enforcement (in-process accounting only). |
+| `fuse_quota` | A separate FUSE process in the filesystem write path. |
+| `none` (default) | Wings accounting and usage checks, without a write-time backend. |
 
-The **FUSE quota** backend runs as a **separate subprocess** that Wings talks to
-over a Unix socket, keeping that enforcement path isolated from the main daemon.
-Usage deltas are synced to it, and it answers usage queries and enforces the
-configured limit.
+ZFS, Btrfs, and XFS enforce their configured quota in the filesystem. FUSE routes
+writes through its quota process. These cover writes from the game server as well
+as Wings. The in-process counter is supplementary accounting, not a hard bound on
+physical disk usage.
 
-```mermaid
-graph TD
-  classDef logic fill:#f3e5f5,stroke:#4a148c,stroke-width:2px;
-  classDef gate fill:#fff9c4,stroke:#fbc02d,stroke-width:2px;
-  classDef store fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
-  classDef deny fill:#ffebee,stroke:#b71c1c,stroke-width:2px;
-
-  A[Write request grows usage by delta]:::logic
-  B{"current + delta > limit ?"}:::gate
-  C[Refuse allocation, write does not proceed]:::deny
-  D[Atomically commit new usage]:::gate
-  E[("On-disk backend: ZFS / Btrfs / XFS / FUSE quota")]:::store
-
-  A --> B
-  B -->|yes| C
-  B -->|no| D
-  D --> E
-
-  %% The atomic check-and-commit removes the check-then-write race.
-```
-
-The cached in-process usage is periodically reconciled against real disk usage on
-an interval (`system.disk_check_interval`, default 150s), with a heavier full
-recount every few passes (`full_disk_check_every`) and inotify-driven updates in
-between, so drift between the fast accounting path and actual on-disk usage is
-corrected.
-
-### Real limiters vs `none`: who actually enforces
-
-Which backend you choose decides where enforcement actually happens. The **real
-limiters** (`zfs_dataset`, `btrfs_subvolume`, `xfs_quota`) push it into the
-**kernel filesystem layer**: when a server hits its quota, the offending `write()`
-syscall itself returns `EDQUOT` (or `ENOSPC`), synchronously, no matter who is
-writing or how fast. The game server's own direct writes are bound the same way,
-because the kernel enforces the quota on the mount, not Wings. The `fuse_quota`
-backend is a middle ground: enforcement lives in a userspace FUSE daemon, but the
-kernel VFS routes every write to that mount through it, so it is still in the
-write path and rejects overruns at write time rather than after the fact.
-
-::: danger The `none` limiter is not real enforcement
-With `none`, there is no on-disk backend, so a game server writing directly to
-its volume is only ever caught by the periodic usage scan
-(`disk_check_interval`, default 150s). That check is **reactive**: a process that
-writes faster than the interval can exceed its quota by a large margin before the
-next scan even notices, and nothing at write time stops it. `none` is therefore
-suitable only where the workload is trusted or disk is not a real constraint. For
-untrusted tenants, use one of the kernel-enforced limiters (ZFS, Btrfs, or XFS)
-where the filesystem supports it, or `fuse_quota` otherwise.
+::: danger Choose a quota backend for untrusted tenants
+The default `none` backend does not stop a game server's writes at the quota.
+Periodic usage checks are reactive, and a process can fill disk between checks.
+Use ZFS, Btrfs, or XFS where supported, or `fuse_quota` otherwise.
 :::
 
-## Checks are advisory, operations are authoritative
+Sources: [quota backends and default](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/limiter/mod.rs), [file accounting](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/file.rs#L129-L179), [upload preflight](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/routes/upload/file.rs#L134-L162).
 
-Wings and the panel operate on live, concurrently-mutated state. A game server can
-create, grow, truncate, or delete a file at any instant, including the instant
-between Wings observing it and Wings acting on it. The codebase treats an initial
-check as a **fast-path hint, not a fact**: the check picks an efficient path, but
-correctness comes from the operation that consumes the data staying valid even if
-the data changed underneath it. This is time-of-check to time-of-use (TOCTOU)
-resilience, and it recurs by design:
+## Backups of a running server
 
-- **Archive and backup streaming (`FixedReader`).** Archives are built by
-  streaming files off disk, and each format (tar, pxar, itaf, 7z, zip) writes a
-  per-file header declaring the file's length, then expects exactly that many
-  content bytes. If the file's size changes between header and body, the stream
-  desynchronizes and every following entry is corrupted.
-  `FixedReader` (`application/src/io/fixed_reader.rs`) pins the body to exactly the
-  size captured at header time: it never yields more than the declared size (a
-  file that **grows** cannot inject extra bytes), and it zero-fills the remainder
-  if the file hits EOF early because it was **truncated**. The archive always
-  receives the promised byte count and stays structurally valid and extractable.
-  The trade-off is confined to that one file's contents (it may be zero-padded or
-  clipped), never the archive as a whole. The same reader backs the PBS, restic,
-  and ddup_bak backup adapters, so a live server cannot produce a structurally
-  broken backup.
+A file can grow or shrink while a backup reads it. Wings' fixed-length reader
+limits the output to the size captured for that file: growth is clipped, and early
+EOF is padded with zeroes. This prevents that length change from shifting later
+entries in an archive. Other I/O errors can still fail the operation.
 
-- **Disk usage scanning.** The scanner reads a path's type once to choose a fast
-  path (rescan just the modified directory, or walk up to the nearest existing
-  ancestor if the path has already vanished). It does not assume the tree stays
-  still during the walk: every per-entry metadata read is guarded, and an entry
-  that disappeared or changed type since the initial check is skipped
-  (`Err(_) => continue`) rather than aborting the whole scan or lazily
-  propagating the error upward. Hardlinks are de-duplicated by inode so a file
-  linked many times is counted once.
+That is a stream-format safeguard, not an application-consistent snapshot. A live
+backup can contain files from different moments, and a clipped or padded file may
+be unusable to the game. Quiesce the application or stop it when consistency
+matters, and test restores.
 
-- **Quota enforcement.** The in-process accounting check is advisory; the
-  authoritative bound is applied at write time by the kernel or the on-disk
-  limiter (see above). Under `none` there is no authoritative layer, only later
-  reconciliation, which is precisely why `none` is weak.
+Sources: [fixed-length readers](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/io/fixed_reader.rs#L25-L101).
 
-- **Session and key validation (panel).** A fetched session token or API key is
-  not trusted by mere presence; it is re-verified against its stored hash on
-  every request.
+## Daemon authentication and direct access
 
-The common thread: an earlier read of mutable state is never the thing keeping the
-system correct. Where a naive implementation would check once and then trust that
-result, Wings checks for the fast path and then handles the real outcome
-defensively.
+The Panel controls Wings with a node bearer token. Treat that token as a
+privileged node credential and protect the connection with HTTPS. Browser file
+transfers and console access use signed, scoped tokens instead of exposing this
+administrative credential.
+
+Wings checks token expiry, issue time, and the required operation scope.
+File-download tokens identify a server and file; WebSocket tokens carry server
+permissions, which are checked for actions such as sending commands or changing
+power state. Download-token reuse is limited by `api.max_jwt_uses` (default five);
+these are not single-use links.
+
+Tokens issued before the current Wings process started are rejected, so users may
+need fresh direct-access links after a daemon restart. Anyone holding a valid
+bearer token can use its authority until it expires or is invalidated; token
+scope limits that authority, but does not make a leaked token harmless.
+
+Sources: [node API authentication](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/routes/api/mod.rs#L22-L53), [JWT validation and reuse](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/remote/jwt.rs#L49-L201), [file-download claims](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/routes/download/file.rs#L25-L94), [WebSocket action permissions](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/websocket/message_handler.rs#L120-L134).
+
+## Network boundaries
+
+### Outbound requests made by Wings
+
+Remote file pulls and scheduled HTTP requests filter DNS answers through the
+resolver used for the connection. They also check literal IP addresses, including
+IPv4-mapped IPv6 addresses, against configured blocked CIDRs. Defaults cover
+private, loopback, link-local, and other special-use ranges. Both clients disable
+environment proxy settings.
+
+Pulls check redirect targets and allow at most ten redirects. Scheduled HTTP
+requests do not follow redirects. Scheduled requests also have per-server request
+limits, timeouts, and a cap on captured response bodies.
+
+These checks cover those Wings HTTP features. Tenant code can still make its own
+network connections. Add your own internal networks to the blocked CIDRs,
+especially services reachable through public IP addresses, and use host/network
+controls for restrictions that must also apply to containers.
+
+Sources: [address filtering](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/net.rs#L19-L103), [remote-pull client](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/pull/mod.rs#L19-L96), [scheduled HTTP requests](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/schedule/http.rs#L33-L205), [blocked-range defaults](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/config.rs#L37-L94).
+
+### Server firewalls
+
+Wings can apply source-address, protocol, and destination-port rules with nftables
+or iptables, including through a helper container. If no usable backend is
+available, creating a runtime container with configured firewall rules fails.
+Explicitly setting `docker.firewall.backend` to `disabled` permits it to start
+with a warning and leaves those rules unapplied.
+
+These rules filter traffic to server destinations. They are not a general host
+firewall or an outbound network sandbox. Established connections are retained, so
+changing a rule does not necessarily disconnect an existing client. Traffic
+between bridged containers also depends on the host's bridge netfilter settings.
+Server firewalls require Linux and are unsupported with rootless container
+engines. See the [Wings configuration reference](../wings/configuration).
+
+Sources: [backend selection](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/firewall/mod.rs#L304-L473), [unavailable-backend behavior](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/firewall/noop.rs#L19-L35), [startup failure handling](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/executor/docker/mod.rs#L2677-L2690), [stateful filtering](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/firewall/nftables.rs#L413-L429), [bridge netfilter check](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/firewall/mod.rs#L547-L562).
 
 ## Denial-of-service protections
 
 A multi-tenant node has many amplification points: a server can spam its console,
 an attacker can hammer SFTP or the login endpoint, and a client can request a
-huge file or listing. These are bounded explicitly. Unlike the isolation controls
-above, these are enforced in **userspace** by Wings and the panel, which is
-sound here because Wings owns the SFTP server and reads the container's stdout,
-and the panel fronts every API request, so each is genuinely in the path it
-limits.
+huge file or listing. The following controls bound specific parts of that work.
+They run in **userspace**, where Wings accepts SFTP connections and reads console output, and
+where the Panel handles API requests. They do not provide protection against
+network traffic that saturates the host or its upstream connection.
 
 ### Console output throttling
 
@@ -313,7 +258,7 @@ websocket, and lock up every viewer's browser. Wings counts output lines and,
 once a configurable line count is exceeded within a reset interval, stops
 forwarding to the rate-limited console stream and emits a single "throttling"
 notice (`config.throttles.{enabled,lines,line_reset_interval}`; throttling is on
-by default, at 2000 lines per 100s). The unthrottled internal stream is preserved
+by default, at 2000 lines per 100 ms). The unthrottled internal stream is preserved
 separately for logging and startup detection, so throttling never breaks state
 detection.
 
@@ -337,6 +282,8 @@ graph TD
 
   %% Logging and startup detection are never throttled.
 ```
+
+Sources: [console throttling](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/executor/docker/mod.rs#L1445-L1500), [console defaults](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/config.rs#L605-L613).
 
 ### SFTP / SSH limits
 
@@ -377,6 +324,20 @@ graph TD
   D -->|no| E
 ```
 
+Sources: [SSH and SFTP limits](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/ssh/limiter.rs).
+
+### WebSocket limits
+
+Wings defaults to a 1 MiB maximum message and frame size, a 60-second deadline to
+authenticate, and at most 32 unauthenticated connections per client IP. These
+limits cover stalled handshakes and oversized messages.
+
+The per-IP slot is released after authentication. The separate global connection
+cap, `system.websocket.max_connections_total`, defaults to `0` (unlimited); set
+it for the capacity of the node.
+
+Sources: [WebSocket defaults](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/config.rs#L367-L383), [connection accounting](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/websocket/limiter.rs#L40-L117), [message and frame limits](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/websocket/handler.rs#L43-L58).
+
 ### Panel rate limiting
 
 The panel applies **per-endpoint, per-client rate limits** backed by the shared
@@ -392,97 +353,140 @@ sensitive endpoints are covered individually rather than by one blanket limit:
   `client_servers_files_pull_query`.
 - Node/daemon: `remote` and `remote_sftp_auth`.
 
-Separating these means a flood against, say, backup creation cannot exhaust the
-budget for ordinary client requests. Limits are keyed by client IP, so behind a
-reverse proxy the panel must receive the real client address (see
-[Reverse proxies](../additional/reverse-proxies)). Rate limiting relies on
-Redis/Valkey; running without it falls back to in-memory and is not recommended
-in production for this reason.
+Dedicated limits for expensive actions supplement the general client budget.
+Those requests still count toward the shared client limit. Limits are keyed by
+client IP, so configure trusted proxies and the real client address correctly
+(see [Reverse proxies](../additional/reverse-proxies)).
 
-::: info Fixed-window behavior
-Limits are counted over a fixed window (`hits` per `window_seconds`). A fixed
-window permits a short burst across a window boundary (up to roughly twice the
-limit in a brief span). This is expected and fine for abuse mitigation.
-:::
+Redis/Valkey coordinates limits across Panel instances. When Redis is unavailable or returns an error, the local fallback keeps
+counters in one process; it cannot provide a shared budget across replicas.
+Fixed windows also allow a burst around a window boundary, so these limits are
+abuse controls rather than exact traffic shaping.
 
-### Bounded reads and pagination
+Sources: [client middleware](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/mod.rs#L174-L225), [cache and rate-limit implementation](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/cache.rs), [endpoint settings](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/settings/ratelimits.rs).
 
-Unbounded reads are avoided throughout:
+### File reads and uploads
 
-- **File reads take an explicit byte limit** and truncate at it, so opening a file
-  (for example in the editor) cannot read an arbitrarily large file into memory.
-- **Directory and archive listings are paginated** (`skip(start).take(per_page)`)
-  rather than materializing an entire tree.
-- **inotify path accumulation is capped** and deduplicated past a threshold,
-  bounding watcher memory under rapid filesystem churn.
-- **Server file uploads are streamed, not buffered,** and bounded by the disk
-  quota through the incremental allocation described above, so there is no need
-  to hold a whole upload in memory or to trust a client-declared length. The
-  body-size limit is deliberately disabled only on the trusted admin asset-upload
-  route.
+File-content reads accept a byte limit. Server uploads stream into the file
+writer instead of buffering the whole upload, and can use a total size for early
+rejection when one is supplied. Neither a declared length nor an early free-space
+check replaces quota enforcement during the transfer.
+
+Sources: [file-content reads](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/routes/api/servers/_server_/files/contents.rs), [streaming upload route](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/routes/upload/file.rs).
 
 ### Compile-time panic resistance (lints)
 
 In a root daemon that parses untrusted input (paths, archive contents, wire
 protocols), a panic is a denial-of-service: it takes down the task or the daemon.
-Wings pushes the most common panic sources out at **compile time** rather than
-relying on review. Both the application crate and `pbs-client` set these clippy
-lints to `deny`:
+Wings denies several common panic patterns when Clippy is run. Both the
+application crate and `pbs-client` set these Clippy lints to `deny`:
 
 - `unwrap_used`, `panic`, `unreachable`, `todo`, `unimplemented`
 - `indexing_slicing` and `string_slice`, so a bad index or a non-char-boundary
-  slice on attacker-influenced data cannot panic; bounds-checked access
-  (`.get()`) is required instead
+  slice is caught by linting; code can use checked access (`.get()`) instead
 - `unwrap_in_result` and `panic_in_result_fn`, keeping fallible paths returning
   errors instead of panicking
 
 `missing_panics_doc` is a warning, and the full `clippy::all` group runs at warn.
 This does not make the daemon panic-proof in an absolute sense (it does not cover,
-for example, arithmetic overflow or allocation failure), but it removes the panic
-vectors most reachable from malformed input.
+for example, arithmetic overflow or allocation failure). Dependencies and explicit
+lint exceptions also need review.
+
+Sources: [application lints](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/Cargo.toml), [PBS client lints](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/pbs-client/Cargo.toml).
 
 ## Panel authentication and secrets
 
-- **Passwords:** bcrypt via pgcrypto, cost factor 12. Plaintext is never stored.
-- **Session tokens and API keys:** stored hashed, verified against the hash on
-  each request, not kept in plaintext.
-- **MFA:** TOTP and WebAuthn / security keys. Login can be gated by a configurable
-  CAPTCHA (Turnstile, reCAPTCHA, hCaptcha, or FriendlyCaptcha).
-- **Stored secrets** (node tokens, backup credentials, database passwords):
-  encrypted at rest with authenticated encryption keyed by the panel's
-  configured encryption key.
+### Passwords, sessions, and MFA
 
-::: warning Known trade-off: decrypted-secret cache
-The panel can briefly cache decrypted secrets in Redis (short TTL, ~30s) to avoid
-repeated decryption. This is **off by default** (`APP_USE_DECRYPTION_CACHE`) and
-should be weighed against your threat model before enabling, since it places
-decrypted values in the cache.
+Passwords use bcrypt at cost 12. Hashing and verification run in a blocking pool
+with a bounded number of concurrent bcrypt jobs. Session tokens and API keys are
+stored as hashes; credential resolution and model records are cached, so this is
+not a fresh database hash verification on every request.
+
+Session cookies are `HttpOnly` and `SameSite=Lax`. The `Secure` flag is set when
+the configured Panel URL uses HTTPS. Set that URL correctly and serve the Panel
+over HTTPS, including when TLS terminates at a reverse proxy.
+
+The Panel supports TOTP, email codes, and WebAuthn/security keys. MFA requirements
+can be configured for all users or administrators; role-specific requirements
+override the global policy. TOTP and security keys count by default. Email codes
+are opt-in and are not in the default accepted-method list. Email authentication
+also depends on the security of the user's mailbox.
+
+Discoverable passkeys can be used to sign in. With WebAuthn enabled and a security
+key registered, users can disable password login after confirming their password.
+CAPTCHA can also gate login. These are configurable account and operator choices;
+having an MFA feature does not mean every account has enabled it.
+
+Sources: [password hashing](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/crypt.rs#L4-L48), [credential cache](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/mod.rs#L961-L1016), [session cookie](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user_session.rs#L355-L376), [MFA policy](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user/mod.rs#L714-L767), [MFA defaults](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/settings/app.rs#L19-L34), [discoverable passkeys](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/auth/login/security_key/discoverable.rs), [password-login control](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/account/password_login.rs#L58-L76).
+
+### Scoped permissions and API keys
+
+User, administrator, and server permissions are checked separately. An API key's
+scopes cap the permissions available through that key: they are intersected with
+the user's effective grants, rather than granting access the user does not have.
+Keys can also have an expiry, be disabled, and restrict source IPs/CIDRs.
+For an integration with a fixed job, choose the smallest permissions it needs.
+
+Sources: [effective permissions and scope intersection](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user/auth.rs#L49-L202), [key expiry](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user/mod.rs#L283-L301), [key disablement](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/mod.rs#L84-L89), [key address restrictions](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/mod.rs#L340-L351).
+
+### Encryption and cache trust
+
+Node tokens, backup credentials, and database passwords use the Panel's encrypted
+secret storage, keyed by `APP_ENCRYPTION_KEY`. The running Panel must be able to
+decrypt these values to use them. Encryption therefore does not protect them
+from a compromised Panel process or an attacker who also obtains its key.
+
+::: warning Optional decrypted-secret cache
+`APP_USE_DECRYPTION_CACHE` is off by default. Enabling it allows the encrypted-secret
+helper to cache decrypted values for 30 seconds. Treat Redis/Valkey as trusted
+infrastructure, including when this option is off: the Panel also uses it for
+application and authentication state.
 :::
 
-The panel encryption key is set via `APP_ENCRYPTION_KEY` (the panel will not start
-without it). It must be kept secret and not lost; rotating it requires
-re-encrypting all stored secrets. See the
-[Panel environment reference](../panel/environment).
+Keep the encryption key secret and backed up separately. Losing it makes the
+stored encrypted values unusable; changing it requires re-encrypting those
+values. See the [Panel environment reference](../panel/environment).
+
+Sources: [encrypted value type](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/crypt.rs#L63-L115), [encryption and decrypted cache](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/database.rs#L123-L258), [cache option default](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/env.rs#L287-L290).
 
 ## Supply chain and build integrity
 
-Both the panel and Wings builds produce, in CI:
+The Panel and Wings CI image workflows configure:
 
 - **CycloneDX SBOMs** generated from source per build.
 - **Signed container images** using cosign / sigstore (GHCR and Docker Hub).
 - **Build provenance** and **SBOM attestations** attached to the images, so a
   consumer can verify what was built and from what.
 
+Signatures and provenance establish where an artifact came from; they do not
+prove its code or dependencies are free of vulnerabilities. Verification is a
+consumer step, not something implied by pulling an image tag.
+
+Backend extensions are trusted code in the Panel process. Their entrypoints
+receive application state, including database, cache, and environment access.
+Installing one extends the trusted codebase; the tenant permission model does not
+sandbox it.
+
+Sources: [Panel image workflow](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/.github/workflows/build.yml#L148-L274), [Wings image workflow](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/.github/workflows/build.yml#L81-L171), [extension entrypoints](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/extensions/mod.rs#L294-L331), [application state](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/lib.rs#L155-L166).
+
 ## Known residual risks
 
 The residual risks, listed directly:
 
-- **Quota overshoot bound.** Incremental allocation can exceed a quota by up to
-  roughly one 1 MiB batch (plus any in-flight async batch) before refusing
-  further growth. Deliberate throughput trade-off.
-- **Decrypted-secret cache.** When explicitly enabled, decrypted secrets sit in
-  Redis for a short TTL. Off by default.
-- **Operator-dependent hardening.** User-namespace remapping and rootless mode
-  are opt-in; the strongest isolation posture requires enabling them. The `none`
-  disk limiter provides no write-time enforcement (see above) and should not be
-  used for untrusted tenants.
+- **Shared kernel and trusted control plane.** A host, Panel, or privileged node
+  credential compromise reaches beyond a single game server. Runtime container
+  restrictions do not sandbox administrators, installer code, or Panel extensions.
+- **Operator-dependent isolation.** Rootless execution, user namespaces, AppArmor,
+  mounts, and device access depend on configuration and host support. Rootless
+  engines cannot use Wings' server firewall feature.
+- **Disk and connection defaults.** The default `none` quota backend supplies no
+  write-time bound. The global WebSocket connection cap is also off by default.
+  Choose both limits for the workload before accepting untrusted tenants.
+- **Network reachability.** HTTP destination checks cover the specific daemon
+  features above. They do not stop a game server from opening its own connections.
+  Server firewall changes also retain established connections.
+- **Live-backup consistency.** A structurally readable backup can still contain
+  inconsistent application data. Restore testing and application quiescing matter.
+- **Secret and cache access.** The running Panel has decryption authority. The
+  optional decrypted-secret cache increases where those plaintext values live.

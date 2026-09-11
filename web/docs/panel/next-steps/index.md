@@ -1,5 +1,5 @@
 ---
-description: "What to do after installing the Calagopus panel: register your first Wings node and add egg repositories for game server templates."
+description: "What to do after installing the Calagopus panel: use your existing node or connect Wings, then add game server templates."
 ---
 
 # Next Steps
@@ -8,7 +8,9 @@ The panel is installed and the OOBE is complete. Here's what to do next:
 
 ## Add a Node
 
-The panel manages servers, but it doesn't run them directly, game server containers are managed by Wings on one or more nodes. See [Configuring a New Node](../../wings/next-steps/configure-node.md) to register a node and connect it to the panel.
+The panel manages servers, while Wings runs their game containers. If setup already created your node, continue with egg repositories below. The All-in-One image creates **Integrated Node** automatically, so you don't need to register it or install Wings separately.
+
+If you still need a node, follow [Configuring a New Node](../../wings/next-steps/configure-node.md) to register it and connect Wings to the panel.
 
 ## Add Egg Repositories
 

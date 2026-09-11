@@ -53,7 +53,7 @@ Select the eggs you want by dragging them into the selection area or searching b
 
 ![alt text](./images/egg-repos/drag.webp)
 
-A popup will ask which nest to import into. Select the nest and click **Install**.
+A popup will ask which nest to import into. A nest is a category for eggs, such as Minecraft. If you don't have one yet, [create a nest](../features/admin/nests.md#creating-and-editing-a-nest) under **Admin → Nests**, then return to the repository. Select the nest and click **Install**. This imports the template; it does not create or start a game server.
 
 ![](./images/egg-repos/install.webp)
 
@@ -81,4 +81,4 @@ Re-sync the repository, then head to **Admin → Nests** and open the nest. Sele
 ![](./images/egg-repos/nest-update.webp)
 ![](./images/egg-repos/massupdate.webp)
 
-Egg updates may require updating server configurations or reinstalling servers to take effect.
+Updating an egg changes its template, not the game files already installed on your servers. Depending on what changed, you may need to update a server's settings, choose a different runtime image, or rerun its installer. Before reinstalling, back up the server and read the [reinstall warning](../features/server/settings.md#reinstall-server): the install script can modify or delete files even when you don't choose to wipe the server first.

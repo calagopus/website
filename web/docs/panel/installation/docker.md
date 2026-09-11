@@ -7,6 +7,8 @@ description: Step-by-step guide to installing the Calagopus Panel with Docker. C
 
 Before installing, check the [Minimum Requirements](../overview.md#minimum-requirements) section in the Panel Overview.
 
+Those requirements cover the Panel itself. For an AIO host, also leave room for Ubuntu or your chosen OS, PostgreSQL, Valkey, container images, backups, and the games you plan to run. [Your first VPS](./first-vps.md#before-you-start) includes an example resource budget.
+
 ## Which image should I use?
 
 If you only plan to run a **single node** (Panel + Wings on the same host), use the **All-in-One (AIO)** image. It ships the Panel and Wings together in one container, which makes the setup noticeably simpler: one compose file, one service to start, no separate node to register, no additional Wings reverse proxy configuration. **This is the recommended path for most users.**
@@ -178,7 +180,7 @@ The **Heavy** compose uses the `:heavy` image and includes the volume mounts nee
 
 ### 2. Change the Docker Image Variant (Optional)
 
-If you want a different tag than what your chosen compose file ships with (for example `:nightly` or `:latest-pre`), open `compose.yml` in your preferred text editor and change the image tag on the `panel` service. [See the Docker Image Variants section above](#docker-image-variants) for details.
+If you want a different tag than what your chosen compose file ships with (for example `:nightly` or `:latest-pre`), open `compose.yml` in your preferred text editor and change the image tag on the `web` service. [See the Docker Image Variants section above](#docker-image-variants) for details.
 
 ::: warning
 If you switch from a non-heavy variant to a heavy variant after the fact, you will also need to add the compose mounts required for extensions to work. See the [`compose.heavy.yml`](https://github.com/calagopus/panel/blob/main/compose.heavy.yml) file for reference.

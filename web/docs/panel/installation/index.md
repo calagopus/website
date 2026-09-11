@@ -4,6 +4,8 @@ description: Install the Calagopus panel with Docker, APT/RPM/APK package manage
 
 # Panel Installation
 
+For a fresh Linux VPS, [Your first VPS](./first-vps.md) walks through the All-in-One installation, optional Caddy HTTPS, and your first game server.
+
 Before installing, check the [minimum requirements](../overview.md#minimum-requirements).
 
 Choose your installation method:

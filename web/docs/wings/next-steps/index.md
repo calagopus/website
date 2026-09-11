@@ -4,8 +4,8 @@ description: "What to do after installing Wings: set up IP and port allocations 
 
 # Next Steps
 
-Wings is installed and connected to the panel. Before the panel can place servers on this node, it needs allocations.
+Wings is installed and connected to the panel. Next, create allocations for the ports your game servers will use.
 
 ## Set Up Allocations
 
-Allocations are the IP and port combinations the panel assigns to game servers so players can connect to them. Without at least one allocation set up, you won't be able to create a server on this node. See [Setting up Allocations](./setting-up-allocations.md) to create them.
+Allocations are the IP and port combinations the panel assigns to game servers so players can connect to them. The Panel also allows creating a server without an allocation after confirmation, but a publicly reachable game server normally needs one. See [Setting up Allocations](./setting-up-allocations.md) to create them.

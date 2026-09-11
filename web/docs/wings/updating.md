@@ -1,29 +1,33 @@
 ---
 title: Updating Wings
-description: Update Calagopus Wings for bug fixes, security patches, and new features, without planned downtime for running servers.
+description: Update Calagopus Wings with Docker, a package manager, or a binary, and check its connection after restarting.
 ---
 
 # Updating Wings
 
-Updating Wings periodically gets you bug fixes, security patches, and new features. The process is quick and safe to do whenever a new release comes out, you don't need to plan downtime around it.
+Updating Wings gets you bug fixes, security patches, and new features. Read the [release notes](../releases/index.md), back up your Wings configuration, and check [Panel/Wings version compatibility](../additional/troubleshooting.md#versions-and-clocks) before updating.
 
-::: info No downtime required
-Game server containers run independently of the Wings daemon. You can update Wings without stopping your servers, they will continue running as normal while Wings restarts.
+::: info What restarts?
+Game server containers run independently of Wings and normally keep running during a Wings-only restart. Console connections, server controls, and SFTP are interrupted while Wings is unavailable. Docker, host OS, and game updates are separate operations and may require stopping games.
 :::
+
+If you use the Panel's **All-in-One** image or package, follow [Updating the Panel](../panel/updating.md) instead. Its update includes Wings; there is no separate AIO `wings` Compose service to update.
 
 Pick the method matching how you installed Wings:
 
 ::::tabs
 === Docker (Recommended)
 
-Pull the latest image and recreate the container:
+Return to the directory containing your Wings `compose.yml`. Pull the latest image and recreate the `wings` service:
 
 ```bash
-docker compose pull
-docker compose up -d
+docker compose pull wings
+docker compose up -d --no-deps wings
+docker compose ps
+docker compose logs --tail 50 wings
 ```
 
-That's it, Docker handles the restart as part of `up -d`.
+Docker handles the restart as part of `up -d`. Keep the existing configuration and data mounts.
 
 === APT / RPM / APK
 
@@ -34,25 +38,31 @@ Run the command for your package manager:
 ::: code-group
 ```bash [APT]
 apt update
-apt upgrade -y
+apt install --only-upgrade calagopus-wings
 ```
 ```bash [RPM]
-dnf check-update
-dnf upgrade -y
+dnf upgrade calagopus-wings
 ```
 ```bash [APK]
 apk update
-apk upgrade
+apk upgrade calagopus-wings
 ```
 :::
 
+These commands target Wings and any required dependencies. Schedule OS-wide updates separately.
+
 #### 2. Restart the service
 
-The package upgrade alone doesn't restart the running daemon, do that explicitly:
+Restart the service to load the updated binary:
 
-```bash
+::: code-group
+```bash [systemd]
 systemctl restart wings
 ```
+```bash [OpenRC (Alpine)]
+rc-service wings restart
+```
+:::
 
 === Binary
 
@@ -82,3 +92,5 @@ Check the output against the [latest release](https://github.com/calagopus/wings
 systemctl start wings
 ```
 ::::
+
+After updating, check **Admin → Nodes → (your node) → Overview** for the Wings version, then open a game console and confirm it reconnects.

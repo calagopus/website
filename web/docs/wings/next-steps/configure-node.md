@@ -5,7 +5,9 @@ description: Connect Wings to the panel by creating a location and node, install
 
 # Configuring a New Node
 
-A node connects Wings (running on a remote or local host) to the panel. Creating one takes four steps: create a location, create the node, install Wings, and apply the node's configuration to it.
+A node connects Wings on a remote or local host to the panel. Create a location and node, install Wings, then apply its configuration before starting it.
+
+If you use the Panel's All-in-One image, its integrated node is already configured. Use that existing node; these steps are for adding a separate Wings installation.
 
 You can do this during the **OOBE** (first-time setup) or anytime later from the **Admin panel**. The steps are the same either way, just noted below where they differ.
 
@@ -20,7 +22,7 @@ Locations group nodes together and control backup configuration inheritance. You
 |---|---|
 | Name | A label to distinguish this location (e.g. `Germany`). |
 | Backup Configuration Name | The backup storage configuration used by nodes in this location. |
-| Backup Disk | Where backups are stored. Leave as `Local` if unsure. *(OOBE only)* |
+| Backup Disk | Where backups are stored. `Local` stores them on the Wings host; keep a copy elsewhere in case that host is lost. *(OOBE only)* |
 | Description | Optional notes about this location. *(Admin panel only)* |
 
 ![](./images/configure-node/location-oobe.webp)
@@ -40,14 +42,16 @@ Locations group nodes together and control backup configuration inheritance. You
 | Public URL | The address browsers use to reach Wings directly, for websocket connections and downloads. Leave empty to reuse **URL**. |
 | SFTP Host | Custom SFTP hostname shown in the dashboard. Leave empty to reuse the hostname from URL. |
 | SFTP Port | Port for the SFTP/SSH server. Leave default unless you know you need to change it. |
-| Memory | Total RAM this node can allocate across servers. |
-| Disk | Total disk space this node can allocate. |
+| Memory | RAM budget for planning and automatic placement; reserve memory for the OS and other services. Manual server creation can exceed it. |
+| Disk | Disk budget for planning and automatic placement; leave space for images, logs, and backups. This is not a filesystem quota. |
 | Backup Configuration | The backup configuration servers on this node will use. *(Admin panel only)* |
 | Description | Optional description. *(Admin panel only)* |
 
-**URL vs. Public URL:** **URL** is what the panel itself uses to reach Wings, so it can be an internal address like a LAN IP or `localhost`. **Public URL** is what the browser uses, so it must be reachable from wherever your users are, e.g. a domain with SSL like `https://node.calagopus.com:8080`. Leave Public URL empty to just reuse URL.
+**URL vs. Public URL:** **URL** is what the panel itself uses to reach Wings, so it can be a reachable internal address such as a LAN IP. With a Panel running in Docker, `localhost` refers to that container, not the host or a separate Wings container. Use an address reachable from the Panel's network. The AIO image is an exception: its bundled Wings shares the Panel's container and is configured automatically.
 
-If your panel has SSL but Wings doesn't, use **Wings Proxy Mode** instead of a second reverse proxy: the panel proxies Wings traffic itself, so only the panel needs a cert. Enable it via `APP_ENABLE_WINGS_PROXY=true` in the panel's `.env`, then click the globe icon next to Public URL to auto-fill it. Full details and trade-offs (no SFTP, extra load on the panel): [Exposing Wings in a Homelab](../../wings/advanced/exposing-wings-in-a-homelab.md).
+**Public URL** is what the browser uses, so it must be reachable from wherever your users are, e.g. a domain with SSL like `https://node.calagopus.com:8080`. Leave Public URL empty to reuse URL.
+
+If your panel has SSL but Wings doesn't, **Wings Proxy Mode** lets the panel proxy browser traffic to Wings. With the supplied Docker Compose stack, set `APP_ENABLE_WINGS_PROXY=true` in the `web` service's `environment` list, then run `docker compose up -d --no-deps web` from the Compose directory. For a native installation, set it in the Panel's `.env` and restart the Panel service. Click the globe icon next to Public URL to auto-fill the proxy URL. This adds load to the Panel and does not proxy SFTP. See [Exposing Wings in a Homelab](../advanced/exposing-wings-in-a-homelab.md) for the network requirements and trade-offs.
 
 ![](./images/configure-node/add-node-oobe.webp)
 ![](./images/configure-node/create-node.webp)
@@ -59,25 +63,30 @@ Click **Create** (or **Create & Continue** in the OOBE).
 
 ## Install Wings
 
-Wings needs to actually be running on the node's host before it can be configured. Follow the [Wings Installation](../../wings/installation/index.md) guide, then come back here.
+Follow the [Wings Installation](../../wings/installation/index.md) guide for your chosen method. Install the binary or package, or download the Docker Compose file, then return here for the node configuration. Apply that configuration before starting Wings.
 
 ## Apply the node configuration
 
-Once the node exists in the panel, copy its join command and run it on the node's host:
+Once the node exists in the panel, open its configuration:
+
+- **OOBE**: shown on the Node Configuration step.
+- **Admin panel**: go to **Admin → Nodes → (your node) → Configuration** tab.
+
+For **Docker**, copy the generated YAML into `config/config.yml` as described in the [Docker installation guide](../installation/docker.md#configure-wings).
+
+For a **binary installation**, run the generated join command on the node's host:
 
 ```bash
 wings configure --join-data xxxxxx
 ```
 
-Where to find the command:
-- **OOBE**: shown on the Node Configuration step.
-- **Admin panel**: go to **Admin → Nodes → (your node) → Configuration** tab.
+For a **package installation**, use `calagopus-wings configure --join-data xxxxxx` instead, unless you created the optional `wings` alias. Replace `xxxxxx` with the join data supplied by your Panel.
 
 ![](./images/configure-node/oobe-nodeconf.webp)
 ![](./images/configure-node/config.webp)
 
-After running it, finish setup via [Docker](../../wings/installation/docker.md#configure-wings), [Binary](../../wings/installation/binary.md#configure-wings), or [Package Manager](../../wings/installation/pkgmanager.md#configure-wings) guide.
+After applying the configuration, return to your [Docker](../installation/docker.md#start-wings), [Binary](../installation/binary.md#configure-wings), or [Package Manager](../installation/pkgmanager.md#configure-wings) guide to start Wings and check the connection.
 
-## Next step: enable SSL
+## Next step: secure the browser connection
 
-SSL is disabled by default on a fresh Wings install. Before using this node for anything beyond testing, generate a certificate and enable it. See [Generating SSL Certificates](../../additional/ssl-certificates.md) and [SSL Configuration](../configuration.md#ssl-configuration).
+SSL is disabled by default on a fresh Wings install. For browsers to reach Wings from an HTTPS Panel, serve Wings over HTTPS using [its own certificate](../configuration.md#ssl-configuration) or a [reverse proxy](../../additional/reverse-proxies.md#putting-wings-behind-a-reverse-proxy). If you use Wings Proxy Mode through an HTTPS Panel, Wings does not need a separate public certificate; follow the [proxy-mode guide](../advanced/exposing-wings-in-a-homelab.md) instead.

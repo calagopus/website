@@ -184,3 +184,18 @@ Retention for the three activity logs and what gets logged.
 Per-endpoint API rate limits. Each endpoint card has two values: **Hits**, the maximum number of requests allowed per window, and **Window**, the window duration in seconds.
 
 Endpoints covered: `auth/register`, `auth/login`, `auth/login/checkpoint`, `auth/login/checkpoint/email`, `auth/login/security-key`, `auth/password/forgot`, `auth/password/reset`, `auth/email/verify`, `client`, `client/account/email/resend-verification`, `client/servers/backups/create`, `client/servers/files/pull`, `client/servers/files/pull/query`, `remote`, and `remote/sftp/auth`.
+
+### Exemptions
+
+The **Exemptions** card below the endpoint grid lets trusted callers skip the two broad per-IP limits.
+
+| Field | Description |
+| --- | --- |
+| **Exempt IPs** | IP addresses or CIDR ranges that skip the `client` and `remote` limits |
+| **Exempt API Keys** | UUIDs of API keys that skip the `client` limit; a key only counts as exempt while it is enabled and used from one of its allowed IPs |
+
+Exemptions only cover the `client` and `remote` limits. The login, registration, and password limits still apply to exempt IPs, and the per-server limits (backup creation, file pulls) still apply to exempt keys, since those protect the nodes rather than the panel.
+
+Users can copy a key's UUID from the context menu on their [API Keys](../dashboard/api-keys.md) page. Saving refuses UUIDs that don't belong to an existing key, and a background job removes the UUIDs of keys that were deleted afterwards.
+
+If the panel runs behind a reverse proxy, make sure `APP_TRUSTED_PROXIES` is set correctly, since IP exemptions match against the client address the panel resolves from the forwarded headers.
