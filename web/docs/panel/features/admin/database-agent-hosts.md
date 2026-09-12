@@ -78,6 +78,22 @@ Every managed database on this host, searchable: Name, Server (linked), Type, Ad
 
 ![Instances tab](./images/database-agent-hosts/instances.webp)
 
+### Backups
+
+Every [database backup](../server/backups.md) taken from an instance on this host, searchable: Name, **Source** (the instance the dump came from), Server, Node, Checksum, Size, and Created. A dump taken by a [system backup policy](./system-backup-policies.md) carries a **SYSTEM** badge linking to the policy. There is no file count, because a dump is a single file.
+
+Right-click a row to **Download**, **Reassign** or **Delete** it. Restore, export to files and the detach and reattach actions are file-backup concepts and are not offered for dumps.
+
+**Reassign** moves a dump to a different database instance. The dialog has two fields: pick a **Server**, then one of that server's **Database Instances**. Only instances of the same database type are listed, and the instance the dump already belongs to is left out. The target server can be a different one, in which case the dump moves onto that server's backup list and quota; a dump that is not on shared storage can only move to a server on the same node. Moving a dump to another server also takes it out of any [backup group](../server/backups.md#backup-groups) it was in, because groups belong to a single server. When the host has failed dumps, a **Delete Failed Backups** button appears above the table, with the usual **Force** switch.
+
+The Node column is the node whose storage holds the dump, not the host that produced it. Deletion goes through that node, so a dump cannot be removed while its storage node is unreachable unless you force it.
+
+::: info
+A dump whose instance has since been deleted loses its link to this host and no longer appears here. It remains on the server's and the node's backup tabs.
+:::
+
+![Backups tab](./images/database-agent-hosts/backups.webp)
+
 ### Statistics
 
 Live host metrics streamed from the agent: CPU, memory, disk, and network cards plus **CPU Load**, **Memory Usage**, **Disk I/O**, and **Network Traffic** graphs. The memory card also notes the agent's own footprint.

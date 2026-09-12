@@ -134,7 +134,7 @@ Same attach/detach pattern for [database agent](../../../db-agent/index.md) host
 
 ## Backups
 
-Every backup stored on this node, regardless of which server it belongs to (requires `nodes.backups`). Columns: Name, Server, Checksum, Size, Files, and Created. The **Only show detached backups** switch filters to backups no longer linked to any server. A warning icon marks backups whose server now lives on a different node; those aren't viewable from the client area.
+Every backup stored on this node, regardless of which server it belongs to (requires `nodes.backups`). Columns: Name, **Kind**, **Source**, Server, Checksum, Size, Files, and Created. Kind separates file archives from database dumps, and Source names either the server files or the instance a dump came from. Restore, export to files, detach and reattach apply to file backups only; dumps get **Reassign** instead, which moves them to another database instance of the same type, optionally on a different server. The **Only show detached backups** switch filters to backups no longer linked to any server. A warning icon marks backups whose server now lives on a different node; those aren't viewable from the client area.
 
 ![](./images/nodes/backups.webp)
 

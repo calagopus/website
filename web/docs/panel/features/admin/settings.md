@@ -80,6 +80,22 @@ The **Available Variables** box lists everything you can reference in that templ
 
 **Reset to default** discards your custom template and restores the built-in one. This cannot be undone.
 
+### Variables and Languages
+
+Every user receives mail in the language set on their account. Addresses that do not belong to a user get the panel's default language. A template has one layout for all of them: the wording lives in **Variables**, small text fragments the template references as <code v-pre>{{ vars.name }}</code>, and each variable can carry a value per language.
+
+The **Variables** section below the subject lists the fragments a template uses. Built-in templates ship with **System** variables such as `greeting`, `intro`, `button` and `footer`, with translations maintained alongside the panel's own. Pick a language from the selector on a variable to see and edit its value for that language. An empty field uses the default shown inside it, so you only have to fill in what you want to change.
+
+When a user's language has no value of its own, the panel uses your English value if you set one, then the built-in translation for that language, then the built-in English text. So once you customise a variable in English, every language without its own value gets that English wording. Fill in the other languages you serve.
+
+A variable's value is itself a MiniJinja snippet and can use the same variables as the template, for example <code v-pre>Hello <strong>{{ user.username }}</strong>,</code>. The rendered fragment is inserted into the template as is, so HTML inside a variable works, while values like <code v-pre>{{ user.username }}</code> inside it are escaped. The subject is rendered as plain text, so keep HTML out of variables you use there.
+
+**Add Variable** creates a **Custom** variable for the current template, which you can reference from the template's content or subject. Use the reset icon on a system variable to drop your values for every language, and the delete icon to remove a custom one.
+
+**Global Variables** in the sidebar holds variables that every template can reference, handy for a shared signature or support address. A template variable with the same name takes precedence over a global one.
+
+The `language` variable holds the language code a mail is rendered in, which the built-in templates put on the `<html>` tag.
+
 ## Captcha
 
 Captcha protection for the panel; set this up before you [enable registration](#application). When configured, the captcha renders on the [login, register, and forgot-password pages](../auth/index.md) and in the server [subuser invite modal](../server/subusers.md). Pick a **Provider**:

@@ -40,7 +40,7 @@ Opening a configuration shows tabs for **General** (the edit form, plus **Duplic
 
 ![Stats tab](./images/backup-configurations/stats.webp)
 
-**Backups** lists every backup stored on the configuration: Name, Server, Node, Checksum, Size, Files, and Created.
+**Backups** lists every backup stored on the configuration: Name, **Kind**, **Source**, Server, Node, Checksum, Size, Files, and Created. Kind separates file archives from database dumps, and Source names either the server files or the instance a dump came from.
 
 ![Backups tab](./images/backup-configurations/backups.webp)
 

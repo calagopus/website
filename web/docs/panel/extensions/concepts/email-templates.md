@@ -38,7 +38,7 @@ The five fields, in order:
 - **`default_enabled`** controls whether the template is enabled out of the box. If `false`, `send_template` and `send_template_foreground` silently skip sending when no operator override is in place. Use this for opt-in notifications (e.g. "server installed" alerts) where most operators probably don't want the email unless they actively turn it on.
 
 ::: info
-Every template implicitly gets a `settings` variable in addition to whatever you declare - it's the Panel's app settings, accessible as <code v-pre>{{ settings.app.name }}</code>, <code v-pre>{{ settings.app.url }}</code>, etc. Two things happen automatically: `settings` is appended to your `available_variables` list during finalization (so it shows up in the admin UI even if you didn't list it), and it's injected into the rendering context by `send_template` / `send_template_foreground` at send time. You should not pass `settings` yourself in the context - whatever you pass gets overwritten by the framework-provided value anyway.
+Every template implicitly gets a `settings` variable in addition to whatever you declare - it's the Panel's app settings, accessible as <code v-pre>{{ settings.app.name }}</code>, <code v-pre>{{ settings.app.url }}</code>, etc. Two things happen automatically: `settings` and `language` are appended to your `available_variables` list during finalization (so they show up in the admin UI even if you didn't list them), and it's injected into the rendering context by `send_template` / `send_template_foreground` at send time. You should not pass `settings` yourself in the context - whatever you pass gets overwritten by the framework-provided value anyway.
 :::
 
 ## Registering Templates
@@ -87,6 +87,9 @@ The directory layout most extensions use looks like this:
 backend/
   mails/
     welcome.html # MiniJinja template, included via include_str!
+    variables/
+      en.json # variable defaults, included via include_dir!
+      de.json # translations, one file per language
   src/
     lib.rs # registers the templates in initialize_email_templates
 ```
@@ -111,8 +114,78 @@ Template content is a [MiniJinja](https://docs.rs/minijinja) template - close to
 <code v-pre>{{ user.name }}</code> and <code v-pre>{{ user.invite_expiry_hours }}</code> use field access - MiniJinja can dot-walk into structs that get serialized into the rendering context. The shape of `user` is whatever the sending code passed; if you registered `available_variables: vec!["user"]` and your sender passes `user => some_user_struct`, the template can access any of that struct's serialized fields. <code v-pre>{{ invite_link }}</code> is a simple string variable; <code v-pre>{{ settings.app.name }}</code> is the implicit settings variable, accessible without you passing anything.
 
 ::: warning Default templates should be in English
-The `default_content` you ship with your extension should be written in English, regardless of where you or your users are. Operators who want a different language adjust the template content through the admin UI on a per-deployment basis - the override system is the localization story for emails. Don't try to ship multiple language variants by registering separate identifiers per language; that just creates fragmentation that operators can't sensibly customize.
+The `default_content` you ship with your extension should be written in English, regardless of where you or your users are. Don't try to ship multiple language variants by registering separate identifiers per language; that just creates fragmentation that operators can't sensibly customize. If you want your mails translated, keep the layout in the template and move the wording into [variables](#variables-and-translations), which carry a value per language.
 :::
+
+## Variables and Translations
+
+Every mail is rendered in the recipient's language. The template itself stays one HTML document. The wording that changes with the language lives in variables, small MiniJinja fragments the template references as <code v-pre>{{ vars.<name> }}</code>. A variable has an English default and optional translated defaults. Operators can override any of them per language, or add their own, from the same admin page that edits the template.
+
+The easiest way to ship them is a directory of JSON files, one per language, embedded with [`include_dir`](https://docs.rs/include_dir) (a workspace dependency, add `include_dir = { workspace = true }` to your extension's `Cargo.toml`). `en.json` declares the variables and their English defaults, keyed by template identifier; every other `<language>.json` carries translations for the same keys. This is exactly how the panel ships its own defaults, so you can crib the layout from `shared/mails/variables/` in the panel source.
+
+```json
+{
+  "dev.0x7d8.test.welcome": {
+    "subject": "Welcome",
+    "greeting": "Hello <strong>{{ user.username }}</strong>,",
+    "button": "Set a password"
+  }
+}
+```
+
+```rs
+const MAIL_VARIABLES: include_dir::Dir<'_> = include_dir::include_dir!("$CARGO_MANIFEST_DIR/mails/variables");
+
+builder
+    .add_template(EmailTemplate {
+        identifier: "dev.0x7d8.test.welcome",
+        available_variables: vec!["user", "invite_link"],
+        default_subject: "{{ settings.app.name }} - {{ vars.subject }}",
+        default_content: include_str!("../mails/welcome.html"),
+        default_enabled: true,
+    })
+    .add_template_variables(&MAIL_VARIABLES)
+```
+
+Add as many language files as you like. A translation file may also carry keys for the core templates (`password_reset`, `two_factor_code` and so on), which is how an extension can ship a language the panel does not translate itself. Translations for a variable nothing declares are logged and skipped, and a directory can be registered more than once without duplicating anything.
+
+Variables can also be declared one at a time on the builder. The first argument scopes the variable to a template identifier; `None` makes it a global variable every template can use.
+
+```rs
+builder
+    .add_template_variable(Some("dev.0x7d8.test.welcome"), "subject", "Welcome")
+    .add_template_variable(
+        Some("dev.0x7d8.test.welcome"),
+        "greeting",
+        "Hello <strong>{{ user.username }}</strong>,",
+    )
+    .add_template_variable_translation(
+        Some("dev.0x7d8.test.welcome"),
+        "greeting",
+        "de",
+        "Hallo <strong>{{ user.username }}</strong>,",
+    )
+```
+
+The template then reads:
+
+```html
+<p>{{ vars.greeting }}</p>
+
+<p>Your account at {{ settings.app.name }} is ready to go.</p>
+```
+
+A few rules for variables:
+
+- **Names** are lowercase letters, digits and underscores, starting with a letter, at most 64 characters. Invalid names are logged and dropped at registration.
+- **Values are MiniJinja fragments** rendered with the same context as the template, so <code v-pre>{{ user.username }}</code> and <code v-pre>{{ settings.app.name }}</code> work inside them. For the body they are rendered with HTML auto-escaping and inserted as safe HTML; for the subject they are rendered as plain text. A variable can reference another one as <code v-pre>{{ vars.<name> }}</code>, one level deep: a chain of three renders the innermost as empty.
+- **Resolution order** for a recipient language is: the operator's value for that language, the operator's English value, your translated default for that language, your English default. Once an operator customises a variable in English, that wording is what every language without its own override receives.
+- **Template variables shadow global ones** with the same name.
+- `add_template_variable` is a no-op if the variable already exists, `mutate_template_variable(identifier, name, |variable| ...)` changes an existing one, mirroring `add_template` and `mutate_template`.
+
+The core templates each declare a `subject` variable plus `greeting`, `intro`, `button`, `note`, `footer` and a few template-specific ones; look at `shared/mails/variables/en.json` in the panel source for the full list. Their translations are maintained through the panel's Crowdin project, so if you want to reword a core mail without replacing its layout, `mutate_template_variable` is the tool.
+
+Two globals are always available in templates and variables besides `settings`: `language`, the language code the mail is rendered in, and (in the body only) `subject`, the rendered subject line. `subject` is deliberately left out of the admin UI's variable list, since it exists only while the body renders - an operator who puts it in the subject field gets nothing back.
 
 ## Sending an Email Using Your Template
 
@@ -134,7 +207,7 @@ async fn send_welcome_email(
         .send_template(
             state,
             "dev.0x7d8.test.welcome",
-            user.email.clone(),
+            user,
             minijinja::context! {
                 user => user,
                 invite_link => invite_link,
@@ -148,11 +221,13 @@ async fn send_welcome_email(
 
 Note the absence of `?` on the `send_template` call - it returns nothing meaningful (it spawns a tokio task and any failure is logged from inside the task). If you use `send_template_foreground` instead, you'd propagate errors with `.await?`.
 
-The four arguments to `send_template` / `send_template_foreground`: the `State`, the template identifier, the recipient address, and the MiniJinja context for variable substitution.
+The four arguments to `send_template` / `send_template_foreground`: the `State`, the template identifier, the recipient, and the MiniJinja context for variable substitution.
+
+The recipient is anything that converts into a `MailRecipient`, which pairs an address with the language to render in. Pass `&user` and the mail goes to the user's address in the user's language. Pass a bare `CompactString` address and the panel's default language is used. `MailRecipient::new(address, language)` covers the case where the address and the language come from different places, like a verification mail for an address the user has not confirmed yet.
 
 A few notes on this pattern:
 
-- **The subject comes from the template, not your code.** Both the subject and body are stored in the template and can be overridden by operators. The subject is itself a MiniJinja template string, so <code v-pre>{{ settings.app.name }}</code> and other variables work there too.
+- **The subject comes from the template, not your code.** Both the subject and body are stored in the template and can be overridden by operators. The subject is itself a MiniJinja template string, so <code v-pre>{{ settings.app.name }}</code> and other variables work there too, and it is rendered as plain text rather than HTML.
 - **If the template is disabled, the send is silently skipped.** `send_template` returns immediately with no error; `send_template_foreground` returns `Ok(())`. A `tracing::debug` message is emitted so you can see it in logs. Check `default_enabled` on your template definition if you're wondering why emails aren't sending.
 - **The 15-second cache still applies.** Template content and the enabled/disabled state are cached from the database for 15 seconds. A change made in the admin UI won't be visible to senders for up to that long.
 - **`send_template` vs `send_template_foreground` is about who handles failures.** `send_template` returns almost immediately and spawns a tokio task for the actual send - SMTP errors, network errors, and rendering errors are logged from inside the task and the user-facing request is unaffected. `send_template_foreground` does everything in your async context and propagates errors back. Use `send_template` for fire-and-forget notifications; use `send_template_foreground` when the send result actually matters to your code (e.g. an SMTP connection test, where the whole point is to know whether it worked).
@@ -207,12 +282,13 @@ The whole point of using the template system rather than hardcoded HTML is that 
 - Edit the subject line, replacing your default with their own customized version (the subject supports the same MiniJinja syntax as the body)
 - Edit the body content, replacing your default with their own customized version
 - Reset the subject and/or content back to the default at any time
+- Edit every variable per language, add custom variables, and reset a variable back to your defaults
 
 Overrides are per-template and stored in the Panel's database, so they persist across restarts and are shared across panel instances. Resetting deletes the database row for that field, falling back to your `default_subject` / `default_content` immediately.
 
 ## Where to Go From Here
 
-Most extensions only need `add_template` and `send_template` - the rest of this is for less common cases. If you're shipping a feature that sends email, register a template, write your default HTML and subject in English, and use it. The override flow happens for free.
+Most extensions only need `add_template`, `add_template_variables` and `send_template` - the rest of this is for less common cases. If you're shipping a feature that sends email, register a template, write your default HTML and subject in English with the wording in variables, and use it. The override and translation flow happens for free.
 
 A few things this page didn't cover that you might want to look into separately:
 

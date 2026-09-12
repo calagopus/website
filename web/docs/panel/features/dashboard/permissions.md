@@ -498,6 +498,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `database-agent-hosts.read-token` | Allows viewing a database agent host's token. |
 | `database-agent-hosts.reset-token` | Allows resetting database agent host tokens. |
 | `database-agent-hosts.test` | Allows testing database agent host connections. |
+| `database-agent-hosts.backups` | Allows viewing and managing a database agent host's backups. |
 
 ### Database Agent Templates
 

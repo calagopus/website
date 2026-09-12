@@ -133,7 +133,7 @@ Mounts attached to this server: ID, Name, Source, Target, and Added. **Add** att
 
 ### Backups
 
-All backups of this server: Name, Node, Checksum, Size, Files, and Created, with failed backups flagged. A warning icon appears when a backup lives on a different node than the server; those are not viewable from the client API. The **Only show partially detached backups** switch filters to exactly those.
+All backups of this server: Name, **Kind**, **Source**, Node, Checksum, Size, Files, and Created, with failed backups flagged. Kind separates the server's file archives from dumps of its [database instances](./database-agent-hosts.md), and Source names either the server files or the instance a dump came from. Restore and export to files are offered for file backups only. A warning icon appears when a backup lives on a different node than the server; those are not viewable from the client API. The **Only show partially detached backups** switch filters to exactly those.
 
 Right-click a completed backup for **Download** (with a format submenu for streaming backups), **Restore**, **Export to Files**, **View Metadata** (raw JSON), and **Delete**. The owner-facing side is the [Backups](../server/backups.md) page.
 
