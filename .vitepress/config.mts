@@ -14,6 +14,7 @@ import { generateLlmsArtifacts } from './plugins/llms.ts';
 import { imageAssetsPlugin, imageMime, writeImageManifest } from './plugins/mcp-images.ts';
 import { recordPage, writePageManifest } from './plugins/mcp-manifest.ts';
 import { expandReleaseMarkdown } from './plugins/releases.ts';
+import { expandFeaturedSponsorsMarkdown } from './plugins/sponsor-sections.ts';
 import { expandSponsorsMarkdown } from './plugins/sponsors.ts';
 
 const SITE_URL = 'https://calagopus.com';
@@ -649,6 +650,7 @@ export default withMermaid({
     await generateLlmsArtifacts(siteConfig, SITE_URL);
     await expandReleaseMarkdown(siteConfig.outDir);
     await expandSponsorsMarkdown(siteConfig.outDir);
+    await expandFeaturedSponsorsMarkdown(siteConfig.outDir);
     await writePageManifest(siteConfig.outDir, SITE_URL);
     await writeImageManifest(siteConfig.outDir);
   },

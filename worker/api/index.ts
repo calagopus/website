@@ -1,7 +1,7 @@
 import { wantsMarkdown } from '../http.ts';
 import { handleGuild } from './guild.ts';
 import { handleLatest, handleReleases, RELEASES_PATTERN } from './releases.ts';
-import { handleSponsors } from './sponsors.ts';
+import { handleSponsorSections, handleSponsors } from './sponsors.ts';
 import { handleTelemetry } from './telemetry.ts';
 
 export const API_PREFIX = '/api/';
@@ -12,6 +12,9 @@ export async function apiHandler(request: Request, env: Env, ctx: ExecutionConte
 
   if (pathname === '/api/latest' || pathname === '/api/latest/') return handleLatest(request, env);
   if (pathname === '/api/guild' || pathname === '/api/guild/') return handleGuild(request);
+  if (pathname === '/api/sponsors/sections' || pathname === '/api/sponsors/sections/') {
+    return handleSponsorSections(request);
+  }
   if (pathname === '/api/sponsors' || pathname === '/api/sponsors/') return handleSponsors(request);
   if (pathname === '/api/telemetry' || pathname === '/api/telemetry/') return handleTelemetry(request, env, ctx);
 

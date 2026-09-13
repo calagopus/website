@@ -21,6 +21,7 @@ hero:
 ---
 
 <script setup lang="ts">
+import FeaturedSponsors from '../.vitepress/components/FeaturedSponsors.vue';
 import Features from '../.vitepress/components/Features.vue';
 import Stats from '../.vitepress/components/Stats.vue';
 import { faqs } from '../.vitepress/data/faqs.ts';
@@ -96,6 +97,8 @@ import mobilePreviewSrcset from './mobile-preview.webp?w=360;500;720;1000&as=src
     <a href="/docs/about/what-is-calagopus">See more questions →</a>
   </p>
 </section>
+
+<FeaturedSponsors />
 
 <style scoped>
 .preview-container {

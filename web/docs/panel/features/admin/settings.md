@@ -5,7 +5,7 @@ description: Every panel-wide setting in the Calagopus admin area, from applicat
 
 # Settings
 
-Everything panel-wide that isn't its own admin page lives under `/admin/settings`, split into ten category tabs. Saving any category requires the `settings.update` permission.
+Everything panel-wide that isn't its own admin page lives under `/admin/settings`, split into eleven category tabs. Saving any category requires the `settings.update` permission.
 
 ::: info
 The **Application** tab has an **Advanced mode** toggle in the top right. It reveals the fields marked *advanced* below, and the preference is saved to your account, so it follows you to other devices.
