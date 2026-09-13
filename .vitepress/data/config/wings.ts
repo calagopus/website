@@ -147,21 +147,39 @@ export const wingsConfigDoc: ConfigDoc = {
           default: 4,
         },
         {
+          key: 'api.file_search_context.max_matches',
+          description:
+            'The largest number of context blocks per file a search request may ask for. A request above this limit (or asking for `0`) is rejected outright rather than trimmed, so raising it lets clients pull more of each file into a single response.',
+          default: 100,
+        },
+        {
+          key: 'api.file_search_context.max_response_size',
+          description:
+            'The total size (in bytes) of preview context Wings will return across a whole search response. Context blocks are added until the budget is spent; files past it are still listed as matches but come back without preview content and are flagged as truncated. This is the effective ceiling on how large a preview-enabled search response can get.',
+          default: 8388608,
+        },
+        {
           key: 'api.file_copy_threads',
           description:
-            'The number of concurrent worker threads allocated for duplicating files and directories within the file manager.',
+            'The number of concurrent worker threads allocated for duplicating files and directories within the file manager. Set to `0` to use every available core.',
           default: 4,
+        },
+        {
+          key: 'api.file_delete_threads',
+          description:
+            "The number of concurrent worker threads used to walk and remove a directory tree. Applies to deleting a directory from the file manager and to wiping a server's volume when it is deleted or reinstalled. Set to `0` to use every available core.",
+          default: 2,
         },
         {
           key: 'api.file_decompression_threads',
           description:
-            'The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.',
-          default: 2,
+            'The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.',
+          default: 4,
         },
         {
           key: 'api.file_compression_threads',
           description:
-            'The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.',
+            'The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.',
           default: 2,
         },
         {
@@ -987,7 +1005,7 @@ export const wingsConfigDoc: ConfigDoc = {
           notesAfter: [
             {
               type: 'warning',
-              body: 'Server firewalls are Linux only, and are not supported with a rootless container engine - published port traffic does not traverse the host netfilter forward path there.\n\nWhen no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.',
+              body: 'Server firewalls are Linux only, and are not supported with a rootless container engine - published port traffic does not traverse the host netfilter forward path there.\n\nWhen no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.\n\nThe `container` backend runs `nft` out of the Wings image itself, so that image has to carry the binary. The official Wings and All-in-One images do; a custom image may not, and Wings then reports that `nft` is missing from the image the helper container runs.',
             },
           ],
         },
@@ -1289,7 +1307,7 @@ export const wingsConfigDoc: ConfigDoc = {
           key: 'tundra.source_image',
           description:
             'The image the tundra binary is extracted from when `binary` is empty. Pin this to control which tundra version the node runs.',
-          default: 'ghcr.io/calagopus/tundra:1.0.0',
+          default: 'ghcr.io/calagopus/tundra:latest',
         },
         {
           key: 'tundra.metrics_port',

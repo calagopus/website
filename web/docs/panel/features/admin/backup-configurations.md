@@ -42,6 +42,8 @@ Opening a configuration shows tabs for **General** (the edit form, plus **Duplic
 
 **Backups** lists every backup stored on the configuration: Name, **Kind**, **Source**, Server, Node, Checksum, Size, Files, and Created. Kind separates file archives from database dumps, and Source names either the server files or the instance a dump came from.
 
+When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
+
 ![Backups tab](./images/backup-configurations/backups.webp)
 
 ![Locations tab](./images/backup-configurations/locations.webp)

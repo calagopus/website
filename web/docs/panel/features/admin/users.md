@@ -29,7 +29,7 @@ Click **Create** (or go to `/admin/users/new`) and fill in the form:
 | **Role** | Optional; only shown to root admins. See [Roles](./roles.md). |
 | **External ID** | Optional identifier for linking external systems. |
 | **Password** | Required when creating. When updating, leave it empty to keep the current one. |
-| **Admin** | Only shown to root admins. "Admin users have full, unrestricted access to everything on the panel." |
+| **Admin** | Only shown to root admins. "Admin users have full, unrestricted access to everything on the panel." Saving with this on asks for confirmation first ("Are you sure you want to grant **name** admin access?"). |
 | **Frozen** | "Frozen users cannot make any changes to their account information." |
 | **Suspended** | "Suspended users cannot access the panel in any meaningful way." |
 

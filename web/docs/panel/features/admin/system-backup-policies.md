@@ -55,6 +55,8 @@ Due-ness is tracked per target (the cron having fired since that server's or tha
 
 The **Backups** tab lists every backup the policy has taken, searchable: Name, Server, Node, Checksum, Size, Files, and Created, each row tagged with a **SYSTEM** badge and carrying a download action. A database policy adds a **Kind** column, and its rows report no file count because a dump is a single file. Policy backups do not count towards each server's backup limit and no [backup group](../server/backups.md#backup-groups) touches them; the policy's own **Retention** rules manage them instead, re-checked once an hour. Unlocked failed attempts are cleaned up 24 hours after they finish.
 
+When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
+
 ![Policy backups tab](./images/system-backup-policies/backups.webp)
 
 ## Deleting a Policy

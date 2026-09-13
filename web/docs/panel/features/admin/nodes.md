@@ -134,7 +134,9 @@ Same attach/detach pattern for [database agent](../../../db-agent/index.md) host
 
 ## Backups
 
-Every backup stored on this node, regardless of which server it belongs to (requires `nodes.backups`). Columns: Name, **Kind**, **Source**, Server, Checksum, Size, Files, and Created. Kind separates file archives from database dumps, and Source names either the server files or the instance a dump came from. Restore, export to files, detach and reattach apply to file backups only; dumps get **Reassign** instead, which moves them to another database instance of the same type, optionally on a different server. The **Only show detached backups** switch filters to backups no longer linked to any server. A warning icon marks backups whose server now lives on a different node; those aren't viewable from the client area.
+Every backup stored on this node, regardless of which server it belongs to (requires `nodes.backups`). Columns: Name, **Kind**, **Source**, Server, Checksum, Size, Files, and Created. Kind separates file archives from database dumps, and Source names either the server files or the instance a dump came from. Restore, export to files, detach and reattach apply to file backups only; dumps get **Reassign** instead, which moves them to another database instance of the same type, optionally on a different server. The **Only show detached backups** switch filters to backups no longer linked to any server, and also decides which failed backups the button below clears. A warning icon marks backups whose server now lives on a different node; those aren't viewable from the client area.
+
+When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
 
 ![](./images/nodes/backups.webp)
 

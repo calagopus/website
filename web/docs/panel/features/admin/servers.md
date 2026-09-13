@@ -11,6 +11,23 @@ description: Create servers, look them up, and manage every server on the panel 
 
 Next to **Create** sits **Find by External ID**: enter the external identifier (for example one set by your billing system), hit **Search**, and a **Server Found** card shows the matching server's name, owner, and node with a **View Server** button. If nothing matches, you get "No server found with that external ID."
 
+## Bulk Actions
+
+Selecting servers in the list turns the header into an action bar that applies one operation to the whole selection. Select with the row checkboxes, or by dragging a box across the rows.
+
+| Action | Effect | Needs |
+| --- | --- | --- |
+| **Clear State** | Clears the stored installation/transfer state, the same as [Clear State](#server-view) on a single server | `servers.update` |
+| **Unsuspend** | Lifts suspension | `servers.update` |
+| **Suspend** | Suspends the servers, stopping them and cutting off their owners | `servers.update` |
+| **Delete** | Permanently deletes the servers and everything on them | `servers.delete` |
+
+Each action asks for confirmation first, and **Delete** spells out that it cannot be undone. Only the actions your role permits appear.
+
+Servers the action would not change are skipped rather than pushed through, so suspending a selection that already contains suspended servers only touches the rest, and the toast reports both counts ("Successfully suspended 3 servers. 2 servers skipped."). If nothing in the selection would change, the panel says so and does nothing.
+
+Servers are processed independently, so a bulk action can partly succeed; the toast then reports how many succeeded and how many failed.
+
 ## Creating a Server
 
 Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an **Advanced mode** toggle in the top right reveals the fields marked *advanced* below and is remembered across admin forms.
@@ -26,7 +43,7 @@ Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an
 | Field | Notes |
 | --- | --- |
 | **Node** | Required. Where the server will be deployed. |
-| **Owner** | Required. The user who owns the server. |
+| **Owner** | Required. The user who owns the server. The dropdown searches by username *and* email, and each entry shows both. If nobody matches, a **Can't find them? Create a new user** link opens a create-user modal inline and selects the new account as the owner (needs `users.create`). |
 | **Nest** | Required. Selecting one unlocks the egg dropdown. |
 | **Egg** | Required. Determines images, startup commands, and variables. |
 | **Backup Configuration** | Optional; defaults to "Inherit from Node/Location". |
@@ -133,9 +150,11 @@ Mounts attached to this server: ID, Name, Source, Target, and Added. **Add** att
 
 ### Backups
 
-All backups of this server: Name, **Kind**, **Source**, Node, Checksum, Size, Files, and Created, with failed backups flagged. Kind separates the server's file archives from dumps of its [database instances](./database-agent-hosts.md), and Source names either the server files or the instance a dump came from. Restore and export to files are offered for file backups only. A warning icon appears when a backup lives on a different node than the server; those are not viewable from the client API. The **Only show partially detached backups** switch filters to exactly those.
+All backups of this server: Name, **Kind**, **Source**, Node, Checksum, Size, Files, and Created, with failed backups flagged. Kind separates the server's file archives from dumps of its [database instances](./database-agent-hosts.md), and Source names either the server files or the instance a dump came from. Restore and export to files are offered for file backups only. A warning icon appears when a backup lives on a different node than the server; those are not viewable from the client API. The **Only show partially detached backups** switch filters to exactly those, and also decides which failed backups the button below clears.
 
 Right-click a completed backup for **Download** (with a format submenu for streaming backups), **Restore**, **Export to Files**, **View Metadata** (raw JSON), and **Delete**. The owner-facing side is the [Backups](../server/backups.md) page.
+
+When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
 
 ![](./images/servers/backups.webp)
 

@@ -119,7 +119,7 @@ The `default_content` you ship with your extension should be written in English,
 
 ## Variables and Translations
 
-Every mail is rendered in the recipient's language. The template itself stays one HTML document. The wording that changes with the language lives in variables, small MiniJinja fragments the template references as <code v-pre>{{ vars.<name> }}</code>. A variable has an English default and optional translated defaults. Operators can override any of them per language, or add their own, from the same admin page that edits the template.
+Every mail is rendered in the recipient's language. The template itself stays one HTML document. The wording that changes with the language lives in variables, small MiniJinja fragments the template references as <code v-pre>{{ vars.&lt;name&gt; }}</code>. A variable has an English default and optional translated defaults. Operators can override any of them per language, or add their own, from the same admin page that edits the template.
 
 The easiest way to ship them is a directory of JSON files, one per language, embedded with [`include_dir`](https://docs.rs/include_dir) (a workspace dependency, add `include_dir = { workspace = true }` to your extension's `Cargo.toml`). `en.json` declares the variables and their English defaults, keyed by template identifier; every other `<language>.json` carries translations for the same keys. This is exactly how the panel ships its own defaults, so you can crib the layout from `shared/mails/variables/` in the panel source.
 
@@ -178,7 +178,7 @@ The template then reads:
 A few rules for variables:
 
 - **Names** are lowercase letters, digits and underscores, starting with a letter, at most 64 characters. Invalid names are logged and dropped at registration.
-- **Values are MiniJinja fragments** rendered with the same context as the template, so <code v-pre>{{ user.username }}</code> and <code v-pre>{{ settings.app.name }}</code> work inside them. For the body they are rendered with HTML auto-escaping and inserted as safe HTML; for the subject they are rendered as plain text. A variable can reference another one as <code v-pre>{{ vars.<name> }}</code>, one level deep: a chain of three renders the innermost as empty.
+- **Values are MiniJinja fragments** rendered with the same context as the template, so <code v-pre>{{ user.username }}</code> and <code v-pre>{{ settings.app.name }}</code> work inside them. For the body they are rendered with HTML auto-escaping and inserted as safe HTML; for the subject they are rendered as plain text. A variable can reference another one as <code v-pre>{{ vars.&lt;name&gt; }}</code>, one level deep: a chain of three renders the innermost as empty.
 - **Resolution order** for a recipient language is: the operator's value for that language, the operator's English value, your translated default for that language, your English default. Once an operator customises a variable in English, that wording is what every language without its own override receives.
 - **Template variables shadow global ones** with the same name.
 - `add_template_variable` is a no-op if the variable already exists, `mutate_template_variable(identifier, name, |variable| ...)` changes an existing one, mirroring `add_template` and `mutate_template`.

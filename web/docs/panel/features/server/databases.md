@@ -76,6 +76,8 @@ Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance i
 
 While a [database backup](./backups.md#database-backups) is being restored into the instance, a banner at the top reads "A backup is currently being restored into this managed database. Please wait..." with a progress bar and time estimate, and **Start**, **Restart**, and **Stop** are disabled until it finishes. A toast tells you whether the restore completed or failed.
 
+A restore also **write locks** the instance, and anything connected to it notices. New connections are refused with "database is write locked", and **connections that are already open are dropped**, so a game server using the database will see its connection die mid-query and need to reconnect once the restore is done. Restores are the only thing that locks an instance; exports and remote imports you start yourself do not, so your own export will not freeze the database under a running server. The [query explorer](#data-explorer) also refuses to run while the lock is held.
+
 ![](./images/databases/instance-restoring.webp)
 
 ### Databases Tab

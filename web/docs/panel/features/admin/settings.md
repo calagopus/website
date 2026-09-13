@@ -42,6 +42,26 @@ Two combinations are rejected when you save, with an error rather than a silent 
 - *"at least one two-factor method must be accepted while two-factor is required"* - you cleared **Accepted Two-Factor Methods** while the requirement is anything other than None.
 - *"email two-factor and email verification require a mail transport to be configured"* - one of the two email options is on while [Mail](#mail) is set to no transport.
 
+## Metadata
+
+![](./images/settings/metadata.webp)
+
+Controls the `<head>` of the panel's own page: what search engines record and what a link to your panel looks like when it is pasted into Discord, Slack, or a social app. These values are rendered into the HTML the panel serves, so they apply before anyone logs in.
+
+| Field | Description |
+| --- | --- |
+| **Description** | Shown under the title in search results and link previews. Left empty it falls back to "Manage your game servers and services with *name*." |
+| **Preview Image** | The image shown in link previews (`og:image`). Suggests files uploaded under [Assets](./assets.md). Must be a PNG or JPEG, **not** an SVG, since most preview scrapers refuse SVG. A bare path is resolved against the panel **URL**; a full `http(s)://` address is used as is. Empty falls back to the panel's `android-chrome-512x512.png` |
+| **Twitter Card Type** | **Summary** for a small square thumbnail, or **Summary with Large Image** for a full-width banner |
+| **Theme Color** | Hex color that tints the browser UI on mobile and the accent bar on some link previews. Defaults to `#6c5ce7` |
+| **Allow Search Engine Indexing** | On sends `robots: index, follow`; off sends `noindex, nofollow` |
+
+**Autofill** fills **Description** and **Preview Image** with the defaults described above, which is the quickest way back to a working starting point.
+
+::: info
+`noindex` is a request, not an access control. It asks well-behaved crawlers to stay out; it does not hide the panel. Keep a private panel behind real authentication rather than relying on this switch.
+:::
+
 ## Storage
 
 Where the panel stores uploaded files such as profile pictures and admin assets. Pick a **Driver**:

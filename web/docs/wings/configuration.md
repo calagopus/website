@@ -194,24 +194,48 @@ Default value:
 file_search_threads: 4
 ```
 
+### api.file_search_context.max_matches
+The largest number of context blocks per file a search request may ask for. A request above this limit (or asking for `0`) is rejected outright rather than trimmed, so raising it lets clients pull more of each file into a single response.
+
+Default value:
+```yaml
+max_matches: 100
+```
+
+### api.file_search_context.max_response_size
+The total size (in bytes) of preview context Wings will return across a whole search response. Context blocks are added until the budget is spent; files past it are still listed as matches but come back without preview content and are flagged as truncated. This is the effective ceiling on how large a preview-enabled search response can get.
+
+Default value:
+```yaml
+max_response_size: 8388608
+```
+
 ### api.file_copy_threads
-The number of concurrent worker threads allocated for duplicating files and directories within the file manager.
+The number of concurrent worker threads allocated for duplicating files and directories within the file manager. Set to `0` to use every available core.
 
 Default value:
 ```yaml
 file_copy_threads: 4
 ```
 
-### api.file_decompression_threads
-The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.
+### api.file_delete_threads
+The number of concurrent worker threads used to walk and remove a directory tree. Applies to deleting a directory from the file manager and to wiping a server's volume when it is deleted or reinstalled. Set to `0` to use every available core.
 
 Default value:
 ```yaml
-file_decompression_threads: 2
+file_delete_threads: 2
+```
+
+### api.file_decompression_threads
+The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.
+
+Default value:
+```yaml
+file_decompression_threads: 4
 ```
 
 ### api.file_compression_threads
-The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`.
+The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.
 
 Default value:
 ```yaml
@@ -1299,6 +1323,8 @@ backend: auto
 Server firewalls are Linux only, and are not supported with a rootless container engine - published port traffic does not traverse the host netfilter forward path there.
 
 When no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.
+
+The `container` backend runs `nft` out of the Wings image itself, so that image has to carry the binary. The official Wings and All-in-One images do; a custom image may not, and Wings then reports that `nft` is missing from the image the helper container runs.
 :::
 
 ### docker.firewall.source_file_max_entries
@@ -1705,7 +1731,7 @@ The image the tundra binary is extracted from when `binary` is empty. Pin this t
 
 Default value:
 ```yaml
-source_image: ghcr.io/calagopus/tundra:1.0.0
+source_image: ghcr.io/calagopus/tundra:latest
 ```
 
 ### tundra.metrics_port
@@ -1887,8 +1913,12 @@ api:
   directory_entry_limit: 10000
   send_offline_server_logs: false
   file_search_threads: 4
+  file_search_context:
+    max_matches: 100
+    max_response_size: 8388608
   file_copy_threads: 4
-  file_decompression_threads: 2
+  file_delete_threads: 2
+  file_decompression_threads: 4
   file_compression_threads: 2
   upload_limit: 100
   max_jwt_uses: 5
@@ -2127,7 +2157,7 @@ tundra:
   data_directory: '{root_directory}/tundra'
   binary: ''
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:1.0.0
+  source_image: ghcr.io/calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}
@@ -2184,8 +2214,12 @@ api:
   directory_entry_limit: 10000
   send_offline_server_logs: false
   file_search_threads: 4
+  file_search_context:
+    max_matches: 100
+    max_response_size: 8388608
   file_copy_threads: 4
-  file_decompression_threads: 2
+  file_delete_threads: 2
+  file_decompression_threads: 4
   file_compression_threads: 2
   upload_limit: 100
   max_jwt_uses: 5
@@ -2419,7 +2453,7 @@ tundra:
   data_directory: '{root_directory}\tundra'
   binary: ''
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:1.0.0
+  source_image: ghcr.io/calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}

@@ -64,6 +64,22 @@ Each node caps the size of a source file. By default a file may hold 10000 entri
 
 Nothing you do on this page reaches the server until you press **Save**. Adding, editing, removing and reordering only change the pending list. An alert appears while you have unsaved work ("You have unsaved changes. Nothing is applied until you save."), and navigating away asks for confirmation before discarding it.
 
+## Import and Export
+
+The page header has an **Export** menu and an **Import** button next to **Save**.
+
+**Export** downloads the current ruleset as `firewall-<server id>.json` or `.yml`, in the same shape **Import** accepts. It exports the rules as they sit on the page, including unsaved edits, and is greyed out while there are no rules. Viewing the page is enough to export; only **Import** needs `firewall.update`.
+
+**Import** accepts a `.json`, `.yml`, or `.yaml` ruleset, either through the file picker or by dragging the file anywhere onto the page ("Drop some files here to import as Firewall Rules").
+
+::: warning
+Importing **replaces every rule**, it does not merge into what is already there. If you have unsaved changes, a **Replace Unsaved Rules** dialog warns you first; otherwise the swap happens immediately.
+:::
+
+An import only fills the pending list, exactly like editing the rules by hand, so nothing reaches the node until you press **Save** ("Firewall rules imported. Review them and save to apply them."). A file is rejected before it touches the page if it holds more rules than the server may have, or if any rule lists more sources than allowed, both set under [Settings > Server](../../admin/settings.md#server).
+
+Because a ruleset carries no server-specific identifiers, exporting from one server and importing into another is the way to copy a firewall between servers. Mind the [source file](#source-files) paths when you do: the path travels with the rule, but the file itself does not, and each server reads its own copy.
+
 ## Warnings You May See
 
 On top of the default-allow notice above, the page raises these:

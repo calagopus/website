@@ -268,6 +268,8 @@ Nodes migrated from Pterodactyl keep the `pterodactyl` user and `/var/lib/pterod
 
 **The agent host is attached and healthy but the host list in the create dialog stays empty.** Three things must all be true: a [template](../db-agent/templates.md) for the database type has been imported, the agent host is attached to the server's node or location, and the host's **Memory** and **Disk** budget still has room for the new instance. Raising the budget fixed the last report. Instances are created from the server's Databases page, not from the admin host page.
 
+**A game server suddenly loses its database connection with `database is write locked` (MySQL error `1040` / `08004`, Postgres `57P03`, or `-ERR database is write locked` on Redis).** A [database backup is being restored](../panel/features/server/databases.md#managed-databases) into that managed instance. A restore write locks the instance for its duration: new connections are refused and existing ones are dropped, so anything connected has to reconnect when it finishes. Wait for the restore to complete, then restart the game server. Exports and remote imports do not lock, so they are not the cause.
+
 **The database list doesn't update after adding one.** Refresh the page.
 
 ## OAuth and Integrations

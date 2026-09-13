@@ -63,6 +63,27 @@ Results replace the listing, with a banner summarizing the query and active filt
 
 <img src="./images/files/search-modal.webp" width="310" alt="Search modal with advanced filters" />
 
+#### Result Previews
+
+Every search result carries an inline preview you can expand and collapse per file, in both the list and the tree view.
+
+With a **File Content** search running, the preview shows the matching lines themselves, with a line of context either side and the match highlighted, headed by the line range ("Lines 41-43"). Without a content filter, it shows the first few lines of the file instead, so you still get a sense of what you matched. Archives never get a preview.
+
+Previews are capped: at most six lines are shown per file, and **More matches not shown** appears when a file matched more times than fit.
+
+Some results show a short status instead of content:
+
+| Status | Meaning |
+| --- | --- |
+| **Content permission required** | You have `files.read` but not `files.read-content`, so the panel may list matching files but not show what is inside them. |
+| **Match found, preview unavailable** | The file matched, but the node returned no context for it, usually because it is larger than the node's preview limit. |
+| **Preview unavailable** | The file's contents could not be read back. |
+| **Empty file** | The file matched the name or size filters and has no content. |
+
+::: info
+How much the node will read for previews is capped by [`api.file_search_context`](../../../wings/configuration.md#api-file-search-context-max-matches) in the Wings configuration, separately from the **Max file size** on the search itself. A file over the node's budget still counts as a match; it just comes back without preview content.
+:::
+
 ### Analyzing Disk Usage
 
 The chart icon next to **Search** ("Analyze directory sizes") opens **Largest Directories**, a treemap of which directories eat your disk. Click a directory in the map to jump into it.
@@ -180,7 +201,7 @@ Revisions are recorded by Wings for edits made through the file manager and SFTP
 
 ## Live Collaboration
 
-When several people open the same file, the editor switches to a shared real-time session: everyone's avatar appears in the header, and edits merge live. **Save** persists the shared document for everyone. In Monaco each participant also gets a colored cursor and selection labeled with their name; Pierre syncs the content but draws no remote cursors. The [VS Code extension](../../../integrations/vscode.md) supports the same real-time collaboration, synchronized through the panel.
+When several people open the same file, the editor switches to a shared real-time session: everyone's avatar appears in the header, and edits merge live. **Save** persists the shared document for everyone. Each participant also gets a colored cursor and selection labeled with their name, in both Monaco and Pierre. The [VS Code extension](../../../integrations/vscode.md) supports the same real-time collaboration, synchronized through the panel.
 
 If the file changes on disk outside the session (for example via SFTP), a warning banner appears with **View Diff** to compare, **Load Disk Version** to replace the session contents with the file on disk, or **Keep Editor Version** to overwrite the disk with what the session has.
 
