@@ -1,5 +1,5 @@
 ---
-description: Install the Calagopus panel using platform-specific methods for TrueNAS SCALE, Unraid, and Hostinger, which bundle the Panel and Wings in a single container.
+description: Install the Calagopus panel using platform-specific methods for TrueNAS SCALE, Unraid, Hostinger, and Portainer, which bundle the Panel and Wings in a single container.
 ---
 
 # External Installation Methods
@@ -21,4 +21,7 @@ See the [Unraid Installation](./unraid.md) guide. Install Calagopus from a Commu
 
 === Hostinger
 See the [Hostinger Installation](./hostinger.md) guide. Deploy Calagopus on a Hostinger VPS as a one-click application, no manual Docker setup required. Includes Wings in the same container.
+
+=== Portainer
+See the [Portainer Installation](./portainer.md) guide. Deploy Calagopus from a reusable Custom Template pointed at the official compose file, managed and updated entirely through Portainer's UI. Includes Wings in the same container.
 ::::
