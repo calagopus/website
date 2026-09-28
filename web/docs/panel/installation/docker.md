@@ -138,6 +138,10 @@ Once it's up, navigate to `http://<your-server-ip>:8000` in your web browser and
 
 ![Calagopus Panel OOBE](../oobe.webp)
 
+## Option C: Easypanel
+
+[Easypanel](https://easypanel.io/) can deploy the Calagopus Panel with one click using its [official template](https://easypanel.io/templates/calagopus), which provisions the required PostgreSQL and Redis services automatically. Since this only deploys the Panel, you'll still need to install Wings separately on each node that will run game servers, following the [Wings Docker Installation](../../wings/installation/docker.md) guide.
+
 ## Option B: Standalone Panel (multi-node or split-host setups)
 
 Use this option if you want the Panel on one host and Wings on one or more separate hosts.
