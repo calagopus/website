@@ -142,7 +142,11 @@ Panel resources map as follows:
 
 - memory plus configured overhead becomes the LXC RAM limit;
 - panel swap becomes additional PVE swap;
+- unlimited memory and `-1` swap use cgroup v2 `max` overrides;
 - `100%` CPU becomes `cpulimit=1`, `250%` becomes `2.5`;
+- `build.threads` becomes an exact LXC CPU set;
+- the node PID limit and per-server block-I/O weight become native cgroup v2 limits;
+- a panel entrypoint replaces the image entrypoint while retaining Wings' network-ready wrapper;
 - directory mounts become PVE `mpN` mounts;
 - supported character and block devices become PVE `devN` entries; and
 - console input and output use the PVE console while Wings retains a bounded host-side log.
@@ -160,12 +164,10 @@ The Tundra build must advertise the `process_container_refs` capability. Wings r
 The initial backend has these deliberate limits:
 
 - stopped containers report an unknown exit code and cannot yet distinguish an OOM kill from another exit;
-- panel entrypoint overrides and CPU pinning are rejected;
-- unlimited memory and `-1` swap are rejected;
 - digest-form OCI references are rejected;
 - PVE OCI pulls do not yet receive private-registry credentials from Wings;
 - one primary IPv4 address is supported per server;
-- PID limits, block-I/O weight and read-only rootfs do not yet have LXC mappings; and
+- read-only rootfs does not yet have an LXC mapping; and
 - migration or management of a remote PVE cluster node is unsupported.
 
 These checks fail explicitly instead of silently weakening the panel configuration.
