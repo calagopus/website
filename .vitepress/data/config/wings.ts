@@ -43,6 +43,157 @@ export const wingsConfigDoc: ConfigDoc = {
       ],
     },
     {
+      title: 'Runtime',
+      body: 'Choose the container runtime Wings uses for game servers. Docker remains the default when both Docker and Proxmox VE are available. See [Proxmox VE LXC Runtime](./installation/proxmox-lxc.md) before selecting `pve_lxc`.',
+      options: [
+        {
+          key: 'runtime.backend',
+          description:
+            'The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and saves the selected backend so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.',
+          values: ['auto', 'docker', 'pve_lxc'],
+          default: 'auto',
+        },
+        {
+          key: 'runtime.pve_lxc.node',
+          description:
+            'The local Proxmox node name. Leave empty to discover it. Wings cannot manage a remote cluster node because it uses local LXC processes, bind mounts, procfs and cgroups.',
+          default: '',
+        },
+        {
+          key: 'runtime.pve_lxc.template_storage',
+          description: 'The Proxmox storage used for cached OCI templates. It must support `vztmpl` content.',
+          default: 'local',
+        },
+        {
+          key: 'runtime.pve_lxc.rootfs_storage',
+          description:
+            'The storage used for LXC root filesystems. `auto` selects the active `rootdir` storage with the most free space that can fit the requested rootfs, falling through to the next eligible storage when needed.',
+          default: 'auto',
+        },
+        {
+          key: 'runtime.pve_lxc.bridge',
+          description: 'The Proxmox bridge attached to every game-server and helper LXC.',
+          default: 'vmbr0',
+        },
+        {
+          key: 'runtime.pve_lxc.vlan_tag',
+          description:
+            'An optional VLAN tag applied to each LXC veth. Leave unset when the bridge itself is dedicated to the game-server network.',
+          example: 30,
+        },
+        {
+          key: 'runtime.pve_lxc.network_prefix',
+          description:
+            'The IPv4 CIDR prefix used when panel allocations are assigned directly to LXCs. Required with static allocations when edge forwarding is not configured.',
+          example: 24,
+        },
+        {
+          key: 'runtime.pve_lxc.gateway',
+          description:
+            'The IPv4 gateway used with direct static LXC allocations. Required with `network_prefix` when edge forwarding is not configured.',
+          example: '10.70.0.1',
+        },
+        {
+          key: 'runtime.pve_lxc.edge_wireguard_interface',
+          description:
+            'The host WireGuard interface used to discover edge-forwarding peers. It has no effect until both edge SSH paths are configured.',
+          default: 'wg-calagopus',
+        },
+        {
+          key: 'runtime.pve_lxc.edge_ssh_identity_path',
+          description:
+            'A root-owned SSH private key used to synchronize port forwarding on edge hosts. The file must be inaccessible to group and other users. Leave empty to use direct bridged allocations.',
+          default: '',
+        },
+        {
+          key: 'runtime.pve_lxc.edge_known_hosts_path',
+          description: 'A pinned SSH known-hosts file for edge hosts. Required when `edge_ssh_identity_path` is set.',
+          default: '',
+        },
+        {
+          key: 'runtime.pve_lxc.rootfs_size_gib',
+          description:
+            'The size in GiB of each replaceable LXC root filesystem. Persistent game data stays in `system.data_directory` and does not consume this allocation.',
+          default: 8,
+        },
+        {
+          key: 'runtime.pve_lxc.console_log_max_bytes',
+          description: 'The maximum retained console-log size for each LXC server.',
+          default: 5242880,
+        },
+        {
+          key: 'runtime.pve_lxc.tag_prefix',
+          description:
+            'The prefix for Proxmox tags used to identify containers owned by this runtime. Do not change it while managed containers exist.',
+          default: 'calagopus',
+        },
+        {
+          key: 'runtime.pve_lxc.managed_file_directory',
+          description:
+            'A host-visible staging directory for read-only managed file mounts such as `/etc/hosts`. Its parent directories must be traversable by unprivileged LXC mount setup.',
+          default: '/var/lib/lxc/calagopus-wings-managed',
+        },
+        {
+          key: 'runtime.pve_lxc.unprivileged',
+          description:
+            'Whether Wings creates unprivileged LXCs. The current runtime requires this because persistent server data uses per-mount UID/GID mapping.',
+          default: true,
+        },
+        {
+          key: 'runtime.pve_lxc.firewall.backend',
+          description:
+            '`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off Wings firewall enforcement for this runtime.',
+          values: ['auto', 'proxmox', 'nftables', 'iptables', 'disabled'],
+          default: 'auto',
+        },
+        {
+          key: 'runtime.pve_lxc.firewall.source_file_max_entries',
+          description: 'The maximum number of firewall source entries Wings reads from one server file.',
+          default: 10000,
+        },
+        {
+          key: 'runtime.pve_lxc.firewall.source_file_max_bytes',
+          description: 'The maximum number of bytes Wings reads from one firewall source file.',
+          default: 1048576,
+        },
+        {
+          key: 'runtime.pve_lxc.pct_path',
+          description: 'The path to the local Proxmox `pct` command.',
+          default: '/usr/sbin/pct',
+        },
+        {
+          key: 'runtime.pve_lxc.pvesh_path',
+          description: 'The path to the local Proxmox `pvesh` command.',
+          default: '/usr/bin/pvesh',
+        },
+        {
+          key: 'runtime.pve_lxc.pveversion_path',
+          description: 'The path to the local `pveversion` command.',
+          default: '/usr/bin/pveversion',
+        },
+        {
+          key: 'runtime.pve_lxc.pvesm_path',
+          description: 'The path to the local Proxmox `pvesm` command.',
+          default: '/usr/sbin/pvesm',
+        },
+        {
+          key: 'runtime.pve_lxc.lxc_attach_path',
+          description: 'The path to the host `lxc-attach` command.',
+          default: '/usr/bin/lxc-attach',
+        },
+        {
+          key: 'runtime.pve_lxc.lxc_stop_path',
+          description: 'The path to the host `lxc-stop` command.',
+          default: '/usr/bin/lxc-stop',
+        },
+        {
+          key: 'runtime.pve_lxc.perl_path',
+          description: 'The Perl interpreter used for locked Proxmox configuration updates.',
+          default: '/usr/bin/perl',
+        },
+      ],
+    },
+    {
       title: 'API Settings',
       options: [
         {
