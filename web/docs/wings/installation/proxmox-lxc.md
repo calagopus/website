@@ -153,6 +153,8 @@ Panel resources map as follows:
 
 Wings reads the OCI process UID and GID and maps `/home/container` to the host account configured under `system.user`. Images that run as root are rejected because this mapping is part of the unprivileged-container isolation model.
 
+The network-ready wrapper records the game process's real exit code and compares the container's cgroup OOM counter across the process lifetime. This gives the panel the same crash and out-of-memory distinction it receives from a container engine. Wings clears the status marker before every start; a panel-requested hard kill reports exit code `137`.
+
 ## Private Networking
 
 Private networking uses the same panel connection model described in [The Private Network](../advanced/private-network.md). On an LXC node, Tundra runs as a native child process because Docker is unavailable. Wings identifies each running LXC with a process-backed reference so Tundra can enter its network namespace through procfs.
@@ -163,7 +165,6 @@ The Tundra build must advertise the `process_container_refs` capability. Wings r
 
 The initial backend has these deliberate limits:
 
-- stopped containers report an unknown exit code and cannot yet distinguish an OOM kill from another exit;
 - digest-form OCI references are rejected;
 - PVE OCI pulls do not yet receive private-registry credentials from Wings;
 - one primary IPv4 address is supported per server;
