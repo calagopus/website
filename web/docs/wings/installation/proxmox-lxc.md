@@ -44,7 +44,7 @@ Choose one of these models before starting Wings.
 
 ### Direct allocations
 
-Use this model when panel allocations are addresses that belong directly to the LXC network. Configure a bridge, optional VLAN, IPv4 prefix and gateway. Wings assigns the server's primary panel allocation to `net0`.
+Use this model when panel allocations are addresses that belong directly to the LXC network. Configure a bridge, optional VLAN, IPv4 prefix and gateway. Wings assigns the server's primary panel allocation through PVE's `net0` property. Additional allocations may use other ports on that address.
 
 ```yaml
 runtime:
@@ -165,13 +165,12 @@ The Tundra build must advertise the `process_container_refs` capability. Wings r
 
 The initial backend has these deliberate limits:
 
-- digest-form OCI references are rejected;
-- PVE OCI pulls do not yet receive private-registry credentials from Wings;
-- one primary IPv4 address is supported per server;
-- read-only rootfs does not yet have an LXC mapping; and
+- the PVE 9.2 OCI pull endpoint accepts tagged references and exposes no registry-credential inputs, so digest-only references and authenticated private registries are unavailable through this backend;
+- each server uses one primary IPv4 address; edge forwarding also uses that address to select the WireGuard peer and forwarding controller;
+- the LXC rootfs remains writable because PVE's pre-start and host-managed DHCP hooks update files in the rootfs before and after container start; and
 - migration or management of a remote PVE cluster node is unsupported.
 
-These checks fail explicitly instead of silently weakening the panel configuration.
+Unsupported image references and remote-node configurations fail explicitly. The networking and rootfs behavior above is documented so it is not mistaken for Docker parity.
 
 ## Verify the Host Contracts
 
