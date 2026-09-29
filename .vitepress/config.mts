@@ -520,6 +520,7 @@ export default withMermaid({
             collapsed: true,
             items: [
               { text: 'Docker', link: '/docs/wings/installation/docker' },
+              { text: 'Proxmox VE LXC', link: '/docs/wings/installation/proxmox-lxc' },
               { text: 'Binary', link: '/docs/wings/installation/binary' },
               { text: 'Package Manager', link: '/docs/wings/installation/pkgmanager' },
             ],
