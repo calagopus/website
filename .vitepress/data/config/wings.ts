@@ -49,7 +49,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'runtime.backend',
           description:
-            'The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and saves the selected backend so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.',
+            'The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and stores the selection in `system.root_directory/runtime-backend` so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.',
           values: ['auto', 'docker', 'pve_lxc'],
           default: 'auto',
         },
@@ -100,6 +100,11 @@ export const wingsConfigDoc: ConfigDoc = {
           default: 'wg-calagopus',
         },
         {
+          key: 'runtime.pve_lxc.edge_ssh_user',
+          description: 'The SSH account used by the restricted edge port-forwarding key.',
+          default: 'root',
+        },
+        {
           key: 'runtime.pve_lxc.edge_ssh_identity_path',
           description:
             'A root-owned SSH private key used to synchronize port forwarding on edge hosts. The file must be inaccessible to group and other users. Leave empty to use direct bridged allocations.',
@@ -138,6 +143,12 @@ export const wingsConfigDoc: ConfigDoc = {
           description:
             'Whether Wings creates unprivileged LXCs. The current runtime requires this because persistent server data uses per-mount UID/GID mapping.',
           default: true,
+        },
+        {
+          key: 'runtime.pve_lxc.pids_limit',
+          description:
+            'The maximum number of processes in each LXC. Leave unset to use `docker.container_pid_limit` for compatibility; set `0` for no limit.',
+          example: 512,
         },
         {
           key: 'runtime.pve_lxc.firewall.backend',

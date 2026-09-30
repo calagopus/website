@@ -77,7 +77,7 @@ token: TOKEN_HERE
 Choose the container runtime Wings uses for game servers. Docker remains the default when both Docker and Proxmox VE are available. See [Proxmox VE LXC Runtime](./installation/proxmox-lxc.md) before selecting `pve_lxc`.
 
 ### runtime.backend
-The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and saves the selected backend so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.
+The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and stores the selection in `system.root_directory/runtime-backend` so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.
 
 Available options:
 
@@ -137,6 +137,14 @@ Default value:
 edge_wireguard_interface: wg-calagopus
 ```
 
+### runtime.pve_lxc.edge_ssh_user
+The SSH account used by the restricted edge port-forwarding key.
+
+Default value:
+```yaml
+edge_ssh_user: root
+```
+
 ### runtime.pve_lxc.edge_ssh_identity_path
 A root-owned SSH private key used to synchronize port forwarding on edge hosts. The file must be inaccessible to group and other users. Leave empty to use direct bridged allocations.
 
@@ -192,6 +200,9 @@ Default value:
 ```yaml
 unprivileged: true
 ```
+
+### runtime.pve_lxc.pids_limit
+The maximum number of processes in each LXC. Leave unset to use `docker.container_pid_limit` for compatibility; set `0` for no limit.
 
 ### runtime.pve_lxc.firewall.backend
 `auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off Wings firewall enforcement for this runtime.
@@ -2159,6 +2170,7 @@ runtime:
     network_prefix: 24
     gateway: 10.70.0.1
     edge_wireguard_interface: wg-calagopus
+    edge_ssh_user: root
     edge_ssh_identity_path: ''
     edge_known_hosts_path: ''
     rootfs_size_gib: 8
@@ -2166,6 +2178,7 @@ runtime:
     tag_prefix: calagopus
     managed_file_directory: /var/lib/lxc/calagopus-wings-managed
     unprivileged: true
+    pids_limit: 512
     firewall:
       backend: auto
       source_file_max_entries: 10000
@@ -2495,6 +2508,7 @@ runtime:
     network_prefix: 24
     gateway: 10.70.0.1
     edge_wireguard_interface: wg-calagopus
+    edge_ssh_user: root
     edge_ssh_identity_path: ''
     edge_known_hosts_path: ''
     rootfs_size_gib: 8
@@ -2502,6 +2516,7 @@ runtime:
     tag_prefix: calagopus
     managed_file_directory: /var/lib/lxc/calagopus-wings-managed
     unprivileged: true
+    pids_limit: 512
     firewall:
       backend: auto
       source_file_max_entries: 10000
