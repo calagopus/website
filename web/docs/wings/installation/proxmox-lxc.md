@@ -21,7 +21,6 @@ Docker remains the preferred backend when both runtimes are available. On a fres
 - A Proxmox storage with `vztmpl` content for cached OCI templates.
 - At least one active storage with `rootdir` content for LXC root filesystems.
 - A bridge that provides connectivity for game-server LXCs.
-- An OCI image whose configured process user is not root.
 
 Wings manages only the local Proxmox node. It uses local `pct`, `pvesh`, LXC processes, bind mounts, cgroups and procfs, so pointing it at another cluster member is unsupported.
 
@@ -153,7 +152,7 @@ Panel resources map as follows:
 - supported character and block devices become PVE `devN` entries; and
 - console input and output use the PVE console while Wings retains a bounded host-side log.
 
-Wings reads the OCI process UID and GID and maps `/home/container` to the host account configured under `system.user`. Images that run as root are rejected because this mapping is part of the unprivileged-container isolation model.
+Wings reads the OCI process UID and GID and maps that identity for `/home/container` to the host account configured under `system.user`. This works for images configured to run as root as well as images with a non-root process user; the LXC itself remains unprivileged on the host.
 
 The network-ready wrapper records the game process's real exit code and compares the container's cgroup OOM counter across the process lifetime. This gives the panel the same crash and out-of-memory distinction it receives from a container engine. Wings clears the status marker before every start; a panel-requested hard kill reports exit code `137` without replacing a marker already written by the process wrapper. OOM attribution requires cgroup v2; on a cgroup v1 host Wings still reports the exit code but cannot distinguish an OOM kill.
 
