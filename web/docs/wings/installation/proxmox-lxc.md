@@ -11,7 +11,7 @@ The Proxmox VE runtime lets Wings run game servers as native LXCs instead of Doc
 The LXC backend is still under review. Test it with workloads you can recreate before using it for production servers. The current support limits are listed at the end of this page.
 :::
 
-Docker remains the preferred backend when both runtimes are available. On a fresh node, `runtime.backend: auto` probes Docker first and then local Proxmox VE. Wings saves the selected backend in `config.yml`, so installing Docker later does not silently move an existing LXC node.
+Docker remains the preferred backend when both runtimes are available. On a fresh node, `runtime.backend: auto` probes Docker first and then local Proxmox VE. Wings stores the selection in `system.root_directory/runtime-backend` without rewriting `config.yml`, so installing Docker later does not silently move an existing LXC node. Remove that state file before restarting Wings to run detection again.
 
 ## Requirements
 
@@ -68,6 +68,7 @@ runtime:
   pve_lxc:
     bridge: vmbr-calagopus
     edge_wireguard_interface: wg-calagopus
+    edge_ssh_user: root
     edge_ssh_identity_path: /etc/calagopus-wings/edge-forward
     edge_known_hosts_path: /etc/calagopus-wings/edge-known-hosts
 ```
@@ -92,6 +93,7 @@ runtime:
     tag_prefix: calagopus
     managed_file_directory: /var/lib/lxc/calagopus-wings-managed
     unprivileged: true
+    pids_limit: 512
     firewall:
       backend: auto
       source_file_max_entries: 10000
@@ -144,8 +146,8 @@ Panel resources map as follows:
 - panel swap becomes additional PVE swap;
 - unlimited memory and `-1` swap use cgroup v2 `max` overrides;
 - `100%` CPU becomes `cpulimit=1`, `250%` becomes `2.5`;
-- `build.threads` becomes an exact LXC CPU set;
-- the node PID limit and per-server block-I/O weight become native cgroup v2 limits;
+- `build.threads` becomes both an exact LXC CPU set and the corresponding PVE core count;
+- `runtime.pve_lxc.pids_limit` and each server's block-I/O weight become native cgroup v2 limits; when `pids_limit` is omitted, Wings uses the legacy `docker.container_pid_limit` value for compatibility;
 - a panel entrypoint replaces the image entrypoint while retaining Wings' network-ready wrapper;
 - directory mounts become PVE `mpN` mounts;
 - supported character and block devices become PVE `devN` entries; and
@@ -153,7 +155,7 @@ Panel resources map as follows:
 
 Wings reads the OCI process UID and GID and maps `/home/container` to the host account configured under `system.user`. Images that run as root are rejected because this mapping is part of the unprivileged-container isolation model.
 
-The network-ready wrapper records the game process's real exit code and compares the container's cgroup OOM counter across the process lifetime. This gives the panel the same crash and out-of-memory distinction it receives from a container engine. Wings clears the status marker before every start; a panel-requested hard kill reports exit code `137`.
+The network-ready wrapper records the game process's real exit code and compares the container's cgroup OOM counter across the process lifetime. This gives the panel the same crash and out-of-memory distinction it receives from a container engine. Wings clears the status marker before every start; a panel-requested hard kill reports exit code `137` without replacing a marker already written by the process wrapper. OOM attribution requires cgroup v2; on a cgroup v1 host Wings still reports the exit code but cannot distinguish an OOM kill.
 
 ## Private Networking
 
@@ -167,6 +169,7 @@ The initial backend has these deliberate limits:
 
 - the PVE 9.2 OCI pull endpoint accepts tagged references and exposes no registry-credential inputs, so digest-only references and authenticated private registries are unavailable through this backend;
 - each server uses one primary IPv4 address; edge forwarding also uses that address to select the WireGuard peer and forwarding controller;
+- unlimited memory and swap depend on PVE preserving Wings-managed `lxc.cgroup2.*=max` entries when the container starts; this is live-tested against PVE 9.2 by the included smoke test;
 - the LXC rootfs remains writable because PVE's pre-start and host-managed DHCP hooks update files in the rootfs before and after container start; and
 - migration or management of a remote PVE cluster node is unsupported.
 
