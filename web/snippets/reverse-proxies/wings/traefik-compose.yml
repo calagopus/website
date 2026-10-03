@@ -1,0 +1,17 @@
+services:
+  wings:
+    # ...existing configuration...
+    networks:
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.wings.rule=Host(`<node-domain>`)
+      - traefik.http.routers.wings.entrypoints=websecure
+      - traefik.http.routers.wings.tls.certresolver=letsencrypt
+      - traefik.http.services.wings.loadbalancer.server.port=8080
+
+networks:
+  proxy:
+    external: true

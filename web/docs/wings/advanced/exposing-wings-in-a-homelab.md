@@ -51,7 +51,7 @@ A reverse proxy runs on the node (or another machine on your network) and answer
 
 **1. Forward ports 80 and 443** on your router to the machine that runs the proxy. Port 80 is what Let's Encrypt uses to issue the certificate; port 443 carries the traffic.
 
-**2. Set up the proxy and trust it in Wings.** Follow [Putting Wings behind a reverse proxy](../../additional/reverse-proxies/wings.md). It covers the Nginx, Apache and Caddy configurations, the upload size limit, and `api.trusted_proxies`, which Wings needs so it sees your users' real addresses instead of the proxy's.
+**2. Set up the proxy and trust it in Wings.** Follow [Putting Wings behind a reverse proxy](../../additional/reverse-proxies/wings.md). It covers the configuration for Nginx, Apache, Caddy, Traefik and Nginx Proxy Manager, closing Wings' own port, and `api.trusted_proxies`, which Wings needs so it sees your users' real addresses instead of the proxy's.
 
 **3. Point the node at the proxy.** In **Admin → Nodes → (your node) → General**, set **URL** to the proxy's address without a port, for example `https://wings.example.com`. The form warns that no port was given and offers to add `:8080`. Ignore that here: the proxy listens on `443`, and `:8080` would go around it. Leave **Public URL** empty so browsers use the same address.
 

@@ -40,24 +40,21 @@ Three things happen at the proxy on every request:
 2. It adds headers that tell the Panel or Wings who the real visitor is (`X-Forwarded-For`, `X-Real-IP`).
 3. It forwards the request over plain HTTP to the service on the loopback address, and streams the response back.
 
-Because every request now arrives *from the proxy*, the Panel or Wings has to be told which address the proxy uses. Otherwise every visitor looks like they come from the same IP, which breaks per-IP rate limiting and fills the activity log with the proxy's address. Telling it about the proxy is the only application-side change either guide makes.
+Because every request now arrives *from the proxy*, the Panel or Wings has to be told which address the proxy uses. Otherwise every visitor looks like they come from the same IP, which breaks per-IP rate limiting and fills the activity log with the proxy's address. Both guides start with that, along with closing off the port the service used to answer on directly.
 
 ::: info All-in-One image
-If you run the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), the bundled Wings is reached through the Panel, so the Panel guide alone covers both. Only SFTP (port `2022`) stays direct, because it is not HTTP.
+On the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), the bundled Wings is reached through the Panel, so the Panel guide covers both; see [All-in-One and Wings Proxy Mode](./panel.md#all-in-one-and-wings-proxy-mode). Only SFTP (port `2022`) stays direct, because it is not HTTP.
 :::
 
 ## Pick a Guide
 
-::::tabs
-=== Panel
+| Guide | Set up | Covers |
+| --- | --- | --- |
+| [Panel](./panel.md) | Once | The login page, dashboard and admin area, and on the All-in-One image the bundled Wings |
+| [Wings](./wings.md) | Per standalone node | The browser's direct connections to the node: console, file manager, uploads and downloads |
 
-Set up once, for every visitor: log in page, dashboard, admin, and (on the All-in-One image) the bundled Wings.
+## Keeping the Configuration Current
 
-See the [Panel reverse proxy guide](./panel.md).
+The examples are written for the current stable release of each proxy. An older release can lack a directive or behave differently. The guides call out the differences that matter, such as Nginx before 1.25.1 and Apache before 2.4.47.
 
-=== Wings
-
-Set up per standalone node, for browsers connecting to the console, file manager, and server uploads/downloads directly.
-
-See the [Wings reverse proxy guide](./wings.md).
-::::
+The Panel and Wings change too. A release can add an endpoint, a WebSocket route or a larger request that the proxy has to let through, so a configuration that worked before an update can stop working after it. Whenever you update the Panel or Wings, come back to its guide and compare your configuration with the current example.

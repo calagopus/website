@@ -1,0 +1,18 @@
+# Replace <domain> with your domain.
+# Change 127.0.0.1:8000 below if the Panel listens elsewhere.
+<domain> {
+    # Largest request body the proxy accepts, except under /api/remote/backups/
+    @limited not path /api/remote/backups/*
+    request_body @limited {
+        max_size 128MiB
+    }
+
+    header {
+        Referrer-Policy    "same-origin"
+        Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=(self), clipboard-read=(self)"
+        # See https://hstspreload.org/ before uncommenting the line below.
+        # Strict-Transport-Security "max-age=15768000; preload;"
+    }
+
+    reverse_proxy 127.0.0.1:8000
+}

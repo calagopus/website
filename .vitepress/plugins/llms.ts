@@ -3,6 +3,7 @@ import { dirname, join } from 'node:path';
 import type { SiteConfig } from 'vitepress';
 import { featureCategories } from '../data/features.ts';
 import { BENCHMARKS_PAGE, expandBenchmarksMarkdown } from './benchmarks.ts';
+import { expandSnippetImports } from './snippet-imports.ts';
 
 interface SidebarNode {
   text?: string;
@@ -106,7 +107,8 @@ export async function generateLlmsArtifacts(siteConfig: SiteConfig, siteUrl: str
   for (const page of pages) {
     const dest = join(outDir, page);
     await mkdir(dirname(dest), { recursive: true });
-    const source = await readFile(join(srcDir, page), 'utf8');
+    const file = join(srcDir, page);
+    const source = expandSnippetImports(await readFile(file, 'utf8'), { srcDir, file });
     await writeFile(dest, cleanMarkdownExport(source, page));
   }
 

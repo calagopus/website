@@ -1,0 +1,17 @@
+services:
+  web:
+    # ...existing configuration...
+    networks:
+      - default
+      - proxy
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=proxy
+      - traefik.http.routers.calagopus.rule=Host(`<domain>`)
+      - traefik.http.routers.calagopus.entrypoints=websecure
+      - traefik.http.routers.calagopus.tls.certresolver=letsencrypt
+      - traefik.http.services.calagopus.loadbalancer.server.port=8000
+
+networks:
+  proxy:
+    external: true

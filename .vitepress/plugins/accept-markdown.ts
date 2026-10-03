@@ -3,6 +3,7 @@ import { join, sep } from 'node:path';
 import type { PluginOption } from 'vite';
 import { markdownCandidates } from '../lib/markdown-candidates.ts';
 import { BENCHMARKS_PAGE, expandBenchmarksMarkdown } from './benchmarks.ts';
+import { expandSnippetImports } from './snippet-imports.ts';
 
 interface MiddlewareRequest {
   method?: string;
@@ -25,10 +26,10 @@ function resolveWithinRoot(root: string, relativePath: string): string | null {
   return resolved;
 }
 
-async function readFirstExisting(paths: string[]): Promise<string | null> {
+async function readFirstExisting(paths: string[]): Promise<{ path: string; body: string } | null> {
   for (const path of paths) {
     try {
-      return await readFile(path, 'utf8');
+      return { path, body: await readFile(path, 'utf8') };
     } catch {
       // try the next candidate
     }
@@ -63,8 +64,9 @@ export function acceptMarkdownPlugin(): PluginOption {
           .filter((p): p is string => p !== null);
         if (candidates.length === 0) return next();
 
-        const body = await readFirstExisting(candidates);
-        if (body === null) return next();
+        const found = await readFirstExisting(candidates);
+        if (found === null) return next();
+        const body = expandSnippetImports(found.body, { srcDir: root, file: found.path });
 
         const page = pathname.replace(/^\/+/, '').replace(/\/+$/, '').replace(/\.md$/, '');
         const output =

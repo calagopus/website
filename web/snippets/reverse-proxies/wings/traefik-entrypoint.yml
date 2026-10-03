@@ -1,0 +1,7 @@
+entryPoints:
+  websecure:
+    address: ":443"
+    transport:
+      respondingTimeouts:
+        readTimeout: 0
+        idleTimeout: 3600s

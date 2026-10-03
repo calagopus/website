@@ -5,22 +5,22 @@ description: Put Nginx, Apache, Caddy, Traefik or Nginx Proxy Manager in front o
 
 # Putting the Panel Behind a Reverse Proxy
 
-This guide covers the Panel. For a standalone Wings node, see [Putting Wings Behind a Reverse Proxy](./wings.md) instead. The All-in-One image doesn't need that guide, since this guide already covers the bundled Wings.
+This guide covers the Panel, including the Wings bundled with the All-in-One image. For a standalone node, see [Putting Wings Behind a Reverse Proxy](./wings.md). For how a proxy fits into the request path, see [Setting up a Reverse Proxy](./index.md).
 
-See [Setting up a Reverse Proxy](./index.md) for how a reverse proxy fits into the request path if you haven't read that yet.
+::: info
+These configurations target current releases of each proxy and of the Panel. After updating the Panel, compare your configuration with this page again; see [Keeping the Configuration Current](./index.md#keeping-the-configuration-current).
+:::
 
 ## Prerequisites
 
-Have these ready before you start:
-
-- The Panel is [installed with Docker](../../panel/installation/docker.md) and reachable at `http://<server-ip>:8000`.
-- A domain name with an `A` record (and `AAAA` if you use IPv6) pointing at the server's public IP. This guide uses `<domain>` as a placeholder; replace it everywhere it appears.
-- Ports `80` and `443` open in your firewall and forwarded on your router if the server is at home.
-- A TLS certificate for the domain, unless you pick Caddy (which issues one by itself). See [Generating SSL Certificates](../ssl-certificates.md). The examples below use the paths certbot creates under `/etc/letsencrypt/live/<domain>/`.
-- The proxy software installed on the same machine as the Panel: `apt install nginx`, `apt install apache2`, or the [Caddy install guide](https://caddyserver.com/docs/install). For a proxy that runs in Docker, see [Proxies running in Docker](#proxies-running-in-docker) first.
+- The Panel [installed with Docker](../../panel/installation/docker.md), reachable at `http://<server-ip>:8000`.
+- A domain (`<domain>` below) with an `A` record, plus `AAAA` for IPv6 pointing at the server.
+- Ports `80` and `443` open, and forwarded on your router if the server is at home.
+- A [TLS certificate](../ssl-certificates.md) for the domain. Caddy, Traefik and Nginx Proxy Manager issue their own.
+- The proxy installed on the same machine, or running in Docker (see [Proxies Running in Docker](#proxies-running-in-docker)).
 
 ::: warning
-A broken proxy configuration makes the Panel unreachable until it is fixed, so keep a terminal open and know how to roll back. Nothing in this guide touches the Panel's data.
+A broken proxy configuration makes the Panel unreachable until it's fixed, so keep a terminal open. Nothing in this guide touches the Panel's data.
 :::
 
 ## Step 1: Prepare the Panel
@@ -67,7 +67,15 @@ services:
       - APP_TRUSTED_PROXIES=172.18.0.1
 ```
 
-The variable takes a comma-separated list of IPs or CIDR ranges. Only list addresses you control. When a request arrives from a trusted address, the Panel believes the `X-Forwarded-For` and `X-Real-IP` headers on it; when it arrives from anywhere else, those headers are ignored and the connecting address is used. Trusting too much lets a visitor spoof their IP by sending the header themselves.
+The variable takes a comma-separated list of IPs or CIDR ranges. Only list addresses you control. When a request arrives from a trusted address, the Panel believes three headers on it:
+
+| Header | What the Panel does with it |
+| --- | --- |
+| `X-Forwarded-For` | Reads the visitor's IP, walking the list from the right and skipping every address that is itself trusted |
+| `X-Real-IP` | Same, used as a fallback when `X-Forwarded-For` yields nothing usable |
+| `X-Forwarded-Host` | Picks which of the configured Panel URLs to build links and cookies from, when you serve the Panel on more than one hostname ([Step 3](#step-3-set-the-panel-url)) |
+
+When a request arrives from anywhere else, all three are ignored and the connecting address and the `Host` header are used instead. Trusting too much lets a visitor spoof their IP by sending the header themselves.
 
 ### Apply the Changes
 
@@ -85,14 +93,19 @@ A `200` (or a redirect status) means the Panel answers on the loopback address a
 
 ## Step 2: Configure the Proxy
 
-Every configuration below does the same four things. If you use a proxy that isn't listed, these are the settings to replicate:
+Every configuration below does the same things. If you use a proxy that isn't listed, these are the settings to replicate:
 
 | Setting | Why the Panel needs it |
 | --- | --- |
 | Forward to `http://127.0.0.1:8000` | The address the Panel listens on after Step 1 |
 | Pass `Upgrade` and `Connection` headers through | The server console, live statistics and file manager use WebSockets, which start as an HTTP upgrade |
-| Raise the request body limit (default in the examples: `100 MB`) | File uploads through the file manager go through the proxy; anything larger than the limit fails with `413` |
-| Set `X-Forwarded-For` and `X-Real-IP` | Real client IPs for logs and rate limiting. The Panel reads these two; `X-Forwarded-Proto` and `Host` are set for completeness and are what most other applications expect |
+| Request body limit of at least `100 MiB` | Server files over 95 MiB are uploaded as chunks of at most 95 MiB, and smaller ones are batched to the same size. Admin asset uploads are not chunked and the Panel puts no limit on them, so here the proxy is the only cap |
+| Pass the visitor's hostname through, as `Host` or `X-Forwarded-Host` | Only matters when the Panel answers on more than one hostname, which is what **Additional URLs** is for. Every example preserves `Host`, which is enough for a single domain |
+| Set `X-Forwarded-For` and `X-Real-IP` | Real client IPs for logs and rate limiting |
+| Stream `/wings-proxy/` instead of buffering it | On the All-in-One image, and on a node in Wings Proxy Mode, browsers reach Wings through the Panel. See [All-in-One and Wings Proxy Mode](#all-in-one-and-wings-proxy-mode) |
+| Stream `/api/remote/backups/` with no body limit | Every node makes its backup requests here. Most are small, but some carry a whole backup as one streamed request, in either direction, and the Panel limits neither |
+| No CORS headers and no `Content-Security-Policy` | The Panel sends its own CSP, `X-Frame-Options` and `X-Content-Type-Options`, and sandboxes the file previews it serves. A copy from the proxy either overrides that or makes the browser reject the response |
+| No `X-Robots-Tag` | Indexing is [**Allow Search Engine Indexing**](../../panel/features/admin/settings.md#metadata) under Admin → Settings → Metadata. The header overrides that setting instead of following it, because crawlers apply whichever of the header and the page's `<meta name="robots">` tag is stricter |
 
 Pick the proxy you use:
 
@@ -101,119 +114,18 @@ Pick the proxy you use:
 
 **1. Add the WebSocket map.** Open `/etc/nginx/nginx.conf` and add this block inside `http { ... }`, next to the other `include` lines. It must not be inside a `server { ... }` block.
 
-```nginx
-map $http_upgrade $connection_upgrade {
-    default upgrade;
-    ''      "";
-}
-```
+<<< @/snippets/reverse-proxies/nginx-websocket-map.conf{nginx}
 
 This sends `Connection: upgrade` only on requests that actually ask for a WebSocket. Without it Nginx sends the header on every request, and multipart uploads and other ordinary traffic break.
 
-**2. Create the site.** Save the configuration as `/etc/nginx/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/nginx/conf.d/calagopus.conf` on RHEL-based systems. Replace `<domain>` in the `server_name` and certificate lines.
+**2. Create the site.** Save the configuration as `/etc/nginx/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/nginx/conf.d/calagopus.conf` on RHEL-based systems.
 
 ::: code-group
-```nginx [With SSL]
-server {
-    listen 80;
-    listen [::]:80;
-    server_name <domain>;
-    return 301 https://$server_name$request_uri;
-}
-
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-    server_name <domain>;
-
-    access_log /var/log/nginx/calagopus.app-access.log;
-    error_log  /var/log/nginx/calagopus.app-error.log error;
-
-    sendfile off;
-    # Largest request body the proxy accepts. Uploads through the
-    # file manager bigger than this fail with HTTP 413.
-    client_max_body_size 100M;
-
-    ssl_certificate     /etc/letsencrypt/live/<domain>/fullchain.pem;
-    ssl_certificate_key /etc/letsencrypt/live/<domain>/privkey.pem;
-    ssl_protocols       TLSv1.2 TLSv1.3;
-    ssl_ciphers         HIGH:!aNULL:!MD5;
-    ssl_prefer_server_ciphers on;
-    ssl_session_cache   shared:SSL:30m;
-    ssl_session_timeout 10m;
-    ssl_session_tickets on;
-
-    # See https://hstspreload.org/ before uncommenting the line below.
-    # add_header Strict-Transport-Security "max-age=15768000; preload;";
-    add_header X-XSS-Protection          "1; mode=block";
-    add_header X-Robots-Tag              "noindex, nofollow" always;
-    add_header Permissions-Policy        "camera=(), microphone=(), geolocation=(), fullscreen=(self), clipboard-read=(self)" always;
-    add_header Referrer-Policy           "same-origin";
-
-    location / {
-        proxy_http_version 1.1;
-        # WebSocket support (uses the map from step 1)
-        proxy_set_header Upgrade          $http_upgrade;
-        proxy_set_header Connection       $connection_upgrade;
-        # Tell the Panel who the visitor is
-        proxy_set_header Host             $host;
-        proxy_set_header X-Real-IP        $remote_addr;
-        proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_redirect off;
-        proxy_buffering on;
-        proxy_request_buffering on;
-        proxy_pass http://127.0.0.1:8000;
-        proxy_pass_header Content-Security-Policy;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-```
-```nginx [Without SSL]
-server {
-    listen 80;
-    listen [::]:80;
-    server_name <domain>;
-
-    access_log /var/log/nginx/calagopus.app-access.log;
-    error_log  /var/log/nginx/calagopus.app-error.log error;
-
-    sendfile off;
-    # Largest request body the proxy accepts. Uploads through the
-    # file manager bigger than this fail with HTTP 413.
-    client_max_body_size 100M;
-
-    add_header X-XSS-Protection   "1; mode=block";
-    add_header X-Robots-Tag       "noindex, nofollow" always;
-    add_header Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=(self), clipboard-read=(self)" always;
-    add_header Referrer-Policy    "same-origin";
-
-    location / {
-        proxy_http_version 1.1;
-        # WebSocket support (uses the map from step 1)
-        proxy_set_header Upgrade          $http_upgrade;
-        proxy_set_header Connection       $connection_upgrade;
-        # Tell the Panel who the visitor is
-        proxy_set_header Host             $host;
-        proxy_set_header X-Real-IP        $remote_addr;
-        proxy_set_header X-Forwarded-For  $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_redirect off;
-        proxy_buffering on;
-        proxy_request_buffering on;
-        proxy_pass http://127.0.0.1:8000;
-        proxy_pass_header Content-Security-Policy;
-    }
-
-    location ~ /\.ht {
-        deny all;
-    }
-}
-```
+<<< @/snippets/reverse-proxies/panel/nginx-ssl.conf{nginx} [With SSL]
+<<< @/snippets/reverse-proxies/panel/nginx.conf{nginx} [Without SSL]
 :::
+
+The `upstream` block names the Panel once, and `keepalive 16` lets each Nginx worker keep up to 16 idle connections to it open for reuse instead of opening a new one for every request. Settings shared by every path sit at the server level; each `location` lists only what differs.
 
 ::: details Why is there a "Without SSL" variant at all?
 Only for testing on a network you trust, or when TLS is terminated somewhere in front of Nginx (a load balancer or Cloudflare with "Flexible" mode). Passkeys, secure cookies and the browser's clipboard access all need HTTPS, so do not run a real installation this way.
@@ -229,6 +141,12 @@ sudo systemctl reload nginx
 
 `nginx -t` checks the configuration before anything is reloaded. If it reports an error, fix the file first; the running Nginx keeps its old configuration until the reload succeeds.
 
+::: details Nginx older than 1.25.1
+The standalone `http2 on;` directive was added in 1.25.1. On older releases, drop that line and put the parameter back on the listen directives instead:
+
+<<< @/snippets/reverse-proxies/nginx-http2-legacy.conf{nginx}
+:::
+
 === Apache
 
 **1. Enable the modules and disable the default site.** The default site catches every request that doesn't match another `ServerName`, which gets in the way while testing.
@@ -240,114 +158,17 @@ sudo a2dissite 000-default.conf
 
 On RHEL-based systems the modules are compiled in or loaded already; you can skip this step.
 
-**2. Create the site.** Save the configuration as `/etc/apache2/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/httpd/conf.d/calagopus.conf` on RHEL-based systems. Replace `<domain>` in the `ServerName` and certificate lines.
+**2. Create the site.** Save the configuration as `/etc/apache2/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/httpd/conf.d/calagopus.conf` on RHEL-based systems.
 
 ::: code-group
-```apache [With SSL]
-<VirtualHost *:80>
-    ServerName <domain>
-    RewriteEngine On
-    RewriteRule ^ https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
-</VirtualHost>
-
-<VirtualHost *:443>
-    ServerName <domain>
-
-    AllowEncodedSlashes NoDecode
-    Protocols h2 http/1.1
-
-    ErrorLog  /var/log/apache2/calagopus.app-error.log
-    CustomLog /var/log/apache2/calagopus.app-access.log combined
-
-    EnableSendfile Off
-    # Largest request body the proxy accepts, in bytes.
-    # Uploads through the file manager bigger than this fail with HTTP 413.
-    LimitRequestBody 104857600
-
-    SSLEngine on
-    SSLCertificateFile    /etc/letsencrypt/live/<domain>/fullchain.pem
-    SSLCertificateKeyFile /etc/letsencrypt/live/<domain>/privkey.pem
-    SSLProtocol           -all +TLSv1.2 +TLSv1.3
-    SSLCipherSuite        HIGH:!aNULL:!MD5
-    SSLHonorCipherOrder   on
-    SSLSessionTickets     on
-
-    # See https://hstspreload.org/ before uncommenting the line below.
-    # Header always set Strict-Transport-Security "max-age=15768000; preload;"
-    Header always set X-XSS-Protection   "1; mode=block"
-    Header always set X-Robots-Tag       "noindex, nofollow"
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=(self), clipboard-read=(self)"
-    Header always set Referrer-Policy    "same-origin"
-
-    ProxyPreserveHost On
-    ProxyRequests Off
-
-    <Proxy *>
-        Require all granted
-    </Proxy>
-
-    # upgrade=websocket needs Apache 2.4.47 or newer; see the note below for older releases.
-    ProxyPass        / http://127.0.0.1:8000/ retry=0 upgrade=websocket
-    ProxyPassReverse / http://127.0.0.1:8000/
-
-    # Tell the Panel who the visitor is. mod_proxy adds X-Forwarded-For on its own.
-    RequestHeader set X-Real-IP        %{REMOTE_ADDR}s
-    RequestHeader set X-Forwarded-Proto "https"
-
-    <FilesMatch "^\.ht">
-        Require all denied
-    </FilesMatch>
-</VirtualHost>
-```
-```apache [Without SSL]
-<VirtualHost *:80>
-    ServerName <domain>
-
-    AllowEncodedSlashes NoDecode
-
-    ErrorLog  /var/log/apache2/calagopus.app-error.log
-    CustomLog /var/log/apache2/calagopus.app-access.log combined
-
-    EnableSendfile Off
-    # Largest request body the proxy accepts, in bytes.
-    # Uploads through the file manager bigger than this fail with HTTP 413.
-    LimitRequestBody 104857600
-
-    Header always set X-XSS-Protection   "1; mode=block"
-    Header always set X-Robots-Tag       "noindex, nofollow"
-    Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), fullscreen=(self), clipboard-read=(self)"
-    Header always set Referrer-Policy    "same-origin"
-
-    ProxyPreserveHost On
-    ProxyRequests Off
-
-    <Proxy *>
-        Require all granted
-    </Proxy>
-
-    # upgrade=websocket needs Apache 2.4.47 or newer; see the note below for older releases.
-    ProxyPass        / http://127.0.0.1:8000/ retry=0 upgrade=websocket
-    ProxyPassReverse / http://127.0.0.1:8000/
-
-    # Tell the Panel who the visitor is. mod_proxy adds X-Forwarded-For on its own.
-    RequestHeader set X-Real-IP        %{REMOTE_ADDR}s
-    RequestHeader set X-Forwarded-Proto "http"
-
-    <FilesMatch "^\.ht">
-        Require all denied
-    </FilesMatch>
-</VirtualHost>
-```
+<<< @/snippets/reverse-proxies/panel/apache-ssl.conf{apache} [With SSL]
+<<< @/snippets/reverse-proxies/panel/apache.conf{apache} [Without SSL]
 :::
 
 ::: details Apache older than 2.4.47
 Check with `apache2 -v` (or `httpd -v`). Older releases don't understand the `upgrade=websocket` parameter and reject the configuration. Remove `upgrade=websocket` from the `ProxyPass` line and add these lines above it to route WebSocket requests through `mod_proxy_wstunnel` instead:
 
-```apache
-RewriteEngine On
-RewriteCond %{HTTP:Upgrade} =websocket [NC]
-RewriteRule /(.*) ws://127.0.0.1:8000/$1 [P,L]
-```
+<<< @/snippets/reverse-proxies/panel/apache-websocket-legacy.conf{apache}
 :::
 
 **3. Enable it and reload.**
@@ -362,21 +183,13 @@ On RHEL-based systems the file in `conf.d/` is already active; run `apachectl co
 
 === Caddy
 
-Caddy obtains and renews the certificate on its own, sets the forwarding headers, and passes WebSockets through without extra configuration. The site block is a few lines. Make sure ports `80` and `443` are reachable from the internet before starting it, because that is how Caddy proves it owns the domain.
+Caddy obtains and renews the certificate on its own, passes WebSockets through, never buffers a whole body unless you ask it to, and sets `X-Forwarded-For`, `X-Forwarded-Proto` and `X-Forwarded-Host`. It does not set `X-Real-IP`, which the Panel does not need when `X-Forwarded-For` is there. Make sure ports `80` and `443` are reachable from the internet before starting it, because that is how Caddy proves it owns the domain.
 
 Replace the contents of `/etc/caddy/Caddyfile` (or add this block to it if Caddy already serves other sites):
 
-```text
-<domain> {
-    # Largest request body the proxy accepts. Uploads through the
-    # file manager bigger than this fail with HTTP 413.
-    request_body {
-        max_size 100MB
-    }
+<<< @/snippets/reverse-proxies/panel/Caddyfile{text}
 
-    reverse_proxy 127.0.0.1:8000
-}
-```
+The `@limited` matcher keeps the body limit off `/api/remote/backups/`, where Wings sends its backup requests. Leave out `encode`, `request_buffers` and `response_buffers`. The Panel's assets are already compressed, and compressing downloads again breaks the range requests a resumed download needs.
 
 Then validate and reload:
 
@@ -393,27 +206,15 @@ This assumes Traefik already runs in Docker with the Docker provider enabled, a 
 
 Add the labels and network to the `web` service in the Panel's `compose.yml`, and remove the `8000:8000` port mapping:
 
-```yaml
-services:
-  web:
-    # ...existing configuration...
-    networks:
-      - default
-      - proxy
-    labels:
-      - traefik.enable=true
-      - traefik.docker.network=proxy
-      - traefik.http.routers.calagopus.rule=Host(`<domain>`)
-      - traefik.http.routers.calagopus.entrypoints=websecure
-      - traefik.http.routers.calagopus.tls.certresolver=letsencrypt
-      - traefik.http.services.calagopus.loadbalancer.server.port=8000
+<<< @/snippets/reverse-proxies/panel/traefik-compose.yml{yaml}
 
-networks:
-  proxy:
-    external: true
-```
+Traefik forwards WebSockets, sets `X-Forwarded-For` and `X-Forwarded-Proto`, and neither buffers nor limits request bodies, so the router itself needs nothing more. One entrypoint default gets in the way: `respondingTimeouts.readTimeout` is `60s` and covers reading the whole request body, so a slow client uploading a chunk is cut off. Raise it in the static configuration:
 
-Traefik forwards WebSockets, sets `X-Forwarded-For` and `X-Forwarded-Proto`, and does not limit request bodies by default, so nothing else is needed. Apply with `docker compose up -d`; Traefik picks the container up within a few seconds.
+<<< @/snippets/reverse-proxies/panel/traefik-entrypoint.yml{yaml}
+
+A backup restore can arrive as a single request too. If yours can take longer than an hour, set `readTimeout` to `0`, which disables it.
+
+Apply the compose change with `docker compose up -d`; Traefik picks the container up within a few seconds. A static configuration change needs Traefik itself restarted.
 
 === Nginx Proxy Manager
 
@@ -422,26 +223,45 @@ Nginx Proxy Manager runs as a container, so it reaches the Panel over a shared D
 1. Open **Hosts → Proxy Hosts → Add Proxy Host**.
 2. On the **Details** tab set **Domain Names** to your domain, **Scheme** to `http`, **Forward Hostname / IP** to `web` (the Panel's service name on the shared network) and **Forward Port** to `8000`. Turn on **Websockets Support**.
 3. On the **SSL** tab pick **Request a new SSL Certificate**, and enable **Force SSL** and **HTTP/2 Support**.
-4. Save.
+4. On the **Advanced** tab put this into **Custom Nginx Configuration**:
 
-Nginx Proxy Manager already allows request bodies up to 2000 MB, so no upload limit needs changing. To pick a different limit, put `client_max_body_size 100M;` into **Custom Nginx Configuration** on the **Advanced** tab.
+<<< @/snippets/reverse-proxies/panel/npm-custom.conf{nginx}
 
-Nginx Proxy Manager sets the `X-Forwarded-For`, `X-Real-IP` and `X-Forwarded-Proto` headers on its own.
+5. Save.
+
+Nginx Proxy Manager sets `X-Forwarded-For`, `X-Real-IP` and `X-Forwarded-Proto` on its own. The first block lifts its 2000 MB body limit for the backup requests Wings sends; the second is only reached on the All-in-One image or with Wings Proxy Mode. Both raise its `90s` timeouts and turn off its response buffering. For a lower limit everywhere else, add `client_max_body_size 128M;` there as well.
+
+Use `$http_connection`, not the `$connection_upgrade` map from the Nginx tab: Nginx Proxy Manager never defines that map. The `include` lines reuse the forward host, port and headers from the **Details** tab.
 
 ::::
 
-## Step 3: Verify
-
-1. Open `https://<domain>` in a browser. You should see the Panel's login page with a valid padlock. If the page doesn't load, check the [troubleshooting section](#troubleshooting).
-2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#trust-the-proxy-s-address).
-3. Open a server and check that the console connects and shows live output. If it stays on "connecting", the WebSocket headers aren't reaching the Panel.
-4. Confirm the old address no longer works from another machine: `http://<server-ip>:8000` should time out or be refused.
-
-## Step 4: Set the Panel URL
+## Step 3: Set the Panel URL
 
 The Panel builds links from a URL you configure, not from the address a visitor happened to use. Go to **Admin → Settings → Application**, set **URL** to `https://<domain>`, and save. Email links, OAuth callbacks, node connections and the generated Wings configuration all use this value, so it has to match the address the proxy serves.
 
 ![Application settings tab with the URL field](../../panel/features/admin/images/settings/application.webp)
+
+The scheme matters twice, and neither case follows `X-Forwarded-Proto`. A URL on `https://` is what puts the `Secure` flag on the session cookie, and a URL left on `http://` makes the frontend build `ws://` console addresses, which a page served over HTTPS refuses to open.
+
+Serving the Panel on more than one hostname? Add the others under **Additional URLs** on the same tab, and it picks the matching one per request from `Host` or `X-Forwarded-Host`. An unconfigured hostname falls back to the primary URL.
+
+## Step 4: Verify
+
+1. Open `https://<domain>` in a browser. You should see the Panel's login page with a valid padlock. If the page doesn't load, check the [troubleshooting section](#troubleshooting).
+2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#trust-the-proxy-s-address).
+3. Open a server and check that the console connects and shows live output.
+4. Upload a file through the file manager, and download a backup.
+5. Confirm the old address no longer works from another machine: `http://<server-ip>:8000` should time out or be refused.
+
+Items 3 and 4 only reach this proxy on the All-in-One image or a node in Wings Proxy Mode. Elsewhere they go over the node's own address, covered by the [Wings guide](./wings.md).
+
+## All-in-One and Wings Proxy Mode
+
+Browsers normally reach Wings directly for the console, uploads and downloads. Two setups route that traffic through the Panel instead, under `/wings-proxy/<node-uuid>/`: the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), which does it for its bundled Wings automatically and never publishes port `8080`, and any node with [Wings Proxy Mode](../../wings/advanced/exposing-wings-in-a-homelab.md) turned on.
+
+That path carries a WebSocket, uploads in chunks of up to 95 MiB, and downloads of any size, so it needs the `Upgrade` and `Connection` headers, buffering off in both directions, no compression, and timeouts above the usual 60 second defaults. The All-in-One image also raises the bundled Wings' `api.upload_limit` to 10 GiB, leaving the proxy as the only cap on an upload.
+
+[Step 2](#step-2-configure-the-proxy) covers it: Nginx, Apache and Nginx Proxy Manager get a dedicated block for the path, Caddy and Traefik stream by default.
 
 ## Proxies Running in Docker
 
@@ -498,19 +318,24 @@ If your domain is proxied through Cloudflare (orange cloud), the proxy chain bec
 
   This works as written with Nginx and Nginx Proxy Manager, which append to the `X-Forwarded-For` header Cloudflare sends. Caddy and Traefik replace that header unless Cloudflare's ranges are also trusted in the proxy itself: Caddy through `trusted_proxies` inside the `reverse_proxy` block, Traefik through `forwardedHeaders.trustedIPs` on the entrypoint.
 - **Set the SSL/TLS mode to Full (strict)** in the Cloudflare dashboard, so Cloudflare verifies your certificate instead of connecting over plain HTTP.
-- **Keep non-HTTP hostnames DNS-only (grey cloud).** Cloudflare's proxy only carries HTTP and WebSocket traffic. SFTP (port `2022`), game server ports and the [private network](../../wings/advanced/private-network.md) tunnel do not pass through it. Give Wings nodes a hostname that resolves directly to the machine, or turn the proxy off for those records. The same applies to a standalone node's own hostname; see [Cloudflare](./wings.md#cloudflare) on the Wings guide.
+- **Keep non-HTTP hostnames DNS-only (grey cloud).** Cloudflare's proxy only carries HTTP and WebSocket traffic. SFTP (port `2022`), game server ports and the [private network](../../wings/advanced/private-network.md) tunnel do not pass through it. Give Wings nodes a hostname that resolves directly to the machine, or turn the proxy off for those records. The same applies to a standalone node's own hostname; see [Docker and Cloudflare](./wings.md#docker-and-cloudflare) on the Wings guide.
 
-Cloudflare also caps the size of a single request per plan (100 MB on Free), and that cap applies before your own body size limit. Server file uploads through the file manager are sent in chunks of at most 95 MiB, so they pass through Cloudflare on any plan. Admin asset uploads are not chunked and stay subject to the cap.
+Cloudflare also caps the size of a single request per plan (100 MB on Free), and that cap applies before your own body size limit. Server file uploads through the file manager are sent in chunks of at most 95 MiB, so they pass through Cloudflare on any plan. Admin asset uploads are not chunked and stay subject to the cap, and so do the backup requests Wings sends to `/api/remote/backups/`, since Wings reaches the Panel through Cloudflare as well.
 
 ## Troubleshooting
 
 | Symptom | Fix |
 | --- | --- |
 | 502 Bad Gateway, or the proxy's own error page | The proxy can't reach the Panel. Check that the container is running with `docker compose ps`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
-| The page loads, but the console stays on "connecting" and statistics never appear | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**. |
-| Uploads fail with `413 Request Entity Too Large` | Raise the body limit in the proxy configuration (`client_max_body_size`, `LimitRequestBody`, `max_size`). |
+| The page loads, but the console stays on "connecting" and statistics never appear | The console WebSocket goes to the node's **Public URL**. If that's the node itself, see the [Wings guide](./wings.md#troubleshooting). If it's the Panel (All-in-One or Wings Proxy Mode), WebSocket upgrades aren't getting through: on Nginx, confirm the `map` block exists in `nginx.conf` and the `Upgrade` and `Connection` headers are set; on Apache, check the version note above; on Nginx Proxy Manager, enable **Websockets Support**. |
+| Database instance consoles, or the admin node statistics and log views, stay empty | Those WebSockets are the Panel's own, under `/api`, and go through `location /`. The `Upgrade` and `Connection` headers have to apply there too, which the examples do by setting them at the server level. |
+| Uploads fail with `413 Request Entity Too Large` | Raise the body limit (`client_max_body_size`, `LimitRequestBody`, `max_size`) to at least `100 MiB`. On Caddy, check you wrote `128MiB` and not `100MB`. |
+| Large uploads or backup downloads through the Panel die partway through, always after about the same time | A timeout on `/wings-proxy/`. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, `ProxyTimeout` on Apache, or `respondingTimeouts.readTimeout` on the Traefik entrypoint. |
+| Backup downloads through the Panel fill the proxy's disk with temporary files | Response buffering is on for `/wings-proxy/`. Set `proxy_buffering off` there on Nginx or Nginx Proxy Manager. Caddy and Traefik stream by default. |
+| A backup or restore fails with `413`, or stops partway | Wings sends backup requests through `/api/remote/backups/`, which needs no body limit, buffering off and long timeouts. Add the dedicated block from [Step 2](#step-2-configure-the-proxy). |
 | Activity shows `172.x.x.x` or `127.0.0.1` for every user, or rate limits trigger for everyone at once | `APP_TRUSTED_PROXIES` doesn't contain the address the proxy connects from. Re-run the `docker inspect` command from Step 1; the gateway can change if the compose network was recreated. |
-| Links in emails or OAuth callbacks point at `http://` or the wrong host | The Panel builds links from the URL in **Admin → Settings → Application**, not from the request. Make sure it starts with `https://` and matches the domain the proxy serves. |
+| Links in emails or OAuth callbacks point at `http://` or the wrong host | The Panel builds links from the URL in **Admin → Settings → Application**, not from the request. Make sure it starts with `https://` and matches the domain the proxy serves. If you serve several hostnames, the extra ones have to be listed under **Additional URLs**, or every request falls back to the primary URL. |
+| The session cookie has no `Secure` flag even though the site is on HTTPS | The Panel takes the scheme from the configured URL, not from `X-Forwarded-Proto`. Set **URL** to `https://<domain>` in [Step 3](#step-3-set-the-panel-url). |
 | The Panel is still reachable at `http://<server-ip>:8000` | The port mapping wasn't restricted to `127.0.0.1`, or the change wasn't applied. Edit `compose.yml` and run `docker compose up -d` again. |
 | Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../ssl-certificates.md#troubleshooting) for renewal problems. |
 

@@ -54,6 +54,7 @@ If a reviewer can tell a page was AI-generated without checking git blame, it ne
 - Match the existing tone: direct, practical, no fluff.
 - Don't touch commands, config values, or code blocks during a wording or formatting pass. Technical content stays byte-for-byte correct.
 - More than one method in a guide? Use the existing `:::: tabs` / `=== Method` pattern instead of stacking headings.
+- Long code blocks, like full proxy configurations, go in a file under `web/snippets/` and get included with a [snippet import](https://vitepress.dev/guide/markdown#import-code-snippets), the way the reverse proxy guides do it: `<<< @/snippets/reverse-proxies/panel/nginx.conf{nginx}`
 
 ### Sidebar
 
@@ -102,6 +103,7 @@ Run the same checks CI runs:
 ```bash
 pnpm docs:build
 pnpm exec biome check
+pnpm run typecheck
 ```
 
 If `biome check` reports dozens of unrelated files needing reformatting, it's almost certainly CRLF line endings from a Windows checkout, not a real issue. A `.gitattributes` in the repo root forces LF on checkout, but it only applies to files checked out *after* it's in place. If you cloned before it existed, run `git add --renormalize .` once (and `git config core.autocrlf false` if you have it set globally), then re-run the check.
