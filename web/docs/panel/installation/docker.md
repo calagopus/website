@@ -15,6 +15,12 @@ If you only plan to run a **single node** (Panel + Wings on the same host), use 
 
 If you plan to run **multiple nodes**, or want to keep the Panel and Wings on separate hosts, use one of the standalone Panel images (`:latest` or `:heavy`) and install Wings separately following the [Wings Docker Installation](../../wings/installation/docker.md) guide.
 
+::: warning Migrating from Pterodactyl or Pelican? Usually skip AIO
+A migration keeps your existing Wings nodes, and your servers stay on them. AIO only makes sense if you want this host to become an extra node as well. Its bundled Wings also takes port `2022`, so it collides with a Wings already running on the same host.
+
+On first start the AIO image also creates an "Integrated Node", an "Integrated Location", and a backup configuration. The node can't be deleted while you run an `-aio` image. The [importer](../../additional/migrations/index.md) refuses a target that already has nodes or locations, so you'd need `--force` and end up with an extra node next to the imported ones. For most migrations, use a standalone image (Option B).
+:::
+
 Use a **heavy** variant (AIO or standalone) only if you intend to install [extensions](../extensions/index.md). It bundles the build tooling needed to compile them. Otherwise stick with the non-heavy image; it has a smaller footprint.
 
 ## Docker Image Variants
