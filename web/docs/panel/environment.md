@@ -41,6 +41,16 @@ Comma-separated list of Sentinel nodes when `REDIS_MODE=sentinel`. Each node in 
 sentinel1.example.com:26379,sentinel2.example.com:26379,sentinel3.example.com:26379
 ```
 
+## REDIS_KEY_PREFIX
+
+A prefix for every key the Panel writes to Redis, so several Panels can share one Redis/Valkey instance without reading each other's cache, rate limits or locks. Works with both `REDIS_MODE` values. The Panel adds the `::` separator itself, so `REDIS_KEY_PREFIX=panel1` stores keys like `panel1::ratelimit::...`. Unset by default, which keeps keys unprefixed.
+
+```plaintext
+REDIS_KEY_PREFIX=panel1
+```
+
+All instances in a clustered setup must use the same prefix. Changing the prefix on an existing install leaves the old keys in Redis until they expire. They only hold cached data, rate limit counters and locks, so nothing is lost.
+
 ## SENTRY_URL
 
 Sentry DSN for error tracking. Leave unset to disable.
