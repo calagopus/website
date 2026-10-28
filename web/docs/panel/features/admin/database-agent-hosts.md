@@ -11,7 +11,7 @@ A database agent host is a machine running the [Calagopus DB Agent](../../../db-
 Install the agent on the machine first; the [DB Agent docs](../../../db-agent/index.md) cover installation and the [configuration reference](../../../db-agent/configuration.md). The panel side below hands you the exact config file to drop in.
 :::
 
-The list at `/admin/database-agent-hosts` shows a health indicator, ID, Name, and Created date for each host. The heart is green when the panel can reach the agent, yellow and pulsing when an agent update is available, and broken red when the host is unreachable; hovering it gives the agent version. Next to the name, a badge shows whether the host can still take new instances: **Deployment Enabled** (green), **Nearly Full** (yellow), **No Capacity** (orange), **Under Maintenance** (red), **No Types Enabled** (red), or **Deployment Disabled** (red). Hovering it shows allocated memory and disk against the host's limits, or "no host limit" where a limit is `0`.
+The list at `/admin/database-agent-hosts` shows a health indicator, ID, Name, and Created date for each host. The heart is green when the panel can reach the agent, yellow and pulsing when an agent update is available, grey when the latest version could not be determined, and broken red when the host is unreachable; hovering it gives the agent version. Next to the name, a badge shows whether the host can still take new instances: **Deployment Enabled** (green), **Nearly Full** (yellow), **No Capacity** (orange), **Under Maintenance** (red), **No Types Enabled** (red), or **Deployment Disabled** (red). Hovering it shows allocated memory and disk against the host's limits, or "no host limit" where a limit is `0`.
 
 Rows have selection checkboxes; drag across rows or Ctrl/Cmd-click to select several (Ctrl/Cmd+A for all, Escape to clear). With hosts selected, an action bar appears with **Update Config**, which applies a YAML configuration snippet to every selected host at once.
 
@@ -71,13 +71,19 @@ Below the setup steps, **Live Configuration** shows the running agent's full con
 
 Badges show the host's deployment and maintenance state. The **Host Details** card lists URL, Memory, Disk, Description, and Created; **System Information** shows the agent's Version, CPU, Memory, Instances (online / total), Kernel Version, and Architecture.
 
-If a newer agent release exists, an **Update Available** badge appears next to the version; see [Updating](../../../db-agent/updating.md). **Allocated Resources** graphs how much of the host's memory and disk budget instances currently claim, plus allocated CPU.
+If a newer agent release exists, an **Update Available** badge appears next to the version, or **Latest Version Unknown** when the check failed; see [Updating](../../../db-agent/updating.md). **Allocated Resources** graphs how much of the host's memory and disk budget instances currently claim, plus allocated CPU. **Allocation Breakdown** below splits that per instance, with the same bars and **Measure Against** choices as on a [node's overview](./nodes.md#overview).
 
 ![Host overview](./images/database-agent-hosts/overview.webp)
 
+### Upgrading the Agent
+
+A host running DB Agent 1.2.4 or newer as a binary (not in a container) gets an **Upgrade** button next to the version (requires `database-agent-hosts.upgrade`). The **Upgrade Database Agent** dialog works like [upgrading Wings](./nodes.md#upgrading-wings): it names the release repository and provider, takes a **Version** such as `1.2.4` or `latest`, and the host is unreachable for a few seconds while the agent replaces its binary and restarts. Restarting the agent drops every client connection to its databases, as with any [update](../../../db-agent/updating.md). The upgrade is recorded in admin activity as `database-agent-host:upgrade`.
+
+An agent whose `config.yml` sets [`ignore_upgrades`](../../../db-agent/configuration.md#ignore-upgrades) ignores the request, and the panel says so. A private fork or a GitHub API rate limit needs a **Database Agent Release Token** under [Settings > Updates](./settings.md#updates).
+
 ### General
 
-The edit form, plus **Test Connection**, **Reset Token** (invalidates the agent's current token; you'll need to update the config file on the host afterwards), and **Delete**.
+The edit form, plus **Test Connection**, **Reset Token** (invalidates the agent's current token; you'll need to update the config file on the host afterwards), and **Delete**. Changing the **URL** needs `database-agent-hosts.read-token` as well as `update` since Panel 1.2.7, because the panel sends the host token to that address.
 
 ![General tab](./images/database-agent-hosts/general.webp)
 
@@ -97,7 +103,7 @@ Right-click a row to **Download**, **Reassign** or **Delete** it. Restore, expor
 
 The target server can be a different one, in which case the dump moves onto that server's backup list and quota; a dump that's not on shared storage can only move to a server on the same node. Moving a dump to another server also takes it out of any [backup group](../server/backups.md#backup-groups) it was in, because groups belong to a single server.
 
-When the host has failed dumps, a **Delete Failed Backups** button appears above the table, with the usual **Force** switch.
+When the host has failed dumps, a **Delete Failed Backups** button appears above the table, with the usual **Force** switch. Since Panel 1.2.8, dumps whose deletion failed after the panel's eight automatic attempts get a **Retry Failed Deletions** button next to it (requires `database-agent-hosts.backups` and `nodes.backups`).
 
 The Node column is the node whose storage holds the dump, not the host that produced it. Deletion goes through that node, so a dump cannot be removed while its storage node is unreachable unless you force it.
 
@@ -122,5 +128,5 @@ Like database hosts, agent hosts must be attached to a node or location from tha
 While **Maintenance Enabled** is on, the host takes no new instances, and users cannot send power actions to the instances already on it, update them, or delete them. Template updates skip instances on hosts in maintenance too.
 
 ::: info
-The buttons on these pages follow the `database-agent-hosts.*` admin permission keys (`create`, `read`, `update`, `delete`, `test`, `read-token`, `reset-token`). See the [Permissions Reference](../dashboard/permissions.md).
+The buttons on these pages follow the `database-agent-hosts.*` admin permission keys (`create`, `read`, `update`, `delete`, `test`, `read-token`, `reset-token`, `upgrade`, `backups`). See the [Permissions Reference](../dashboard/permissions.md).
 :::

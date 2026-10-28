@@ -612,7 +612,13 @@ export const wingsConfigDoc: ConfigDoc = {
           key: 'system.file_history.zstd_level',
           description:
             'The [Zstandard](https://facebook.github.io/zstd/) compression level used when storing snapshots and delta entries in the history database. Higher values produce smaller stored history at the cost of more CPU time. Valid range is `1`–`22`.',
-          default: 19,
+          default: 9,
+          notesAfter: [
+            {
+              type: 'info',
+              body: 'Wings 1.2.8 lowered the default from `19` to `9`. Wings writes its defaults into `config.yml`, so an existing node keeps `19` until you change it there.',
+            },
+          ],
         },
         {
           key: 'system.file_history.anchor_interval',
@@ -825,6 +831,12 @@ export const wingsConfigDoc: ConfigDoc = {
           default: 4,
         },
         {
+          key: 'system.backups.ddup_bak.restore_threads',
+          description:
+            'The number of threads used for restoring `ddup-bak` backups. Each thread restores one file, so with 4 threads, up to 4 files are restored concurrently.',
+          default: 4,
+        },
+        {
           key: 'system.backups.ddup_bak.compression_format',
           description:
             'Compression for DdupBak backups: `none`, `deflate`, `gzip`, `brotli`, or `zstd`. New configurations default to `zstd`; an existing explicit value such as `deflate` is kept.',
@@ -840,7 +852,7 @@ export const wingsConfigDoc: ConfigDoc = {
           notesBefore: [
             {
               type: 'info',
-              body: 'All restic options only apply when using Pterodactyl. On Calagopus, restic is fully managed by the panel, and these local configuration settings are ignored.',
+              body: 'On Calagopus, restic is normally configured through a backup configuration in the panel. If the file at `password_file` exists, Wings uses these local options instead, for every restic backup on the node.',
             },
           ],
         },
@@ -860,7 +872,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.backups.restic.environment',
           description:
-            'The environment variables passed to the restic process for authentication and configuration. This can be overridden by the panel.',
+            'The environment variables passed to the restic process for authentication and configuration. Every variable except `PATH` is passed through. Panel configuration patches cannot change this key.',
           default: {},
         },
         {
@@ -1043,14 +1055,19 @@ export const wingsConfigDoc: ConfigDoc = {
           default: 1048576,
         },
         {
-          key: 'docker.bandwidth.enabled',
+          key: 'docker.bandwidth.backend',
           description:
-            "Whether Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart. When this is off, limited servers run without their limits and Wings logs a warning for each one.",
-          default: true,
+            "How Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart.\n\n- `auto`: `local` when Wings runs on the host, or in a container that shares the host PID namespace. Otherwise `container`.\n- `local`: Wings applies the limits itself. Rootful Wings needs `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, which it has when it runs as root on the host. Rootless Wings needs user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). Wings in a container without the host PID namespace cannot reach server network namespaces, so limits are unavailable with this backend there.\n- `container`: Wings starts a helper container, `calagopus-wings-bandwidth`, from its own image with the host PID namespace, no network, and `NET_ADMIN` and `SYS_ADMIN`, and applies the limits through it. Only works when Wings itself runs as a container on the Docker engine it manages, and not with rootless container engines.\n- `disabled`: limited servers start without their limits, and Wings logs a warning for each one.",
+          default: 'auto',
+          values: ['auto', 'local', 'container', 'disabled'],
           notesAfter: [
             {
               type: 'warning',
-              body: "Bandwidth limits are Linux only. Rootful Wings needs `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, which it has when it runs as root on the host. Wings in the default Docker Compose stack has neither, and it also cannot reach server containers' network namespaces without sharing the host PID namespace, so bandwidth limits are not supported there out of the box. Rootless Wings needs user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). The Panel shows the reason on the server's limit fields when a node can't apply limits, and refuses to save a non-zero limit there.\n\nA limited server needs a bridge network with exactly one interface; `host`, `none` and `container:` network modes are rejected, as is a server container granted `NET_ADMIN`, `NET_RAW` or `SYS_ADMIN`. If shaping fails when a limited server starts, the start fails rather than running the server unthrottled. Set this to `false` to start such servers without their limits.",
+              body: "Bandwidth limits are Linux only. The Wings Docker Compose file shares the host PID namespace (`pid: host`) since Wings 1.2.6, so `auto` picks `local`, but the Wings container does not hold `CAP_NET_ADMIN` or `CAP_SYS_ADMIN` and limits stay unavailable. Set this option to `container` in that setup. Adding `cap_add: [NET_ADMIN, SYS_ADMIN]` to the `wings` service gives Wings the same privileges as the helper container instead. An older Compose file without `pid: host` gets the helper container through `auto`.\n\nThe Panel shows the reason on the server's limit fields when a node can't apply limits, and refuses to save a non-zero limit there, including when this option is `disabled`. A limited server needs a bridge network with exactly one interface; `host`, `none` and `container:` network modes are rejected, as is a server container granted `NET_ADMIN`, `NET_RAW` or `SYS_ADMIN`. If limits are unavailable or shaping fails when a limited server starts, the start fails rather than running the server unthrottled. Set this option to `disabled` to start such servers without their limits.",
+            },
+            {
+              type: 'info',
+              body: 'This option replaced `docker.bandwidth.enabled` in Wings 1.2.6. On startup Wings turns `enabled: false` into `backend: disabled`, drops the old key from `config.yml`, and logs `migrated docker.bandwidth.enabled to docker.bandwidth.backend`.',
             },
           ],
         },
@@ -1456,7 +1473,7 @@ export const wingsConfigDoc: ConfigDoc = {
             {
               type: 'info',
               title: 'Options the panel can never change',
-              body: 'Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so change them locally in `config.yml` or through environment overrides:\n\n- Node identity: `uuid`, `token`, `token_id`, `remote`, `remote_headers`\n- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.mounting.path`, `docker.lxcfs.directory`, `tundra.data_directory`, `tundra.binary`\n- Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `tundra.image`, `tundra.source_image`, `allowed_mounts`, `allowed_devices`\n- Listener and egress: `api.host`, `api.port`, `api.ssl`, `api.trusted_proxies`, `api.disable_remote_download`, `api.remote_download_blocked_cidrs`, `api.schedule.steps.http_request`\n- The flags themselves: `ignore_panel_config_updates`, `ignore_panel_wings_upgrades`\n\nThe rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.',
+              body: 'Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so change them locally in `config.yml` or through environment overrides:\n\n- Node identity: `uuid`, `token`, `token_id`, `remote`, `remote_headers`\n- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.restic.environment`, `system.backups.mounting.path`, `docker.lxcfs.directory`, `tundra.data_directory`, `tundra.binary`\n- Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `tundra.image`, `tundra.source_image`, `allowed_mounts`, `allowed_devices`\n- Listener and egress: `api.host`, `api.port`, `api.ssl`, `api.trusted_proxies`, `api.disable_remote_download`, `api.remote_download_blocked_cidrs`, `api.schedule.steps.http_request`\n- The flags themselves: `ignore_panel_config_updates`, `ignore_panel_wings_upgrades`\n\nThe rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.',
             },
           ],
         },

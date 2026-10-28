@@ -24,7 +24,9 @@ Two more fields control what happens after that:
 
 ![Update Egg Repository form for Ptero Game Eggs with Default Nest set to Minecraft, Automatic Sync on, and Save, Sync, and Delete buttons](./images/egg-repositories/general.webp)
 
-For private repositories, enable the **Repository Credentials** section and pick a **Credential Type**: **None**, **Password** (a **Username** plus a **Password or Access Token**), or **Private Key** (a **Username** plus an SSH **Private Key** with optional **Passphrase**). Password credentials work with both `https` and `ssh` repository URLs; private keys require an `ssh` one.
+For private repositories, enable the **Repository Credentials** section and pick a **Credential Type**: **None**, **Password** (a **Username** plus a **Password or Access Token**), or **Private Key** (a **Username** plus an SSH **Private Key** with optional **Passphrase**). Password credentials work with both `https` and `ssh` repository URLs; private keys require an `ssh` one. An `ssh` URL without credentials is refused ("ssh repositories need credentials, use an https repository url for public repositories").
+
+Since Panel 1.2.7, `https` clones go through the same address filter as other outbound requests ([`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked-cidrs)) and don't follow redirects: a repository URL that redirects fails with "repository redirected to ..., use that url instead", so enter the final URL.
 
 ![Repository Credentials section expanded with the Credential Type set to None](./images/egg-repositories/repository-credentials.webp)
 

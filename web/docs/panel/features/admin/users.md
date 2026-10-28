@@ -36,7 +36,7 @@ Click **Create** (or go to `/admin/users/new`) and fill in the form:
 Finish with **Save** (returns to the list) or **Save & Stay**.
 
 ::: info
-Role-based admins are limited here: only root admins (accounts with the **Admin** toggle) can assign roles, grant **Admin**, or change another user's email and password, and a role-based admin cannot save changes to a root admin at all.
+Role-based admins are limited here: only root admins (accounts with the **Admin** toggle) can assign roles, grant **Admin**, or change another user's email and password, and a role-based admin cannot save changes to a root admin at all. Since Panel 1.2.7 those root admin powers also need a browser session: through an API key, even a root admin's, none of them work, and a password or email can only be changed for your own account from a session.
 :::
 
 ## User View
@@ -97,5 +97,7 @@ The user's account audit log, the same one they see on their own [Activity](../d
 Everything you do while impersonating is written to the activity logs with an "Impersonated by ..." marker next to the actor, so the audit trail always shows who really acted.
 
 ::: warning
-You cannot impersonate yourself. Root admins can impersonate anyone, including other root admins; role-based admins cannot impersonate root admins, and can only impersonate users whose role permissions are a subset of their own.
+You cannot impersonate yourself. Root admins can impersonate anyone, including other root admins; role-based admins cannot impersonate root admins, and can only impersonate users whose role permissions are a subset of their own. Since Panel 1.2.7, impersonating a root admin needs a root admin signed in with a session, and through an API key the target's role must also fit within the key's permissions. Otherwise the panel answers "cannot impersonate this user".
+
+While impersonating you cannot change the user's credentials or settings: password, email, password login, two-factor, security keys, SSH keys, API keys and account settings all answer "this cannot be modified while impersonating".
 :::

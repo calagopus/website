@@ -15,7 +15,7 @@ The table lists every mount available to your server: **Name**, **Description**,
 
 Use the green **+** at the end of a row to attach a mount, or the red **-** to detach one. Both ask for confirmation first ("Do you want to attach **name** to `target`?") and confirm with a toast once done.
 
-Select rows with their checkboxes, by dragging across them, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. **Attach** and **Detach** in the action bar then work on the whole selection, each skipping mounts already in that state; **Detach** asks for confirmation first. Each action reports how many items it changed, skipped or failed in a toast.
+Select rows with their checkboxes, by dragging across them, by `Shift`-clicking a second checkbox for a range, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. **Attach** and **Detach** in the action bar then work on the whole selection, each skipping mounts already in that state; **Detach** asks for confirmation first. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![Mount selected with bulk Attach and Detach controls](./images/mounts/bulk-actions.webp)
 

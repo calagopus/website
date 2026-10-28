@@ -32,6 +32,14 @@ Right-clicking any sidebar link offers two more ways to open it: **Open in Virtu
 
 The search box above a list, in the admin area and on your own pages alike, matches names and other text anywhere in the field, and also takes an ID: paste a full UUID, or at least its first 8 characters (the short ID in a server's URL), and the matching row comes up.
 
+## Tables
+
+Paginated tables show "Showing 1 to 25 of 140 results." under the rows, with the page buttons next to it. Once a table has more than 10 results, a results-per-page dropdown sits beside the page buttons with **10 / page**, **25 / page** (the default), **50 / page**, and **100 / page**. The choice applies to every table and is saved to your account like the other [synced settings](#settings-sync). Changing it keeps the first row you were looking at on screen. The arrow keys page through a table; see [Keyboard Shortcuts](./keyboard-shortcuts.md).
+
+![Table footer reading Showing 1 to 25 of 1,517 results, with the results-per-page dropdown open on 10, 25, 50 and 100 per page next to the page buttons](./images/index/pagination.webp)
+
+Where rows can be selected for bulk actions, a click anywhere in the checkbox column toggles a row, and holding `Shift` while clicking a checkbox selects (or clears) every row between it and the checkbox you clicked last. Dragging a box across rows and `Ctrl+A` select too, and `Esc` clears the selection. A selection only covers the rows on the current page.
+
 ## Quick Actions
 
 **Quick actions...** at the top of the sidebar, or `Ctrl+Space` anywhere (rebindable under [Keyboard Shortcuts](./keyboard-shortcuts.md), and it works even while typing in an input), opens a command palette: type to filter actions and pages by any part of their name, use the arrow keys to navigate, **Enter** to select, **Esc** to close.
@@ -81,3 +89,7 @@ Every synced setting has a small icon next to its label that opens a scope menu:
 A few settings are inherently per-device and never sync: the editor engine, line-overflow wrapping, the VS Code URI scheme, and the audio player's volume.
 
 When you have any overrides, the profile menu at the bottom of the sidebar grows a **Reset Device Overrides** entry with a count, which clears them all at once and returns this device to your account's values.
+
+## When the Panel Is Updated
+
+The panel loads each page's code the first time you open that page. If the panel was updated after you loaded it, that code may no longer exist on the server, so instead of an error the panel covers the page with **Updating to the latest version** and reloads itself into the new version. Without a network connection it waits and reloads "once your connection is back". **Reload Now** skips the wait, and if a reload hasn't gone through after a few seconds the notice asks you to reload the page yourself. It stops after three automatic reloads in quick succession, so a page that keeps failing to load shows its error instead of reloading forever.

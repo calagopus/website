@@ -45,7 +45,7 @@ panel-rs my-tool --help
 ```
 
 ::: warning
-**The name you pass to `add_group` becomes a top-level subcommand, unprefixed.** `add_group("my-tool", ...)` makes `panel-rs my-tool ...` - there's no automatic namespacing, the same way admin routes aren't namespaced for you either. Pick a group name unlikely to collide with the core CLI or other extensions. Something tied to your extension (like `minecraft-versions` or `egg-changer`) is a safe default; a generic name like `tools` or `admin` is asking for trouble.
+**The name you pass to `add_group` becomes a top-level subcommand, unprefixed.** `add_group("my-tool", ...)` makes `panel-rs my-tool ...` - there's no automatic namespacing, the same way admin routes aren't namespaced for you either. Pick a group name unlikely to collide with the core CLI or other extensions. Something tied to your extension (like `minecraft-versions` or `egg-changer`) is a safe default; a generic name like `tools` or `admin` is asking for trouble. Since Panel 1.2.7, a group or command whose name is already taken, or an `initialize_cli` that panics, marks the extension as failed to start, so none of its other entrypoints run either.
 :::
 
 You can nest groups inside groups by calling `add_group` again from within a child builder - useful if your extension has several categories of commands and you want `panel-rs my-tool users disable-2fa` rather than a flat list. For most extensions a single group with a handful of commands is plenty.

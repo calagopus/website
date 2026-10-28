@@ -17,7 +17,9 @@ The maximum number of subusers per server is a panel-wide setting configured by 
 
 ## Inviting a Subuser
 
-Click **Create** and enter the person's **Email**. If an account with that email already exists it gets added directly; if not, an account is created for them automatically. Either way, they receive an email with a link to the server. When the panel has a [captcha](../admin/settings.md#captcha) configured, it renders in this modal too and must be solved before **Create** works.
+Click **Create** and enter the person's **Email**. If an account with that email already exists it gets added directly; if not, an account is created for them automatically. Either way, they receive an email with a link to the server. When the panel has a [captcha](../admin/settings.md#captcha) configured, it renders in this modal too and must be solved before **Create** works. Since Panel 1.2.8, creating subusers is rate limited to 10 per hour by default, counted both per IP and per account; admins change it as `client/servers/subusers/create` under [Ratelimits](../admin/settings.md#ratelimits).
+
+Since Panel 1.2.8, while **Enable Password Login** is off panel-wide, no account is created automatically, because it could never sign in. The email must belong to an existing account. If an OAuth provider lets new users sign up, the panel says: "No account uses this email. They need to sign in to the panel once first, using an account with this exact email, then you can add them." Otherwise it asks for an administrator to create the account first.
 
 ![Create Subuser dialog with an email field and grouped permission checkboxes with a selected permissions list](./images/subusers/create-modal.webp)
 
@@ -58,7 +60,7 @@ Lines starting with `#` are comments. Later lines win over earlier ones, so an e
 
 hides everything except `game/csgo/cfg` and its contents. The directories on the way there (`game`, `game/csgo`) stay listed so the subuser can reach the exception, but the directories themselves are still denied, so they cannot be renamed, deleted or archived as a whole. A list that fails to compile, for example with an unclosed `[`, denies the whole server rather than nothing.
 
-As you type, the gutter next to each line shows how many files currently match ("12 matched" or "No matches"); `!` lines are marked "Exception". Past 20 patterns, counting is no longer automatic and a **Count Matches** button appears instead. An exception without a `/` in it, like `!server.properties`, gets a yellow note below the field: "`!server.properties` matches at any depth, use `!/server.properties` to only match it in the root directory."
+As you type, the gutter next to each line shows how many files currently match ("12 matched" or "No matches"); `!` lines are marked "Exception". The node does the counting with the same matcher it uses to enforce the list, so the count is what the subuser will actually lose. A line it cannot parse, such as one with an unclosed `[`, shows "Invalid pattern" in red, and "Count unavailable" means the node could not be asked, for example because it runs a Wings older than 1.2.6. Past 20 patterns, counting is no longer automatic and a **Count Matches** button appears instead. An exception without a `/` in it, like `!server.properties`, gets a yellow note below the field: "`!server.properties` matches at any depth, use `!/server.properties` to only match it in the root directory."
 
 A partially uploaded file is matched against the name it will end up with, not the `.upload-part` name it carries while in flight, so a pattern cannot be side-stepped by grabbing the partial file over SFTP mid-upload.
 
@@ -70,7 +72,7 @@ Right-click a subuser (or open the row menu) for **Edit** and **Remove**. **Edit
 
 Changes reach the node straight away. A subuser who already has the console or an SFTP session open keeps it with the new permissions and ignored files, and a removed subuser, or one left without access, is disconnected. See [When access changes](../../../about/security.md#when-access-changes).
 
-With `subusers.delete`, select several subusers (checkboxes, drag, or `Ctrl+A`) and **Remove** them together after one confirmation.
+With `subusers.delete`, select several subusers (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and **Remove** them together after one confirmation.
 
 ![Subuser selected with the bulk Remove control](./images/subusers/bulk-actions.webp)
 

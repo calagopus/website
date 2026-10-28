@@ -167,6 +167,10 @@ The product setting keys and the egg variables share one lookup, and the egg var
 
 OAuth linking lets your customers log into the Calagopus panel using their Paymenter account, so they never need a separate panel password. When enabled, newly provisioned servers automatically link the customer's panel user to their Paymenter identity.
 
+::: warning Panel 1.2.7 refuses linking
+Panel 1.2.7 refuses every API key that links an OAuth identity to another user's account, so the panel answers "you can only link identities to your own account from a session". Provisioning still succeeds, just without the link, and **Sync** and **Sync All Users** report **Failed** with that reason. Panel 1.2.8 accepts them again once **Linkable with API Keys** is turned on for the provider (step 7). On 1.2.7 itself, a root admin has to link customers by hand in the panel. Customers who aren't linked can't sign in through the Paymenter provider, because the imported template is **Login Only**.
+:::
+
 1. Download the `paymenter-oauth-provider.yml` template from the [module repository](https://github.com/calagopus/paymenter-module).
 
 2. In your Calagopus panel, go to **Admin → OAuth Providers → Import** and import the template.
@@ -179,7 +183,11 @@ OAuth linking lets your customers log into the Calagopus panel using their Payme
 
 6. Back in Calagopus, edit the imported OAuth provider, paste in the Client ID and Secret, and save.
 
-7. Copy the **UUID** of the OAuth provider in Calagopus and paste it into the **OAuth Provider UUID** field on your Paymenter Calagopus server configuration. Save.
+7. Still on the provider, check that **Linkable with API Keys** (Panel 1.2.8 and newer) is on. Current templates turn it on; a provider imported from an older template needs it switched on and saved. Only a root admin signed in to the panel can change this switch, and importing a template with it on needs one too. Without it the panel refuses the module's links.
+
+8. Make sure the module's API key holds the `users.oauth-links` and `users.impersonate` admin permissions. The panel only accepts links to customers the key could impersonate, so customers who are panel admins can't be linked this way.
+
+9. Copy the **UUID** of the OAuth provider in Calagopus and paste it into the **OAuth Provider UUID** field on your Paymenter Calagopus server configuration. Save.
 
 From now on, when a server is created for a customer, Paymenter links their panel account to their Paymenter identity automatically, letting them sign in to the panel with their Paymenter credentials.
 

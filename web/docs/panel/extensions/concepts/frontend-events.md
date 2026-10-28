@@ -76,7 +76,18 @@ On a server's pages, the Panel keeps one websocket open to Wings. It carries con
 | `addMessageHandler` | `ServerWebsocketMessageEvent` | `{ event, args }` received from Wings | `serverUuid`, `socket` |
 | `addSendHandler` | `ServerWebsocketSendEvent` | `{ event, args }` about to be sent to Wings | `serverUuid`, `socket` |
 
-`event` is the frame name (`'console output'`, `'stats'`, `'send command'`, ...), and `args` is the frame's string arguments. The `SocketEvent` and `SocketRequest` enums in `@/plugins/websocket/useWebsocketEvent.ts` list the names the Panel itself uses.
+`event` is the frame name (`'console output'`, `'stats'`, `'send command'`, ...), and `args` is the frame's arguments.
+
+Since Panel 1.2.8, `args` is typed `unknown[]` rather than `string[]`. Plain text such as console lines is still a string, but the Panel now asks Wings for its `msgpack` transmission mode, and falls back to the older mode when Wings doesn't answer. In `msgpack` mode, structured arguments (the `stats` payload, backup progress) arrive as values and binary ones as `Uint8Array`; in the older mode they are JSON and base64 strings. Read them with the helpers `shared` exports from the same module as the events, which accept both forms:
+
+```ts
+import { binaryArg, structuredArg } from 'shared/src/registries/events/serverWebsocket.ts';
+
+const stats = structuredArg<{ memory_bytes: number }>(event.data.args[0]);
+const update = binaryArg(event.data.args[0]);
+```
+
+Check `typeof arg === 'string'` before treating an argument as text. The `SocketEvent` and `SocketRequest` enums in `@/plugins/websocket/useWebsocketEvent.ts` list the names the Panel itself uses.
 
 ```ts
 import { Extension, ExtensionContext } from 'shared';
@@ -89,11 +100,14 @@ class MyExtension extends Extension {
         socket
           .addMessageHandler((event) => {
             if (event.data.event === SocketEvent.CONSOLE_OUTPUT) {
-              event.data.args = event.data.args.map((line) => line.replaceAll('secret-token', '********'));
+              event.data.args = event.data.args.map((line) =>
+                typeof line === 'string' ? line.replaceAll('secret-token', '********') : line,
+              );
             }
           })
           .addSendHandler((event) => {
-            if (event.data.event === SocketRequest.SEND_COMMAND && event.data.args[0]?.startsWith('op ')) {
+            const command = event.data.args[0];
+            if (event.data.event === SocketRequest.SEND_COMMAND && typeof command === 'string' && command.startsWith('op ')) {
               event.cancel();
             }
           }),
@@ -114,7 +128,7 @@ Send handlers only see frames that will actually go out. If the socket is discon
 
 ### Frames You Can't Intercept
 
-Authentication and socket setup bypass the handlers entirely: incoming `auth success`, `token expiring`, `token expired` and `jwt error`, and outgoing `auth` and `configure socket`. Cancelling or rewriting any of these would leave the socket unable to authenticate or refresh its token, so they never reach your handler. For the same reason, a handler that renames a frame to one of these names has that frame dropped.
+Authentication and socket setup bypass the handlers entirely: incoming `auth success`, `token expiring`, `token expired`, `jwt error` and `socket configured`, and outgoing `auth` and `configure socket`. Cancelling or rewriting any of these would leave the socket unable to authenticate or refresh its token, so they never reach your handler. For the same reason, a handler that renames a frame to one of these names has that frame dropped.
 
 The Panel's own connection-state pseudo-events (`SOCKET_OPEN`, `SOCKET_CLOSE` and the rest) aren't frames, so they don't pass through these handlers either.
 

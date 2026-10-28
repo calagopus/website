@@ -282,7 +282,7 @@ In **Admin → Nodes → (your node) → General**, set **URL** to `https://<nod
 
 Then open the node's **Configuration** tab and run **Verify Connection**. Both checks have to pass: **Backend to Wings** proves the Panel reaches the node through the proxy, and **Frontend to Wings** proves your browser does, which the console, uploads and downloads depend on.
 
-Finish with a real transfer: open the console, upload a file over 95 MiB so a resumable chunk goes through the proxy, and download a backup. If you move servers between nodes, transfer one to this node too.
+Finish with a real transfer: open the console, upload a file of a few hundred MiB so chunked requests go through the proxy, and download a backup. If you move servers between nodes, transfer one to this node too.
 
 ## Docker and Cloudflare
 

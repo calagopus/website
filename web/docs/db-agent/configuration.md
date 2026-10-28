@@ -230,7 +230,7 @@ The name of an AppArmor profile to confine database containers with, passed to D
 
 Default value:
 ```yaml
-container_apparmor_profile: ''
+container_apparmor_profile: ""
 ```
 
 ### docker.container_ulimits
@@ -268,7 +268,7 @@ The user namespace mode for database containers, used to isolate container users
 
 Default value:
 ```yaml
-userns_mode: ''
+userns_mode: ""
 ```
 
 ### docker.cpu_period
@@ -341,8 +341,8 @@ The configuration passed to the selected logging driver.
 Default value:
 ```yaml
 config:
-  compress: 'false'
-  max-file: '1'
+  compress: "false"
+  max-file: "1"
   max-size: 5m
 ```
 
@@ -364,7 +364,7 @@ The API token clients must present to authenticate against the management API. M
 
 Default value:
 ```yaml
-token: ''
+token: ""
 ```
 
 ### api.disable_openapi_docs
@@ -408,8 +408,8 @@ remote_import_blocked_cidrs:
 - 198.18.0.0/15
 - 224.0.0.0/4
 - 240.0.0.0/4
-- '::'
-- ::1
+- "::"
+- "::1"
 - fe80::/10
 - fc00::/7
 - 2002::/16
@@ -551,11 +551,11 @@ docker:
   tmpfs_size: 100
   shm_size: 0
   container_pid_limit: 512
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   timezone: UTC
-  userns_mode: ''
+  userns_mode: ""
   cpu_period: 100000
   cfs_burst:
     enabled: true
@@ -569,8 +569,8 @@ docker:
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
 api:
   bind: 0.0.0.0:8090
@@ -579,7 +579,7 @@ api:
     ktls_enabled: false
     cert: cert.pem
     key: key.pem
-  token: ''
+  token: ""
   disable_openapi_docs: false
   request_log_limit: 250
   disable_remote_import: false
@@ -595,8 +595,8 @@ api:
   - 198.18.0.0/15
   - 224.0.0.0/4
   - 240.0.0.0/4
-  - '::'
-  - ::1
+  - "::"
+  - "::1"
   - fe80::/10
   - fc00::/7
   - 2002::/16

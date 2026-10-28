@@ -10,7 +10,7 @@ Disabling an extension keeps it installed but stops the Panel from running it. O
 Unlike installing and uninstalling, this needs **no recompile**, which means it works on every deployment: the regular `:latest` and `:nightly` images, the `:heavy` variants, the all-in-one image and a plain binary install.
 
 ::: tip Reach for this when an extension misbehaves
-An extension that breaks the Panel - a failing migration, a panic during startup, a route that takes the API down - can be disabled to get the Panel back on its feet, without losing the extension or its data. Its migrations are skipped while it is disabled and applied again when you enable it.
+An extension that breaks the Panel - a failing migration, a route that takes the API down - can be disabled to get the Panel back on its feet, without losing the extension or its data. Since Panel 1.2.7, an extension that panics in its entrypoints, or whose routes or CLI commands clash with another, is skipped on its own and shown as **Failed to start**; disable or remove it to clear that. Its migrations are skipped while it is disabled and applied again when you enable it.
 :::
 
 ## Disabling an Extension

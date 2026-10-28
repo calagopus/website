@@ -209,7 +209,7 @@ async fn send_welcome_email(
             "dev.0x7d8.test.welcome",
             user,
             minijinja::context! {
-                user => user,
+                user => minijinja::value::Serde(user),
                 invite_link => invite_link,
             },
         )
@@ -221,7 +221,7 @@ async fn send_welcome_email(
 
 Note the absence of `?` on the `send_template` call - it returns nothing meaningful (it spawns a tokio task and any failure is logged from inside the task). If you use `send_template_foreground` instead, you'd propagate errors with `.await?`.
 
-The four arguments to `send_template` / `send_template_foreground`: the `State`, the template identifier, the recipient, and the MiniJinja context for variable substitution.
+The four arguments to `send_template` / `send_template_foreground`: the `State`, the template identifier, the recipient, and the MiniJinja context for variable substitution. Since Panel 1.2.7 the Panel uses MiniJinja 3, where a struct that only implements `Serialize`, like `User`, has to be wrapped in `minijinja::value::Serde(...)` to go into a context; strings and numbers go in as they are. Earlier Panels took `user => user` directly.
 
 The recipient is anything that converts into a `MailRecipient`, which pairs an address with the language to render in. Pass `&user` and the mail goes to the user's address in the user's language. Pass a bare `CompactString` address and the panel's default language is used. `MailRecipient::new(address, language)` covers the case where the address and the language come from different places, like a verification mail for an address the user has not confirmed yet.
 
@@ -262,7 +262,7 @@ The core templates available for mutation in 1.2.3 are:
 - `session_created` - sent when a session is created for a user, on any successful login. Variables: `user`, `ip`, `user_agent`, `sessions_link`. Disabled by default.
 - `connection_test` - sent by the admin SMTP test feature. No variables (other than the implicit `settings`).
 - `added_to_server` - sent when a user is added as a subuser to a server. Variables: `user`, `server`, `server_link`.
-- `removed_from_server` - sent when a user is removed as a subuser from a server. Variables: `server`.
+- `removed_from_server` - sent when a user is removed as a subuser from a server. Variables: `user`, `server`. Before Panel 1.2.7 the email was sent with `user` only, so references to `server` rendered empty.
 - `server_installed` - sent when a server finishes installing. Variables: `user`, `server`, `server_link`. Disabled by default.
 - `server_restored` - sent when a server backup is restored. Variables: `user`, `server`, `server_link`. Disabled by default.
 

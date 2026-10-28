@@ -56,6 +56,10 @@ systemctl restart db-agent
 
 === Binary
 
+::: tip Upgrading from the Panel
+DB Agent 1.2.4 and newer, installed as a binary or package, can upgrade itself from the Panel: see [Upgrading the Agent](../panel/features/admin/database-agent-hosts.md#upgrading-the-agent). The agent downloads the release from GitHub, checks it against the release's SHA-256 digest, replaces its own binary and restarts in place. It refuses while instances are booting, autostarting, changing power state or running operations, or while imports or exports run. Set [`ignore_upgrades`](./configuration.md#ignore-upgrades) to turn this off. An agent in a container cannot upgrade itself.
+:::
+
 #### 1. Stop the service
 
 ```bash

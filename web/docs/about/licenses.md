@@ -65,15 +65,16 @@ Calagopus commercially.
 
 | Component | Location | License | Notes |
 | --- | --- | --- | --- |
-| `unrar-rs` (wrapper) | `wings/unrar-rs` | MIT OR Apache-2.0 | The Rust wrapper is permissive. |
-| UnRAR C library | `wings/unrar-rs/unrar_sys/vendor/unrar` | **UnRAR license** | Non-free and restrictive. See below. |
+| `unrar-ng` (wrapper) | [`0x7d8/unrar.rs`](https://github.com/0x7d8/unrar.rs), a Git dependency of Wings | MIT OR Apache-2.0 | The Rust wrapper is permissive. |
+| UnRAR C library | `unrar_sys/vendor/unrar` in the same repository | **UnRAR license** | Non-free and restrictive. See below. |
 
 The UnRAR dependency is unconditional, so every Wings binary contains it. Its
 license permits using the source to *unpack* RAR archives, but explicitly
 forbids using it to build a RAR-compatible archiver, and requires the license
 text to travel with any redistribution. Read
-[`vendor/unrar/license.txt`](https://github.com/calagopus/wings/blob/main/unrar-rs/unrar_sys/vendor/unrar/license.txt)
-before shipping Wings as part of a commercial product.
+[`vendor/unrar/license.txt`](https://github.com/0x7d8/unrar.rs/blob/1a57ca302207b12c7cb1b12dbedf5d7b1eeadce2/unrar_sys/vendor/unrar/license.txt)
+before shipping Wings as part of a commercial product. Wings 1.2.6 and older vendored the
+wrapper in the Wings repository itself.
 
 Wings also contains a `pbs-client` crate used for
 [Proxmox Backup Server backups](../wings/advanced/backup-configurations.md). It

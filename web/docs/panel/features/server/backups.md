@@ -39,7 +39,7 @@ The form has four fields:
 | **Backup Group** | Only shown when the server has groups. Defaults to **No group**. |
 | **Ignored Files** | Patterns for files to exclude, one pattern per line. Server backups only. |
 
-The **Ignored Files** field uses the same `.gitignore` rules as [subuser ignored files](./subusers.md#ignored-files), `!` exceptions below an ignored directory included. It shows a live match count next to each pattern, and has a **Preview ignored files** toggle that opens a file browser showing exactly what would be skipped.
+The **Ignored Files** field uses the same `.gitignore` rules as [subuser ignored files](./subusers.md#ignored-files), `!` exceptions below an ignored directory included. It shows a live match count next to each pattern, counted by the node (see [subuser ignored files](./subusers.md#ignored-files) for what the gutter shows), and has a **Preview ignored files** toggle that opens a file browser showing exactly what would be skipped.
 
 Wings adds two more sources to that list: a `.pteroignore` file in the server's root directory, read with the same rules (up to 1 MiB), and the egg's **File Deny List**. Their lines come after yours, so an exception in the field cannot re-include something they exclude.
 
@@ -125,7 +125,7 @@ Once you have more than one group, each header grows a grip handle: drag it to r
 
 The server's backup limit is a hard cap that groups don't raise; retention only decides which backup goes when room is needed.
 
-- At the limit, an automatic backup makes room for itself by deleting whatever your rules no longer keep.
+- At the limit, an automatic backup makes room for itself by deleting whatever your rules no longer keep. It counts itself into its group's rules while doing so: with **Keep daily** 7 and dailies from the seven previous days already there, the new backup pushes the oldest daily out, and that one goes first. If one of them is from today, the new backup takes today's slot and that one goes instead.
 - If there's nothing expendable, it takes one more anyway, preferring a failed backup, then an ungrouped one, and only then a backup a group still keeps.
 - A manual backup is refused rather than delete something a rule still keeps.
 - Locked backups are never touched.
@@ -148,7 +148,7 @@ The rows are read-only in the sense that you cannot rename, lock or delete them,
 
 ## Bulk Actions
 
-Select rows with their checkboxes, by dragging across them, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar then offers:
+Select rows with their checkboxes, by dragging across them, by `Shift`-clicking a second checkbox for a range, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar then offers:
 
 ![Two backups selected, with the action bar showing Move to Group, Lock, Unlock and Delete](./images/backups/bulk-actions.webp)
 
@@ -162,9 +162,9 @@ Selecting needs `backups.update` or `backups.delete`. Each action reports how ma
 
 ## Backup Actions
 
-Right-click a backup (or use the menu at the end of the row) for its actions.
+Right-click a backup (or use the menu at the end of the row) for its actions. **Lock** / **Unlock** in the menu toggles the lock straight away, without opening **Edit**; it needs `backups.update` and is not offered on [system backups](#system-backups). A backup whose deletion failed offers only **Delete**, so you can try again, plus **Backup Metadata** if it has any.
 
-![Backup row menu with Edit, Download, Restore, Export to Files, Backup Metadata, and Delete](./images/backups/context-menu.webp)
+![Backup row menu with Edit, Lock, Download, Restore, Export to Files, Backup Metadata, and Delete](./images/backups/context-menu.webp)
 
 ### Edit
 

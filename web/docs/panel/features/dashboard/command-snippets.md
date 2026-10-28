@@ -25,7 +25,7 @@ Typing `!hello` in the console and pressing enter pastes `say hello world!` in i
 
 Right-click an existing snippet (or open the menu at the end of its row) to edit, duplicate (the copy's name prefills as "`<name>` (copy)"), or delete it.
 
-To delete several snippets at once, select them (checkboxes, drag, or `Ctrl+A`) and use **Delete** in the action bar, which asks for confirmation.
+To delete several snippets at once, select them (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and use **Delete** in the action bar, which asks for confirmation.
 
 ![Command snippet selected with the bulk Delete control](./images/command-snippets/bulk-actions.webp)
 

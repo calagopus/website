@@ -71,7 +71,7 @@ Size fields take a value plus a unit (B through PiB). The two bandwidth fields u
 | **Pinned CPUs** (*advanced*) | CPU cores the server is pinned to, by index (e.g. `0`, `1`, `2`). Empty allows all cores. |
 | **Upload Limit** / **Download Limit** | Caps the server's outgoing and incoming network traffic. `0` sets no limit; otherwise the rate must be between 8 bits/s and 100 Gbps. Needs bandwidth limits enabled on the node, see below. |
 
-Bandwidth limits are enforced by Wings and need [`docker.bandwidth.enabled`](../../../wings/configuration.md#docker-bandwidth-enabled) on the node (on by default) plus a Linux host that can apply them. Once a node is picked, the panel asks it whether it can apply limits, and the description under both fields tells you where it stands: "0 will not set a limit." when limits work, "Bandwidth limits are disabled in the node configuration." when the option is off on a node that could otherwise apply them, or "The node does not support bandwidth limits." (or the reason Wings gave) when the node can't apply them. Setting or changing a non-zero limit on a node that isn't ready fails with a 409 naming the reason ("bandwidth limits are disabled on this node" when the option is off); `0` always saves. The owner sees the limits on the [console's](../server/console.md#stats) network tiles.
+Bandwidth limits are enforced by Wings and need a Linux node where [`docker.bandwidth.backend`](../../../wings/configuration.md#docker-bandwidth-backend) is not `disabled` (it is `auto` by default; Wings before 1.2.6 used `docker.bandwidth.enabled`) and that can apply them. Once a node is picked, the panel asks it whether it can apply limits, and the description under both fields tells you where it stands: "0 will not set a limit." when limits work, "Bandwidth limits are disabled in the node configuration." when the backend is `disabled`, or "The node does not support bandwidth limits." (or the reason Wings gave) when the node can't apply them. Setting or changing a non-zero limit on a node that isn't ready fails with a 409 naming the reason ("bandwidth limits are disabled on this node" when the backend is `disabled`); `0` always saves. The owner sees the limits on the [console's](../server/console.md#stats) network tiles.
 
 ### Server Configuration
 
@@ -180,6 +180,8 @@ All backups of this server: Name, **Kind**, **Source**, Node, Checksum, Size, Fi
 Right-click a completed backup for **Download** (with a format submenu for streaming backups), **Restore**, **Export to Files**, **View Metadata** (raw JSON), and **Delete**. The owner-facing side is the [Backups](../server/backups.md) page.
 
 When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
+
+A backup whose deletion still fails after the panel's eight automatic attempts is marked as a failed deletion. When there are any, a **Retry Failed Deletions** button with their count sits next to it (requires `nodes.backups`). It skips backups whose configuration is in maintenance, runs in the background, and has the same **Force** switch.
 
 ![Server Backups tab listing backups with node, checksum, size, and file count](./images/servers/backups.webp)
 

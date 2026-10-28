@@ -428,6 +428,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `nodes.delete` | Allows deleting nodes. |
 | `nodes.read-token` | Allows viewing a node's token. |
 | `nodes.reset-token` | Allows resetting a node's token. |
+| `nodes.upgrade` | Allows upgrading a node's wings to a newer release. |
 | `nodes.allocations` | Allows viewing and managing a node's allocations. |
 | `nodes.mounts` | Allows viewing and managing a node's mounts. |
 | `nodes.devices` | Allows viewing and managing a node's devices. |
@@ -511,6 +512,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `database-agent-hosts.delete` | Allows deleting database agent hosts. |
 | `database-agent-hosts.read-token` | Allows viewing a database agent host's token. |
 | `database-agent-hosts.reset-token` | Allows resetting database agent host tokens. |
+| `database-agent-hosts.upgrade` | Allows upgrading a database agent host to a newer release. |
 | `database-agent-hosts.test` | Allows testing database agent host connections. |
 | `database-agent-hosts.backups` | Allows viewing and managing a database agent host's backups. |
 

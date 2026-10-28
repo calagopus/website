@@ -9,7 +9,7 @@ Schedules automate work on your server. Each schedule combines **triggers** (whe
 
 ![Schedules page listing a Daily Backups schedule with last run, status, and the Create button](./images/schedules/list.webp)
 
-The list shows each schedule's name, **Last Run**, **Last Failure**, **Status** (**Active** or **Inactive**), and **Created** timestamps. Click a row to open the schedule, or right-click it for **Run Now**, **Export**, **Duplicate**, and **Delete**. **Duplicate** is disabled once the server has reached its schedule limit.
+The list shows each schedule's name, **Last Run**, **Last Failure**, **Status** (**Active** or **Inactive**), and **Created** timestamps. Click a row to open the schedule, or right-click it for **Run Now**, **Export**, **Duplicate**, and **Delete**. **Run Now** is disabled while the schedule is disabled, and **Duplicate** once the server has reached its schedule limit.
 
 **View Calendar** opens the **Upcoming Runs Calendar**, which plots upcoming cron runs in a day, week, or month view. Click an entry to jump to its schedule.
 
@@ -25,7 +25,9 @@ Click **Create**. A schedule starts with a **Schedule Name**, an **Enabled** tog
 
 ![Create Schedule dialog with name, Enabled toggle, and an Add Trigger button](./images/schedules/create-form.webp)
 
-A disabled schedule ignores its triggers and can't be run manually until re-enabled.
+A disabled schedule ignores its triggers and can't be run manually until re-enabled; the panel refuses with "cannot trigger a disabled schedule".
+
+Changing a trigger's type in the form resets that trigger's fields to the new type's defaults, so nothing from the previous type is carried over.
 
 ## Triggers
 
@@ -43,6 +45,8 @@ A schedule runs whenever any one of its triggers fires.
 | **Console Line** | When the console prints a line matching **Line Contains** (optionally **Case Insensitive**), with the line optionally stored into a variable via **Output into** |
 | **Crash** | When the server crashes |
 
+Since Panel 1.2.7, adding a **Console Line** trigger needs the `control.read-console` permission. Without it, saving fails with "unable to create schedule trigger that requires permission: control.read-console" (or "unable to update ..." when editing).
+
 ### Cron Triggers
 
 By default the cron trigger uses friendly controls: pick how often it **Runs** (**Every few minutes**, **Every few hours**, **Daily**, **Weekly**, **Monthly**) plus the matching interval, weekday, day, and **At** time fields. A plain-language description of the resulting schedule is shown underneath, along with a "Times use the server timezone" hint naming the zone (or UTC).
@@ -55,7 +59,7 @@ Calagopus cron expressions put **seconds** first: `second minute hour day month 
 
 ## Bulk Actions
 
-Select rows with their checkboxes, by dragging across them, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar then offers:
+Select rows with their checkboxes, by dragging across them, by `Shift`-clicking a second checkbox for a range, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar then offers:
 
 | Action | Notes |
 | --- | --- |
@@ -85,7 +89,7 @@ Steps are picked from a searchable **Action Type** list, organized into five gro
 
 ![Create Schedule Step dialog with the Action Type dropdown open showing server actions](./images/schedules/step-picker.webp)
 
-Most steps have an **Ignore Failure** switch to let the schedule carry on if that step fails. Long-running operations (backups, file copies, archives) additionally have **Run in Foreground**, which makes the schedule wait for the operation to finish before moving on.
+Most steps have an **Ignore Failure** switch to let the schedule carry on if that step fails. Long-running operations (backups, file copies, archives, downloads) additionally have **Wait for Completion** (called **Run in Foreground** before Panel 1.2.8). With it on, the schedule waits for the operation to finish and a failure counts as a failed step. With it off, the step runs in the background: the next step starts right away and failures are not reported. Each such step shows a **Waits** or **Background** badge in the step list.
 
 #### Server
 
@@ -99,11 +103,11 @@ Most steps have an **Ignore Failure** switch to let the schedule carry on if tha
 
 | Step | What it does | Key fields |
 | --- | --- | --- |
-| **Create Backup** | Create a backup of the server files. | **Backup Name** (auto-generated if left empty), **Backup Group**, **Ignored Files**, **Output Backup UUID Into**, **Run in Foreground** |
+| **Create Backup** | Create a backup of the server files. | **Backup Name** (auto-generated if left empty), **Backup Group**, **Ignored Files**, **Output Backup UUID Into**, **Wait for Completion** |
 | **Restore Backup** | Stop the server and restore a backup of the server files. | **Backup to Restore**, **Delete all files before restore**, **Restore startup settings** |
 | **Delete Backup** | Delete a backup selected by the backup selector. | **Backup to Delete** |
 | **Move Backup** | Move a backup selected by the backup selector into a backup group. | **Backup to Move**, **Target Backup Group** |
-| **Create Database Backup** | Create a backup of a managed database. | **Managed Database**, **Backup Name**, **Backup Group**, **Output Backup UUID Into**, **Run in Foreground** |
+| **Create Database Backup** | Create a backup of a managed database. | **Managed Database**, **Backup Name**, **Backup Group**, **Output Backup UUID Into**, **Wait for Completion** |
 | **Restore Database Backup** | Restore a database backup into a managed database. | **Database Backup to Restore**, **Only Consider Backups From**, **Restore Into** |
 | **Delete Database Backup** | Delete a database backup selected by the backup selector. | **Database Backup to Delete**, **Only Consider Backups From** |
 | **Move Database Backup** | Move a database backup selected by the backup selector into a backup group. | **Database Backup to Move**, **Only Consider Backups From**, **Target Backup Group** |
@@ -124,12 +128,12 @@ Restoring stops the server and overwrites its files; avoid combining **Restore B
 | --- | --- | --- |
 | **Create Directory** | Create a new folder in the server files. | **Root Path**, **Directory Name** |
 | **Write File** | Write or append text to a file. | **File Path**, **Content**, **Append to File** |
-| **Copy File** | Copy a file to a new location. | **Source File**, **Destination**, **Run in Foreground** |
+| **Copy File** | Copy a file to a new location. | **Source File**, **Destination**, **Wait for Completion** |
 | **Delete Files** | Delete files or folders, or move them to the [trash](./files.md#trash). | **Root Path**, **Files to Delete**, **Move to Trash** |
 | **Rename Files** | Rename or move files. | **Root Path**, file pairs (**from** / **to**) |
-| **Compress Files** | Compress files into an archive. | **Root Path**, **Files to Compress**, **Archive Format** (`.tar` family, `.zip`, `.7z`), **Archive Name**, **Run in Foreground** |
-| **Decompress File** | Extract an archive into a folder. | **Root Path**, **File**, **Run in Foreground** |
-| **Pull File** | Download a file from a URL into a folder. | **File URL**, **Root Path**, **File Name** (derived from the URL or the response when left empty), **Use Response File Name**, **Run in Foreground** |
+| **Compress Files** | Compress files into an archive. | **Root Path**, **Files to Compress**, **Archive Format** (`.tar` family, `.zip`, `.7z`), **Archive Name**, **Wait for Completion** |
+| **Decompress File** | Extract an archive into a folder. | **Root Path**, **File**, **Wait for Completion** |
+| **Pull File** | Download a file from a URL into a folder. | **File URL**, **Root Path**, **File Name** (derived from the URL or the response when left empty), **Use Response File Name**, **Wait for Completion** |
 
 **Move to Trash** on a **Delete Files** step is off by default, so a step deletes permanently unless you turn it on. It only takes effect while the trash is enabled for the server; with the trash off, or on a node older than Wings 1.2.6, the files are deleted permanently. Files inside a mount are always deleted permanently. When the trash is used, the step is logged as `server:file.trash` instead of `server:file.delete`, even if some of its files were on a mount and deleted permanently.
 
@@ -159,6 +163,18 @@ Creating an **If** step automatically adds its **End If**, and steps inside the 
 #### Variables
 
 Many step fields accept either plain text or a variable; the icon at the field's right edge toggles between the two ("Use a variable instead of plain text"). Variables are produced by outputs elsewhere in the schedule: the Console Line trigger's **Output into**, **Match Regex** captures, **Format**, the UUID outputs of **Create Backup** and **Create Database Backup**, and the HTTP Request outputs. A variable holds up to 16 KiB.
+
+The editor checks every variable a step or condition reads against where it gets set, following the order of the steps and the **If** blocks. A step with a problem gets a yellow warning icon (hover it for the details), the step dialog shows the same warnings while you edit, and a warning under the pre-condition covers the **Conditions** tab:
+
+| Warning | Means |
+| --- | --- |
+| The variable "x" is never set by this schedule, so it will not resolve. | No trigger or step writes it at all, usually a typo. |
+| The variable "x" is not set by a trigger or an earlier step at this point. | It is written, but only by a later step. |
+| The variable "x" is only set on some runs, for example inside another branch, by one of several triggers or by a step that may fail. | Whether it exists depends on how the run went: it is set inside an **If** branch, by only some of the schedule's triggers, or by a step with **Ignore Failure** on. |
+
+![Schedule Actions with warning icons on a Format step and a Send Command step, the second hovered: The variable "mesage" is never set by this schedule, so it will not resolve.](./images/schedules/variable-warnings.webp)
+
+The warnings don't stop you from saving. A **Variable Exists** condition is the way to handle a variable that is only set on some runs.
 
 #### HTTP Request
 
@@ -202,7 +218,7 @@ Changes here must be saved with **Update**; navigating away with unsaved changes
 
 ### Triggers
 
-The **Schedule Triggers** tab lists each trigger as a card. Cron cards also show the next and last run times. To change triggers, use **Edit** at the top of the page.
+The **Schedule Triggers** tab lists each trigger as a card. Cron cards also show the next and last run times. To change triggers, use **Edit** at the top of the page. A schedule without triggers shows **No Triggers** here: it never starts on its own and only runs when started by hand.
 
 ## Import and Export
 

@@ -46,6 +46,8 @@ Opening a configuration shows tabs for **General** (the edit form, plus **Duplic
 
 When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
 
+A backup whose deletion still fails after the panel's eight automatic attempts is marked as a failed deletion. Since Panel 1.2.8, when there are any, a **Retry Failed Deletions** button with their count sits next to it (requires `backup-configurations.backups` and `nodes.backups`). It skips backups whose configuration is in maintenance, runs in the background, and has the same **Force** switch.
+
 ![Backups tab](./images/backup-configurations/backups.webp)
 
 ![Locations tab](./images/backup-configurations/locations.webp)

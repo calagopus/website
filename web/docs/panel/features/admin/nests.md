@@ -41,7 +41,7 @@ Eggs support bulk operations: drag across rows to select, Ctrl/Cmd-click or use 
 
 **Import** is a dropdown with three sources: **from File**, **from URL**, and **from Repository**.
 
-**from File** accepts an egg file in JSON or YAML format (`.json`, `.yml`, `.yaml`), including eggs exported from Pterodactyl. You can also drag files from your file manager anywhere onto the page and drop them to import several at once.
+**from File** accepts an egg file in JSON or YAML format (`.json`, `.yml`, `.yaml`), including eggs exported from Pterodactyl. A file picked here is parsed in your browser, which expands YAML aliases (`*name`) and merge keys (`<<:`). Importing from a URL or syncing an [egg repository](./egg-repositories.md) parses the YAML on the panel instead, and since Panel 1.2.7 an egg that uses aliases or merge keys fails to import from a URL and is silently left out of a repository sync. You can also drag files from your file manager anywhere onto the page and drop them to import several at once.
 
 **from URL** fetches the eggs instead. Paste up to 25 `http`/`https` URLs and the panel downloads them (5 at a time), auto-detecting JSON or YAML. Each egg may be at most 1 MiB. If some URLs fail, the import still succeeds for the rest and lists the failures with a reason next to each URL. Eggs imported this way are not linked to a repository, so they won't be updated automatically - **Update** on an existing egg also offers **from URL** for refreshing one by hand.
 
@@ -70,7 +70,7 @@ Below that, three configuration cards:
 
 - **Startup Configuration**: **Startup Done**, one or more console messages indicating startup completion (the panel marks the server as running when one appears), and **Strip ANSI from startup messages**, which removes ANSI control characters before matching.
 - **Stop Configuration**: **Stop Type** is **Send Command** (with a **Stop Command** field), **Send Signal** (with a **Stop Signal** picker: `SIGABRT`, `SIGINT`, `SIGTERM`, `SIGQUIT`, `SIGKILL`), or **Docker Stop**.
-- **Config Files Configuration**: files the panel rewrites on boot. Each entry has a **File Path**, a **Parser** (File, YAML, Properties, INI, JSON, XML, TOML), a **Create New File** switch, and a list of replacements (**Match**, optional **If Value**, **Replace With** as either **Text** or **JSON**, plus **Insert New** and **Update Existing** switches controlling whether unmatched values get inserted and matched ones replaced).
+- **Config Files Configuration**: files the panel rewrites on boot. Each entry has a **File Path**, a **Parser** (File, YAML, Properties, INI, JSON, XML, TOML), a **Create New File** switch, and a list of replacements (**Match**, optional **If Value**, **Replace With** as either **Text** or **JSON**, plus **Insert New** and **Update Existing** switches controlling whether unmatched values get inserted and matched ones replaced). Since Wings 1.2.7, a YAML file that uses aliases (`*name`), including merge keys (`<<: *name`), is not rewritten: Wings logs `failed to update process configuration files` and skips that file and the entries after it, then starts the server anyway.
 
 ![Config Files Configuration section with a new config file entry and an Add Replacement button](./images/nests/config-files.webp)
 

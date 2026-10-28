@@ -151,6 +151,8 @@ impl SettingsDeserializeExt for ExtensionSettingsDataDeserializer {
 
 Much shorter. `write_serde_setting(key, &value)?` does the serde dance internally (the value ends up as JSON in the database) and `read_serde_setting(key)` reads it back into any `Deserialize` type as a `Result<T, serde_json::Error>`. A stored value that fails to deserialize is an `Err`, which the example above handles by falling back to an empty `Vec`. A missing key is deserialized from JSON `null`, so it is an `Err` for a `Vec` but an `Ok(None)` for an `Option<T>`.
 
+Fall back like this rather than returning the error with `?`. Since Panel 1.2.7, the Panel runs your deserializer once at startup, and if it returns an `Err` or panics, the extension is marked as failed to start and none of its entrypoints run. If it only fails on a later settings reload, the Panel logs the error and leaves your extension's settings out, and the rest of the Panel's settings still load. Before 1.2.7 an `Err` there failed the settings load for the whole Panel.
+
 ### Mixing Both
 
 You can mix patterns in one `serialize`/`deserialize` implementation - use `write_raw_setting` for scalar fields that benefit from per-field treatment (encryption, validation at read time) and `write_serde_setting` for fields that are inherently complex. The key space is shared, so just don't use the same key twice.

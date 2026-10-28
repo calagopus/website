@@ -36,6 +36,6 @@ The rest of the right-click menu:
 | **Recreate** | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
 | **Delete** | Permanently deletes the database and all data. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
 
-With `databases.delete`, you can also select several databases (checkboxes, drag, or `Ctrl+A`) and **Delete** them together after one confirmation. Locked databases are skipped. Each action reports how many items it changed, skipped or failed in a toast.
+With `databases.delete`, you can also select several databases (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and **Delete** them together after one confirmation. Locked databases are skipped. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![Classic database selected with the bulk Delete control](../images/databases/classic-bulk-actions.webp)

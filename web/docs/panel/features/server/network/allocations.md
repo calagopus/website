@@ -38,6 +38,6 @@ Right-click an allocation (or use the menu at the end of the row):
 The pool allocations are drawn from is defined per node by admins, under the node's [Allocations tab](../../admin/nodes.md#allocations). See [Setting up Allocations](../../../../wings/next-steps/setting-up-allocations.md).
 :::
 
-With `allocations.delete`, select several allocations (checkboxes, drag, or `Ctrl+A`) and **Remove** them after one confirmation. The primary allocation is skipped. Each action reports how many items it changed, skipped or failed in a toast.
+With `allocations.delete`, select several allocations (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and **Remove** them after one confirmation. The primary allocation is skipped. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![Additional allocation selected with the bulk Remove control](../images/network/allocations-selection.webp)

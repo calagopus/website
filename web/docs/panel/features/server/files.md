@@ -9,7 +9,7 @@ The Files tab is a full file manager for your server: browse and sort, upload an
 
 ![File manager list view](./images/files/list.webp)
 
-The file manager has two views, and the page title tells you which one you are in. **List** is the table above, and **Tree** swaps it for a sidebar file tree next to an editor pane, for working across several files at once. The pair of buttons in the top right switches between them, as do the **Switch to List View** and **Switch to Tree View** [quick actions](../dashboard/index.md#quick-actions). Your choice is remembered per browser.
+The file manager has two views, and the page title tells you which one you are in. **List** is the table above, and **Tree** swaps it for a sidebar file tree next to tabbed editor panes, for working across several files at once (see [The Tree View](#the-tree-view)). The pair of buttons in the top right switches between them, as do the **Switch to List View** and **Switch to Tree View** [quick actions](../dashboard/index.md#quick-actions). Your choice is remembered per browser.
 
 ## The List View
 
@@ -24,6 +24,7 @@ The gear next to the page title opens the file manager settings:
 | **Click once to open file or folder** | Single-click opens entries instead of selecting them. |
 | **Always overwrite existing files** | Skips upload conflict choices and defaults file-copy operations to overwriting existing files. Off by default. |
 | **Show physical size instead of logical size** | The Size column shows actual disk usage rather than file length. |
+| **Preview files in tree tabs** | In the tree view, opening a file reuses a single preview tab until you edit it or double-click its tab. On by default. See [Editor Tabs](#editor-tabs). |
 | **VS Code URI Scheme** | Which editor the **via VS Code** connect option launches (`vscode` by default, e.g. `vscodium` or `cursor` for forks). |
 
 ### Connect
@@ -50,7 +51,11 @@ The **New** menu (shown when you can write to the current directory and hold `fi
 
 ### Disk Usage
 
-Below the toolbar, a **Disk Usage** bar shows how much of the server's disk limit is in use, for example `271.86 MiB of 20 GiB used (1.3%)`. It turns yellow at 80% and red at 95%, and is hidden on servers with unlimited disk.
+Below the toolbar a **Disk Usage** bar shows how much of the server's disk limit is in use, for example `271.86 MiB of 20 GiB used (1.3%)`. It turns yellow at 80% and red at 95%, and is hidden on servers with unlimited disk. Since Panel 1.2.8 the bar also sits above the [tree view](#the-tree-view).
+
+Files in the [trash](#trash) count towards that total, and since Panel 1.2.8 the bar shows how much of it they take up as a separate grey **Trash** segment, with a legend underneath giving the size of **Files** and **Trash**. Hover a segment for its size. The legend only appears while the trash holds something, and the node has to report the trash size, which needs Wings 1.2.8 or newer.
+
+![Disk Usage bar at 969.04 MiB of 10 GiB with a blue Files segment and a grey Trash segment, and a legend giving Files 99.91 MiB and Trash 869.12 MiB](./images/files/disk-usage.webp)
 
 ### Search
 
@@ -99,9 +104,39 @@ The chart icon next to **Search** ("Analyze directory sizes") opens **Largest Di
 
 Backups can be browsed read-only through the same file manager; the breadcrumb root switches to `backups / <backup name>` and an **Exit Backup** button brings you back to the live filesystem. Actions that modify files are hidden while browsing a backup.
 
+## The Tree View
+
+The tree view puts the server's files in a sidebar on the left and opens files next to it in tabbed editor panes, so you can keep several files open while you browse. The [Disk Usage](#disk-usage) bar sits above both.
+
+![Tree view with the file tree on the left, bukkit.yml and help.yml tabs in one editor pane and eula.txt in a second pane, below the Disk Usage bar](./images/files/tree.webp)
+
+Drag the gap between the tree and the editors to make the tree wider or narrower; with the handle focused, the arrow keys resize it in steps and `Home` resets it. The width is remembered on this device. The double-arrow button at the top of the tree (**Hide file tree** / **Show file tree**) folds the tree away to give the editors the full width. On narrow screens the tree and the editors take turns: the editors only show while the tree is folded away, and opening a file folds it for you.
+
+The icon row at the top of the tree has the select-all checkbox, **Create** (**New File**, **New Directory** and **Symlink**), **Upload** (**Upload from computer** for files or a directory, or **Upload from URL**), **Search Files**, **Analyze directory sizes**, and **Reload files**. Right-clicking a directory adds **New File** and **New Directory** to its menu, which create the entry inside that directory.
+
+Drag entries onto a directory to move them there. While you drag, the target directory and everything listed under it is highlighted, so it is clear where the files will land.
+
+### Searching the Tree
+
+The magnifying glass (**Search Files**) opens a **Search files...** box that filters the tree by name as you type. The sliders icon at the end of the box (**Advanced search**) opens the [Search Files](#search) modal with what you typed already filled in, for path patterns, content and size filters. Running an advanced search closes the quick filter and shows the results in the tree, with the same [previews](#result-previews) as in the list view.
+
+### Editor Tabs
+
+Every file you open gets a tab. With **Preview files in tree tabs** on (the default), opening a file from the tree uses a preview tab, shown in italics, which the next file you open replaces. Editing the file, or double-clicking its tab, turns it into a normal tab that stays open; the **Keep File Open** quick action does the same. A dot marks a tab with unsaved changes.
+
+Right-click a tab for **Close**, **Close Others**, **Close to the Right**, **Close Saved**, **Close All**, and **Reveal in Tree**, which expands the tree to the file and selects it. `Ctrl+W` closes the active tab and `Ctrl+Tab` / `Ctrl+Shift+Tab` switch between tabs (both rebindable under [Keyboard Shortcuts](../dashboard/keyboard-shortcuts.md)); `Ctrl+PageUp` / `Ctrl+PageDown` switch too, and `Ctrl+1` to `Ctrl+8` jump to that tab, `Ctrl+9` to the last one. Many browsers keep `Ctrl+W` and `Ctrl+Tab` for their own tabs, so rebind those two if they close or switch the browser tab instead. Drag a tab along the tab strip to reorder it.
+
+Since Panel 1.2.8, the five tabs you used most recently stay loaded, so switching back to one keeps its cursor, scroll position and undo history. Older tabs load the file again when you return to them. Open tabs and panes are remembered per server in your browser.
+
+### Editor Panes
+
+To work on files side by side, drag a tab, or a file from the tree, onto the left or right edge of an editor; a highlighted outline shows where the new pane will go. Dropping it in the middle of a pane, or on its tab strip, moves the tab into that pane instead. A pane closes when its last tab does.
+
+Splitting needs room: each pane has to stay at least 280 pixels wide, and dragging the only tab of a pane cannot split that same pane. Drag the handle between two panes to resize them, double-click it to make all panes the same width, or focus it and use the arrow keys (`Home` splits the two evenly). On small screens only one pane is shown at a time, and a **Select editor pane** dropdown above the editor switches between them.
+
 ## Selecting Files and Mass Actions
 
-Use the row checkboxes, `Ctrl`-click to toggle, `Shift`-click for a range, drag a selection box across rows, or the breadcrumb checkbox / `Ctrl+A` for everything. As soon as anything is selected, an action bar appears with quick buttons for download (as a `.zip`), remote copy, copy, archive, rename, move, and delete. With the [trash](#trash) on, the delete button turns blue and reads **Move to Trash**.
+Use the row checkboxes, `Ctrl`-click to toggle, `Shift`-click for a range, drag a selection box across rows, or the breadcrumb checkbox / `Ctrl+A` for everything. A click anywhere in the checkbox column toggles the row, and `Shift` plus a checkbox click selects (or clears) every row between it and the last checkbox you clicked, adding to what is already selected instead of replacing it. As soon as anything is selected, an action bar appears with quick buttons for download (as a `.zip`), remote copy, copy, archive, rename, move, and delete. With the [trash](#trash) on, the delete button turns blue and reads **Move to Trash**.
 
 ![Files selected with download, copy, archive, rename, move and delete controls](./images/files/bulk-actions.webp)
 
@@ -297,7 +332,9 @@ How to clear one depends on where it came from:
 | Someone else's, or left by a wings restart | Delete the partial file from the listing. Restart leftovers are listed without an owner or a total size and cannot be resumed at all. |
 
 ::: info
-Only uploads larger than 95 MiB are sent in chunks, and only those can be paused and resumed. Anything smaller goes up in a single request, so **Cancel** is the only action offered on the row.
+Files larger than the current request size are sent in chunks, and only those can be paused and resumed. Smaller files are bundled into shared requests, so **Cancel** is the only action offered on their rows. The request size starts at 8 MiB for each server and adapts to your connection as the upload runs, aiming for requests that take about a minute, never below 4 MiB or above 95 MiB. A slow connection therefore uses small chunks rather than running into proxy timeouts, and whether a file counts as large is decided when you start the upload.
+
+Network errors, timeouts and 5xx responses are retried, and every cut-off request at least halves the request size for what follows. A chunked upload asks the node how far it got and carries on from there, giving up after five attempts in a row that make no progress. A bundled request is retried up to three times, and is split back into smaller bundles first if it is now over the request size. Rate-limit responses are retried up to five times, waiting as long as the node asks.
 
 The 30-second threshold only decides when the panel calls an upload incomplete. Wings keeps tracking an abandoned partial for 24 hours before it drops the record, and the `.upload-part` file itself stays on disk until something deletes it. Nothing reclaims that space on its own, so a server that repeatedly loses connections mid-upload is worth checking.
 :::
@@ -319,7 +356,7 @@ Openable files launch a code editor at `/files/edit` with syntax highlighting an
 | **Editor Engine** | **Monaco** or **Pierre**. Monaco is the full desktop editor; Pierre is lighter and built for touch. Touch devices default to Pierre, everything else to Monaco. |
 | **Show File Minimap** | Toggles the code overview strip on the right. Monaco only. |
 | **Wrap Line Overflow** | Wraps long lines instead of scrolling horizontally. |
-| **Editor Font Size** | Font size, 6 to 72. |
+| **Editor Font Size** | Font size, 6 to 72. Since Panel 1.2.8, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14) change it from inside the editor, as does `Ctrl` + mouse wheel; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts). |
 | **VS Code URI Scheme** | Same setting as in the list view; the editor's **Connect** menu can hand the open file straight to your editor. |
 
 ![File editor](./images/files/editor.webp)

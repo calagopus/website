@@ -89,7 +89,9 @@ One switch: **Allow Custom Startup Command**. When off, users on the server's [S
 
 Reorders the server sidebar for affected servers. Each entry shows its path and has a remove button; drag entries to reorder. The bottom row adds entries by type: **Route** picks a page, **Divider** (optionally named) groups them, **Redirect** (a name plus a destination URL) adds an external link. Divider and redirect names are translatable per language.
 
-![Route Configuration section listing server routes from Console to Activity with a route picker](./images/egg-configurations/route-config.webp)
+The icon button at the start of a route or redirect entry picks its sidebar icon from the Font Awesome solid, regular and brands sets, searchable by name. **Use Default Icon** goes back to the page's own icon (or the external-link icon for a redirect). The same picker is in the [Client Route Order](./settings.md#user) editor.
+
+![Route Configuration section listing server routes from Console to Activity, each with an icon button, and a route picker](./images/egg-configurations/route-config.webp)
 
 
 ::: warning

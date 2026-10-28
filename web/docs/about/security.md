@@ -301,7 +301,8 @@ Sources: [Panel invalidation](https://github.com/calagopus/panel/blob/4f33b77b81
 
 The Panel can push configuration changes to Wings. Before merging a patch, Wings
 removes a fixed list of keys from it. The list covers the node identity, token and
-Panel URL; the data, backup and temporary directories; the system user; the Docker
+Panel URL; the data, backup and temporary directories and the local restic
+repository, password file and environment; the system user; the Docker
 socket and the paths of binaries and images Wings runs; `allowed_mounts` and
 `allowed_devices`; the API listen address, TLS and trusted proxies; and the remote
 download and scheduled HTTP request settings, including their blocked CIDRs. These
@@ -312,13 +313,18 @@ settings that weaken isolation can still be patched, including seccomp, AppArmor
 user-namespace mode, sysctls, the container network, SFTP and allowed origins.
 The Panel also supplies settings per operation outside this patch, such as backup
 adapter configuration, and decides per server whether `/dev/kvm` is passed
-through.
+through. Since Wings 1.2.7, restic environment variables from the Panel are
+limited to backend credentials, `RESTIC_` options and proxy settings, and
+variables that name a file or command on the node, such as
+`RESTIC_PASSWORD_COMMAND` or `GOOGLE_APPLICATION_CREDENTIALS`, are dropped. The
+[restic configuration](../wings/advanced/backup-configurations.md#disk-specific-settings)
+lists them.
 
 `ignore_panel_config_updates: true` makes Wings ignore Panel configuration patches
 entirely, and `ignore_panel_wings_upgrades: true` does the same for upgrade
 requests. Both keys are on the protected list, so the Panel cannot turn them off.
 
-Sources: [protected config keys](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/config.rs#L1519-L1557), [config patch route](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/routes/api/update.rs).
+Sources: [protected config keys](https://github.com/calagopus/wings/blob/76d26c47328d35bbbed5e81c47c2794119b90744/application/src/config.rs#L1519-L1558), [config patch route](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/routes/api/update.rs).
 
 ### Pairing a new node
 
@@ -617,6 +623,31 @@ scopes cap the permissions available through that key: they are intersected with
 the user's effective grants, rather than granting access the user does not have.
 Keys can also have an expiry, be disabled, and restrict source IPs/CIDRs.
 For an integration with a fixed job, choose the smallest permissions it needs.
+
+Since Panel 1.2.7, handing out access is bounded by the credential in use, not
+only by the account behind it:
+
+- Roles and OAuth role or subuser mappings can only grant permissions the caller
+  holds, and through an API key only those the key also carries. A role that
+  already grants more than the caller holds cannot be edited by them at all.
+- Granting or changing **Admin**, assigning roles, changing another account's
+  password or email, saving changes to a root admin, impersonating a root admin,
+  linking OAuth identities to other accounts, and changing how an OAuth provider
+  identifies users or whether it bypasses 2FA all need a root admin signed in
+  with a session. API keys are refused, including a root admin's. The one
+  exception, from Panel 1.2.8: an API key with `users.oauth-links` and
+  `users.impersonate` may link identities through a provider a root admin marked
+  **Linkable with API Keys**, and only to accounts the key could impersonate.
+- Impersonating someone else needs a caller who could grant the target's whole
+  role. While impersonating, the target's password, email, two-factor, security
+  keys, SSH keys, API keys and account settings cannot be changed.
+- Changing a node's or database agent host's URL needs the permission to read its
+  token, since the Panel sends the token to that URL.
+- Reaching other users' servers as an admin needs the `servers.read` admin
+  permission in the credential's scope, and acting on a suspended server needs
+  `servers.update`, where it used to need the root **Admin** flag.
+
+Sources: [grant and impersonation rules](https://github.com/calagopus/panel/blob/cc2c1d9ec829b1e497c84f3ea1dcb1f08c354df9/shared/src/models/user/auth.rs), [admin user routes](https://github.com/calagopus/panel/blob/cc2c1d9ec829b1e497c84f3ea1dcb1f08c354df9/backend/src/routes/api/admin/users/_user_/mod.rs), [OAuth provider updates](https://github.com/calagopus/panel/blob/cc2c1d9ec829b1e497c84f3ea1dcb1f08c354df9/backend/src/routes/api/admin/oauth_providers/_oauth_provider_/mod.rs).
 
 Sources: [effective permissions and scope intersection](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user/auth.rs#L49-L202), [key expiry](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/models/user/mod.rs#L283-L301), [key disablement](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/mod.rs#L84-L89), [key address restrictions](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/backend/src/routes/api/client/mod.rs#L340-L351).
 

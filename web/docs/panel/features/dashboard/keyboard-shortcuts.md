@@ -7,7 +7,7 @@ description: View and rebind keyboard shortcuts for navigating and interacting w
 
 Keyboard shortcuts let you navigate and interact with the panel without reaching for the mouse, grouped by where they apply: general, the file manager, the server console, and table navigation.
 
-![Keyboard Shortcuts page with File Manager, General, Server Console, and Table Navigation shortcut groups](./images/keyboard-shortcuts/overview.webp)
+![Keyboard Shortcuts page with File Manager, General, Server Console, and Table Navigation shortcut groups, including the editor and console font size shortcuts](./images/keyboard-shortcuts/overview.webp)
 
 The panel detects whether you're on Windows/Linux or macOS and shows the matching modifier keys automatically.
 
@@ -17,6 +17,7 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | --- | --- |
 | Undo the last action | `Ctrl+Z` |
 | Open quick actions | `Ctrl+Space` |
+| Save the current form | `Ctrl+S` |
 
 | File Manager | Binding |
 | --- | --- |
@@ -24,7 +25,7 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | Cut selected files | `Ctrl+X` |
 | Copy selected files | `Ctrl+C` |
 | Paste files | `Ctrl+V` |
-| Duplicate selected file | `D` |
+| Duplicate selected file | `Ctrl+D` |
 | Search files | `Ctrl+K` |
 | Move Up a directory | `Alt+↑` |
 | Move Up the selection | `↑` |
@@ -32,12 +33,21 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | Rename file | `F2` |
 | Deselect all files | `Esc` |
 | Delete selected files | `Del` |
+| Close the active editor tab | `Ctrl+W` |
+| Next editor tab | `Ctrl+Tab` |
+| Previous editor tab | `Ctrl+Shift+Tab` |
+| Increase the editor font size | `Ctrl+=` |
+| Decrease the editor font size | `Ctrl+-` |
+| Reset the editor font size | `Ctrl+0` |
 
 | Server Console | Binding |
 | --- | --- |
 | Search in console output | `Ctrl+F` |
 | Previous command in history | `↑` |
 | Next command in history | `↓` |
+| Increase the console font size | `Ctrl+=` |
+| Decrease the console font size | `Ctrl+-` |
+| Reset the console font size | `Ctrl+0` |
 
 | Table Navigation | Binding |
 | --- | --- |
@@ -49,6 +59,14 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 | Deselect all rows | `Esc` |
 
 (`Ctrl` shows as `Cmd` on macOS.)
+
+The editor tab shortcuts apply to the tabs of the file manager's [tree view](../server/files.md#the-tree-view).
+
+### Font Size Shortcuts
+
+The font size shortcuts arrived in Panel 1.2.8. They only act while the code editor or the console has keyboard focus, so everywhere else `Ctrl+=` and `Ctrl+-` still zoom the browser page. Holding `Ctrl` while scrolling the mouse wheel (or pinching on a trackpad) over the editor or console resizes its font too, without focusing it first. As long as the increase and decrease bindings are left at their defaults, `Ctrl+Shift+=`, the numpad `+` and `-` keys, and an unshifted `+` key on layouts that have one work as well.
+
+The editor font goes from 6 to 72 and the console font from 10 to 24, and reset returns both to 14. The new size is saved the same way as the **Editor Font Size** setting and the console's font buttons, so it follows your account by default. See [Settings Sync](./index.md#settings-sync).
 
 ## Rebinding, Disabling, and Resetting
 
@@ -77,55 +95,75 @@ The button at the end reads **Account** or **This Device** and controls where yo
 
 [files] # File Manager
 # Select all files
-files.selectAll         = Mod+A
+files.selectAll              = Mod+A
 # Cut selected files
-files.cut               = Mod+X
+files.cut                    = Mod+X
 # Copy selected files
-files.copy              = Mod+C
+files.copy                   = Mod+C
 # Paste files
-files.paste             = Mod+V
+files.paste                  = Mod+V
 # Duplicate selected file
-files.duplicate         = D
+files.duplicate              = Mod+D
 # Search files
-files.search            = Mod+K
+files.search                 = Mod+K
 # Move Up a directory
-files.moveUpDirectory   = Alt+ArrowUp
+files.moveUpDirectory        = Alt+ArrowUp
 # Move Up the selection
-files.moveUpSelection   = ArrowUp
+files.moveUpSelection        = ArrowUp
 # Move Down the selection
-files.moveDownSelection = ArrowDown
+files.moveDownSelection      = ArrowDown
 # Rename file
-files.rename            = F2
+files.rename                 = F2
 # Deselect all files
-files.deselectAll       = Escape
+files.deselectAll            = Escape
 # Delete selected files
-files.delete            = Delete
+files.delete                 = Delete
+# Close the active editor tab
+files.closeEditorTab         = Mod+W
+# Next editor tab
+files.nextEditorTab          = Mod+Tab
+# Previous editor tab
+files.previousEditorTab      = Mod+Shift+Tab
+# Increase the editor font size
+files.increaseEditorFontSize = Mod+=
+# Decrease the editor font size
+files.decreaseEditorFontSize = Mod+-
+# Reset the editor font size
+files.resetEditorFontSize    = Mod+0
 
 [general] # General
 # Undo the last action
-general.undo            = Mod+Z
+general.undo                 = Mod+Z
 # Open quick actions
-general.quickActions    = Mod+Space
+general.quickActions         = Mod+Space
+# Save the current form
+general.save                 = Mod+S
 
 [console] # Server Console
 # Search in console output
-console.search          = Mod+F
+console.search               = Mod+F
 # Previous command in history
-console.previousCommand = ArrowUp
+console.previousCommand      = ArrowUp
 # Next command in history
-console.nextCommand     = ArrowDown
+console.nextCommand          = ArrowDown
+# Increase the console font size
+console.increaseFontSize     = Mod+=
+# Decrease the console font size
+console.decreaseFontSize     = Mod+-
+# Reset the console font size
+console.resetFontSize        = Mod+0
 
 [table] # Table Navigation
 # Previous page
-table.previousPage      = ArrowLeft
+table.previousPage           = ArrowLeft
 # Next page
-table.nextPage          = ArrowRight
+table.nextPage               = ArrowRight
 # First page
-table.firstPage         = Shift+ArrowLeft
+table.firstPage              = Shift+ArrowLeft
 # Last page
-table.lastPage          = Shift+ArrowRight
+table.lastPage               = Shift+ArrowRight
 # Select all rows
-table.selectAll         = Mod+A
+table.selectAll              = Mod+A
 # Deselect all rows
-table.deselectAll       = Escape
+table.deselectAll            = Escape
 ```

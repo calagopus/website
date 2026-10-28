@@ -15,7 +15,7 @@ Use the **+** or **-** on a row to attach or detach it, then confirm.
 
 <img src="./images/devices/attach-modal.webp" alt="Device attachment confirmation" width="220">
 
-For several devices, select rows with the checkboxes, by dragging, or with `Ctrl+A`; **Attach** and **Detach** in the action bar skip devices already in the requested state. `Escape` clears the selection.
+For several devices, select rows with the checkboxes (`Shift`-click for a range), by dragging, or with `Ctrl+A`; **Attach** and **Detach** in the action bar skip devices already in the requested state. `Escape` clears the selection.
 
 ![Device selection with bulk attach and detach actions](./images/devices/bulk-actions.webp)
 

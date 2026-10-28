@@ -5,7 +5,7 @@ description: Every panel-wide setting in the Calagopus admin area, from applicat
 
 # Settings
 
-Everything panel-wide that isn't its own admin page lives under `/admin/settings`, split into eleven category tabs. Saving any category requires the `settings.update` permission.
+Everything panel-wide that isn't its own admin page lives under `/admin/settings`, split into twelve category tabs. Saving any category requires the `settings.update` permission.
 
 Unsaved changes stay in the form while you switch between settings tabs. Leaving settings with a draft prompts you to confirm. These drafts live only in the current page session; save each tab to keep its changes after a reload.
 
@@ -30,7 +30,7 @@ The tab is split into **General**, **Branding**, **Authentication**, **Sessions*
 | **Banner** | Optional banner image URL, also suggested from Assets |
 | **Banner (Light Mode)** | Optional separate banner for light mode (*advanced*) |
 | **Two-Factor Authentication Requirement** | Who must enable 2FA: **Admins**, **All Users**, or **None**. Affected users without 2FA are blocked from everything except setting it up and logging out |
-| **Accepted Two-Factor Methods** | Which enrolled factors satisfy the requirement above: **TOTP**, **Security Key**, and/or **Email**. Defaults to TOTP and security keys |
+| **Accepted Two-Factor Methods** | Which enrolled factors satisfy the requirement above: **TOTP**, **Security Key**, and/or **Email**. Defaults to TOTP and security keys. Since Panel 1.2.7, a user who is required to use two-factor and has an accepted factor is only offered accepted factors at login, so an email code can't stand in for TOTP when Email isn't accepted |
 | **Email Two-Factor** | Let users receive a one-time login code by email as a second factor. Requires a mail transport |
 | **Require Email Verification** | New accounts must open a verification link before they can use the panel, including SFTP and SSH. Requires a mail transport |
 | **Enable Registration** | Let anyone create an account on this panel |
@@ -43,7 +43,7 @@ The tab is split into **General**, **Branding**, **Authentication**, **Sessions*
 
 Enabling registration also asks for confirmation and points out that doing it without a [captcha](#captcha) configured may be a mistake.
 
-Turning **Enable Password Login** off asks for confirmation too, because it reaches further than the login page. With it off, local registration, the forgot-password flow and SFTP password authentication all stop working as well, and everyone needs an [OAuth provider](/docs/panel/features/admin/oauth-providers) or a [security key](/docs/panel/features/dashboard/account#security-keys) to get in.
+Turning **Enable Password Login** off asks for confirmation too, because it reaches further than the login page. With it off, local registration, the forgot-password flow and SFTP password authentication all stop working as well, subusers can only be added by the email of an existing account (since Panel 1.2.8), and everyone needs an [OAuth provider](/docs/panel/features/admin/oauth-providers) or a [security key](/docs/panel/features/dashboard/account#security-keys) to get in.
 
 Public key authentication over SFTP keeps working. The per-account **Password Login** switch disappears while the panel-wide one is off, since there's nothing left for it to decide.
 
@@ -240,9 +240,9 @@ Per-account limits for [Dashboard](../dashboard/index.md) features, followed by 
 | **Allow Changing Language** | If enabled, users can change their language preferences. The login, register, and other auth pages then show a language picker when more than one language is available, and a first-time visitor gets the closest match to their browser languages, falling back to the panel default. New accounts are created with the language picked during registration |
 | **Allow Changing Avatar** | If enabled, users can upload and remove their own [avatar](../dashboard/account.md#avatar). With it off, the Avatar card is hidden from the Account page. On by default |
 
-Below the limits, **Client Route Order** is a collapsible section: enable it to reorder the pages of the user dashboard sidebar for everyone. Drag entries to reorder, and use the row at the bottom to insert extra entries: a **Route**, a **Divider**, or a **Redirect** (a name plus an external URL). It's the same editor egg configurations use for the [server sidebar](./egg-configurations.md#route-configuration).
+Below the limits, **Client Route Order** is a collapsible section: enable it to reorder the pages of the user dashboard sidebar for everyone. Drag entries to reorder, and use the row at the bottom to insert extra entries: a **Route**, a **Divider**, or a **Redirect** (a name plus an external URL). Routes and redirects can each get their own icon from the icon button on their row. It's the same editor egg configurations use for the [server sidebar](./egg-configurations.md#route-configuration).
 
-![Client Route Order section listing account routes from Account to Activity with a route picker](./images/settings/client-route-order.webp)
+![Client Route Order section listing account routes from Account to Activity, each with an icon button, a Tools divider, and a route picker](./images/settings/client-route-order.webp)
 
 ![Route type dropdown open with Route, Divider, and Redirect choices](./images/settings/route-divider-redirect.webp)
 
@@ -264,13 +264,15 @@ Retention for the three activity logs and what gets logged.
 
 ## Ratelimits
 
-![Admin Settings Ratelimits tab with hits and window fields per route, plus exempt IPs and API keys](./images/settings/ratelimits.webp)
+![Admin Settings Ratelimits tab with hits and window fields per route, including client/servers/subusers/create, plus exempt IPs and API keys](./images/settings/ratelimits.webp)
 
 Per-endpoint API rate limits. Each endpoint card has two values: **Hits**, the maximum number of requests allowed per window, and **Window**, the window duration in seconds.
 
-Endpoints covered: `auth/register`, `auth/login`, `auth/login/checkpoint`, `auth/login/checkpoint/email`, `auth/login/security-key`, `auth/password/forgot`, `auth/password/reset`, `auth/email/verify`, `client`, `client/account/email/resend-verification`, `client/servers/backups/create`, `client/servers/files/pull`, `client/servers/files/pull/query`, `remote`, `remote/enroll`, and `remote/sftp/auth`.
+Endpoints covered: `auth/register`, `auth/login`, `auth/login/checkpoint`, `auth/login/checkpoint/email`, `auth/login/security-key`, `auth/password/forgot`, `auth/password/reset`, `auth/email/verify`, `client`, `client/account/email/resend-verification`, `client/servers/backups/create`, `client/servers/files/pull`, `client/servers/files/pull/query`, `client/servers/subusers/create`, `remote`, `remote/enroll`, and `remote/sftp/auth`.
 
 **Remote Enroll** limits redemption of node enrollment codes to 10 requests per 60 seconds by default. Its settings key is `remote_enroll`; it is separate from the general remote API limit.
+
+`client/servers/subusers/create`, added in Panel 1.2.8, defaults to 10 requests per 3600 seconds. It is counted twice, per IP and per account, so a single user cannot get around it by switching addresses.
 
 ### Exemptions
 
@@ -281,8 +283,16 @@ The **Exemptions** card below the endpoint grid lets trusted callers skip the tw
 | **Exempt IPs** | IP addresses or CIDR ranges that skip the `client` and `remote` limits |
 | **Exempt API Keys** | UUIDs of API keys that skip the `client` limit; a key only counts as exempt while it is enabled and used from one of its allowed IPs |
 
-Exemptions only cover the `client` and `remote` limits. The login, registration, and password limits still apply to exempt IPs, and the per-server limits (backup creation, file pulls) still apply to exempt keys, since those protect the nodes rather than the panel.
+Exemptions only cover the `client` and `remote` limits. The login, registration, and password limits still apply to exempt IPs, and the per-server limits (backup creation, file pulls) and the subuser creation limit still apply to exempt keys.
 
 Users can copy a key's UUID from the context menu on their [API Keys](../dashboard/api-keys.md) page. Saving refuses UUIDs that don't belong to an existing key, and a background job removes the UUIDs of keys that were deleted afterwards.
 
 If the panel runs behind a reverse proxy, make sure `APP_TRUSTED_PROXIES` is set correctly, since IP exemptions match against the client address the panel resolves from the forwarded headers.
+
+## Updates
+
+Release tokens for upgrading [nodes](./nodes.md#upgrading-wings) and [database agent hosts](./database-agent-hosts.md#upgrading-the-agent) from the panel: **Wings Release Token** and **Database Agent Release Token**. Both are optional. The tab's notice explains when you need one: when nodes or database agent hosts upgrade from a private fork, or when the GitHub API rate limits unauthenticated downloads.
+
+![Admin Settings Updates tab with the release token notice and empty Wings Release Token and Database Agent Release Token fields](./images/settings/updates.webp)
+
+Use a fine-grained token with read-only **Contents** access to the release repository and nothing else, and give it an expiry date. The tokens are encrypted at rest and censored when the tab is reopened. The panel hands the token to the daemon with upgrade checks and upgrade requests, but only when the admin doing it also has `settings.read`; for everyone else the request goes out without it.

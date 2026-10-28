@@ -79,7 +79,7 @@ The IP address Wings binds its internal API to. Alternatively, a Unix socket pat
 
 Default value:
 ```yaml
-host: 0.0.0.0
+host: "0.0.0.0"
 ```
 
 ### api.port
@@ -111,7 +111,7 @@ The absolute filesystem path to the SSL certificate file used for API encryption
 
 Default value:
 ```yaml
-cert: ''
+cert: ""
 ```
 
 ### api.ssl.key
@@ -119,7 +119,7 @@ The absolute filesystem path to the SSL private key file corresponding to the ce
 
 Default value:
 ```yaml
-key: ''
+key: ""
 ```
 
 ### api.redirects
@@ -163,8 +163,8 @@ remote_download_blocked_cidrs:
 - 198.18.0.0/15
 - 224.0.0.0/4
 - 240.0.0.0/4
-- '::'
-- ::1
+- "::"
+- "::1"
 - fe80::/10
 - fc00::/7
 - 2002::/16
@@ -344,8 +344,8 @@ blocked_cidrs:
 - 198.18.0.0/15
 - 224.0.0.0/4
 - 240.0.0.0/4
-- '::'
-- ::1
+- "::"
+- "::1"
 - fe80::/10
 - fc00::/7
 - 2002::/16
@@ -383,7 +383,7 @@ This is the directory where Wings stores server data. This is the directory that
 
 Default value:
 ```yaml
-data: '{root_directory}/volumes'
+data: "{root_directory}/volumes"
 ```
 
 ### system.diffs_directory
@@ -391,7 +391,7 @@ This is the directory where Wings stores the per-server SQLite databases used by
 
 Default value:
 ```yaml
-diffs_directory: '{root_directory}/diffs'
+diffs_directory: "{root_directory}/diffs"
 ```
 
 ### system.vmount_directory
@@ -399,7 +399,7 @@ This is the directory where Wings stores virtual mounts for servers. Currently m
 
 Default value:
 ```yaml
-vmount_directory: '{root_directory}/vmounts'
+vmount_directory: "{root_directory}/vmounts"
 ```
 
 ### system.archive_directory
@@ -407,7 +407,7 @@ This is the directory where Wings stores server archives. This is 100% unused in
 
 Default value:
 ```yaml
-archive_directory: '{root_directory}/archives'
+archive_directory: "{root_directory}/archives"
 ```
 
 ### system.backup_directory
@@ -415,7 +415,7 @@ This is the directory where Wings stores server backups. This applies to backups
 
 Default value:
 ```yaml
-backup_directory: '{root_directory}/backups'
+backup_directory: "{root_directory}/backups"
 ```
 
 ### system.tmp_directory
@@ -423,7 +423,7 @@ This is the directory where Wings stores temporary files, such as the staging di
 
 Default value:
 ```yaml
-tmp_directory: '{root_directory}/tmp'
+tmp_directory: "{root_directory}/tmp"
 ```
 
 ::: info Moved from /tmp
@@ -614,7 +614,7 @@ The IP address that the internal SFTP/SSH server binds to.
 
 Default value:
 ```yaml
-bind_address: 0.0.0.0
+bind_address: "0.0.0.0"
 ```
 
 ### system.sftp.bind_port
@@ -794,8 +794,12 @@ The [Zstandard](https://facebook.github.io/zstd/) compression level used when st
 
 Default value:
 ```yaml
-zstd_level: 19
+zstd_level: 9
 ```
+
+::: info
+Wings 1.2.8 lowered the default from `19` to `9`. Wings writes its defaults into `config.yml`, so an existing node keeps `19` until you change it there.
+:::
 
 ### system.file_history.anchor_interval
 The number of delta (diff) entries written in a chain before Wings stores a full snapshot (anchor) instead. A lower value creates anchors more frequently, making history reconstruction faster at the cost of more disk space.
@@ -1071,6 +1075,14 @@ Default value:
 create_threads: 4
 ```
 
+### system.backups.ddup_bak.restore_threads
+The number of threads used for restoring `ddup-bak` backups. Each thread restores one file, so with 4 threads, up to 4 files are restored concurrently.
+
+Default value:
+```yaml
+restore_threads: 4
+```
+
 ### system.backups.ddup_bak.compression_format
 Compression for DdupBak backups: `none`, `deflate`, `gzip`, `brotli`, or `zstd`. New configurations default to `zstd`; an existing explicit value such as `deflate` is kept.
 
@@ -1085,14 +1097,14 @@ compression_format: zstd
 
 ### system.backups.restic.repository
 ::: info
-All restic options only apply when using Pterodactyl. On Calagopus, restic is fully managed by the panel, and these local configuration settings are ignored.
+On Calagopus, restic is normally configured through a backup configuration in the panel. If the file at `password_file` exists, Wings uses these local options instead, for every restic backup on the node.
 :::
 
 The Restic repository path used for backups. This must already be initialized and can be overridden by the panel.
 
 Default value:
 ```yaml
-repository: '{root_directory}/backups/restic'
+repository: "{root_directory}/backups/restic"
 ```
 
 ### system.backups.restic.password_file
@@ -1100,7 +1112,7 @@ The local path to the file containing the Restic repository password used for au
 
 Default value:
 ```yaml
-password_file: '{root_directory}/backups/restic_password'
+password_file: "{root_directory}/backups/restic_password"
 ```
 
 ### system.backups.restic.retry_lock_seconds
@@ -1112,7 +1124,7 @@ retry_lock_seconds: 60
 ```
 
 ### system.backups.restic.environment
-The environment variables passed to the restic process for authentication and configuration. This can be overridden by the panel.
+The environment variables passed to the restic process for authentication and configuration. Every variable except `PATH` is passed through. Panel configuration patches cannot change this key.
 
 Default value:
 ```yaml
@@ -1200,7 +1212,7 @@ The specific IP interface used for the Docker network bridge.
 
 Default value:
 ```yaml
-interface: 172.18.0.1
+interface: "172.18.0.1"
 ```
 
 ### docker.network.disable_interface_binding
@@ -1217,8 +1229,8 @@ The list of DNS servers used by containers for name resolution.
 Default value:
 ```yaml
 dns:
-- 1.1.1.1
-- 1.0.0.1
+- "1.1.1.1"
+- "1.0.0.1"
 ```
 
 ### docker.network.dns_options
@@ -1310,7 +1322,7 @@ The IPv4 gateway address for the Docker network. This will automatically be incr
 
 Default value:
 ```yaml
-gateway: 172.18.0.1
+gateway: "172.18.0.1"
 ```
 
 ### docker.network.interfaces.v6.enabled
@@ -1375,18 +1387,31 @@ Default value:
 source_file_max_bytes: 1048576
 ```
 
-### docker.bandwidth.enabled
-Whether Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart. When this is off, limited servers run without their limits and Wings logs a warning for each one.
+### docker.bandwidth.backend
+How Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart.
+
+- `auto`: `local` when Wings runs on the host, or in a container that shares the host PID namespace. Otherwise `container`.
+- `local`: Wings applies the limits itself. Rootful Wings needs `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, which it has when it runs as root on the host. Rootless Wings needs user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). Wings in a container without the host PID namespace cannot reach server network namespaces, so limits are unavailable with this backend there.
+- `container`: Wings starts a helper container, `calagopus-wings-bandwidth`, from its own image with the host PID namespace, no network, and `NET_ADMIN` and `SYS_ADMIN`, and applies the limits through it. Only works when Wings itself runs as a container on the Docker engine it manages, and not with rootless container engines.
+- `disabled`: limited servers start without their limits, and Wings logs a warning for each one.
+
+Available options:
+
+`auto`, `local`, `container`, `disabled`
 
 Default value:
 ```yaml
-enabled: true
+backend: auto
 ```
 
 ::: warning
-Bandwidth limits are Linux only. Rootful Wings needs `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, which it has when it runs as root on the host. Wings in the default Docker Compose stack has neither, and it also cannot reach server containers' network namespaces without sharing the host PID namespace, so bandwidth limits are not supported there out of the box. Rootless Wings needs user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). The Panel shows the reason on the server's limit fields when a node can't apply limits, and refuses to save a non-zero limit there.
+Bandwidth limits are Linux only. The Wings Docker Compose file shares the host PID namespace (`pid: host`) since Wings 1.2.6, so `auto` picks `local`, but the Wings container does not hold `CAP_NET_ADMIN` or `CAP_SYS_ADMIN` and limits stay unavailable. Set this option to `container` in that setup. Adding `cap_add: [NET_ADMIN, SYS_ADMIN]` to the `wings` service gives Wings the same privileges as the helper container instead. An older Compose file without `pid: host` gets the helper container through `auto`.
 
-A limited server needs a bridge network with exactly one interface; `host`, `none` and `container:` network modes are rejected, as is a server container granted `NET_ADMIN`, `NET_RAW` or `SYS_ADMIN`. If shaping fails when a limited server starts, the start fails rather than running the server unthrottled. Set this to `false` to start such servers without their limits.
+The Panel shows the reason on the server's limit fields when a node can't apply limits, and refuses to save a non-zero limit there, including when this option is `disabled`. A limited server needs a bridge network with exactly one interface; `host`, `none` and `container:` network modes are rejected, as is a server container granted `NET_ADMIN`, `NET_RAW` or `SYS_ADMIN`. If limits are unavailable or shaping fails when a limited server starts, the start fails rather than running the server unthrottled. Set this option to `disabled` to start such servers without their limits.
+:::
+
+::: info
+This option replaced `docker.bandwidth.enabled` in Wings 1.2.6. On startup Wings turns `enabled: false` into `backend: disabled`, drops the old key from `config.yml`, and logs `migrated docker.bandwidth.enabled to docker.bandwidth.backend`.
 :::
 
 ### docker.domainname
@@ -1394,7 +1419,7 @@ The domain name assigned to containers, useful for internal networking resolutio
 
 Default value:
 ```yaml
-domainname: ''
+domainname: ""
 ```
 
 ### docker.registries
@@ -1466,7 +1491,7 @@ The name of an AppArmor profile to confine server containers with, passed to Doc
 
 Default value:
 ```yaml
-container_apparmor_profile: ''
+container_apparmor_profile: ""
 ```
 
 ### docker.container_ulimits
@@ -1677,7 +1702,7 @@ The user namespace mode for containers, used to isolate container users from hos
 
 Default value:
 ```yaml
-userns_mode: ''
+userns_mode: ""
 ```
 
 ### docker.log_config.type
@@ -1693,7 +1718,7 @@ Whether to enable compression for stored log files to save disk space.
 
 Default value:
 ```yaml
-compress: 'false'
+compress: "false"
 ```
 
 ### docker.log_config.config.max-file
@@ -1701,7 +1726,7 @@ The maximum number of log files to retain before the oldest ones are rotated out
 
 Default value:
 ```yaml
-max-file: '1'
+max-file: "1"
 ```
 
 ### docker.log_config.config.max-size
@@ -1793,7 +1818,7 @@ Where the daemon's persistent state lives, including the node's local CA, its id
 
 Default value:
 ```yaml
-data_directory: '{root_directory}/tundra'
+data_directory: "{root_directory}/tundra"
 ```
 
 ### tundra.binary
@@ -1801,7 +1826,7 @@ Path to a tundra binary to run instead of the bundled one. Leave empty and Wings
 
 Default value:
 ```yaml
-binary: ''
+binary: ""
 ```
 
 ### tundra.image
@@ -1916,7 +1941,7 @@ ignore_panel_config_updates: false
 Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so change them locally in `config.yml` or through environment overrides:
 
 - Node identity: `uuid`, `token`, `token_id`, `remote`, `remote_headers`
-- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.mounting.path`, `docker.lxcfs.directory`, `tundra.data_directory`, `tundra.binary`
+- Paths: `system.root_directory`, `system.log_directory`, `system.data`, `system.diffs_directory`, `system.vmount_directory`, `system.archive_directory`, `system.backup_directory`, `system.tmp_directory`, `system.passwd.directory`, `system.backups.restic.repository`, `system.backups.restic.password_file`, `system.backups.restic.environment`, `system.backups.mounting.path`, `docker.lxcfs.directory`, `tundra.data_directory`, `tundra.binary`
 - Host access: `system.username`, `system.user`, `system.passwd`, `docker.socket`, `tundra.image`, `tundra.source_image`, `allowed_mounts`, `allowed_devices`
 - Listener and egress: `api.host`, `api.port`, `api.ssl`, `api.trusted_proxies`, `api.disable_remote_download`, `api.remote_download_blocked_cidrs`, `api.schedule.steps.http_request`
 - The flags themselves: `ignore_panel_config_updates`, `ignore_panel_wings_upgrades`
@@ -1974,13 +1999,13 @@ uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
 api:
-  host: 0.0.0.0
+  host: "0.0.0.0"
   port: 8080
   ssl:
     enabled: false
     ktls_enabled: false
-    cert: ''
-    key: ''
+    cert: ""
+    key: ""
   redirects: {}
   disable_openapi_docs: false
   disable_remote_download: false
@@ -1996,8 +2021,8 @@ api:
   - 198.18.0.0/15
   - 224.0.0.0/4
   - 240.0.0.0/4
-  - '::'
-  - ::1
+  - "::"
+  - "::1"
   - fe80::/10
   - fc00::/7
   - 2002::/16
@@ -2037,8 +2062,8 @@ api:
         - 198.18.0.0/15
         - 224.0.0.0/4
         - 240.0.0.0/4
-        - '::'
-        - ::1
+        - "::"
+        - "::1"
         - fe80::/10
         - fc00::/7
         - 2002::/16
@@ -2046,12 +2071,12 @@ api:
 system:
   root_directory: /var/lib/calagopus-wings
   log_directory: /var/log/calagopus-wings
-  data: '{root_directory}/volumes'
-  diffs_directory: '{root_directory}/diffs'
-  vmount_directory: '{root_directory}/vmounts'
-  archive_directory: '{root_directory}/archives'
-  backup_directory: '{root_directory}/backups'
-  tmp_directory: '{root_directory}/tmp'
+  data: "{root_directory}/volumes"
+  diffs_directory: "{root_directory}/diffs"
+  vmount_directory: "{root_directory}/vmounts"
+  archive_directory: "{root_directory}/archives"
+  backup_directory: "{root_directory}/backups"
+  tmp_directory: "{root_directory}/tmp"
   username: calagopus
   timezone: +00:00
   user:
@@ -2079,7 +2104,7 @@ system:
   tcp_congestion_control: bbr
   sftp:
     enabled: true
-    bind_address: 0.0.0.0
+    bind_address: "0.0.0.0"
     bind_port: 2022
     read_only: false
     key_algorithm: ssh-ed25519
@@ -2107,7 +2132,7 @@ system:
     timeout: 60
   file_history:
     enabled: true
-    zstd_level: 19
+    zstd_level: 9
     anchor_interval: 4
     keep_chains: 5
     file_size_cap: 1048576
@@ -2147,10 +2172,11 @@ system:
       retry_limit: 10
     ddup_bak:
       create_threads: 4
+      restore_threads: 4
       compression_format: zstd
     restic:
-      repository: '{root_directory}/backups/restic'
-      password_file: '{root_directory}/backups/restic_password'
+      repository: "{root_directory}/backups/restic"
+      password_file: "{root_directory}/backups/restic_password"
       retry_lock_seconds: 60
       environment: {}
     btrfs:
@@ -2168,11 +2194,11 @@ docker:
   server_name_in_container_name: false
   delete_container_on_stop: true
   network:
-    interface: 172.18.0.1
+    interface: "172.18.0.1"
     disable_interface_binding: false
     dns:
-    - 1.1.1.1
-    - 1.0.0.1
+    - "1.1.1.1"
+    - "1.0.0.1"
     dns_options:
     - ndots:0
     - timeout:2
@@ -2189,7 +2215,7 @@ docker:
       v4:
         enabled: true
         subnet: 172.18.0.0/16
-        gateway: 172.18.0.1
+        gateway: "172.18.0.1"
       v6:
         enabled: true
         subnet: fdba:17c8:6c94::/64
@@ -2199,8 +2225,8 @@ docker:
     source_file_max_entries: 10000
     source_file_max_bytes: 1048576
   bandwidth:
-    enabled: true
-  domainname: ''
+    backend: auto
+  domainname: ""
   registries: {}
   registry_image_fetch_cache:
     enabled: true
@@ -2210,7 +2236,7 @@ docker:
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   numa_memory_binding: true
@@ -2241,12 +2267,12 @@ docker:
     override: false
     default_multiplier: 1.05
     multipliers: {}
-  userns_mode: ''
+  userns_mode: ""
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
       mode: non-blocking
 limits:
@@ -2258,8 +2284,8 @@ throttles:
   line_reset_interval: 100
 tundra:
   enabled: false
-  data_directory: '{root_directory}/tundra'
-  binary: ''
+  data_directory: "{root_directory}/tundra"
+  binary: ""
   image: debian:trixie-slim
   source_image: ghcr.io/calagopus/tundra:latest
   metrics_port: 7101
@@ -2286,13 +2312,13 @@ uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
 api:
-  host: 0.0.0.0
+  host: "0.0.0.0"
   port: 8080
   ssl:
     enabled: false
     ktls_enabled: false
-    cert: ''
-    key: ''
+    cert: ""
+    key: ""
   redirects: {}
   disable_openapi_docs: false
   disable_remote_download: false
@@ -2308,8 +2334,8 @@ api:
   - 198.18.0.0/15
   - 224.0.0.0/4
   - 240.0.0.0/4
-  - '::'
-  - ::1
+  - "::"
+  - "::1"
   - fe80::/10
   - fc00::/7
   - 2002::/16
@@ -2349,21 +2375,21 @@ api:
         - 198.18.0.0/15
         - 224.0.0.0/4
         - 240.0.0.0/4
-        - '::'
-        - ::1
+        - "::"
+        - "::1"
         - fe80::/10
         - fc00::/7
         - 2002::/16
         - ff00::/8
 system:
   root_directory: C:\ProgramData\Calagopus-Wings
-  log_directory: '{root_directory}\logs'
-  data: '{root_directory}\volumes'
-  diffs_directory: '{root_directory}\diffs'
-  vmount_directory: '{root_directory}\vmounts'
-  archive_directory: '{root_directory}\archives'
-  backup_directory: '{root_directory}\backups'
-  tmp_directory: '{root_directory}\tmp'
+  log_directory: "{root_directory}\\logs"
+  data: "{root_directory}\\volumes"
+  diffs_directory: "{root_directory}\\diffs"
+  vmount_directory: "{root_directory}\\vmounts"
+  archive_directory: "{root_directory}\\archives"
+  backup_directory: "{root_directory}\\backups"
+  tmp_directory: "{root_directory}\\tmp"
   username: calagopus
   timezone: +00:00
   user:
@@ -2386,7 +2412,7 @@ system:
   tcp_congestion_control: bbr
   sftp:
     enabled: true
-    bind_address: 0.0.0.0
+    bind_address: "0.0.0.0"
     bind_port: 2022
     read_only: false
     key_algorithm: ssh-ed25519
@@ -2414,7 +2440,7 @@ system:
     timeout: 60
   file_history:
     enabled: true
-    zstd_level: 19
+    zstd_level: 9
     anchor_interval: 4
     keep_chains: 5
     file_size_cap: 1048576
@@ -2454,10 +2480,11 @@ system:
       retry_limit: 10
     ddup_bak:
       create_threads: 4
+      restore_threads: 4
       compression_format: zstd
     restic:
-      repository: '{root_directory}\backups\restic'
-      password_file: '{root_directory}\backups\restic_password'
+      repository: "{root_directory}\\backups\\restic"
+      password_file: "{root_directory}\\backups\\restic_password"
       retry_lock_seconds: 60
       environment: {}
     btrfs:
@@ -2475,11 +2502,11 @@ docker:
   server_name_in_container_name: false
   delete_container_on_stop: true
   network:
-    interface: 172.18.0.1
+    interface: "172.18.0.1"
     disable_interface_binding: false
     dns:
-    - 1.1.1.1
-    - 1.0.0.1
+    - "1.1.1.1"
+    - "1.0.0.1"
     dns_options:
     - ndots:0
     - timeout:2
@@ -2496,7 +2523,7 @@ docker:
       v4:
         enabled: true
         subnet: 172.18.0.0/16
-        gateway: 172.18.0.1
+        gateway: "172.18.0.1"
       v6:
         enabled: true
         subnet: fdba:17c8:6c94::/64
@@ -2506,8 +2533,8 @@ docker:
     source_file_max_entries: 10000
     source_file_max_bytes: 1048576
   bandwidth:
-    enabled: true
-  domainname: ''
+    backend: auto
+  domainname: ""
   registries: {}
   registry_image_fetch_cache:
     enabled: true
@@ -2517,7 +2544,7 @@ docker:
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   numa_memory_binding: true
@@ -2545,12 +2572,12 @@ docker:
     override: false
     default_multiplier: 1.05
     multipliers: {}
-  userns_mode: ''
+  userns_mode: ""
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
       mode: non-blocking
 limits:
@@ -2562,8 +2589,8 @@ throttles:
   line_reset_interval: 100
 tundra:
   enabled: false
-  data_directory: '{root_directory}\tundra'
-  binary: ''
+  data_directory: "{root_directory}\\tundra"
+  binary: ""
   image: debian:trixie-slim
   source_image: ghcr.io/calagopus/tundra:latest
   metrics_port: 7101

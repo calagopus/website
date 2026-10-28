@@ -11,9 +11,9 @@ A database host is an external MySQL, PostgreSQL, or MongoDB server the panel co
 This page covers the panel side. Preparing the database server itself, creating the privileged account, and allowing remote access is covered in [Setting up Database Hosts](../../../additional/database-hosts/index.md), with dedicated guides for MySQL (MariaDB), PostgreSQL, and MongoDB. Do that first.
 :::
 
-The list at `/admin/database-hosts` shows each host's ID, Name, Type, and Created date. Click a host's ID to open it, and use the search box to filter.
+The list at `/admin/database-hosts` shows a health indicator, ID, Name, Type, and Created date for each host. The heart is green when the panel can connect to the database server, with its version on hover, and broken red when it can't (the check gives up after 5 seconds). The same indicator appears on a node's and a location's **Database Hosts** tabs. Click a host's ID to open it, and use the search box to filter.
 
-![Database hosts list](./images/database-hosts/list.webp)
+![Database hosts list with a green health heart for two reachable hosts and a broken red heart for one that cannot be reached](./images/database-hosts/list.webp)
 
 ## Creating a Database Host
 
@@ -38,9 +38,17 @@ Click **Create** in the top right.
 
 Registering a host is not enough on its own: users are only offered hosts that have **Deployment Enabled** turned on and that are attached to their server's node or to that node's location. Attach a host from a node's or location's **Database Hosts** tab with the **Add** button, which lets you search for and pick a registered host.
 
+## Overview
+
+Opening a host lands on its **Overview** tab. Badges show the deployment and maintenance state, **Host Details** lists the type, address, public address and creation date, and **System Information** shows the database server's version, how many databases it holds, and their total size.
+
+**Databases by Size** ranks every database on the host by size: a stacked bar that gives each database holding data its own colour, up to ten (beyond that, the largest nine keep theirs and the rest are grouped as **Other**), then a table with each database's server, size and **Share** of the total. Sizes are cached for 15 seconds and are unavailable while the host is in maintenance.
+
+![Database host Overview tab with host details, system information, and the Databases by Size bar and table](./images/database-hosts/overview.webp)
+
 ## Editing and Testing
 
-Opening a host lands on its **General** tab, the same form as creating one, plus two extra buttons: **Test Connection** verifies the panel can actually reach and authenticate against the database server, and **Delete** removes the host.
+The **General** tab has the same form as creating a host, plus two extra buttons: **Test Connection** verifies the panel can actually reach and authenticate against the database server, and **Delete** removes the host.
 
 The **Connection Credentials** section starts collapsed when editing; leave it collapsed to keep the stored credentials, or expand it to replace them.
 

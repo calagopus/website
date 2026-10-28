@@ -39,7 +39,7 @@ Changing a role's permissions or **Require Two Factor**, or deleting the role, a
 ::: warning
 Selecting `users.impersonate` shows a warning for good reason: it lets holders of this role impersonate other users. Be cautious assigning it to roles with less trusted users, see [Impersonation](./users.md#impersonation) for the exact rules.
 
-![Warning that the users.impersonate permission lets a role impersonate any user, including administrators](./images/roles/impersonate-warning.webp)
+![Warning that the users.impersonate permission lets a role impersonate users](./images/roles/impersonate-warning.webp)
 
 :::
 

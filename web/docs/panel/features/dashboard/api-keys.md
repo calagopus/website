@@ -45,7 +45,7 @@ Saving a key's **Edit** form, disabling it, or removing it also cuts off what wa
 
 ### Bulk Actions
 
-Select rows with their checkboxes, by dragging across them, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar can **Enable**, **Disable** or **Delete** the selected keys; enabling and disabling skip keys already in that state, and deleting asks for confirmation first. Each action reports how many items it changed, skipped or failed in a toast.
+Select rows with their checkboxes, by dragging across them, by `Shift`-clicking a second checkbox for a range, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar can **Enable**, **Disable** or **Delete** the selected keys; enabling and disabling skip keys already in that state, and deleting asks for confirmation first. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![API key selected with Enable, Disable and Delete controls](./images/api-keys/bulk-actions.webp)
 

@@ -22,9 +22,9 @@ The last two control what users see on their own [OAuth Links](../dashboard/oaut
 
 ## Creating a Provider
 
-**Create** (requires `oauth-providers.create`) opens the form. Name and an optional description come first, followed by a **Redirect URL** card: it reads "Available after creation" until the provider exists, then shows `<panel URL>/api/auth/oauth/<uuid>`, the callback URL you register with the external provider. With [Additional URLs](./settings.md#additional-urls) configured, the card lists one redirect URL per address, and each address you want OAuth logins on needs its own registered with the provider.
+**Create** (requires `oauth-providers.create`) opens the form. Name and an optional description come first. The icon button next to **Name** picks the icon shown on the provider's **Login with** button, from the same Font Awesome picker as the [route editors](./egg-configurations.md#route-configuration); without one, the button keeps the default fingerprint icon. After those comes a **Redirect URL** card: it reads "Available after creation" until the provider exists, then shows `<panel URL>/api/auth/oauth/<uuid>`, the callback URL you register with the external provider. With [Additional URLs](./settings.md#additional-urls) configured, the card lists one redirect URL per address, and each address you want OAuth logins on needs its own registered with the provider.
 
-![Provider form](./images/oauth-providers/create-form.webp)
+![Create OAuth Provider form with the icon button next to Name, the Redirect URL card, and the client, URL, and mapping fields](./images/oauth-providers/create-form.webp)
 
 | Field | Notes |
 | --- | --- |
@@ -38,7 +38,7 @@ The last two control what users see on their own [OAuth Links](../dashboard/oaut
 | **Identifier Path** | Required. Extracts the unique user identifier from the Info URL response. |
 | **Email Path** / **Username Path** / **First Name Path** / **Last Name Path** | Optional paths for profile fields, used to fill in accounts registered through this provider. |
 | **Avatar URL Template** / **Overwrite Existing Avatars** | Optional. Import the user's profile picture from the provider, see [Avatars](#avatars). |
-| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Link Manageable by User** / **Enabled** | The behavior switches; the first and last three are [explained above](#oauth-providers). |
+| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Linkable with API Keys** / **Link Manageable by User** / **Enabled** | The behavior switches; **Only allow Login**, **Link Viewable to User**, **Link Manageable by User** and **Enabled** are [explained above](#oauth-providers). |
 
 The path fields use JSONPath syntax (see [serdejsonpath.live](https://serdejsonpath.live)) evaluated against the Info URL response. They never read the additional info URLs.
 
@@ -47,6 +47,8 @@ On every login the Panel fetches the Info URL with the user's access token. The 
 ::: warning
 **Bypass 2FA on Login** "Allows users logging in with this provider to bypass their panel 2FA." Only enable it when the provider enforces equivalent security itself.
 :::
+
+**Linkable with API Keys** lets a billing integration such as [Paymenter](../../../integrations/paymenter.md) link its customers to this provider with an API key. Anyone who controls the provider's identifiers can sign in as every linked account, so only turn it on for a provider you trust the integration to assign identifiers for.
 
 Finish with **Save** (or **Save & Stay** when creating). An existing provider also offers **Export** (as JSON or YAML), **Duplicate**, **Delete**, and a **View Documentation** shortcut to the setup guides.
 
@@ -119,7 +121,9 @@ The **Mappings** tab automates access: whenever a user logs in through this prov
 - **Revoke when not matched**: "Removes the assigned role or server subuser again when the matcher no longer matches on a later login", handy for mirroring, say, a Discord role into a panel role.
 
 ::: info
-You cannot create a mapping that grants more than you hold yourself. A mapping whose role or subuser permissions exceed your own is rejected with `permissions: more permissions than self`. The same guard applies when editing a role that already grants permissions you lack, and when linking an OAuth account to a user whose role outranks yours.
+You cannot create a mapping that grants more than you hold yourself. A mapping whose role or subuser permissions exceed your own is rejected with `permissions: more permissions than self`. The same guard applies when editing a role that already grants permissions you lack. Through an API key, "what you hold" is also limited to the key's own permissions.
+
+Since Panel 1.2.7, some changes need a root admin signed in to the panel; an API key, even a root admin's, is refused. That covers creating a provider with **Bypass 2FA on Login**, and changing an existing provider's Client Id, Auth URL, Token URL, Info URL, Additional Info URLs, Scopes, Identifier Path, **Only allow Login**, **Bypass 2FA on Login** or **Link Manageable by User** ("only administrators can change how an oauth provider identifies users, how they may sign in with it or who may link accounts to it"). Creating or duplicating a provider with **Linkable with API Keys** on, or switching it on or off, is limited the same way ("only administrators can create an oauth provider that api keys may link accounts to"). Linking an OAuth identity to someone else's account from the admin area is likewise limited to root admins in a session; anyone else can only link their own account, also from a session. From Panel 1.2.8 there is one exception, for integrations such as [Paymenter](../../../integrations/paymenter.md): an API key holding `users.oauth-links` and `users.impersonate` may link identities through a provider with **Linkable with API Keys** on, but only to accounts it could impersonate, so never to admins or to roles with permissions the key lacks.
 :::
 
 <img src="./images/oauth-providers/add-mapping.webp" width="310" alt="Add OAuth Provider Mapping dialog with Role type and a Field Equals matcher on the emails source" />

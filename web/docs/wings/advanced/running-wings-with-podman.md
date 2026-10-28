@@ -227,4 +227,4 @@ The optional [LXCFS integration](../installation/binary.md#optional-lxcfs) also 
 
 ## Bandwidth Limits
 
-[Per-server bandwidth limits](../configuration.md#docker-bandwidth-enabled) work with rootless Podman as long as the host allows user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). Wings joins the container's user namespace to set up shaping, and uses deeper download buffers there because traffic is relayed through pasta or slirp4netns. Rootful Podman needs Wings to hold `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, as with Docker.
+[Per-server bandwidth limits](../configuration.md#docker-bandwidth-backend) work with rootless Podman as long as the host allows user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). Wings joins the container's user namespace to set up shaping, and uses deeper download buffers there because traffic is relayed through pasta or slirp4netns. Rootful Podman needs Wings to hold `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, as with Docker.

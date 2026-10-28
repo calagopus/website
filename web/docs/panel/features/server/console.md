@@ -30,9 +30,9 @@ The icons in the top right of the terminal:
 | **Search** | Search the scrollback (also `Ctrl`+`F`). Enter jumps to the next match, Shift+Enter to the previous. |
 | **SSH Details** | Connection details for SSH access, see below |
 | **Command History** | Previously sent commands, see below |
-| **Decrease Font Size** / **Increase Font Size** | Adjust the terminal font between 10px and 24px; the choice is saved to your account and follows you to other devices, unless you set it to this device only |
+| **Decrease Font Size** / **Increase Font Size** | Adjust the terminal font between 10px and 24px; the choice is saved to your account and follows you to other devices, unless you set it to this device only. With the terminal focused, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14px) do the same, as does `Ctrl` + mouse wheel over it; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts) |
 
-Select text to copy it: `Ctrl`+`C` copies the selection, and on touch screens a long press starts selecting and shows a **Copy Selection** button. If you've scrolled up, an arrow button jumps back to the bottom.
+Select text to copy it: `Ctrl`+`C` copies the selection, and so does the browser's own **Copy** (from the right-click menu, for example). The selection is cleared once copied. On touch screens a long press starts selecting and shows a **Copy Selection** button. If you've scrolled up, an arrow button jumps back to the bottom.
 
 When the server's Docker image has to be pulled before it can start, pull and extract progress bars appear below the terminal.
 
@@ -64,6 +64,28 @@ Every field except the password copies on click, and **Launch** opens the connec
 
 <img src="./images/console/ssh-details.webp" width="220" alt="SSH Details dialog with protocol, port, host, username, password, and SSH command fields" />
 
+### SSH Shell Commands
+
+The SSH shell is the server console: it shows the console output, and each line you type is sent to the server as a command (requires `control.console`). Lines starting with `.wings` are handled by Wings instead. The node can rename the prefix with [`system.sftp.shell.cli.name`](../../../wings/configuration.md#system-sftp-shell-cli-name) or turn the shell off with [`system.sftp.shell.enabled`](../../../wings/configuration.md#system-sftp-shell-enabled), and opening it needs the `websocket.connect` permission.
+
+| Command | What it does |
+| --- | --- |
+| `.wings help` | Lists the commands. |
+| `.wings version` | Shows the Wings version of the node. |
+| `.wings status [--json]` | Shows the server state and whether a restart is pending. |
+| `.wings power start\|restart\|stop\|kill [--wait]` | Sends a power action; needs the matching `control.*` permission. With `--wait`, waits up to 10 minutes until the server is running (start, restart) or offline (stop, kill). |
+| `.wings stats [--json]` | Shows CPU, memory, disk and network usage against the server's limits. |
+| `.wings logs [lines]` | Prints the last console lines, by default as many as the console loads on connect. Needs `control.read-console`. |
+| `.wings permissions [--json]` | Lists your permissions on the server, and says when some files are hidden from you. |
+
+`status`, `logs`, `permissions`, `power --wait` and the `--json` options need Wings 1.2.8 or newer; older versions only have `help`, `version`, `power` and `stats`. On 1.2.8 the commands also work without an interactive shell, which makes them usable from scripts. The SSH exit status is `0` on success and `1` on failure:
+
+```bash
+ssh -p 2022 user.1a2b3c4d@node.example.com '.wings power restart --wait'
+```
+
+A command that does not start with `.wings` is sent to the console the same way, without printing any output; it fails with `Server is not running.` while the server is offline, and with `Permission denied.` without `control.console`. Wings before 1.2.8 sends every such command to the console, `.wings` included, and always exits with `0`.
+
 ## Stats
 
 To the right of the terminal, tiles show the server's live stats. Usage tiles show current use against the server's limit, like `869.89 MiB / 4 GiB`, or **Unlimited** where no limit is set; while the server is offline they read **Offline**, except **Disk Usage**, which always shows the stored amount.
@@ -79,7 +101,7 @@ To the right of the terminal, tiles show the server's live stats. Usage tiles sh
 
 ## Graphs
 
-Below everything, three live graphs: **CPU Load**, **Memory Load**, and **Network**. The Network graph tracks both directions in bits per second; click **Hide Outbound** or **Hide Inbound** in its legend to focus on one. While the server is offline, the graphs show a **Server is offline** overlay instead.
+Below everything, three live graphs: **CPU Load**, **Memory Load**, and **Network**. The Network graph tracks both directions in bits per second; click **Hide Outbound** or **Hide Inbound** in its legend to focus on one. While the server is offline, the graphs show a **Server is offline** overlay instead. Until the first stats arrive after opening the page, they show **Connecting...** with a spinner, and the stat tiles show a spinner rather than **Offline**.
 
 When the server has a CPU or memory limit, that graph draws it as a dashed red **Limit** line. Once usage reaches 40% of the limit, the graph's scale stretches to the limit so you can see how close the server is; below that the line sits off the top of the graph and only a small **Limit** label marks it. Hovering over one graph highlights the same moment on all three.
 

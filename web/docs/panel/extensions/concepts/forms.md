@@ -146,6 +146,17 @@ The fields inside a form (and the ones your `transform` produces) are `FieldDef`
 { type: 'textarea', name: '...', label: '...', rows?: number, props?: Partial<TextareaProps> }
 ```
 
+A `text` field can carry an icon picker in front of it with `icon: { name, label, fallback? }`. `name` is the form key the picked icon identifier is stored under (for example `fontawesome:solid:house`, or `null` for none), `label` labels the picker, and `fallback` is the Font Awesome `IconDefinition` shown while nothing is picked. The Panel uses it for the OAuth provider **Name** field. Available since Panel 1.2.7.
+
+```ts
+{
+  type: 'text',
+  name: 'name',
+  label: 'Name',
+  icon: { name: 'icon', label: 'Icon', fallback: faFingerprint },
+}
+```
+
 ### Numeric
 
 ```ts

@@ -7,7 +7,7 @@ description: Create and manage Calagopus nodes, from the connection settings and
 
 A node is a machine running wings that hosts servers. This page covers the admin UI surface; for the step-by-step setup of a new node, follow [Configuring a New Node](../../../wings/next-steps/configure-node.md).
 
-The list shows a health indicator, ID, Name, Location, and Created timestamp for each node. The heart is green when the panel can reach wings, yellow and pulsing when a wings update is available, and broken red when the node is unreachable.
+The list shows a health indicator, ID, Name, Location, and Created timestamp for each node. The heart is green when the panel can reach wings, yellow and pulsing when a wings update is available, grey when the latest version could not be determined, and broken red when the node is unreachable.
 
 Next to the name, a badge shows whether the node can still take new servers:
 
@@ -75,11 +75,24 @@ Hit **Save**, or **Save & Stay** to create another. These limits are what deploy
 
 Two status badges up top: **Deployment Enabled** / **Deployment Disabled** and **Under Maintenance** / **Not Under Maintenance**.
 
-![Node Overview tab with node details, system information, and allocated memory, disk, and CPU gauges](./images/nodes/overview.webp)
+![Node Overview tab with node details, system information with an Upgrade button next to the Wings version, allocated memory, disk, and CPU gauges, and the Allocation Breakdown bars](./images/nodes/overview.webp)
 
 - **Node Details**: Location, Internal URL, Public URL, SFTP Address, Backup Configuration (shows **Inherited from Location** when the node has none of its own), Description, and Created.
-- **System Information**: live data from wings - Wings Version (with an **Update Available** badge when outdated), CPU model and core count, Memory, Servers (online / total), Kernel Version, and Architecture. Shows **Unavailable** when the node can't be reached.
+- **System Information**: live data from wings - Wings Version (with an **Update Available** badge when outdated, **Latest Version Unknown** when the check failed, and an **Upgrade** button where wings can [upgrade itself](#upgrading-wings)), CPU model and core count, Memory, Servers (online / total), Kernel Version, and Architecture. Shows **Unavailable** when the node can't be reached.
 - **Allocated Resources**: what servers on this node have been promised, with a **Servers** count. Memory and Disk show allocated / limit gauges with the free remainder (the gauge turns red at 90% and caps at 100% even when over-allocated); a limit of `0` shows **No node limit**. CPU is always uncapped and shows the total allocated percentage as "cores allocated". Reserved container memory overhead is listed separately.
+- **Allocation Breakdown**: a stacked bar each for Memory, Disk and CPU showing which servers take up the allocation, largest first. Up to ten servers get their own colour and link to the server; with more, the top nine do and the rest are grouped as **Other**, suspended servers are striped, and **Memory Overhead** is its own segment. Servers with no limit for a resource are counted below its bar instead. The button next to each bar's total changes what it is measured against: **Configured Limit** (the default for memory and disk; CPU has no limit and defaults to **Allocated Total**), **Live Capacity** (what Wings reports for the machine, 100% per thread for CPU), **Allocated Total**, or a **Custom** value. The choice is saved to your account per node. A bar past its total shows how far it is **Overallocated**.
+
+### Upgrading Wings
+
+Since Panel 1.2.7, a node running Wings 1.2.7 or newer as a binary (a package or manual install, not a container) can be upgraded from the panel. The **Upgrade** button next to the Wings version needs the `nodes.upgrade` permission and only appears when Wings reports that it can upgrade itself. Containers, including the All-in-One image, never do; update those by pulling a new image, see [Updating Wings](../../../wings/updating.md).
+
+The **Upgrade Wings** dialog names the repository and provider Wings downloads from. **Version** takes a release version such as `1.2.8`, or `latest` for the newest stable release, and is pre-filled with the latest version Wings found. Wings downloads the release, replaces its binary and restarts, so the node is unreachable for a few seconds; a **Restarting** badge shows until it comes back with a new version, for up to 90 seconds. The upgrade is recorded in admin activity as `node:upgrade`. Wings refuses an upgrade while servers are installing, restoring or transferring, or backups or file operations are running; see [Self-upgrades](../../../about/security.md#self-upgrades) for the full list of checks.
+
+![Upgrade Wings dialog naming the calagopus/wings GitHub repository, with the Version field pre-filled](./images/nodes/upgrade-modal.webp)
+
+If the node's `config.yml` sets [`ignore_panel_wings_upgrades`](../../../wings/configuration.md#ignore-panel-wings-upgrades), Wings accepts the request but does nothing, and the panel says the node ignored the upgrade.
+
+Where Wings can upgrade itself, the update check asks Wings about its own release source, which is what makes a fork's releases count as updates. Otherwise the panel compares the version with the latest official Calagopus release. A private fork, or a GitHub API rate limit, needs a [release token](./settings.md#updates).
 
 ## General
 
@@ -90,6 +103,8 @@ The same form as [creating a node](#creating-a-node), plus three extra buttons:
 - **Reset Token** (requires `nodes.reset-token`): issues a new connection token. The wings config contains this token, so re-apply the configuration afterwards or the node loses contact.
 - **Duplicate**: copies the node's settings under a new name.
 - **Delete**: removes the node after confirmation.
+
+Changing the node's **URL** also needs `nodes.read-token` since Panel 1.2.7, because the panel sends the node token to whatever that URL points at.
 
 ## Configuration
 
@@ -109,7 +124,7 @@ Below that are the manual configuration tools needed to connect Wings to this no
 
 ![Verify Connection step with backend and frontend connection checks to Wings both succeeding](./images/nodes/verify-connection.webp)
 
-**Live Configuration** below edits the full `config.yml` of the running wings instance in a YAML editor. **Save Configuration** (or `Ctrl+S`) pushes it to the node. The editor lists options that cannot be changed from the web UI, and reports changes to those paths as ignored. Edit them on the Wings host instead; this includes `allowed_mounts` and `allowed_devices`. See the [Wings configuration reference](../../../wings/configuration.md) for every option. Leaving the page with unsaved edits in the editor asks you to confirm first.
+**Live Configuration** below edits the full `config.yml` of the running wings instance in a YAML editor. **Save Configuration** (or `Ctrl+S`) pushes it to the node. The editor lists options that cannot be changed from the web UI, and reports changes to those paths as ignored. Edit them on the Wings host instead; this includes `allowed_mounts` and `allowed_devices`. See the [Wings configuration reference](../../../wings/configuration.md) for every option. Leaving the page with unsaved edits in the editor asks you to confirm first. Without `nodes.read-token`, secrets in the config (the token, `remote_headers`, registry passwords, log driver options and restic environment variables) are shown censored. Since Panel 1.2.7 saving leaves censored values as they are on the node instead of overwriting them with the placeholder, and the `node:update-config` activity entry stores them censored.
 
 ![Live Configuration YAML editor for Wings with a Save Configuration button](./images/nodes/live-configuration.webp)
 
@@ -181,7 +196,9 @@ Restore, export to files, detach and reattach apply to file backups only; dumps 
 
 When there are failed backups, a **Delete Failed** button appears above the table (requires `nodes.backups`), showing how many it would remove. It asks for confirmation, keeps locked backups and any whose configuration is in maintenance, and runs in the background. A **Force** switch removes them even when the configuration is missing or the remote storage is unreachable, at the risk of leaving orphaned files behind.
 
-![Node Backups tab listing backups with server, checksum, size, and file count](./images/nodes/backups.webp)
+A backup whose deletion still fails after the panel's eight automatic attempts is marked as a failed deletion. Since Panel 1.2.8, when there are any, a **Retry Failed Deletions** button with their count sits next to it (requires `nodes.backups`). It skips backups whose configuration is in maintenance, runs in the background, and has the same **Force** switch. With **Only show detached backups** on, it only retries detached backups.
+
+![Node Backups tab with Delete Failed and Retry Failed Deletions buttons above backups listing server, checksum, size, and file count, one marked Deletion failed](./images/nodes/backups.webp)
 
 Right-click a backup for:
 

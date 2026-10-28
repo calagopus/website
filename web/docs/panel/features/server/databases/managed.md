@@ -21,13 +21,13 @@ Templates and the resource limits they carry are configured by administrators un
 
 ## Bulk Actions
 
-Select rows with their checkboxes, by dragging across them, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar has **Start**, **Restart**, **Stop** and **Kill** for every selected instance (`database-instances.power`; **Kill** asks first, since it can corrupt data), and **Delete** (`database-instances.delete`), which permanently removes the instances and their data after a confirmation. Locked instances are skipped by **Delete**. Each action reports how many items it changed, skipped or failed in a toast.
+Select rows with their checkboxes, by dragging across them, by `Shift`-clicking a second checkbox for a range, or with `Ctrl+A` (`Esc` clears); only rows on the current page are selected. The action bar has **Start**, **Restart**, **Stop** and **Kill** for every selected instance (`database-instances.power`; **Kill** asks first, since it can corrupt data), and **Delete** (`database-instances.delete`), which permanently removes the instances and their data after a confirmation. Locked instances are skipped by **Delete**. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![Managed database instances selected with power and Delete controls](../images/databases/managed-bulk-actions.webp)
 
 ## The Instance Page
 
-Each instance has its own page at `/server/<id>/databases/instances/<id>` with the instance name, its type badge, and badges for **Locked**, **Update Available**, and **Restoring backup** where relevant.
+Each instance has its own page at `/server/<id>/databases/instances/<id>` with the instance name, its type badge, and badges for **Locked**, **Update Available**, and **Restoring backup** where relevant. Next to the badges, a dot shows the page's live connection to the instance, the same way the server console does: green **Connected**, yellow **Connecting...**, or red **Disconnected**. While the page reconnects after losing that connection, a yellow banner at the top reads "Lost connection to the database instance." with a countdown to the next attempt, and the **Logs** tab shows a spinner until the stream is back.
 
 ![Managed MariaDB instance page with CPU and memory graphs, address, uptime, and Start, Restart, Stop, Edit, Delete buttons](../images/databases/instance-view.webp)
 
@@ -39,7 +39,7 @@ Along the top:
 - **Edit** to rename the instance or toggle **Locked**. A locked instance can't be deleted, template updates can't be applied, and its user passwords can't be rotated.
 - **Delete** to remove the instance and all its data. Type the name to confirm.
 
-Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance is offline" overlay when it's off) and stat tiles for Address, Uptime, CPU Load, Memory Load, and Disk Usage. Tiles show usage against the template's limits; a limit of zero displays as Unlimited. If a background operation like a remote import is running, a progress ring appears next to the power buttons where you can watch or cancel it, or **Cancel all operations** at once.
+Below that are live **CPU Load** and **Memory Load** graphs (with an "Instance is offline" overlay when it's off, and **Connecting...** until the first stats arrive) and stat tiles for Address, Uptime, CPU Load, Memory Load, and Disk Usage. Tiles show usage against the template's limits; a limit of zero displays as Unlimited. If a background operation like a remote import is running, a progress ring appears next to the power buttons where you can watch or cancel it, or **Cancel all operations** at once.
 
 While a [database backup](../backups.md#database-backups) is being restored into the instance, a banner at the top reads "A backup is currently being restored into this managed database. Please wait..." with a progress bar and time estimate, and **Start**, **Restart**, and **Stop** are disabled until it finishes. A toast tells you whether the restore completed or failed.
 
@@ -60,8 +60,8 @@ Right-click a database for:
 | Action | What it does |
 | --- | --- |
 | **Explore Data** | Opens the [Data Explorer](./index.md#data-explorer). |
-| **Export** | Downloads a dump of this database: a gzip-compressed `.sql.gz` for PostgreSQL and MariaDB, a `.archive` for MongoDB. |
 | **Import** | Uploads a **Dump File**, optionally wiping existing data first. The file picker only offers `.sql` and `.gz` files for PostgreSQL and MariaDB, `.archive` for MongoDB, and `.rdb` for Redis. Gzip-compressed dumps are detected by their content and unpacked, so a plain `.sql` and an exported `.sql.gz` both work (DB Agent 1.2.3 and newer). MongoDB imports also need the **Source Database** name the dump was taken from. |
+| **Export** | Downloads a dump of this database: a gzip-compressed `.sql.gz` for PostgreSQL and MariaDB, a `.archive` for MongoDB. |
 | **Import from Remote** | Dumps another database server over a **Connection String** and imports the result. An optional **Source Database** field "Overrides the database named in the connection string", and a wipe toggle clears the target first. The connection string is only used to take the dump, it is never stored. Runs in the background as a cancellable operation. |
 | **Recreate** | Wipes all data and recreates an empty database with the same name and user access. Type the name to confirm. |
 | **Delete** | Permanently deletes the database and its data. |

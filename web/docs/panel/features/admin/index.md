@@ -97,8 +97,10 @@ A healthy panel is mostly **Memory hit**. A large **Computed** share means value
 - **Panel Version**: the version you're running versus the latest available, with a **Recheck for Updates** button that re-runs every update check on this tab.
 - **Version History**: a table of installed versions and when they were installed. The dropdown switches between the panel's history and each extension's.
 - **Outdated Extensions**: extensions with a newer version available, listing package name, installed and latest version, and the changelog. Extensions that failed the update check are listed separately with their error.
-- **Outdated Nodes**: nodes running an older Wings version than the latest, including how many failed to check. Requires `nodes.read`.
-- **Outdated Database Agent Hosts**: the same for database agent hosts. Requires `database-agent-hosts.read`.
+- **Outdated Nodes**: nodes running an older Wings version than the latest, including how many failed to check, with a **Latest** badge naming the newer version. Requires `nodes.read`. Right-click a node for **Upgrade** where it can [upgrade itself](./nodes.md#upgrading-wings) (requires `nodes.upgrade`).
+- **Outdated Database Agent Hosts**: the same for database agent hosts. Requires `database-agent-hosts.read`, and `database-agent-hosts.upgrade` for **Upgrade**.
+
+Each daemon that can upgrade itself is asked about its own release source; the rest are compared against the latest official release.
 
 ### Health
 

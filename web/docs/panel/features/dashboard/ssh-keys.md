@@ -33,6 +33,6 @@ Deleting a key logs you out of Wings everywhere: every SFTP and SSH session you 
 
 <img src="./images/ssh-keys/edit-form.webp" width="220" alt="Edit SSH Key dialog with the Name field and Edit button" />
 
-To remove several keys at once, select them (checkboxes, drag, or `Ctrl+A`) and use **Delete** in the action bar, which asks for confirmation. Each action reports how many items it changed, skipped or failed in a toast.
+To remove several keys at once, select them (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and use **Delete** in the action bar, which asks for confirmation. Each action reports how many items it changed, skipped or failed in a toast.
 
 ![SSH key selected with the bulk Delete control](./images/ssh-keys/bulk-actions.webp)
