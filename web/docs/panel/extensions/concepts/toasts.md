@@ -24,12 +24,13 @@ export default function MyCard() {
 
 Before you reach for it, check whether something already toasts for you - the Panel's data-fetching hooks raise error and success toasts internally, so a lot of the obvious cases are already covered. See [Toasts the data hooks already raise](#toasts-the-data-hooks-already-raise).
 
-The hook hands you five things:
+The hook hands you six things:
 
 | Member | What it does |
 | ------ | ------------ |
 | `addToast(message, type?, actions?)` | Shows a toast, returns its numeric id |
 | `addProgressToast(message, options?)` | Shows a toast with a progress bar that stays until you dismiss it, returns its id |
+| `addPendingToast(message)` | Shows a progress toast only if the work takes longer than 300ms, returns a handle to settle it with |
 | `updateToast(id, update)` | Patches a toast that's already on screen |
 | `dismissToast(id)` | Removes a toast early |
 | `toastPosition` | The corner the current user has chosen |
@@ -151,7 +152,7 @@ export default function RenameModal({ server, file }: Props) {
 }
 ```
 
-That one call gets you a success toast carrying an Undo button (a left-arrow icon, tooltipped with the Panel's translated `common.button.undo`), plus an entry in the undo history. You don't wire the action yourself and you don't dismiss the toast in your callback - clicking Undo takes the toast down before running your function.
+That one call gets you a success toast carrying an Undo button (a left-arrow icon, tooltipped with the Panel's translated `common.button.undo`), plus an entry in the undo history. You don't wire the action yourself and you don't dismiss the toast in your callback. While the undo runs, the toast swaps its Undo button for an indeterminate progress bar, and it comes down once your function settles.
 
 <img src="./images/toasts/undo-action.webp" alt="A green success toast reading File has been renamed, with an undo arrow action button to the left of the close button" width="288">
 
@@ -159,7 +160,7 @@ That is the file manager's rename toast, and it is what every `useUndoableToast`
 
 ### Writing the undo callback
 
-The callback is just "do the inverse operation". It can return a promise, which the action button turns into a loading spinner, and it's responsible for its own feedback - the Panel doesn't toast anything on your behalf when an undo runs. The shape the file manager uses:
+The callback is just "do the inverse operation". It can return a promise, which keeps the toast's progress bar up until it settles, and it's responsible for its own feedback - the Panel doesn't toast anything on your behalf when an undo runs. The shape the file manager uses:
 
 ```tsx
 addUndoableToast('Renamed 3 files.', () =>
@@ -209,11 +210,12 @@ The store has a few properties worth knowing about:
 
 - **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Undo entries are always tied to that constant, even though [progress toasts](#progress-toasts) outlive it. Expired entries are pruned as new ones arrive.
 - **Entries are one-shot.** Running an undo removes it, whether it was triggered by the button or the shortcut, so there's no way to fire the same undo twice.
+- **One undo per scope at a time.** Since 1.2.8, while an undo is still running, the shortcut and the Undo buttons for that scope do nothing, so pressing the shortcut again on a slow connection doesn't start on the next older entry.
 - **The history holds 10 entries, globally.** It's shared across all scopes, and the oldest fall off. In practice the timeout expires entries long before the cap bites, but don't build anything that assumes a deep undo stack.
 - **There's no redo.** Undoing doesn't push an inverse entry. If you want "undo the undo", raise another undoable toast from inside your undo callback.
 
 ::: info
-`useUndoableToast` is a convenience layer over the same `addToast` actions described above - nothing stops you from building your own Undo action by hand. Use the hook anyway when the semantics fit. Wiring it yourself means reimplementing the shortcut integration and the dismiss-on-undo behavior, and keeping your label and icon in sync with the ones users see everywhere else.
+`useUndoableToast` is a convenience layer over the same `addToast` actions described above - nothing stops you from building your own Undo action by hand. Use the hook anyway when the semantics fit. Wiring it yourself means reimplementing the shortcut integration and the progress-then-dismiss behavior, and keeping your label and icon in sync with the ones users see everywhere else.
 :::
 
 ## Progress Toasts
@@ -314,8 +316,36 @@ useEffect(() => {
 ```
 
 ::: warning
-Don't convert a finished progress toast into a completion toast with `updateToast`. It keeps the missing timeout and the missing close button, so your green "Done." card stays on screen forever. Dismiss the progress toast and raise a normal one.
+Don't convert a finished progress toast into a completion toast with `updateToast`. It keeps the missing timeout and the missing close button, so your green "Done." card stays on screen forever. Dismiss the progress toast and raise a normal one, or use [`addPendingToast`](#pending-toasts), whose `settle` does the conversion properly.
 :::
+
+### Pending toasts
+
+`addPendingToast` was added in Panel 1.2.8. Some requests are usually quick but can stall on a slow connection: fetching a signed download URL, checking for conflicts before an upload. A progress toast on each of them flickers past on a fast network, while no toast at all leaves the user clicking again on a slow one. `addPendingToast` waits 300ms and only raises an indeterminate progress toast if the work is still running by then:
+
+```ts
+const { addPendingToast } = useToast();
+
+const pending = addPendingToast('Preparing download...');
+
+getDownloadUrl()
+  .then(({ url }) => {
+    pending.settle('Download started.', 'success');
+    downloadUrl(url);
+  })
+  .catch((err) => pending.settle(httpErrorToHuman(err), 'error'));
+```
+
+`settle(message?, type?)` ends it, and the type defaults to `success`:
+
+| Call | Progress toast showing | Still inside the 300ms |
+| ---- | ---------------------- | ---------------------- |
+| `settle(message, type)` | The card turns into a normal toast in place, with a close button and the usual 7500ms timeout | A normal toast is raised, so the user never sees the progress bar |
+| `settle()` | The card is dismissed | Nothing is shown |
+
+Call `settle` exactly once, on every path, the same as `dismissToast` for a progress toast. The Panel's file and backup downloads use the first form, and the upload conflict check uses the bare `settle()` because the upload toasts take over from there.
+
+For [toast handlers](#intercepting-toasts), a pending toast that shows up is a `'progress'` show, and settling it with a message is an update carrying the new `message` and `type`. One that settles inside the 300ms is a plain `'toast'` show.
 
 ### One owner, mounted once
 

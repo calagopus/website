@@ -1286,6 +1286,12 @@ export const wingsConfigDoc: ConfigDoc = {
           default: '',
         },
         {
+          key: 'docker.mount_options',
+          description:
+            'Extra options appended to every bind mount of server and installer containers, such as `idmap`, which together with `docker.userns_mode` keeps file ownership identical inside and outside the container. Options are passed to the container engine untouched and are engine-specific: rootful Podman supports `idmap`, while Docker rejects options it does not know and the container then fails to create. Kernel filesystem sources (`/dev`, `/proc`, `/sys`) and lxcfs mounts never get them. Changes apply to containers created afterwards.',
+          default: [],
+        },
+        {
           key: 'docker.log_config.type',
           description: 'The Docker logging driver type used to capture and store container output.',
           default: 'local',

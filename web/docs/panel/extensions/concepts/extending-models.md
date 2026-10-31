@@ -305,6 +305,32 @@ The **second closure** is the "project": given the original `ApiServerFeatureLim
 
 Once registered, the extended struct gets merged into the JSON that flows in and out of any endpoint that uses `ApiServerFeatureLimits`. Inbound, your fields are validated by garde; outbound, they appear alongside the core fields. The OpenAPI spec is updated automatically.
 
+### Mutating Existing Fields
+
+`extend` and `extend_validated` can only add fields. To change a field the struct already has, register a `mutate` hook instead. The first closure is the same fetch as before. The second gets the built struct as `&mut` and returns a `Result`, and an `Err` fails the whole request. Nothing is added to the OpenAPI spec, since the shape of the struct doesn't change.
+
+`RemoteApiServer` (the server configuration Wings fetches from the Panel) is the main use case. For example, to give every server's container an extra environment variable:
+
+```rs
+RemoteApiServer::mutate(
+    |server, _state| {
+        Box::pin(
+            async move { Ok(server.parse_model_extension::<model::ServerExtension>()?) },
+        )
+    },
+    |remote_server, extension, _state| {
+        remote_server.settings.environment.insert(
+            "SUBDOMAIN".into(),
+            serde_json::Value::String(extension.subdomain.to_string()),
+        );
+
+        Ok(())
+    },
+);
+```
+
+`mutate` and `extend` hooks share one list and run in the order they were registered. Don't return a key from `extend` that matches an existing field, such as `settings` on `RemoteApiServer`. The output would then contain that key twice and Wings would reject it. Use `mutate` for those changes.
+
 ## The Frontend Side
 
 The backend is now fully wired - you can `POST /api/admin/servers` or `PATCH /api/admin/servers/{uuid}` with `{ "feature_limits": { "subdomains": 5 } }` in the body and the server will get its limit set. But the existing admin form for creating and editing servers doesn't know about your new field.

@@ -22,10 +22,12 @@ Every extension's frontend entry point is a class extending `Extension`, whose i
 import { Extension, ExtensionContext } from 'shared';
 import MyConfigurationPage from './ConfigurationPage.tsx';
 import MyCardSummary from './CardSummary.tsx';
+import MyCardDetails from './CardDetails.tsx';
 
 class MyExtension extends Extension {
   public cardConfigurationPage: React.FC | null = MyConfigurationPage;
   public cardComponent: React.FC | null = MyCardSummary;
+  public cardPreviewComponent: React.FC | null = MyCardDetails;
   public cardIcon: React.ReactNode = <FontAwesomeIcon icon={faRocket} />;
 
   public initialize(ctx: ExtensionContext): void {
@@ -36,9 +38,11 @@ class MyExtension extends Extension {
 export default new MyExtension();
 ```
 
-Three fields on the class map directly to admin-panel surfaces:
+Four fields on the class map directly to admin-panel surfaces:
 
-- **`cardComponent`** - a React component rendered inside your extension's card in the admin panel's extension list. Good for a quick at-a-glance summary: "42 items installed", "last sync 2 minutes ago", a small health indicator. Keep it compact, it's sharing space with other extensions. Set to `null` if you don't need it.
+- **`cardComponent`** - a React component rendered inside your extension's card in the admin panel's extension list. Good for a quick at-a-glance summary: "42 items installed", "last sync 2 minutes ago", a small health indicator. Keep it compact, it's sharing space with other extensions. It's also rendered again in the hover preview, so it can be mounted twice at once. Set to `null` if you don't need it.
+
+- **`cardPreviewComponent`** - a React component rendered in the expanded preview that opens when an admin hovers your extension's card with a mouse. It sits below the built-in details (full description, authors, panel version) and your `cardComponent`, just above the action buttons, so it's the place for details that don't fit the compact card. The preview mounts fresh every time it opens and isn't shown on touch devices, so keep it display-only and don't put anything there that only exists in the preview. Set to `null` if you don't need it.
 
 - **`cardConfigurationPage`** - a React component shown when an admin clicks the Configure button on your extension's card. It's mounted at `/admin/extensions/<your-package-identifier>` automatically - you don't need to register a route for it. Set to `null` if your extension has nothing to configure. The Configure button is only enabled while the extension is enabled and has a backend part, and the page itself sits behind the `extensions.*` admin permissions.
 

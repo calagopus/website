@@ -123,6 +123,32 @@ Push your items **during render, on every render**. The item array is rebuilt fr
 
 Two more things about the items themselves: submenus are exactly one level deep, so an item's `items` array cannot hold further nested items, and menu items only fire on real user clicks, which is worth knowing if you drive the Panel from a test script.
 
+### Async Items
+
+Since 1.2.8, an item's `onClick` may return a promise. The menu still closes straight away, but every item in that menu stays disabled until the promise settles, so a second click can't run the action twice. In the meantime the row's `⋯` toggle shows a spinner, and so does the item itself (and its parent, for a submenu item) if the user opens the menu again. An open menu updates as soon as the promise settles. Return the promise whenever the click starts a request. The `Format YAML` item above already does if `formatYaml` returns one, because an arrow without braces returns whatever it calls.
+
+The clipboard item in [the trash example](#the-trash-page) is tracked as well, because `navigator.clipboard.writeText` returns a promise, so its menu is disabled for the moment the copy takes. Wrap the call in braces when you don't want that.
+
+The mass menu and the tree have no row toggle, so the spinner doesn't show there. For anything that can take a while, raise a [pending toast](./toasts.md#pending-toasts) from the handler as well, the way the Panel's downloads do.
+
+If an interceptor wraps a core item's `onClick`, return the original result, or the core item loses its pending state:
+
+```ts
+menu.addItemInterceptor((items) => {
+  for (const item of items) {
+    if (item.type !== 'action' || !item.onClick) continue;
+
+    const original = item.onClick;
+    item.onClick = (e) => {
+      console.debug('menu item clicked', item.label);
+      return original(e);
+    };
+  }
+});
+```
+
+To show the state by hand, set `loading: true` on an item. It swaps the item's icon for a spinner and disables it, which suits work your extension tracks itself, such as a job that outlives the click. Extensions that render their own `ContextMenu` from `@/elements/overlays/ContextMenu.tsx` can also pass its `loading` prop, which disables every item and puts the spinner on that menu's `ContextMenuToggle`.
+
 ## The Trash Page
 
 When a server has the trash enabled, deleting a file moves it to `/server/<id>/files/trash` instead of removing it. That page has its own nested registry with three slot points:
@@ -425,6 +451,6 @@ The component slots, the context menus and `addFileIconHandler` have been there 
 | `fileTreeToolbar`, `FileEditorActionContext`, the `surface` prop on file context menus, `readOnly` on editor content props | 1.2.0 |
 | `enterFileMassContextMenu`, `elements.enterPierreEditor` | 1.2.3 |
 | `trash`, `enterTrash` | 1.2.6 |
-| `diskUsageBar`, `enterDiskUsageBar` | 1.2.8 |
+| `diskUsageBar`, `enterDiskUsageBar`, promise-returning context menu items | 1.2.8 |
 
 An extension using the 1.2.0 additions will not build against an older Panel.
