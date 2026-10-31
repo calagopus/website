@@ -44,6 +44,7 @@ doubt, read the `LICENSE` file in the repository itself.
 | [`calagopus/nix`](https://github.com/calagopus/nix) | MIT | Nix flake for the Panel and Wings. Copyright is held by an outside contributor, not Calagopus. |
 | [`calagopus/unraid`](https://github.com/calagopus/unraid) | MIT | Unraid templates and Community Applications profile. |
 | [`calagopus/tipi-appstore`](https://github.com/calagopus/tipi-appstore) | WTFPL | Runtipi app store entries. |
+| [`calagopus/zimaos-appstore`](https://github.com/calagopus/zimaos-appstore) | MIT | ZimaOS/CasaOS app store entries. |
 
 ### Container images
 

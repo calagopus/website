@@ -460,6 +460,7 @@ export default withMermaid({
                   { text: 'Unraid', link: '/docs/panel/installation/external-methods/unraid' },
                   { text: 'umbrelOS', link: '/docs/panel/installation/external-methods/umbrelos' },
                   { text: 'Runtipi', link: '/docs/panel/installation/external-methods/runtipi' },
+                  { text: 'ZimaOS', link: '/docs/panel/installation/external-methods/zimaos' },
                   { text: 'Hostinger', link: '/docs/panel/installation/external-methods/hostinger' },
                 ],
               },
