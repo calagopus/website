@@ -1,5 +1,5 @@
 ---
-description: Install the Calagopus panel using platform-specific methods for TrueNAS SCALE, Unraid, umbrelOS, Runtipi, and Hostinger, which bundle the Panel and Wings in a single container.
+description: Install the Calagopus panel using platform-specific methods for TrueNAS SCALE, Unraid, umbrelOS, Runtipi, ZimaOS, and Hostinger, which bundle the Panel and Wings in a single container.
 ---
 
 # External Installation Methods
@@ -24,6 +24,9 @@ See the [umbrelOS Installation](./umbrelos.md) guide. Install Calagopus from the
 
 === Runtipi
 See the [Runtipi Installation](./runtipi.md) guide. Install Calagopus from the Calagopus Tipi App Store, no manual Docker setup required. Includes Wings in the same container.
+
+=== ZimaOS
+See the [ZimaOS Installation](./zimaos.md) guide. Install Calagopus from the Calagopus ZimaOS App Store, no manual Docker setup required. Includes Wings in the same container.
 
 === Hostinger
 See the [Hostinger Installation](./hostinger.md) guide. Deploy Calagopus on a Hostinger VPS as a one-click application, no manual Docker setup required. Includes Wings in the same container.
