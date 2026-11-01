@@ -16,7 +16,7 @@ To improve performance and reduce database load, the Calagopus Panel uses 2 cach
 1. **In-Memory Cache**: A local in-memory cache is used for frequently accessed data with a very short TTL (e.g., session data, db object cache). This is specific to each backend and can be disabled.
 2. **Redis Cache**: A Redis-like distributed cache is used for data that needs to be shared across multiple backend instances or has a longer TTL (e.g., login-related data, rate limiting). This cache is required and cannot be disabled, even with a single backend instance. Enabling persistent storage is optional but retains rate limiting data across Redis restarts.
 
-When enabled, the Panel also caches decrypted secrets, but only in the local in-memory cache and only for 30 seconds - decrypted values are never written to Redis. This improves performance but comes with security trade-offs; choose the option that fits your use case.
+When enabled, the Panel also caches decrypted secrets, but only in the local in-memory cache and only for 30 seconds; decrypted values are never written to Redis. This improves performance but comes with security trade-offs; choose the option that fits your use case.
 
 ## Wings Daemon
 

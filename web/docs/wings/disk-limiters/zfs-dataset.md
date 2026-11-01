@@ -25,7 +25,7 @@ Wings drives this by shelling out to the `zfs` CLI: `zfs create` with an explici
 
 ## Migrating existing servers
 
-Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `zfs_dataset` will **not** automatically convert existing server directories into datasets - they will remain plain directories on the parent dataset and will not have quotas enforced. A dataset is a distinct filesystem, so existing files have to be copied into a freshly-created dataset; there is no way to turn a plain directory into one in place.
+Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `zfs_dataset` will **not** automatically convert existing server directories into datasets; they remain plain directories on the parent dataset and will not have quotas enforced. A dataset is a distinct filesystem, so existing files have to be copied into a freshly-created dataset; there is no way to turn a plain directory into one in place.
 
 Wings ships a `migrate-disk-limiter` command that does this conversion for you. For each server it renames the existing directory aside, creates a new `server-<uuid>` dataset in its place, copies the data back in, applies the `refquota`, and removes the old directory. Servers that are already backed by a dataset are detected and skipped.
 
@@ -33,18 +33,18 @@ Wings ships a `migrate-disk-limiter` command that does this conversion for you. 
 The Wings daemon and all running servers **must** be stopped before running the migration. Migrating a server's directory while its container is running can corrupt or lose data.
 :::
 
-1. Stop the Wings daemon (e.g. `systemctl stop wings`).
+1. Stop the Wings daemon (e.g. `sudo systemctl stop wings`).
 2. Set `disk_limiter_mode: zfs_dataset` in your config (see [How do I use it?](#how-do-i-use-it)). The command uses this as the default target, and Wings needs it set to attach the datasets on the next boot.
 3. Run a dry run to see what would be migrated:
 
    ```bash
-   wings migrate-disk-limiter --dry-run
+   sudo wings migrate-disk-limiter --dry-run
    ```
 
 4. Run the migration:
 
    ```bash
-   wings migrate-disk-limiter
+   sudo wings migrate-disk-limiter
    ```
 
 5. Start the Wings daemon again.
@@ -61,14 +61,14 @@ The command pulls the server list and per-server disk limits from the panel, so 
 If a migration fails partway through, the command rolls back automatically: it destroys the partial dataset and restores the original directory, leaving the server exactly as it was.
 
 ::: details Alternative: transfer off the node and back
-If you'd rather not run the command, you can also move a server off the node and back - transfer it to another node, then transfer it back. Wings creates a fresh child dataset on the way back in. This is slower and moves data over the network, so the migration command is preferred.
+If you'd rather not run the command, you can also move a server off the node and back: transfer it to another node, then transfer it back. Wings creates a fresh child dataset on the way back in. This is slower and moves data over the network, so the migration command is preferred.
 :::
 
 ## When should I use it?
 
 Use `zfs_dataset` if you are already running (or want to run) ZFS for your server volumes. It is native, kernel-enforced (or kernel-module-enforced, depending on your distribution), stable, and has effectively no runtime overhead compared to not using a limiter at all.
 
-ZFS is particularly attractive if you also want its other features - RAID-Z, cheap snapshots, send/receive for backups, dataset-level compression, ARC caching. If you don't care about any of those, [Btrfs](./btrfs-subvolume.md) gives you a similar feature set without needing an out-of-tree kernel module on most distros, and [XFS](./xfs-quota.md) gives you the best raw performance if you don't need snapshots at all.
+ZFS is particularly attractive if you also want its other features: RAID-Z, cheap snapshots, send/receive for backups, dataset-level compression, ARC caching. If you don't care about any of those, [Btrfs](./btrfs-subvolume.md) gives you a similar feature set without needing an out-of-tree kernel module on most distros, and [XFS](./xfs-quota.md) gives you the best raw performance if you don't need snapshots at all.
 
 ## Docker Compose Setup
 
@@ -86,11 +86,11 @@ Wings needs access to the pool's underlying drives and elevated permissions to c
 ```
 
 ::: warning Add every drive in the pool
-All physical drives that make up the ZFS pool must be passed through - not just one. Run `zpool status` on the host to see which devices belong to your pool, then add a `devices` entry for each one.
+All physical drives that make up the ZFS pool must be passed through, not just one. Run `zpool status` on the host to see which devices belong to your pool, then add a `devices` entry for each one.
 :::
 
 ::: details Alternatively: privileged mode
-If you'd rather not manage individual capabilities and device paths, `privileged: true` works too - it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
+If you'd rather not manage individual capabilities and device paths, `privileged: true` works too; it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
 
 ```diff
  services:
@@ -102,8 +102,8 @@ If you'd rather not manage individual capabilities and device paths, `privileged
 After making either change, restart the stack:
 
 ```bash
-docker compose down
-docker compose up -d
+sudo docker compose down
+sudo docker compose up -d
 ```
 
 ## How do I use it?

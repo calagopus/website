@@ -4,7 +4,7 @@ description: Install Calagopus Wings on your game server nodes with Docker, APT/
 
 # Wings Installation
 
-Before installing, check the [minimum requirements](../overview.md#minimum-requirements).
+Before installing, check the [minimum requirements](../overview.md#minimum-requirements). Moving an existing Pterodactyl or Pelican node? You don't need a fresh install, follow [Migrating Wings Nodes](../../additional/migrations/wings.md).
 
 Choose your installation method:
 

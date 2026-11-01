@@ -5,19 +5,19 @@ description: Put Nginx, Apache, Caddy, Traefik or Nginx Proxy Manager in front o
 
 # Putting the Panel Behind a Reverse Proxy
 
-This guide covers the Panel, including the Wings bundled with the All-in-One image. For a standalone node, see [Putting Wings Behind a Reverse Proxy](./wings.md). For how a proxy fits into the request path, see [Setting up a Reverse Proxy](./index.md).
+This guide covers the Panel, including the Wings bundled with the All-in-One image. For a standalone node, see [Putting Wings Behind a Reverse Proxy](../../wings/next-steps/reverse-proxy.md). For how a proxy fits into the request path, see [Setting up a Reverse Proxy](../../additional/reverse-proxies.md).
 
 ::: info
-These configurations target current releases of each proxy and of the Panel. After updating the Panel, compare your configuration with this page again; see [Keeping the Configuration Current](./index.md#keeping-the-configuration-current).
+These configurations target current releases of each proxy and of the Panel. After updating the Panel, compare your configuration with this page again; see [Keeping the Configuration Current](../../additional/reverse-proxies.md#keeping-the-configuration-current).
 :::
 
 ## Prerequisites
 
-- The Panel [installed with Docker](../../panel/installation/docker.md), reachable at `http://<server-ip>:8000`.
+- The Panel installed with [Docker](../installation/docker.md), a [package](../installation/pkgmanager.md) or the [binary](../installation/binary.md), reachable at `http://<server-ip>:8000`.
 - A domain (`<domain>` below) with an `A` record, plus `AAAA` for IPv6 pointing at the server.
 - Ports `80` and `443` open, and forwarded on your router if the server is at home.
-- A [TLS certificate](../ssl-certificates.md) for the domain. Caddy, Traefik and Nginx Proxy Manager issue their own.
-- The proxy installed on the same machine, or running in Docker (see [Proxies Running in Docker](#proxies-running-in-docker)).
+- A [TLS certificate](../../additional/ssl-certificates.md) for the domain. Caddy, Traefik and Nginx Proxy Manager issue their own.
+- The proxy installed on the same machine, or, with the Panel in Docker, running in Docker too (see [Proxies Running in Docker](#proxies-running-in-docker)).
 
 ::: warning
 A broken proxy configuration makes the Panel unreachable until it's fixed, so keep a terminal open. Nothing in this guide touches the Panel's data.
@@ -25,7 +25,12 @@ A broken proxy configuration makes the Panel unreachable until it's fixed, so ke
 
 ## Step 1: Prepare the Panel
 
-All of the changes in this step happen in the `compose.yml` you created during installation.
+Pick the tab that matches how the Panel is installed:
+
+:::: tabs
+=== Docker
+
+All of the changes in this tab happen in the `compose.yml` you created during installation.
 
 ### Stop Exposing Port 8000
 
@@ -54,10 +59,10 @@ If your proxy runs as a container (Traefik, Nginx Proxy Manager), it reaches the
 Connections that arrive at the Panel from the proxy come from the gateway of the Panel's Docker network. Run this inside the Panel's compose directory to print that address:
 
 ```bash
-docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(docker compose ps -q web)
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(docker compose ps -q web)
 ```
 
-It prints something like `172.18.0.1` (one line per network the container is on; use the one that belongs to the compose network). Set [`APP_TRUSTED_PROXIES`](../../panel/environment.md#app-trusted-proxies) to that value on the `web` service:
+It prints something like `172.18.0.1` (one line per network the container is on; use the one that belongs to the compose network). Set [`APP_TRUSTED_PROXIES`](../environment.md#app-trusted-proxies) to that value on the `web` service:
 
 ```yaml
 services:
@@ -67,7 +72,45 @@ services:
       - APP_TRUSTED_PROXIES=172.18.0.1
 ```
 
-The variable takes a comma-separated list of IPs or CIDR ranges. Only list addresses you control. When a request arrives from a trusted address, the Panel believes three headers on it:
+### Apply the Changes
+
+```bash
+sudo docker compose up -d
+```
+
+=== Standalone
+
+For a Panel installed from a package or as the binary. All of the changes in this tab happen in the Panel's `.env` file, `/etc/calagopus/.env` by default on Linux.
+
+### Stop Exposing Port 8000
+
+The Panel listens on every interface by default ([`BIND`](../environment.md#bind) is `0.0.0.0`), so port `8000` stays reachable from the internet even after the proxy is in place. Restrict it to the loopback interface:
+
+```bash
+BIND=127.0.0.1
+```
+
+Keep [`PORT`](../environment.md#port) at `8000`. It is the port every configuration in Step 2 forwards to.
+
+### Trust the Proxy's Address
+
+The proxy runs on the same machine, so it connects from the loopback address. Set [`APP_TRUSTED_PROXIES`](../environment.md#app-trusted-proxies) to it:
+
+```bash
+APP_TRUSTED_PROXIES=127.0.0.1
+```
+
+### Apply the Changes
+
+```bash
+sudo systemctl restart calagopus-panel
+```
+
+On Windows, run `nssm restart "Calagopus Panel"` instead.
+
+::::
+
+`APP_TRUSTED_PROXIES` takes a comma-separated list of IPs or CIDR ranges. Only list addresses you control. When a request arrives from a trusted address, the Panel believes three headers on it:
 
 | Header | What the Panel does with it |
 | --- | --- |
@@ -76,12 +119,6 @@ The variable takes a comma-separated list of IPs or CIDR ranges. Only list addre
 | `X-Forwarded-Host` | Picks which of the configured Panel URLs to build links and cookies from, when you serve the Panel on more than one hostname ([Step 3](#step-3-set-the-panel-url)) |
 
 When a request arrives from anywhere else, all three are ignored and the connecting address and the `Host` header are used instead. Trusting too much lets a visitor spoof their IP by sending the header themselves.
-
-### Apply the Changes
-
-```bash
-docker compose up -d
-```
 
 The Panel is now only reachable from the machine itself. Confirm that with:
 
@@ -107,7 +144,7 @@ Every configuration below does the same things. If you use a proxy that isn't li
 | No CORS headers and no `Content-Security-Policy` | The Panel sends its own CSP, `X-Frame-Options` and `X-Content-Type-Options`, and sandboxes the file previews it serves. A copy from the proxy either overrides that or makes the browser reject the response |
 | No `Cache-Control` or `ETag` overrides | The Panel sets its own: `public, max-age=31536000, immutable` for the content-hashed files under `/assets/`, and `no-cache` with an `ETag` for the page and everything else. Forcing a long cache on the page makes browsers keep an old frontend after an update |
 | Compression is optional | The Panel already gzips JSON, JavaScript, SVG and text responses of 1 KiB or more. Proxy compression doesn't hurt, but it adds nothing for those |
-| No `X-Robots-Tag` | Indexing is [**Allow Search Engine Indexing**](../../panel/features/admin/settings.md#metadata) under Admin → Settings → Metadata. The header overrides that setting instead of following it, because crawlers apply whichever of the header and the page's `<meta name="robots">` tag is stricter |
+| No `X-Robots-Tag` | Indexing is [**Allow Search Engine Indexing**](../features/admin/settings.md#metadata) under Admin → Settings → Metadata. The header overrides that setting instead of following it, because crawlers apply whichever of the header and the page's `<meta name="robots">` tag is stricter |
 
 Pick the proxy you use:
 
@@ -181,7 +218,7 @@ sudo apachectl configtest
 sudo systemctl reload apache2
 ```
 
-On RHEL-based systems the file in `conf.d/` is already active; run `apachectl configtest` and `systemctl reload httpd`.
+On RHEL-based systems the file in `conf.d/` is already active; run `apachectl configtest` and `sudo systemctl reload httpd`.
 
 === Caddy
 
@@ -200,11 +237,11 @@ sudo caddy validate --config /etc/caddy/Caddyfile
 sudo systemctl reload caddy
 ```
 
-The first reload takes a few seconds longer while Caddy requests the certificate. `journalctl -u caddy -f` shows the progress if the site does not come up right away.
+The first reload takes a few seconds longer while Caddy requests the certificate. `sudo journalctl -u caddy -f` shows the progress if the site does not come up right away.
 
 === Traefik
 
-This assumes Traefik already runs in Docker with the Docker provider enabled, a `websecure` entrypoint on port 443, and a certificate resolver named `letsencrypt`. Adjust those three names to match your Traefik setup. Traefik connects to the Panel over a shared Docker network, so complete [Proxies running in Docker](#proxies-running-in-docker) first; the network below is called `proxy`.
+This assumes the Panel is installed with Docker, and Traefik already runs in Docker with the Docker provider enabled, a `websecure` entrypoint on port 443, and a certificate resolver named `letsencrypt`. Adjust those three names to match your Traefik setup. Traefik connects to the Panel over a shared Docker network, so complete [Proxies running in Docker](#proxies-running-in-docker) first; the network below is called `proxy`.
 
 Add the labels and network to the `web` service in the Panel's `compose.yml`, and remove the `8000:8000` port mapping:
 
@@ -216,11 +253,11 @@ Traefik forwards WebSockets, sets `X-Forwarded-For` and `X-Forwarded-Proto`, and
 
 A backup restore can arrive as a single request too. If yours can take longer than an hour, set `readTimeout` to `0`, which disables it.
 
-Apply the compose change with `docker compose up -d`; Traefik picks the container up within a few seconds. A static configuration change needs Traefik itself restarted.
+Apply the compose change with `sudo docker compose up -d`; Traefik picks the container up within a few seconds. A static configuration change needs Traefik itself restarted.
 
 === Nginx Proxy Manager
 
-Nginx Proxy Manager runs as a container, so it reaches the Panel over a shared Docker network rather than `127.0.0.1`. Complete [Proxies running in Docker](#proxies-running-in-docker) first, then add a proxy host in the web UI:
+Nginx Proxy Manager runs as a container, so it reaches the Panel over a shared Docker network rather than `127.0.0.1`, which needs the Panel installed with Docker. Complete [Proxies running in Docker](#proxies-running-in-docker) first, then add a proxy host in the web UI:
 
 1. Open **Hosts → Proxy Hosts → Add Proxy Host**.
 2. On the **Details** tab set **Domain Names** to your domain, **Scheme** to `http`, **Forward Hostname / IP** to `web` (the Panel's service name on the shared network) and **Forward Port** to `8000`. Turn on **Websockets Support**.
@@ -241,7 +278,7 @@ Use `$http_connection`, not the `$connection_upgrade` map from the Nginx tab: Ng
 
 The Panel builds links from a URL you configure, not from the address a visitor happened to use. Go to **Admin → Settings → Application**, set **URL** to `https://<domain>`, and save. Email links, OAuth callbacks, node connections and the generated Wings configuration all use this value, so it has to match the address the proxy serves.
 
-![Application settings tab with the URL field](../../panel/features/admin/images/settings/application.webp)
+![Application settings tab with the URL field](../features/admin/images/settings/application.webp)
 
 The scheme matters twice, and neither case follows `X-Forwarded-Proto`. A URL on `https://` is what puts the `Secure` flag on the session cookie, and a URL left on `http://` makes the frontend build `ws://` console addresses, which a page served over HTTPS refuses to open.
 
@@ -250,16 +287,16 @@ Serving the Panel on more than one hostname? Add the others under **Additional U
 ## Step 4: Verify
 
 1. Open `https://<domain>` in a browser. You should see the Panel's login page with a valid padlock. If the page doesn't load, check the [troubleshooting section](#troubleshooting).
-2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#trust-the-proxy-s-address).
+2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#step-1-prepare-the-panel).
 3. Open a server and check that the console connects and shows live output.
 4. Upload a file through the file manager, and download a backup.
 5. Confirm the old address no longer works from another machine: `http://<server-ip>:8000` should time out or be refused.
 
-Items 3 and 4 only reach this proxy on the All-in-One image or a node in Wings Proxy Mode. Elsewhere they go over the node's own address, covered by the [Wings guide](./wings.md).
+Items 3 and 4 only reach this proxy on the All-in-One image or a node in Wings Proxy Mode. Elsewhere they go over the node's own address, covered by the [Wings guide](../../wings/next-steps/reverse-proxy.md).
 
 ## All-in-One and Wings Proxy Mode
 
-Browsers normally reach Wings directly for the console, uploads and downloads. Two setups route that traffic through the Panel instead, under `/wings-proxy/<node-uuid>/`: the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), which does it for its bundled Wings automatically and never publishes port `8080`, and any node with [Wings Proxy Mode](../../wings/advanced/exposing-wings-in-a-homelab.md) turned on.
+Browsers normally reach Wings directly for the console, uploads and downloads. Two setups route that traffic through the Panel instead, under `/wings-proxy/<node-uuid>/`: the [All-in-One image](../installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), which does it for its bundled Wings automatically and never publishes port `8080`, and any node with [Wings Proxy Mode](../../wings/advanced/exposing-wings-in-a-homelab.md) turned on.
 
 That path carries a WebSocket, uploads in chunks of up to 95 MiB, and downloads of any size, so it needs the `Upgrade` and `Connection` headers, buffering off in both directions, no compression, and timeouts above the usual 60 second defaults. The All-in-One image also sets the bundled Wings' `api.upload_limit` to 10 GiB on every start, overriding its config file. Before Wings 1.2.6 that raised the 100 MiB default; on newer versions, where a standalone node has no limit by default, it is a cap of its own.
 
@@ -272,8 +309,8 @@ Traefik, Nginx Proxy Manager and similar tools run as containers themselves. Two
 **The proxy reaches the Panel over a Docker network, not a published port.** Create a network the proxy container is already attached to (or attach it to one), add the Panel's `web` service to that same network, and remove the `8000:8000` port mapping entirely. The proxy then forwards to `web:8000`, using the service name as the hostname.
 
 ```bash
-docker network create proxy
-docker network connect proxy <proxy-container-name>
+sudo docker network create proxy
+sudo docker network connect proxy <proxy-container-name>
 ```
 
 ```yaml
@@ -294,7 +331,7 @@ The `default` entry keeps the Panel connected to its database and cache. On the 
 **The trusted proxy address is the proxy container's, not the gateway's.** Trust the whole shared network so the value survives container restarts:
 
 ```bash
-docker network inspect proxy -f '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
+sudo docker network inspect proxy -f '{{range .IPAM.Config}}{{.Subnet}}{{end}}'
 ```
 
 ```yaml
@@ -320,7 +357,7 @@ If your domain is proxied through Cloudflare (orange cloud), the proxy chain bec
 
   This works as written with Nginx and Nginx Proxy Manager, which append to the `X-Forwarded-For` header Cloudflare sends. Caddy and Traefik replace that header unless Cloudflare's ranges are also trusted in the proxy itself: Caddy through `trusted_proxies` inside the `reverse_proxy` block, Traefik through `forwardedHeaders.trustedIPs` on the entrypoint.
 - **Set the SSL/TLS mode to Full (strict)** in the Cloudflare dashboard, so Cloudflare verifies your certificate instead of connecting over plain HTTP.
-- **Keep non-HTTP hostnames DNS-only (grey cloud).** Cloudflare's proxy only carries HTTP and WebSocket traffic. SFTP (port `2022`), game server ports and the [private network](../../wings/advanced/private-network.md) tunnel do not pass through it. Give Wings nodes a hostname that resolves directly to the machine, or turn the proxy off for those records. The same applies to a standalone node's own hostname; see [Docker and Cloudflare](./wings.md#docker-and-cloudflare) on the Wings guide.
+- **Keep non-HTTP hostnames DNS-only (grey cloud).** Cloudflare's proxy only carries HTTP and WebSocket traffic. SFTP (port `2022`), game server ports and the [private network](../../wings/advanced/private-network.md) tunnel do not pass through it. Give Wings nodes a hostname that resolves directly to the machine, or turn the proxy off for those records. The same applies to a standalone node's own hostname; see [Docker and Cloudflare](../../wings/next-steps/reverse-proxy.md#docker-and-cloudflare) on the Wings guide.
 
 Cloudflare also caps the size of a single request per plan (100 MB on Free), and that cap applies before your own body size limit. Server file uploads through the file manager are sent in chunks of at most 95 MiB, so they pass through Cloudflare on any plan. Admin asset uploads are not chunked and stay subject to the cap, and so do the backup requests Wings sends to `/api/remote/backups/`, since Wings reaches the Panel through Cloudflare as well.
 
@@ -328,17 +365,17 @@ Cloudflare also caps the size of a single request per plan (100 MB on Free), and
 
 | Symptom | Fix |
 | --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach the Panel. Check that the container is running with `docker compose ps`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
-| The page loads, but the console stays on "connecting" and statistics never appear | The console WebSocket goes to the node's **Public URL**. If that's the node itself, see the [Wings guide](./wings.md#troubleshooting). If it's the Panel (All-in-One or Wings Proxy Mode), WebSocket upgrades aren't getting through: on Nginx, confirm the `map` block exists in `nginx.conf` and the `Upgrade` and `Connection` headers are set; on Apache, check the version note above; on Nginx Proxy Manager, enable **Websockets Support**. |
+| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach the Panel. Check that it's running with `sudo docker compose ps` or `sudo systemctl status calagopus-panel`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
+| The page loads, but the console stays on "connecting" and statistics never appear | The console WebSocket goes to the node's **Public URL**. If that's the node itself, see the [Wings guide](../../wings/next-steps/reverse-proxy.md#troubleshooting). If it's the Panel (All-in-One or Wings Proxy Mode), WebSocket upgrades aren't getting through: on Nginx, confirm the `map` block exists in `nginx.conf` and the `Upgrade` and `Connection` headers are set; on Apache, check the version note above; on Nginx Proxy Manager, enable **Websockets Support**. |
 | Database instance consoles, or the admin node statistics and log views, stay empty | Those WebSockets are the Panel's own, under `/api`, and go through `location /`. The `Upgrade` and `Connection` headers have to apply there too, which the examples do by setting them at the server level. |
 | Uploads fail with `413 Request Entity Too Large` | Raise the body limit (`client_max_body_size`, `LimitRequestBody`, `max_size`) to at least `100 MiB`. On Caddy, check you wrote `128MiB` and not `100MB`. |
 | Large uploads or backup downloads through the Panel die partway through, always after about the same time | A timeout on `/wings-proxy/`. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, `ProxyTimeout` on Apache, or `respondingTimeouts.readTimeout` on the Traefik entrypoint. |
 | Backup downloads through the Panel fill the proxy's disk with temporary files | Response buffering is on for `/wings-proxy/`. Set `proxy_buffering off` there on Nginx or Nginx Proxy Manager. Caddy and Traefik stream by default. |
 | A backup or restore fails with `413`, or stops partway | Wings sends backup requests through `/api/remote/backups/`, which needs no body limit, buffering off and long timeouts. Add the dedicated block from [Step 2](#step-2-configure-the-proxy). |
-| Activity shows `172.x.x.x` or `127.0.0.1` for every user, or rate limits trigger for everyone at once | `APP_TRUSTED_PROXIES` doesn't contain the address the proxy connects from. Re-run the `docker inspect` command from Step 1; the gateway can change if the compose network was recreated. |
+| Activity shows `172.x.x.x` or `127.0.0.1` for every user, or rate limits trigger for everyone at once | `APP_TRUSTED_PROXIES` doesn't contain the address the proxy connects from. On Docker, re-run the `docker inspect` command from Step 1; the gateway can change if the compose network was recreated. |
 | Links in emails or OAuth callbacks point at `http://` or the wrong host | The Panel builds links from the URL in **Admin → Settings → Application**, not from the request. Make sure it starts with `https://` and matches the domain the proxy serves. If you serve several hostnames, the extra ones have to be listed under **Additional URLs**, or every request falls back to the primary URL. |
 | The session cookie has no `Secure` flag even though the site is on HTTPS | The Panel takes the scheme from the configured URL, not from `X-Forwarded-Proto`. Set **URL** to `https://<domain>` in [Step 3](#step-3-set-the-panel-url). |
-| The Panel is still reachable at `http://<server-ip>:8000` | The port mapping wasn't restricted to `127.0.0.1`, or the change wasn't applied. Edit `compose.yml` and run `docker compose up -d` again. |
-| Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../ssl-certificates.md#troubleshooting) for renewal problems. |
+| The Panel is still reachable at `http://<server-ip>:8000` | The listener wasn't restricted to `127.0.0.1`, or the change wasn't applied. On Docker, fix the port mapping in `compose.yml` and run `sudo docker compose up -d` again; on a standalone install, set `BIND=127.0.0.1` in `.env` and restart the Panel. |
+| Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems. |
 
-Problems that aren't caused by the proxy, such as the node URL, tokens or clock skew, are collected on the [Troubleshooting](../troubleshooting.md) page.
+Problems that aren't caused by the proxy, such as the node URL, tokens or clock skew, are collected on the [Troubleshooting](../../additional/troubleshooting.md) page.

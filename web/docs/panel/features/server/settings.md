@@ -1,5 +1,5 @@
 ---
-title: Settings
+title: Server Settings
 description: Rename your server, configure auto-kill, auto-start, timezone, and the trash, view debug information, and reinstall it.
 ---
 

@@ -1,6 +1,6 @@
 ---
 title: Package Manager Panel Installation
-description: How to install the Calagopus Panel via a system package manager (APT, RPM). The simplest installation method for supported Linux distributions.
+description: How to install the Calagopus Panel via a system package manager (APT, RPM, APK, AUR). The simplest installation method for supported Linux distributions.
 ---
 
 # Package Manager Panel Installation
@@ -9,138 +9,53 @@ description: How to install the Calagopus Panel via a system package manager (AP
 The package manager installation method does not support extensions in any capacity. If you need extensions, use the [Docker](./docker.md) installation instead.
 :::
 
-Install Calagopus Panel directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager:
+Install Calagopus Panel directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block. If your system doesn't have `sudo`, like Alpine, run the commands as root and leave it out.
+
+## Install the Packages
+
+This installs PostgreSQL, Valkey and the Panel. Already have PostgreSQL and Valkey? Leave out the lines that install and start them. You can substitute Redis for Valkey, though Valkey is notably faster.
+
+If you only plan to run a single node (Panel + Wings on the same host), pick the **All-in-One** block. It bundles Wings alongside the Panel so you don't need to install it separately.
 
 ::::tabs
 === APT (Debian / Ubuntu)
 
-#### Prerequisites
+Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then run:
 
-This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
-
-Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then install:
-```bash
+::: code-group
+```bash [Panel]
 sudo apt update
-sudo apt install postgresql-18
-sudo systemctl enable --now postgresql
-```
+sudo apt install -y postgresql-18 valkey
+sudo systemctl enable --now postgresql valkey-server
 
-Install Valkey:
-```bash
-sudo apt update
-sudo apt install -y valkey
-sudo systemctl enable valkey-server
-sudo systemctl start valkey-server
-```
-
-#### Add the Repository
-
-```bash
-curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
+sudo curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
 echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://packages.calagopus.com/deb stable main" | sudo tee /etc/apt/sources.list.d/calagopus.list
-apt update
+sudo apt update
+sudo apt install -y calagopus-panel
 ```
+```bash [All-in-One]
+sudo apt update
+sudo apt install -y postgresql-18 valkey
+sudo systemctl enable --now postgresql valkey-server
 
-#### Install Calagopus Panel
-
-```bash
-apt install -y calagopus-panel
-```
-
-::: tip All-in-One package
-If you only plan to run a single node (Panel + Wings on the same host), install `calagopus-panel-aio` instead. It bundles Wings alongside the Panel so you don't need to install it separately:
-
-```bash
-apt install -y calagopus-panel-aio
+sudo curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://packages.calagopus.com/deb stable main" | sudo tee /etc/apt/sources.list.d/calagopus.list
+sudo apt update
+sudo apt install -y calagopus-panel-aio
 ```
 :::
 
-#### Database Configuration
-
-Connect to PostgreSQL and create the user and database:
-```bash
-sudo -u postgres psql
-```
-```sql
-CREATE USER calagopus WITH PASSWORD 'yourPassword';
-CREATE DATABASE panel OWNER calagopus;
-GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-exit
-```
-
-#### Configure Environment Variables
-
-Download the example `.env` file:
-```bash
-mkdir -p /etc/calagopus
-cd /etc/calagopus
-
-curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
-ls -lha # should show you the .env file
-```
-
-Open it in your preferred editor and configure the variables. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
-
-```
-DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
-```
-
-`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
-
-Set `APP_ENCRYPTION_KEY` to a random value:
-```bash
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
-```
-
-#### Test the Configuration
-
-```bash
-calagopus-panel
-```
-
-If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
-
-#### Install as a Service
-
-```bash
-calagopus-panel service-install
-```
-
-This creates and enables a systemd service that starts on boot. Check its status with:
-```bash
-systemctl status calagopus-panel
-```
-
-The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-
 === RPM (RHEL / Fedora / Rocky / Alma)
 
-#### Prerequisites
+This example is for Fedora 43 (x86_64). On anything else, take the first line from the [PostgreSQL RPM guide](https://www.postgresql.org/download/linux/redhat/).
 
-This guide assumes you have PostgreSQL and Valkey installed.
-
-Add the PostgreSQL RPM repository following [this guide](https://www.postgresql.org/download/linux/redhat/). For example on Fedora 43 (x86_64):
-```bash
+::: code-group
+```bash [Panel]
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
-sudo dnf install -y postgresql18-server
-sudo dnf install -y postgresql18-contrib
-sudo systemctl enable postgresql-18
-sudo systemctl start postgresql-18
-```
+sudo dnf install -y postgresql18-server postgresql18-contrib valkey
+sudo /usr/pgsql-18/bin/postgresql-18-setup initdb
+sudo systemctl enable --now postgresql-18 valkey
 
-Install Valkey:
-```bash
-sudo yum install valkey
-sudo systemctl enable valkey-server
-sudo systemctl start valkey-server
-```
-
-#### Add the Repository
-
-```bash
 sudo rpm --import https://packages.calagopus.com/pubring.gpg
 sudo tee /etc/yum.repos.d/calagopus.repo > /dev/null <<EOF
 [calagopus]
@@ -150,280 +65,144 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.calagopus.com/pubring.gpg
 EOF
+sudo dnf install -y calagopus-panel
 ```
+```bash [All-in-One]
+sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
+sudo dnf install -y postgresql18-server postgresql18-contrib valkey
+sudo /usr/pgsql-18/bin/postgresql-18-setup initdb
+sudo systemctl enable --now postgresql-18 valkey
 
-#### Install Calagopus Panel
-
-```bash
-dnf install calagopus-panel
-```
-
-::: tip All-in-One package
-If you only plan to run a single node (Panel + Wings on the same host), install `calagopus-panel-aio` instead. It bundles Wings alongside the Panel so you don't need to install it separately:
-
-```bash
-dnf install calagopus-panel-aio
+sudo rpm --import https://packages.calagopus.com/pubring.gpg
+sudo tee /etc/yum.repos.d/calagopus.repo > /dev/null <<EOF
+[calagopus]
+name=Calagopus Repository
+baseurl=https://packages.calagopus.com/rpm
+enabled=1
+gpgcheck=1
+gpgkey=https://packages.calagopus.com/pubring.gpg
+EOF
+sudo dnf install -y calagopus-panel-aio
 ```
 :::
 
-#### Database Configuration
-
-Connect to PostgreSQL and create the user and database:
-```bash
-sudo -u postgres psql
-```
-```sql
-CREATE USER calagopus WITH PASSWORD 'yourPassword';
-CREATE DATABASE panel OWNER calagopus;
-GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-exit
-```
-
-#### Configure Environment Variables
-
-Download the example `.env` file:
-```bash
-mkdir -p /etc/calagopus
-cd /etc/calagopus
-
-curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
-ls -lha # should show you the .env file
-```
-
-Open it in your preferred editor. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
-
-```
-DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
-```
-
-`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
-
-Set `APP_ENCRYPTION_KEY` to a random value:
-```bash
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
-```
-
-#### Test the Configuration
-
-```bash
-calagopus-panel
-```
-
-If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
-
-#### Install as a Service
-
-```bash
-calagopus-panel service-install
-```
-
-This creates and enables a systemd service that starts on boot. Check its status with:
-```bash
-systemctl status calagopus-panel
-```
-
-The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-
 === APK (Alpine)
 
-#### Prerequisites
-
-This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
-
-Install PostgreSQL:
-```bash
-apk add postgresql postgresql-contrib
+::: code-group
+```bash [Panel]
+apk add postgresql postgresql-contrib valkey
 rc-update add postgresql
-rc-service postgresql start
-```
-
-Install Valkey:
-```bash
-apk add valkey
 rc-update add valkey
+rc-service postgresql start
 rc-service valkey start
-```
 
-#### Add the Repository
-
-```bash
 wget -q -O /etc/apk/keys/calagopus.rsa.pub https://packages.calagopus.com/apk/calagopus.rsa.pub
 echo "https://packages.calagopus.com/apk" >> /etc/apk/repositories
 apk update
-```
-
-#### Install Calagopus Panel
-
-```bash
 apk add calagopus-panel
 ```
+```bash [All-in-One]
+apk add postgresql postgresql-contrib valkey
+rc-update add postgresql
+rc-update add valkey
+rc-service postgresql start
+rc-service valkey start
 
-::: tip All-in-One package
-If you only plan to run a single node (Panel + Wings on the same host), install `calagopus-panel-aio` instead. It bundles Wings alongside the Panel so you don't need to install it separately:
-
-```bash
+wget -q -O /etc/apk/keys/calagopus.rsa.pub https://packages.calagopus.com/apk/calagopus.rsa.pub
+echo "https://packages.calagopus.com/apk" >> /etc/apk/repositories
+apk update
 apk add calagopus-panel-aio
 ```
 :::
 
-#### Database Configuration
-
-Connect to PostgreSQL and create the user and database:
-```bash
-su postgres -c psql
-```
-```sql
-CREATE USER calagopus WITH PASSWORD 'yourPassword';
-CREATE DATABASE panel OWNER calagopus;
-GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-exit
-```
-
-#### Configure Environment Variables
-
-Download the example `.env` file:
-```bash
-mkdir -p /etc/calagopus
-cd /etc/calagopus
-
-curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
-ls -lha # should show you the .env file
-```
-
-Open it in your preferred editor. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
-
-```
-DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
-```
-
-`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
-
-Set `APP_ENCRYPTION_KEY` to a random value:
-```bash
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
-```
-
-#### Test the Configuration
-
-```bash
-calagopus-panel
-```
-
-If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
-
-#### Install as a Service
-
-```bash
-calagopus-panel service-install
-```
-
-This creates and enables a service that starts on boot. Check its status with:
-```bash
-rc-service calagopus-panel status
-```
-
-The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-
 === AUR (Arch Linux)
 
-#### Prerequisites
+The Panel is published to the AUR as [`calagopus-panel-bin`](https://aur.archlinux.org/packages/calagopus-panel-bin), and the All-in-One as [`calagopus-panel-aio-bin`](https://aur.archlinux.org/packages/calagopus-panel-aio-bin). Use another AUR helper if you prefer.
 
-This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
-
-Install PostgreSQL:
-```bash
-sudo pacman -S postgresql
+::: code-group
+```bash [Panel]
+sudo pacman -S --noconfirm postgresql valkey
 sudo -u postgres initdb -D /var/lib/postgres/data
-sudo systemctl enable --now postgresql
+sudo systemctl enable --now postgresql valkey
+
+yay -S --noconfirm calagopus-panel-bin
 ```
+```bash [All-in-One]
+sudo pacman -S --noconfirm postgresql valkey
+sudo -u postgres initdb -D /var/lib/postgres/data
+sudo systemctl enable --now postgresql valkey
 
-Install Valkey:
-```bash
-sudo pacman -S valkey
-sudo systemctl enable --now valkey
-```
-
-#### Install Calagopus Panel
-
-The Panel is published to the [AUR](https://aur.archlinux.org/packages/calagopus-panel-bin). Install it with your preferred AUR helper:
-
-```bash
-yay -S calagopus-panel-bin
-```
-
-::: tip All-in-One package
-If you only plan to run a single node (Panel + Wings on the same host), install [`calagopus-panel-aio-bin`](https://aur.archlinux.org/packages/calagopus-panel-aio-bin) instead. It bundles Wings alongside the Panel so you don't need to install it separately:
-
-```bash
-yay -S calagopus-panel-aio-bin
+yay -S --noconfirm calagopus-panel-aio-bin
 ```
 :::
 
-#### Database Configuration
+::::
 
-Connect to PostgreSQL and create the user and database:
-```bash
-sudo -u postgres psql
-```
-```sql
-CREATE USER calagopus WITH PASSWORD 'yourPassword';
+## Create the Database and Configuration
+
+This creates the database user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
+
+::: code-group
+```bash [APT / RPM / AUR]
+DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+sudo -u postgres psql <<SQL
+CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
 CREATE DATABASE panel OWNER calagopus;
 GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-exit
-```
+SQL
 
-#### Configure Environment Variables
-
-Download the example `.env` file:
-```bash
-mkdir -p /etc/calagopus
-cd /etc/calagopus
-
-curl -o .env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
-ls -lha # should show you the .env file
-```
-
-Open it in your preferred editor. See the [Environment Configuration](../environment.md) reference for details. At minimum set these:
-
-```
-DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
-```
-
-`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
-
-Set `APP_ENCRYPTION_KEY` to a random value:
-```bash
+sudo mkdir -p /etc/calagopus
+sudo curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
+sudo sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
 ```
+```bash [APK]
+DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
-#### Test the Configuration
+su postgres -c psql <<SQL
+CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
+CREATE DATABASE panel OWNER calagopus;
+GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
+SQL
+
+mkdir -p /etc/calagopus
+curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
+sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
+```
+:::
+
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
+
+## Test the Configuration
+
+Run the panel once from `/etc/calagopus`, because it looks for the `.env` in the current directory:
 
 ```bash
-calagopus-panel
+cd /etc/calagopus
+sudo calagopus-panel
 ```
 
 If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
 
-#### Install as a Service
+## Install as a Service
 
-```bash
+This creates and enables a service that starts on boot, then shows its status:
+
+::: code-group
+```bash [APT / RPM / AUR]
+sudo calagopus-panel service-install
+sudo systemctl status calagopus-panel --no-pager
+```
+```bash [APK]
 calagopus-panel service-install
+rc-service calagopus-panel status
 ```
-
-This creates and enables a systemd service that starts on boot. Check its status with:
-```bash
-systemctl status calagopus-panel
-```
+:::
 
 The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
 
 ![Calagopus Panel OOBE](../oobe.webp)
-
-::::

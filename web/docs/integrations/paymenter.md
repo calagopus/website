@@ -1,6 +1,6 @@
 ---
 title: Paymenter
-description: The Calagopus Paymenter module provisions servers from your billing workflow, creating, suspending, upgrading, and terminating them automatically, shows customers a live server summary, and can link accounts via OAuth.
+description: The Paymenter module creates, suspends, upgrades and terminates servers from your billing workflow, shows a live server summary, and can link accounts via OAuth.
 ---
 
 # Paymenter
@@ -214,7 +214,7 @@ Neither creates panel accounts; they only add missing links. A customer is linke
 ![Paymenter Calagopus OAuth Links page listing a customer with an Already linked result and a Sync button](./images/paymenter/oauth-links.webp)
 
 ::: info
-The provided template is configured as **login only** - customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../additional/setting-up-oauth/index.md).
+The provided template is configured as **login only**: customers use it to authenticate, and the provider does not let them manage the link themselves. For more on OAuth providers in general, see [Setting up OAuth](../additional/setting-up-oauth/index.md).
 :::
 
 ## Migrating from the Pterodactyl extension

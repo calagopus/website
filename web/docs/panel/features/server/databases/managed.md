@@ -109,14 +109,14 @@ Right-click a user for:
 | Action | What it does |
 | --- | --- |
 | **Details** | Opens the **Database Credentials** modal: address, username, password, and a **JDBC Connection String**, plus the same **Rotate Password** button classic databases have. When the user can reach more than one database, a selector switches which one the connection string is built for. |
-| **Permissions** | Opens **Database Permissions** - "Controls which databases **{username}** can access, and what it may do in them." - the same No Access / Read Only / Read & Write list used when creating the user. |
+| **Permissions** | Opens **Database Permissions** ("Controls which databases **{username}** can access, and what it may do in them."), the same No Access / Read Only / Read & Write list used when creating the user. |
 | **Delete** | Removes the user. |
 
 For MariaDB/MySQL, a client may display the proxy's greeting version rather than your instance's version. Run `SELECT VERSION()` after connecting to check the server itself. See [MariaDB/MySQL Client Compatibility](../../../../db-agent/overview.md#mariadb-mysql-client-compatibility).
 
 ## Backups Tab
 
-Shown with the `backups.read` permission. Lists the database backups taken from this instance, under a counter like "2 of 15 maximum backups created on this server, shared with server backups." - the same limit the server's [Backups](../backups.md) page counts against. Backups that belong to a [backup group](../backups.md#backup-groups) show the group's name under theirs.
+Shown with the `backups.read` permission. Lists the database backups taken from this instance, under a counter like "2 of 15 maximum backups created on this server, shared with server backups.", the same limit the server's [Backups](../backups.md) page counts against. Backups that belong to a [backup group](../backups.md#backup-groups) show the group's name under theirs.
 
 ![Backups tab of a managed database listing MariaDB backups with source, checksum, size, and lock status](../images/databases/instance-backups.webp)
 

@@ -1,7 +1,9 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import type { SiteConfig } from 'vitepress';
+import { compareFaqs } from '../data/compare-faqs.ts';
 import { featureCategories } from '../data/features.ts';
+import { docsSidebar } from '../data/sidebar.ts';
 import { MARKDOWN_EXPANDERS } from './benchmarks.ts';
 import { expandSnippetImports } from './snippet-imports.ts';
 
@@ -89,6 +91,14 @@ function absoluteLinks(markdown: string, page: string): string {
     });
 }
 
+function compareFaqMarkdown(page: string): string {
+  const questions = (compareFaqs[page] ?? []).map(({ q, a }) => {
+    const answer = a.replace(/<a href="([^"]+)"[^>]*>([^<]+)<\/a>/g, '[$2]($1)');
+    return `### ${q}\n\n${answer}`;
+  });
+  return ['## Frequently Asked Questions', ...questions].join('\n\n');
+}
+
 function cleanMarkdownExport(source: string, page: string): string {
   const expand = MARKDOWN_EXPANDERS[page];
   if (expand) return absoluteLinks(expand(source), page);
@@ -97,7 +107,10 @@ function cleanMarkdownExport(source: string, page: string): string {
     .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n+/, '')
     .replace(/<script setup(?:\s[^>]*)?>[\s\S]*?<\/script>\s*/g, '')
     .replace(/<style(?:\s[^>]*)?>[\s\S]*?<\/style>\s*/g, '')
-    .replace(/<FeatureTable\s+id="([^"]+)"\s*\/>/g, (_, id) => featureTableMarkdown(id));
+    .replace(/<FeatureTable\s+id="([^"]+)"\s*\/>/g, (_, id) => featureTableMarkdown(id))
+    .replace(/<CompareFaq\s*\/>/g, () => compareFaqMarkdown(page))
+    .replace(/ *<Badge [^>]*text="([^"]+)"[^>]*\/>/g, ' ($1)')
+    .replace(/<(Yes|No) \/>/g, '$1');
 
   return absoluteLinks(body, page);
 }
@@ -115,8 +128,7 @@ export async function generateLlmsArtifacts(siteConfig: SiteConfig, siteUrl: str
 
   const sections: string[] = [];
 
-  const sidebar = (site.themeConfig?.sidebar ?? []) as SidebarNode[];
-  for (const group of sidebar) {
+  for (const group of docsSidebar as SidebarNode[]) {
     const links = sectionLinks(group, siteUrl);
     if (group.text && links.length > 0) sections.push(`## ${group.text}\n\n${links.join('\n')}`);
   }

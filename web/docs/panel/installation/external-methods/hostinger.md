@@ -1,6 +1,6 @@
 ---
 title: Hostinger Panel Installation
-description: How to deploy Calagopus on a Hostinger VPS using their one-click application marketplace. Runs the Panel and Wings in a single All-in-One container, no manual setup required.
+description: Deploy Calagopus on a Hostinger VPS from their one-click application marketplace. Runs the Panel and Wings in a single All-in-One container.
 ---
 
 # Hostinger Panel Installation

@@ -1,6 +1,6 @@
 ---
 title: Unraid Panel Installation
-description: How to install Calagopus on Unraid using a Community Applications template. Runs the Panel and Wings in a single All-in-One container alongside separate PostgreSQL and Valkey containers.
+description: Install Calagopus on Unraid with a Community Applications template. Runs the Panel and Wings in one All-in-One container alongside PostgreSQL and Valkey containers.
 ---
 
 # Unraid Panel Installation

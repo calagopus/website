@@ -6,239 +6,43 @@ description: Step-by-step guide to migrating a Dockerized Pterodactyl or Bluepri
 
 # Migrating from Pterodactyl (Dockerized)
 
-This guide is for Pterodactyl installs running in Docker. If you have a `docker-compose.yml` with a Pterodactyl service, you're in the right place. If Pterodactyl runs directly on the host without containers, use the [Standalone](./standalone.md) guide instead.
+This guide is for Pterodactyl installs running in Docker. If Pterodactyl runs directly on the host without containers, use the [Standalone](./standalone.md) guide instead. It works with Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml) and Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/docker/blob/Master/docker-compose.yml).
 
-This guide assumes Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml), but it also works for Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/docker/blob/Master/docker-compose.yml). Variable names and locations are mostly the same.
-
-The import works the same way regardless of how Pterodactyl is running: you point the Calagopus importer at a `.env` file with Pterodactyl's database connection details, and it reads everything across. The Docker-specific part is that you'll usually need to build that `.env` file yourself, since database hostnames inside Docker networks don't match what's in Pterodactyl's original `.env`.
+You point the Calagopus importer at a `.env` file with Pterodactyl's database connection details, and it reads everything across. The Docker-specific part is building that file, because the database hostname inside Pterodactyl's Docker network doesn't work from anywhere else.
 
 API keys do not migrate. The hashes aren't compatible, and neither is the API, so old keys wouldn't work even if they were imported. See the [intro](../pterodactyl.md) for the full reasoning.
 
-## Prerequisites
+## Before You Start
 
-Before you start, you'll want:
-
-- Access to your Dockerized Pterodactyl install (the directory with the compose file and `.env`).
-- Calagopus Panel installed but not yet configured. Stop at the Out-of-Box Experience (OOBE) screen.
-
-## Install Calagopus First
-
-If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md). Once you reach the OOBE screen, **stop**. Don't click through it, don't create the admin user. Just leave it there and come back here.
+You need access to your Dockerized Pterodactyl install, with its containers running, and Calagopus installed on the same machine. If you haven't installed Calagopus yet, follow the [installation guide](../../../panel/installation/index.md). Once you reach the Out-of-Box Experience (OOBE) screen, **stop**. Don't click through it, don't create the admin user.
 
 ::: warning Don't click through the OOBE
-This guide uses a fresh Calagopus database. By default, the importer refuses a target that already has users, nodes, servers, nests, or locations. If you already completed the OOBE and need to keep its data, review [`--force`](../pterodactyl.md#import-options) and run a dry run against the occupied target first.
+This guide uses a fresh Calagopus database. By default, the importer refuses a target that already has users, nodes, servers, nests, or locations. If you already completed the OOBE, either [reset the database](../index.md#resetting-the-calagopus-database), or if you need to keep its data, review [`--force`](../pterodactyl.md#import-options) and run a dry run against the occupied target first.
 
 ![Calagopus Panel OOBE](../../../panel/oobe.webp)
-
-::: details Resetting a disposable target
-Only use these steps if you want to discard everything in the Calagopus database and start fresh. They are not needed after a failed import that reports a rollback. Pick the tab that matches how Calagopus is installed:
-
-::::tabs
-=== Docker
-Go to the directory with your Calagopus compose file and stop the stack:
-
-```bash
-docker compose down
-```
-
-Delete the Postgres data directory:
-
-```bash
-# This wipes the Calagopus database. Don't run this if you have data you care about.
-rm -r postgres
-```
-
-Start Calagopus back up:
-
-```bash
-docker compose up -d
-```
-
-=== APT/RPM, Binary
-Stop Calagopus first:
-
-```bash
-# Linux
-systemctl stop calagopus-panel
-
-# Windows
-nssm stop "Calagopus Panel"
-```
-
-Connect to Postgres and recreate the database:
-
-```bash
-# Linux/MacOS
-sudo -u postgres psql
-
-# Windows: see the binary install guide for psql access
-# https://calagopus.com/docs/panel/installation/binary#database-configuration
-```
-
-```sql
-DROP DATABASE panel WITH (FORCE);
-CREATE DATABASE panel OWNER calagopus;
-GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-\q
-```
-
-Start Calagopus back up:
-
-```bash
-# Linux
-systemctl start calagopus-panel
-
-# Windows
-nssm start "Calagopus Panel"
-```
-
-::::
-
-## Set the Pterodactyl Directory
-
-Most commands below reference your Pterodactyl install directory. Set it as a shell variable up front to save typing. If your Pterodactyl host mount is at `/srv/pterodactyl`, this is fine as-is, otherwise change the path:
-
-```bash
-export PTERODACTYL_DIRECTORY=/srv/pterodactyl
-```
-
-This isn't required, you can substitute the path inline anywhere you see `$PTERODACTYL_DIRECTORY`. It just makes the commands shorter.
-
-## Choose Your Calagopus Install Method
-
-The exact commands depend on how Calagopus itself is installed. Pick the matching tab:
-
-::::tabs
-=== Docker
-
-### Building the Pterodactyl `.env` File
-
-Pterodactyl's database is reachable from inside the Pterodactyl containers, but likely not from your Calagopus containers, since different Docker networks use different hostnames. The fix is to build a small `ptero.env` file with database connection details that work from where the importer runs.
-
-The importer needs all seven of these variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`. You'll find them across Pterodactyl's `docker-compose.yml` and `.env` file. A finished `ptero.env` looks something like:
-
-```sh
-APP_URL=https://panel.example.com
-APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
-DB_HOST=172.20.0.4
-DB_PORT=3306
-DB_DATABASE=panel
-DB_USERNAME=pterodactyl
-DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
-```
-
-Assemble the values one at a time using the steps below.
-
-#### `APP_URL`
-
-Your existing Pterodactyl domain, from Pterodactyl's `docker-compose.yml` or `.env`:
-
-```sh
-APP_URL=https://panel.example.com
-```
-
-#### `APP_KEY`
-
-From Pterodactyl's `.env`:
-
-```bash
-cat $PTERODACTYL_DIRECTORY/var/.env | grep APP_KEY
-```
-
-Looks like:
-
-```sh
-APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
-```
-
-#### `DB_HOST`
-
-Pterodactyl's `.env` probably has `DB_HOST=database`, a Docker service name that won't resolve from outside Pterodactyl's compose stack. Get the actual container IP instead, running this from inside Pterodactyl's directory:
-
-```bash
-# Linux/MacOS
-echo "DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q database))"
-
-# Windows
-echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $_ })"
-```
-
-Looks like:
-
-```sh
-DB_HOST=172.29.0.4
-```
-
-#### `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`
-
-If you haven't modified the default Pterodactyl compose file, these are all defaults:
-
-```sh
-DB_PORT=3306
-DB_DATABASE=panel
-DB_USERNAME=pterodactyl
-```
-
-If you've customized them, check Pterodactyl's `.env` for the actual values.
-
-#### `DB_PASSWORD`
-
-In Pterodactyl's `docker-compose.yml` or `.env`, look for `MARIADB_USER_PASS`. Copy its value and use it as `DB_PASSWORD`:
-
-```sh
-# In Pterodactyl's compose file:
-MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
-
-# Becomes in your ptero.env:
-DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
-```
-
-#### Assembling the File
-
-Go to the Calagopus directory (where your `compose.yml` lives) and create a file called `ptero.env` with all seven variables.
-
-### Running the Import
-
-Copy the `ptero.env` you just made into the Calagopus container:
-
-```bash
-docker compose cp ptero.env web:/.env
-```
-
-First validate without importing records:
-
-```bash
-docker compose exec web calagopus-panel import pterodactyl --environment /.env --dry-run --on-invalid=abort --report /tmp/pterodactyl-import-report.json
-```
-
-Read the reported problems before continuing. With Docker, the report is inside the `web` container; copy it out with `docker compose cp web:/tmp/pterodactyl-import-report.json ./pterodactyl-import-report.json` if needed. Review the [import options](../pterodactyl.md#import-options) to choose fixes or skipped rows. Then run the import interactively:
-
-```bash
-docker compose exec web calagopus-panel import pterodactyl --environment /.env
-```
-
-This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. The terminal shows validation findings and the planned record counts before the import writes data.
-
-::: warning If the import errors out
-Validation errors stop the import before it writes data. If the write phase fails, the importer rolls back the imported records; fix the reported problem and retry. If it says the data was imported but Panel settings could not be saved, keep the imported data and set the URL, name, and mail settings in the admin area. Do not rerun a successful data import just to repair settings.
 :::
 
-When the import finishes, restart the stack:
+## Create the Environment File
+
+Run this from the directory with Pterodactyl's compose file. It collects what the importer needs into `/tmp/ptero.env` and prints it so you can check it. If Pterodactyl's host mount isn't at `/srv/pterodactyl`, change the first line. Run `sudo -v` first so a password prompt doesn't swallow the rest of the pasted block.
 
 ```bash
-docker compose down
-docker compose up -d
+PTERODACTYL_DIRECTORY=/srv/pterodactyl
+
+{
+  echo "APP_URL=$(sudo docker compose exec -T panel printenv APP_URL)"
+  sudo grep '^APP_KEY=' "$PTERODACTYL_DIRECTORY/var/.env"
+  echo "DB_HOST=$(sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(sudo docker compose ps -q database))"
+  echo "DB_PORT=3306"
+  echo "DB_DATABASE=panel"
+  echo "DB_USERNAME=pterodactyl"
+  echo "DB_PASSWORD=$(sudo docker compose exec -T panel printenv DB_PASSWORD)"
+} > /tmp/ptero.env
+sudo chmod 600 /tmp/ptero.env
+cat /tmp/ptero.env
 ```
 
-Log in with your existing Pterodactyl credentials.
-
-=== APT/RPM, Binary
-
-### Building the Pterodactyl `.env` File
-
-For binary or APT/RPM installs of Calagopus, the importer runs directly on the host. If Pterodactyl's database is bound to a host port (e.g. `127.0.0.1:3306`), you can sometimes point the importer at Pterodactyl's existing `.env` file directly. More often the database is only reachable from inside Pterodactyl's Docker network, in which case you'll need a separate `ptero.env` with the right hostname.
-
-The importer needs all seven of these variables: `APP_URL`, `APP_KEY`, `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`, and `DB_PASSWORD`. You'll find them across Pterodactyl's `docker-compose.yml` and `.env` file. A finished `ptero.env` looks something like:
+The result looks like this, and all seven lines need a value:
 
 ```sh
 APP_URL=https://panel.example.com
@@ -250,113 +54,80 @@ DB_USERNAME=pterodactyl
 DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
 ```
 
-Open a scratch text editor and assemble the values one at a time using the steps below.
+`DB_PORT`, `DB_DATABASE` and `DB_USERNAME` are the defaults from Pterodactyl's compose file. If you've customized them, edit the file to match Pterodactyl's `.env`. If the database is bound to a host port and Calagopus isn't in Docker, you can also use `127.0.0.1` for `DB_HOST`.
 
-#### `APP_URL`
+::: details Running Pterodactyl on Windows
+Create `ptero.env` by hand with the seven values above. `APP_KEY` is in Pterodactyl's `var/.env`, `APP_URL` and the password are in its compose file (`MYSQL_PASSWORD`, or `MARIADB_USER_PASS` on Blueprint), and this prints `DB_HOST`:
 
-Your existing Pterodactyl domain, from Pterodactyl's `docker-compose.yml` or `.env`:
-
-```sh
-APP_URL=https://panel.example.com
-```
-
-#### `APP_KEY`
-
-From Pterodactyl's `.env`:
-
-```bash
-cat $PTERODACTYL_DIRECTORY/var/.env | grep APP_KEY
-```
-
-Looks like:
-
-```sh
-APP_KEY=xc5QXq4u3Qgi3zRP0Q9qq32mnZvl0lVY
-```
-
-#### `DB_HOST`
-
-If Pterodactyl's database is exposed to the host on a known port, use `127.0.0.1`. Otherwise, get the container IP from inside Pterodactyl's compose stack:
-
-```bash
-# Linux/MacOS
-echo "DB_HOST=$(docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $(docker compose ps -q database))"
-
-# Windows
+```powershell
 echo "DB_HOST=$($(docker compose ps -q database) | foreach { docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' $_ })"
 ```
+:::
 
-Looks like:
+## Run the Import
 
-```sh
-DB_HOST=172.29.0.4
-```
+The commands depend on how Calagopus itself is installed. Pick the matching tab:
 
-#### `DB_PORT`, `DB_DATABASE`, `DB_USERNAME`
+::::tabs
+=== Docker
 
-If you haven't modified the default Pterodactyl compose file, these are all defaults:
-
-```sh
-DB_PORT=3306
-DB_DATABASE=panel
-DB_USERNAME=pterodactyl
-```
-
-If you've customized them, check Pterodactyl's `.env` for the actual values.
-
-#### `DB_PASSWORD`
-
-In Pterodactyl's `docker-compose.yml` or `.env`, look for `MARIADB_USER_PASS`. Copy its value and use it as `DB_PASSWORD`:
-
-```sh
-# In Pterodactyl's compose file:
-MARIADB_USER_PASS=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
-
-# Becomes in your ptero.env:
-DB_PASSWORD=mZCcs8KInMWexDRe704T6C8swXmbP8W2M+kCpbnQuv4=
-```
-
-#### Assembling the File
-
-Go to wherever your Calagopus `.env` lives (`/etc/calagopus` by default on Linux) and create a `ptero.env` next to it with all seven variables.
-
-### Running the Import
-
-From the directory containing `ptero.env`:
-
-First validate without importing records:
+From the directory with your Calagopus `compose.yml`, copy the file into the container and validate without importing records:
 
 ```bash
-calagopus-panel import pterodactyl --environment ptero.env --dry-run --on-invalid=abort --report /tmp/pterodactyl-import-report.json
+sudo docker compose cp /tmp/ptero.env web:/.env
+sudo docker compose exec web calagopus-panel import pterodactyl --environment /.env --dry-run --on-invalid=abort --report /tmp/pterodactyl-import-report.json
+```
+
+Read the reported problems before continuing. The report is inside the `web` container; copy it out with `sudo docker compose cp web:/tmp/pterodactyl-import-report.json ./pterodactyl-import-report.json` if needed. Review the [import options](../pterodactyl.md#import-options) to choose fixes or skipped rows. Then run the import interactively:
+
+```bash
+sudo docker compose exec web calagopus-panel import pterodactyl --environment /.env
+```
+
+When the import finishes, restart the stack and remove the temporary file:
+
+```bash
+sudo docker compose down
+sudo docker compose up -d
+rm /tmp/ptero.env
+```
+
+=== APT/RPM, Binary
+
+Validate without importing records:
+
+```bash
+cd /etc/calagopus
+sudo calagopus-panel import pterodactyl --environment /tmp/ptero.env --dry-run --on-invalid=abort --report /tmp/pterodactyl-import-report.json
 ```
 
 Read the reported problems before continuing. Review the [import options](../pterodactyl.md#import-options) to choose fixes or skipped rows. Then run the import interactively:
 
 ```bash
-calagopus-panel import pterodactyl --environment ptero.env
+sudo calagopus-panel import pterodactyl --environment /tmp/ptero.env
 ```
 
-This walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. The terminal shows validation findings and the planned record counts before the import writes data.
-
-::: warning If the import errors out
-Validation errors stop the import before it writes data. If the write phase fails, the importer rolls back the imported records; fix the reported problem and retry. If it says the data was imported but Panel settings could not be saved, keep the imported data and set the URL, name, and mail settings in the admin area. Do not rerun a successful data import just to repair settings.
-:::
-
-When the import finishes, restart Calagopus:
+When the import finishes, restart Calagopus and remove the temporary file:
 
 ```bash
-# Linux
-systemctl restart calagopus-panel
-
-# Windows
-nssm restart "Calagopus Panel"
+sudo systemctl restart calagopus-panel
+rm /tmp/ptero.env
 ```
 
-Log in with your existing Pterodactyl credentials.
+On Windows, save `ptero.env` next to your Calagopus `.env`, use `--environment ptero.env` from that folder, and restart with `nssm restart "Calagopus Panel"`.
+
 ::::
+
+The import walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones take longer. The terminal shows validation findings and the planned record counts before the import writes data.
+
+::: warning If the import errors out
+Validation errors stop the import before it writes data. If the write phase fails, the importer rolls back the imported records; fix the reported problem and retry. If it says the data was imported but Panel settings could not be saved, keep the imported data and set the URL, name, and mail settings in the admin area. Do not rerun a successful data import just to repair settings. See [Troubleshooting the Import](../pterodactyl.md#troubleshooting-the-import) for the common errors.
+:::
+
+Log in with your existing Pterodactyl credentials.
 
 ## What's Next
 
-Wings also needs to point at the new panel. See [Updating Wings](../../../wings/updating.md) for that step.
+Your nodes keep their existing Wings install, so don't follow the Wings installation guide. Follow [Migrating Wings Nodes](../wings.md) on each one.
 
 After migrating, regenerate any API keys used by external scripts. The old Pterodactyl keys won't work, and the Calagopus API differs from Pterodactyl's, so those integrations need updating regardless.

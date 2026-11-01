@@ -5,7 +5,7 @@ description: How to install Calagopus DB Agent via a system package manager (APT
 
 # Package Manager DB Agent Installation
 
-Install DB Agent directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager:
+Install DB Agent directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager. Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block. If your system doesn't have `sudo`, like Alpine, run the commands as root and leave it out.
 
 ::::tabs
 === APT (Debian / Ubuntu)
@@ -15,43 +15,27 @@ Install DB Agent directly from the APT, RPM or APK repository, or from the Arch 
 DB Agent requires Docker to manage database containers. Verify your installation:
 
 ```bash
-docker --version
+sudo docker --version
 ```
 
+::: details Docker isn't installed yet
 If Docker is not installed, the easiest way to get it is Docker's installation script:
 
 ```bash
-curl -sSL https://get.docker.com/ | CHANNEL=stable bash
+curl -sSL https://get.docker.com/ | sudo CHANNEL=stable bash
 ```
 
 Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install).
-
-### Add the Repository
-
-```bash
-curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://packages.calagopus.com/deb stable main" | sudo tee /etc/apt/sources.list.d/calagopus.list
-apt update
-```
+:::
 
 ### Install DB Agent
 
 ```bash
-apt install -y calagopus-db-agent
-```
-
-Verify the installation:
-
-```bash
-calagopus-db-agent version
-```
-
-### Add an Alias (Optional)
-
-If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
-
-```bash
-ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+sudo curl -fsSL https://packages.calagopus.com/pub.gpg -o /usr/share/keyrings/calagopus-archive-keyring.gpg
+echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://packages.calagopus.com/deb stable main" | sudo tee /etc/apt/sources.list.d/calagopus.list
+sudo apt update
+sudo apt install -y calagopus-db-agent
+sudo calagopus-db-agent version
 ```
 
 === RPM (RHEL / Fedora / Rocky / Alma)
@@ -61,13 +45,13 @@ ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agen
 DB Agent needs either Docker or Podman installed and running. RHEL-family distributions ship Podman by default, so you may already have it.
 
 ::: info Already have Podman?
-You can keep it. Skip ahead to [Add the Repository](#add-the-repository-1). After DB Agent is installed, point `docker.socket` in your `config.yml` at the Podman socket instead of Docker's. For a rootless setup, see [Running DB Agent Rootless](../advanced/running-db-agent-rootless.md).
+You can keep it. Skip ahead to [Install DB Agent](#install-db-agent-1). After DB Agent is installed, point `docker.socket` in your `config.yml` at the Podman socket instead of Docker's. For a rootless setup, see [Running DB Agent Rootless](../advanced/running-db-agent-rootless.md).
 :::
 
 To use Docker instead, remove Podman first:
 
 ```bash
-dnf remove podman buildah
+sudo dnf remove podman buildah
 ```
 
 ### Install Docker
@@ -75,18 +59,20 @@ dnf remove podman buildah
 DB Agent requires Docker to manage database containers. Verify your installation:
 
 ```bash
-docker --version
+sudo docker --version
 ```
 
+::: details Docker isn't installed yet
 If Docker is not installed, the easiest way to get it is Docker's installation script:
 
 ```bash
-curl -sSL https://get.docker.com/ | CHANNEL=stable bash
+curl -sSL https://get.docker.com/ | sudo CHANNEL=stable bash
 ```
 
 Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install).
+:::
 
-### Add the Repository
+### Install DB Agent
 
 ```bash
 sudo rpm --import https://packages.calagopus.com/pubring.gpg
@@ -98,26 +84,8 @@ enabled=1
 gpgcheck=1
 gpgkey=https://packages.calagopus.com/pubring.gpg
 EOF
-```
-
-### Install DB Agent
-
-```bash
-dnf install calagopus-db-agent
-```
-
-Verify the installation:
-
-```bash
-calagopus-db-agent version
-```
-
-### Add an Alias (Optional)
-
-If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
-
-```bash
-ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+sudo dnf install -y calagopus-db-agent
+sudo calagopus-db-agent version
 ```
 
 === APK (Alpine)
@@ -130,6 +98,7 @@ DB Agent requires Docker to manage database containers. Verify your installation
 docker --version
 ```
 
+::: details Docker isn't installed yet
 If Docker is not installed, enable the community repository and install it:
 
 ```bash
@@ -139,33 +108,16 @@ rc-service docker start
 ```
 
 Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install).
+:::
 
-### Add the Repository
+### Install DB Agent
 
 ```bash
 wget -q -O /etc/apk/keys/calagopus.rsa.pub https://packages.calagopus.com/apk/calagopus.rsa.pub
 echo "https://packages.calagopus.com/apk" >> /etc/apk/repositories
 apk update
-```
-
-### Install DB Agent
-
-```bash
 apk add calagopus-db-agent
-```
-
-Verify the installation:
-
-```bash
 calagopus-db-agent version
-```
-
-### Add an Alias (Optional)
-
-If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
-
-```bash
-ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
 ```
 
 === AUR (Arch Linux)
@@ -175,9 +127,10 @@ ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agen
 DB Agent requires Docker to manage database containers. Verify your installation:
 
 ```bash
-docker --version
+sudo docker --version
 ```
 
+::: details Docker isn't installed yet
 If Docker is not installed, install it from the official repositories:
 
 ```bash
@@ -186,37 +139,33 @@ sudo systemctl enable --now docker
 ```
 
 Otherwise refer to the [official Docker installation guide](https://docs.docker.com/engine/install).
+:::
 
 ### Install DB Agent
 
 DB Agent is published to the [AUR](https://aur.archlinux.org/packages/calagopus-db-agent-bin). Install it with your preferred AUR helper:
 
 ```bash
-yay -S calagopus-db-agent-bin
+yay -S --noconfirm calagopus-db-agent-bin
+sudo calagopus-db-agent version
 ```
 
-Verify the installation:
+::::
 
-```bash
-calagopus-db-agent version
-```
-
-### Add an Alias (Optional)
+## Add an Alias (Optional)
 
 If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
 
 ```bash
-ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+sudo ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
 ```
-
-::::
 
 ## Configure DB Agent
 
 Set an API token that clients will use to authenticate against the management API:
 
 ```bash
-calagopus-db-agent configure --token <TOKEN>
+sudo calagopus-db-agent configure --token <TOKEN>
 ```
 
 This writes the token into the config file at the default path (`/etc/calagopus-db-agent/config.yml`), creating it with defaults first if it doesn't exist yet. See the [Configuration](../configuration.md) reference for every other available option.
@@ -224,19 +173,26 @@ This writes the token into the config file at the default path (`/etc/calagopus-
 Test the configuration by running DB Agent in the foreground:
 
 ```bash
-calagopus-db-agent
+sudo calagopus-db-agent
 ```
 
 Kill it with `Ctrl-C` once you've confirmed it starts without errors.
 
 ## Install as a Service
 
-```bash
+This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot, then shows its status:
+
+::: code-group
+```bash [systemd]
+sudo calagopus-db-agent service-install
+sudo systemctl status db-agent --no-pager
+```
+```bash [OpenRC (Alpine)]
 calagopus-db-agent service-install
+rc-service db-agent status
 ```
+:::
 
-This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot. Check its status with:
+## Next Steps
 
-```bash
-systemctl status db-agent
-```
+With DB Agent running, connect it to the Panel and secure its connections. See [Next Steps](../next-steps/index.md).

@@ -1,6 +1,6 @@
 ---
 title: WHMCS
-description: The Calagopus WHMCS module provisions servers from your billing workflow, creating, suspending, upgrading, and terminating them automatically, with a live server summary in the client area.
+description: The Calagopus WHMCS module creates, suspends, upgrades and terminates servers from your billing workflow, with a live server summary in the client area.
 ---
 
 # WHMCS
@@ -8,7 +8,7 @@ description: The Calagopus WHMCS module provisions servers from your billing wor
 The **Calagopus WHMCS module** is a server provisioning module for [WHMCS](https://www.whmcs.com). It lets WHMCS automatically create, suspend, unsuspend, upgrade, and terminate Calagopus servers as part of your billing workflow, and shows customers a live summary of their server in the WHMCS client area.
 
 ::: danger
-This module authenticates with an **admin API key** (entered as the server password), which grants full administrative access to your panel - creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
+This module authenticates with an **admin API key** (entered as the server password), which grants full administrative access to your panel: creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
 :::
 
 ## What It Does

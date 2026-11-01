@@ -5,13 +5,13 @@ description: Ship operator-facing shell commands with your extension instead of 
 
 # CLI Commands
 
-Sometimes the right way to ship a feature isn't an HTTP route - it's a command the operator runs from the shell. Maybe you want a way to regenerate cached data without hitting an HTTP endpoint, a one-off migration helper, a support tool to disable 2FA for a locked-out user, or a `version` command that prints build info. Calagopus lets extensions add their own top-level commands to the `panel-rs` CLI, and this page is about how.
+Some features are better as a command the operator runs from the shell than as an HTTP route: regenerating cached data, a one-off migration helper, a support tool that disables 2FA for a locked-out user, or a `version` command that prints build info. Extensions can add their own top-level commands to the `panel-rs` CLI.
 
-If you've used [clap](https://docs.rs/clap) before, you already know most of what you need - the extension side is a thin wrapper that lets you register command groups and individual commands with the Panel's root CLI parser. If you haven't used clap, the examples here should be enough to get you going, and clap's docs fill in the details when you need them.
+Commands are built with [clap](https://docs.rs/clap). The extension side is a thin wrapper that registers command groups and commands with the Panel's root CLI parser. The examples below cover the basics; clap's docs have the rest.
 
 ## Registering a Command Group
 
-CLI registration happens in your extension's `initialize_cli` method - the CLI counterpart to `initialize_router` and `initialize_permissions`, with one difference: it runs before the Panel reads which extensions are disabled, so a disabled extension's commands stay available (see [Disabling Extensions](../disabling-extensions.md)):
+CLI registration happens in your extension's `initialize_cli` method, the CLI counterpart to `initialize_router` and `initialize_permissions`, with one difference: it runs before the Panel reads which extensions are disabled, so a disabled extension's commands stay available (see [Disabling Extensions](../disabling-extensions.md)):
 
 ```rs
 use shared::{
@@ -45,14 +45,14 @@ panel-rs my-tool --help
 ```
 
 ::: warning
-**The name you pass to `add_group` becomes a top-level subcommand, unprefixed.** `add_group("my-tool", ...)` makes `panel-rs my-tool ...` - there's no automatic namespacing, the same way admin routes aren't namespaced for you either. Pick a group name unlikely to collide with the core CLI or other extensions. Something tied to your extension (like `minecraft-versions` or `egg-changer`) is a safe default; a generic name like `tools` or `admin` is asking for trouble. Since Panel 1.2.7, a group or command whose name is already taken, or an `initialize_cli` that panics, marks the extension as failed to start, so none of its other entrypoints run either.
+**The name you pass to `add_group` becomes a top-level subcommand, unprefixed.** `add_group("my-tool", ...)` makes `panel-rs my-tool ...`. There's no automatic namespacing, just as admin routes aren't namespaced for you. Pick a group name unlikely to collide with the core CLI or other extensions. A name tied to your extension (like `minecraft-versions` or `egg-changer`) is safe; a generic name like `tools` or `admin` is likely to clash. Since Panel 1.2.7, a group or command whose name is already taken, or an `initialize_cli` that panics, marks the extension as failed to start, so none of its other entrypoints run either.
 :::
 
-You can nest groups inside groups by calling `add_group` again from within a child builder - useful if your extension has several categories of commands and you want `panel-rs my-tool users disable-2fa` rather than a flat list. For most extensions a single group with a handful of commands is plenty.
+You can nest groups inside groups by calling `add_group` again from within a child builder. That helps when your extension has several categories of commands and you want `panel-rs my-tool users disable-2fa` rather than a flat list. Most extensions need only one group with a few commands.
 
 ## The File-System Convention
 
-Just like routes, commands follow a file-system idiom that keeps things easy to navigate once you have more than one or two. The convention is:
+Like routes, commands follow a file layout that keeps them easy to find once there are more than one or two:
 
 ```bash
 backend/src/
@@ -64,7 +64,7 @@ backend/src/
     reset_password.rs
 ```
 
-The `mod.rs` is intentionally boring - it declares the child modules and defines a single function that registers them all on a builder:
+The `mod.rs` declares the child modules and defines one function that registers them all on a builder:
 
 ```rs
 use shared::extensions::commands::CliCommandGroupBuilder;
@@ -92,9 +92,9 @@ pub fn commands(cli: CliCommandGroupBuilder) -> CliCommandGroupBuilder {
 }
 ```
 
-That function then gets passed straight to `add_group`, as shown in the previous section. Once you've written this `mod.rs` once you basically copy its shape and just swap out the command list.
+That function is passed to `add_group`, as shown in the previous section.
 
-If you nest a subgroup, do the same thing one level deeper - a `commands/users/mod.rs` exports its own `commands` function, and the parent `commands/mod.rs` calls `.add_group("users", "...", users::commands)` to wire it in.
+For a nested subgroup, do the same one level deeper: a `commands/users/mod.rs` exports its own `commands` function, and the parent `commands/mod.rs` calls `.add_group("users", "...", users::commands)` to wire it in.
 
 ## Writing a Command
 
@@ -107,10 +107,10 @@ pub trait CliCommand<A: Args> {
 }
 ```
 
-- **`get_command`** lets you customize the `clap::Command` beyond what `#[derive(Args)]` produces - adding aliases, tweaking help, registering arguments not expressible as struct fields. For simple commands, just return `command` unchanged.
+- **`get_command`** lets you customize the `clap::Command` beyond what `#[derive(Args)]` produces such as adding aliases, changing help text, or registering arguments that can't be struct fields. For simple commands, return `command` unchanged.
 - **`get_executor`** returns the async function that runs when the command is invoked. It receives an `Option<Arc<Env>>` (the parsed environment, if available) and the `ArgMatches` from clap, and returns `Result<i32, anyhow::Error>` where the `i32` is the process exit code.
 
-Here's the simplest possible command - prints a version string, takes no arguments:
+The simplest possible command prints a version string and takes no arguments:
 
 ```rs
 use clap::Args;
@@ -137,12 +137,10 @@ impl shared::extensions::commands::CliCommand<VersionArgs> for VersionCommand {
 }
 ```
 
-A few details worth highlighting:
-
-- **The command struct is a unit struct** (`pub struct VersionCommand;`), not an enum or a config-holding struct. It has no state of its own - all the state lives in the `Args` and in whatever you construct inside the executor.
-- **The `Args` struct describes the arguments.** For a command with no arguments, it's an empty unit struct with `#[derive(Args)]`. For a command with flags, add fields with `#[arg(...)]` attributes - see the next section.
+- **The command struct is a unit struct** (`pub struct VersionCommand;`), not an enum or a config-holding struct. It has no state of its own; the state lives in the `Args` and in whatever you construct inside the executor.
+- **The `Args` struct describes the arguments.** For a command with no arguments, it's an empty unit struct with `#[derive(Args)]`. For a command with flags, add fields with `#[arg(...)]` attributes (see the next section).
 - **Exit code `0` means success**, following Unix convention. Non-zero codes indicate failure; pick sensibly numbered codes if you need to distinguish failure modes (`1` for generic failure is fine for most extensions).
-- **The executor is wrapped in `Box::new(|env, arg_matches| Box::pin(async move { ... }))`.** That's unavoidable boilerplate - `ExecutorFunc` is a boxed trait object returning a pinned future. Copy-paste the shape; the interesting code lives inside the `async move {}` block.
+- **The executor is wrapped in `Box::new(|env, arg_matches| Box::pin(async move { ... }))`.** That boilerplate is unavoidable, because `ExecutorFunc` is a boxed trait object returning a pinned future. Copy the shape; your code goes inside the `async move {}` block.
 
 ## Arguments
 
@@ -182,22 +180,23 @@ impl shared::extensions::commands::CliCommand<Disable2FAArgs> for Disable2FAComm
 }
 ```
 
-Whatever clap supports, you get - positional arguments, flags, value parsers, defaults, global arguments, required-vs-optional, `ValueEnum`-derived choices. The `CliCommandGroupBuilder` itself adds one implicit global flag, `--debug` / `-d`, which is available on every subcommand without you declaring it.
+Everything clap supports works: positional arguments, flags, value parsers, defaults, global arguments, required-vs-optional, `ValueEnum`-derived choices. The `CliCommandGroupBuilder` itself adds one implicit global flag, `--debug` / `-d`, which is available on every subcommand without you declaring it.
 
-For arguments that can't be expressed purely with `#[arg(...)]` attributes, use `get_command` to augment the `clap::Command` directly. This is an escape hatch, not the path of least resistance - most commands don't need it.
+For arguments that can't be expressed purely with `#[arg(...)]` attributes, use `get_command` to augment the `clap::Command` directly. Most commands don't need it.
 
 ## Accessing State
 
-Commands often need the Panel's state - the database, the settings store, the shared HTTP client. That state isn't available by default because not every command needs it (a `version` command that prints a string shouldn't pay the cost of connecting to the database), so you opt in by constructing it yourself:
+Commands often need the Panel's state: the database, the settings store, the shared HTTP client. It isn't created by default, because not every command needs it (a `version` command shouldn't connect to the database), so you construct it yourself:
 
 ```rs
 let state = shared::AppState::new_cli(env).await?;
 ```
 
-`AppState::new_cli` takes the `env: Option<Arc<Env>>` parameter from your executor and returns a fully-initialized `State` - the same type your HTTP handlers get. From there you use it exactly like you would in a route, including querying the database and reading settings.
+`AppState::new_cli` takes the `env: Option<Arc<Env>>` parameter from your executor and returns a fully initialized `State`, the same type your HTTP handlers get. Use it as you would in a route, including querying the database and reading settings.
 
-Here's a fuller example - a command that disables 2FA for a user, looking them up by username, email, or UUID, and prompting interactively if no `--user` flag was passed:
+A fuller example: a command that disables 2FA for a user, looking them up by username, email, or UUID, and prompting interactively if no `--user` flag was passed:
 
+::: details Full example: disable 2FA for a user
 ```rs
 use clap::{Args, FromArgMatches};
 use colored::Colorize;
@@ -303,28 +302,27 @@ impl shared::extensions::commands::CliCommand<Disable2FAArgs> for Disable2FAComm
     }
 }
 ```
-
-A few patterns worth pulling out of this:
+:::
 
 - **Build state early**, right after parsing args. If it fails (no database, malformed env), the user sees the error before any other work happens.
 - **Invalidate the cache after a raw write.** Models loaded by UUID are cached for a while, so a `sqlx::query!` that bypasses the model layer must be followed by `User::invalidate_cached(...)` or the running Panel keeps serving the stale row.
 - **Interactive fallback for missing arguments**, guarded by `std::io::stdout().is_terminal()`. When the command is run interactively, prompt for what's missing; when it's piped or scripted, fail fast with a clear error message and exit `1`. The [dialoguer](https://docs.rs/dialoguer) crate handles the prompt rendering.
 - **Use `eprintln!` for status and error messages**, not `println!`. Success output (like the "2FA disabled" line at the end) goes to stderr too in this example because it's user-facing information rather than a machine-readable value. Reserve `println!` for output that should be pipeable to another command.
-- **Use [colored](https://docs.rs/colored) for ANSI output**. Red for errors, cyan for identifiers, green for success - matches the convention used across the Panel's built-in CLI.
+- **Use [colored](https://docs.rs/colored) for ANSI output**. Red for errors, cyan for identifiers and green for success, as in the Panel's built-in CLI.
 
 ## The `env` Parameter
 
 The `env: Option<Arc<Env>>` your executor receives reflects whether the Panel's environment file was loaded successfully:
 
-- **`Some(env)`** - the env file was parsed. The Panel has config, a valid database connection is constructable, and everything the runtime expects is in place.
-- **`None`** - the env file couldn't be read or parsed. This happens during install/setup commands that need to run *before* the Panel is properly configured - think a `generate-env` or `first-time-setup` helper.
+- **`Some(env)`**: the env file was parsed. The Panel has config, a valid database connection is constructable, and everything the runtime expects is in place.
+- **`None`**: the env file couldn't be read or parsed. This happens in install and setup commands that run *before* the Panel is configured, such as a `generate-env` or `first-time-setup` helper.
 
 For most commands you want `Some(env)` and you'll bail out on `None`. `AppState::new_cli(env)` handles that case itself: with `None` it prints "please setup the new panel environment before using this command." and exits the process with code 1 on the spot. It never returns an `Err` for a missing env, so nothing you wrote after it runs in that case; if you need your own message or cleanup, check `env.is_some()` before calling it.
 
-If your command specifically needs to work *without* the env (e.g. it's the command that generates the env file in the first place), branch on `env.is_some()` and handle the cases explicitly - you've seen this pattern in the core Panel's `service install` command, which optionally starts the service with `systemctl enable --now` if the env is present, but registers the service for later startup if not.
+If your command has to work *without* the env (because it generates the env file, for example), branch on `env.is_some()` and handle both cases. The core Panel's `service install` command does this: it starts the service with `systemctl enable --now` if the env is present, and only registers it for later startup if not.
 
 ## Exit Codes
 
-Return `Ok(0)` for success and `Ok(non_zero)` for failure - scripts calling your command will check `$?` and expect Unix conventions. Don't return `Err(...)` for user-facing failures like "user not found" or "file already exists"; those are expected outcomes and should print a helpful message to stderr and return a non-zero exit code. Reserve `Err(...)` for genuine unexpected failures (database connection lost, filesystem I/O error). The Panel prints those as a debug dump of the error and exits with code 1, with a backtrace only if `RUST_BACKTRACE` is set.
+Return `Ok(0)` for success and `Ok(non_zero)` for failure; scripts calling your command check `$?` and expect Unix conventions. Don't return `Err(...)` for user-facing failures like "user not found" or "file already exists"; those are expected outcomes and should print a helpful message to stderr and return a non-zero exit code. Reserve `Err(...)` for genuine unexpected failures (database connection lost, filesystem I/O error). The Panel prints those as a debug dump of the error and exits with code 1, with a backtrace only if `RUST_BACKTRACE` is set.
 
-A simple convention that works fine for most extensions: `0` for success, `1` for any expected failure with a printed error, and bubble up `Err(...)` for anything else.
+A convention that works for most extensions: `0` for success, `1` for any expected failure with a printed error, and bubble up `Err(...)` for anything else.

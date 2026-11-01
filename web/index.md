@@ -2,12 +2,12 @@
 layout: home
 title: Calagopus - Open-Source Game Server Management Panel
 titleTemplate: false
-description: Calagopus is a modern, open-source game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Rust, and other game servers with industry-leading performance.
+description: Calagopus is an open-source game server management panel built in Rust. Deploy, monitor, and manage Minecraft, Rust, and other game servers from one web interface.
 
 hero:
   name: Calagopus
   text: Modern. Fast. Secure.
-  tagline: An open-source game server management panel built in Rust - with panel API throughput up to 442x that of PHP-based panels.
+  tagline: An open-source game server management panel built in Rust, with up to 442x the API throughput of PHP-based panels.
   actions:
     - theme: brand
       text: Get Started
@@ -62,9 +62,9 @@ import mobilePreviewSrcset from './mobile-preview.webp?w=360;500;720;1000&as=src
 <section class="switch-wrapper" aria-labelledby="switch-heading">
   <h2 id="switch-heading" class="section-heading">Switching from another panel?</h2>
   <p class="switch-intro">
-    Calagopus manages anything that runs in a Linux Docker container - Minecraft (Java and Bedrock), Rust,
-    ARK, Valheim, FiveM, and more. Pterodactyl eggs work without modification, and migration tooling is
-    built in. See how it stacks up against the panel you run today:
+    Calagopus manages anything that runs in a Linux Docker container, including Minecraft (Java and Bedrock),
+    Rust, ARK, Valheim and FiveM. Pterodactyl eggs work unchanged, and the panel has a built-in importer.
+    Compare it with the panel you run today:
   </p>
   <div class="switch-grid">
     <Card class="switch-card" padding="lg" href="/compare/calagopus-vs-pterodactyl">

@@ -5,14 +5,14 @@ description: Render your extension React components inside the Panel pages.
 
 # Mounting UI
 
-So far the docs have covered the backend side - routes, permissions, settings, activity. But none of that is any use unless the Panel's UI actually *shows* something to a user. This page is about the frontend entry point: how your extension gets React components onto actual pages in the Panel.
+This page covers how your extension gets React components onto pages in the Panel.
 
 Two things do the work:
 
 1. **The `Extension` class** you export from `src/index.ts`, which declares a couple of default mount points (the admin extension card, the admin extension configuration page).
 2. **The `ExtensionRegistry`**, accessed via `ctx.extensionRegistry` inside your `initialize()` method, which lets you push components into existing Panel pages and add entirely new routes to the sidebar.
 
-Together these cover the big four: "add a summary to the admin extension card", "let the admin configure your extension", "drop a widget into an existing page", and "add a whole new page". Which is most of what most extensions need.
+Together they cover what most extensions need: a summary on the admin extension card, a configuration page, a widget inside an existing page, and whole new pages.
 
 ## The Extension Class
 
@@ -40,16 +40,16 @@ export default new MyExtension();
 
 Four fields on the class map directly to admin-panel surfaces:
 
-- **`cardComponent`** - a React component rendered inside your extension's card in the admin panel's extension list. Good for a quick at-a-glance summary: "42 items installed", "last sync 2 minutes ago", a small health indicator. Keep it compact, it's sharing space with other extensions. It's also rendered again in the hover preview, so it can be mounted twice at once. Set to `null` if you don't need it.
+- **`cardComponent`**: a React component rendered inside your extension's card in the admin extension list, for a short summary such as "42 items installed", "last sync 2 minutes ago" or a small health indicator. Keep it compact; it shares space with other extensions. It's also rendered again in the hover preview, so it can be mounted twice at once. Set to `null` if you don't need it.
 
-- **`cardPreviewComponent`** - a React component rendered in the expanded preview that opens when an admin hovers your extension's card with a mouse. It sits below the built-in details (full description, authors, panel version) and your `cardComponent`, just above the action buttons, so it's the place for details that don't fit the compact card. The preview mounts fresh every time it opens and isn't shown on touch devices, so keep it display-only and don't put anything there that only exists in the preview. Set to `null` if you don't need it.
+- **`cardPreviewComponent`**: a React component rendered in the expanded preview that opens when an admin hovers your extension's card with a mouse. It sits below the built-in details (full description, authors, panel version) and your `cardComponent`, just above the action buttons, so it's the place for details that don't fit the compact card. The preview mounts fresh every time it opens and isn't shown on touch devices, so keep it display-only and don't put anything there that only exists in the preview. Set to `null` if you don't need it.
 
-- **`cardConfigurationPage`** - a React component shown when an admin clicks the Configure button on your extension's card. It's mounted at `/admin/extensions/<your-package-identifier>` automatically - you don't need to register a route for it. Set to `null` if your extension has nothing to configure. The Configure button is only enabled while the extension is enabled and has a backend part, and the page itself sits behind the `extensions.*` admin permissions.
+- **`cardConfigurationPage`**: a React component shown when an admin clicks the Configure button on your extension's card. It's mounted at `/admin/extensions/<your-package-identifier>` automatically, without a route of your own. Set to `null` if your extension has nothing to configure. The Configure button is only enabled while the extension is enabled and has a backend part, and the page itself sits behind the `extensions.*` admin permissions.
 
-- **`cardIcon`** - a React node that overrides the icon shown next to your extension's name in the admin extension list (defaults to a generic puzzle-piece). Pass any element - a `<FontAwesomeIcon />`, an `<img>`, an inline SVG - and it's dropped into the row's icon slot as-is; the surrounding styled container is kept, so you're swapping just the glyph. Leave it `null` to keep the default puzzle piece.
+- **`cardIcon`**: a React node that overrides the icon next to your extension's name in the admin extension list (a puzzle piece by default). Any element works, such as a `<FontAwesomeIcon />`, an `<img>` or an inline SVG. It goes into the row's icon slot as-is, inside the existing styled container. Leave it `null` to keep the default puzzle piece.
 
 ::: info
-**Configuration pages are already wrapped for you.** The route shell that mounts your `cardConfigurationPage` at `/admin/extensions/<id>` provides the admin layout, navigation, and title bar - your component just returns its content (a `<div>`, a `<Stack>`, whatever). This is the *only* exception. Every other route you add needs to wrap its own content (see [Container Wrappers](#container-wrappers) below).
+**Configuration pages are already wrapped for you.** The route shell that mounts your `cardConfigurationPage` at `/admin/extensions/<id>` provides the admin layout, navigation and title bar; your component only returns its content (a `<div>`, a `<Stack>`, anything). This is the *only* exception. Every other route you add needs to wrap its own content (see [Container Wrappers](#container-wrappers) below).
 :::
 
 The `initialize()` method runs once when the Panel loads your extension, and receives a `ctx: ExtensionContext` that exposes the registry. Any UI beyond the two class fields gets added here.
@@ -70,10 +70,10 @@ Walking this left to right: `ctx.extensionRegistry.pages` is the tree of built-i
 
 Each slot has two methods for adding components:
 
-- **`appendComponent(Component)`** - adds to the end of the slot
-- **`prependComponent(Component)`** - adds to the beginning of the slot
+- **`appendComponent(Component)`** adds to the end of the slot
+- **`prependComponent(Component)`** adds to the beginning of the slot
 
-The component you pass takes no props - it's a self-contained feature card that reads whatever state it needs from Panel stores (see [Reading Panel State](#reading-panel-state) below).
+The component you pass takes no props. It's a self-contained card that reads whatever state it needs from Panel stores (see [Reading Panel State](#reading-panel-state) below).
 
 <img src="./images/mounting-ui/settings-card.webp" alt="The server Settings page with an extension's Change Egg card rendered in the grid between the stock Rename Server and Auto-Start cards" width="828">
 
@@ -81,7 +81,7 @@ That is the shape of a plain component list. A few slots are *containers* instea
 
 ### Ordering Between Entries
 
-Append and prepend get you to the ends. If you need to land *between* existing entries, the slot points use Tailwind's `order-` utility classes on each entry to control visual position. Stock entries count up by 10 starting at `order-10`, so `order-10`, `order-20`, `order-30`, and so on - leaving plenty of gaps for extensions to slot in at `order-15` or `order-25` without having to renumber anything.
+Append and prepend get you to the ends. If you need to land *between* existing entries, the slot points use Tailwind's `order-` utility classes on each entry to control visual position. Stock entries count up by 10 starting at `order-10`, so `order-10`, `order-20`, `order-30` and so on, which leaves gaps for extensions at `order-15` or `order-25`.
 
 Since the exact numbers depend on what's already there in the version of the Panel you're targeting, **inspect the page in DevTools** to find the existing orders: right-click an entry next to where you want to land, inspect, and look for the `order-<n>` class on the wrapper. Then set your own component's outer element to an order that falls in the right gap:
 
@@ -125,7 +125,7 @@ The page tree under `ctx.extensionRegistry.pages` is large and evolves as the Pa
 
 ## Adding New Routes
 
-When slotting into an existing page isn't enough - you have a whole new feature that deserves its own sidebar entry and URL - use the route registry. The Minecraft version changer extension does this to add a "Versions" tab to every server:
+When a feature needs its own sidebar entry and URL, use the route registry. The Minecraft version changer extension does this to add a "Versions" tab to every server:
 
 ```ts
 import { faCube } from '@fortawesome/free-solid-svg-icons';
@@ -160,32 +160,32 @@ The definition types form a small hierarchy, each level adding fields. These are
 
 **Always (`GlobalRouteDefinition` and everything that extends it):**
 
-- **`path: string`** - the URL relative to the route type's base. A path of `/minecraft/versions` passed to `addServerRoute` becomes something like `/server/<uuid>/minecraft/versions` in the actual URL. Leading slash required.
-- **`element: FC`** - the React component to render when the route matches. Remember it needs to wrap itself in the appropriate container (see [Container Wrappers](#container-wrappers) below).
-- **`exact?: boolean`** - highlights the sidebar entry only on an exact URL match (it becomes the `NavLink` `end` prop). It does not change which URLs the route matches. Leave unset unless you know you need it.
-- **`filter?: () => boolean`** - called at render time; if it returns `false` the route is skipped as though it wasn't registered. Useful for feature flags ("only show this route if the extension's setting is enabled") or environment checks. The route tree re-evaluates it on every render, but the sidebar lists are memoised and only re-run it when the route list, the admin's route order or the language changes, so keep it cheap and don't expect a flag that flips at runtime to move the sidebar entry straight away.
+- **`path: string`**: the URL relative to the route type's base. A path of `/minecraft/versions` passed to `addServerRoute` becomes something like `/server/<uuid>/minecraft/versions` in the actual URL. Leading slash required.
+- **`element: FC`**: the React component to render when the route matches. Remember it needs to wrap itself in the appropriate container (see [Container Wrappers](#container-wrappers) below).
+- **`exact?: boolean`**: highlights the sidebar entry only on an exact URL match (it becomes the `NavLink` `end` prop). It does not change which URLs the route matches. Leave unset unless you know you need it.
+- **`filter?: () => boolean`**: called at render time; if it returns `false` the route is skipped as though it wasn't registered. Useful for feature flags ("only show this route if the extension's setting is enabled") or environment checks. The route tree re-evaluates it on every render, but the sidebar lists are memoised and only re-run it when the route list, the admin's route order or the language changes, so keep it cheap and don't expect a flag that flips at runtime to move the sidebar entry straight away.
 
 ::: warning
 `filter` is not for egg route filtering, The Panel already has such system built-in via Egg Configurations. Use `filter` for extension-specific conditions only.
 :::
 
-**Additionally for named routes (`RouteDefinition` - account, admin, server):**
+**Additionally for named routes (`RouteDefinition`: account, admin, server):**
 
-- **`name: string | (() => string) | undefined`** - the label shown in the sidebar. A plain string works for untranslated labels. For translated labels, pass a function that returns the translated string - this way the label re-evaluates when the user switches language. `undefined` is valid if for some reason you want a route with no sidebar entry (though in that case you probably want `addGlobalRoute` instead).
-- **`icon?: IconDefinition`** - a FontAwesome icon definition (e.g. `faCube` from `@fortawesome/free-solid-svg-icons`). Optional, but sidebar entries look noticeably worse without one - include one unless you're specifically going for a text-only look.
-- **`activeMatches?: string[]`** - extra paths that also highlight this sidebar entry, for sub-pages of yours that live under a different URL.
+- **`name: string | (() => string) | undefined`**: the label shown in the sidebar. A plain string works for untranslated labels. For translated labels, pass a function that returns the translated string, so the label updates when the user switches language. `undefined` gives a route with no sidebar entry (though in that case you probably want `addGlobalRoute` instead).
+- **`icon?: IconDefinition`**: a FontAwesome icon definition (such as `faCube` from `@fortawesome/free-solid-svg-icons`). Optional, but every core sidebar entry has one.
+- **`activeMatches?: string[]`**: extra paths that also highlight this sidebar entry, for sub-pages of yours that live under a different URL.
 
 **Additionally for permissioned routes (`AdminRouteDefinition`, `ServerRouteDefinition`):**
 
-- **`permission?: string | string[] | null`** - the permission node(s) required to see this route. A single string requires that permission; an array passes if the user holds *any* of them, so use it for "this page is reachable through more than one grant", not to require a combination. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend - see [Permissions](./permissions.md) for how permission nodes map to what the user can do. `null` or omitted means no permission required (which is the right default for most user-facing features; reach for `permission` when you have something gated).
+- **`permission?: string | string[] | null`**: the permission node(s) required to see this route. A single string requires that permission; an array passes if the user holds *any* of them, so use it for "this page is reachable through more than one grant", not to require a combination. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend; see [Permissions](./permissions.md). `null` or omitted means no permission is required.
 
 **Additionally for admin routes (`AdminRouteDefinition`):**
 
-- **`category?: string`** - the admin sidebar is grouped into labelled categories, in this order: System, Infrastructure, Users & Access, Nests & Eggs, Databases, Storage. Set `category` to one of the built-in category keys (`'infrastructure'`, `'eggs'`, `'databases'`, `'storage'`, `'access'`, `'system'`) to place your route under that heading. An unknown or omitted `category` puts the route in an unlabelled group at the bottom of the sidebar, below the built-in categories.
+- **`category?: string`**: the admin sidebar is grouped into labelled categories, in this order: System, Infrastructure, Users & Access, Nests & Eggs, Databases, Storage. Set `category` to one of the built-in category keys (`'infrastructure'`, `'eggs'`, `'databases'`, `'storage'`, `'access'`, `'system'`) to place your route under that heading. An unknown or omitted `category` puts the route in an unlabelled group at the bottom of the sidebar, below the built-in categories.
 
 ### A More Complete Example
 
-Putting a few of these together - a server route with a translated name, an icon, gated on a permission, and hidden while the user has switched the feature off:
+An example combining several of these: a server route with a translated name, an icon, gated on a permission, and hidden while the user has switched the feature off:
 
 ```ts
 import { z } from 'zod';
@@ -203,21 +203,21 @@ ctx.extensionRegistry.enterRoutes((routes) =>
 );
 ```
 
-`filter` takes no arguments and runs outside React, so hooks are out, and so is the current server: `useServerStore` is a context-scoped store with no `getState()`, and the route list is built without a server in hand. Reach for module-level reads instead - `getGlobalStore()` from `@/stores/global.ts` for Panel settings and permissions, or `getUserSetting` from `@/lib/userSettings.ts` for a per-user flag like the one above (see [User Settings](./user-settings.md)). Showing a route only on certain eggs is what Egg Configurations are for, not `filter`.
+`filter` takes no arguments and runs outside React, so hooks are out, and so is the current server: `useServerStore` is a context-scoped store with no `getState()`, and the route list is built without a server in hand. Use module-level reads instead: `getGlobalStore()` from `@/stores/global.ts` for Panel settings and permissions, or `getUserSetting` from `@/lib/userSettings.ts` for a per-user flag like the one above (see [User Settings](./user-settings.md)). Showing a route only on certain eggs is what Egg Configurations are for, not `filter`.
 
 ### Container Wrappers
 
-Unlike configuration pages, **route components don't get page chrome for free**. Your `element` is rendered inside the layout for its route type, but inside that layout you still need to wrap your content in the right **content container**, which handles the title, header, and other per-page chrome. Importing from `@/elements/containers/`:
+Unlike configuration pages, **route components don't get a page frame automatically**. Your `element` is rendered inside the layout for its route type, but inside that layout you still need to wrap your content in the right **content container**, which handles the title, header, and other per-page chrome. Importing from `@/elements/containers/`:
 
 | Route type | Wrapper | Notes |
 | ---------- | ------- | ----- |
-| `addGlobalRoute`, `addAuthenticationRoute` | `ContentContainer` | Minimal - sets the browser tab title, renders children directly |
+| `addGlobalRoute`, `addAuthenticationRoute` | `ContentContainer` | Minimal: sets the browser tab title and renders children directly |
 | `addAccountRoute` | `AccountContentContainer` | Full account page chrome |
 | `addAdminRoute` (top-level) | `AdminContentContainer` | Full admin page chrome |
 | `addAdminRoute` (under a tabbed page with SubNavigation) | `AdminSubContentContainer` | For admin pages that live as a tab underneath a parent page |
 | `addServerRoute` | `ServerContentContainer` | Full server page chrome |
 
-The non-minimal containers all take the same core props - `title` (required - the page header), plus optionals like `subtitle`, `search` / `setSearch` (wires up a search input in the header), `contentRight` (a ReactNode rendered on the right of the header, for buttons), `hideTitleComponent` and `titleOrder`. All but `AdminSubContentContainer` also take `fullscreen`. A typical server page looks like this:
+The other containers all take the same core props: `title` (required, the page header), plus optional ones like `subtitle`, `search` / `setSearch` (wires up a search input in the header), `contentRight` (a ReactNode rendered on the right of the header, for buttons), `hideTitleComponent` and `titleOrder`. All but `AdminSubContentContainer` also take `fullscreen`. A typical server page looks like this:
 
 ```tsx
 import ServerContentContainer from '@/elements/containers/ServerContentContainer.tsx';
@@ -233,13 +233,13 @@ export default function MyServerPage() {
 }
 ```
 
-Note that these containers have a `registry` prop. **You don't need it.** It's used by the stock Panel to register its own slot points inside pages, not by extensions - ignore it.
+These containers have a `registry` prop. **Extensions don't need it**; the Panel uses it to register its own slot points inside pages.
 
 ### Ordering Routes
 
-Admins can reorder the account sidebar (from the admin user settings) and the server sidebar (per egg configuration). **That order is the source of truth.** If an admin has set a custom order, that wins. The admin sidebar has no custom order: it follows the static category order, then registration order within a category. You generally don't need to think about where your route lands - it'll appear somewhere sensible by default, and admins will move it if they want.
+Admins can reorder the account sidebar (from the admin user settings) and the server sidebar (per egg configuration). **That order is the source of truth.** If an admin has set a custom order, that wins. The admin sidebar has no custom order: it follows the static category order, then registration order within a category. You usually don't need to think about where your route lands; admins can move it.
 
-If you really do want to influence the default ordering (before an admin customizes it), use an interceptor - see the next section. But most of the time: just `addServerRoute(...)` and let the admin panel handle placement.
+To influence the default order (before an admin customizes it), use an interceptor, described in the next section.
 
 ## Interceptors
 
@@ -257,17 +257,17 @@ public initialize(ctx: ExtensionContext): void {
 
 Two legitimate uses:
 
-- **Changing default route order.** Move entries around to land in a specific spot. For account and server routes this is the *default* order only - if an admin has set a custom order, their ordering wins and your reordering is discarded (the custom order is applied by path, so an element you replaced stays replaced). Admin routes have no custom order, so there the order your interceptor leaves is what renders.
+- **Changing default route order.** Move entries around to land in a specific spot. For account and server routes this is the *default* order only: if an admin has set a custom order, their ordering wins and your reordering is discarded (the custom order is applied by path, so an element you replaced stays replaced). Admin routes have no custom order, so there the order your interceptor leaves is what renders.
 
-- **Replacing a stock page entirely.** Find the route you want to replace by its path, swap its `element` for your own component. This lets an extension take over a built-in page - useful when you want to offer a different UX for an existing Panel feature.
+- **Replacing a stock page entirely.** Find the route you want to replace by its path, swap its `element` for your own component. This lets an extension take over a built-in page to offer a different UI for an existing Panel feature.
 
 ::: warning
-Interceptors are a sharp tool. They run against every route of that type, including routes from core and routes from other extensions that registered before you. A buggy interceptor can break functionality the user didn't even know came from your extension, and replacing a stock page's element means you now own the responsibility of keeping that page working as the Panel evolves.
+Use interceptors with care. They run against every route of that type, including routes from core and routes from other extensions that registered before you. A buggy interceptor can break functionality the user didn't even know came from your extension, and if you replace a stock page's element, keeping that page working as the Panel changes is your job.
 
 Use interceptors sparingly, keep their mutations narrowly scoped (filter to the one route you care about by path, don't iterate over everything), and prefer the simple `add*Route` methods for anything you can express that way.
 :::
 
-The same interceptor pattern exists for every route type - `addGlobalRouteInterceptor`, `addAccountRouteInterceptor`, `addAdminRouteInterceptor`, `addAuthenticationRouteInterceptor`.
+The same interceptor exists for every route type: `addGlobalRouteInterceptor`, `addAccountRouteInterceptor`, `addAdminRouteInterceptor`, `addAuthenticationRouteInterceptor`.
 
 ## Reading Panel State
 
@@ -278,8 +278,8 @@ import { useServerStore } from '@/stores/server.ts';
 import { useGlobalStore } from '@/stores/global.ts';
 ```
 
-- **`useServerStore`** - the currently-viewed server (on server pages). Exposes `server`, `updateServer`, and related state. It is scoped to the server router through React context, so it only works inside server pages and has no module-level `getState()`.
-- **`useGlobalStore`** - app-wide state: the Panel settings (including the available languages), the current user's permissions, announcements and the server time offset. Outside React, `getGlobalStore()` from the same module returns a snapshot.
+- **`useServerStore`**: the currently viewed server (on server pages). Exposes `server`, `updateServer`, and related state. It is scoped to the server router through React context, so it only works inside server pages and has no module-level `getState()`.
+- **`useGlobalStore`**: app-wide state: the Panel settings (including the available languages), the current user's permissions, announcements and the server time offset. Outside React, `getGlobalStore()` from the same module returns a snapshot.
 
 The logged-in user is not in either store. It comes from `useAuth()` in `@/providers/AuthProvider.tsx`.
 
@@ -296,11 +296,11 @@ Or destructure if you need multiple fields and don't mind the extra re-renders:
 const { server, updateServer } = useServerStore();
 ```
 
-This is standard Zustand - if you haven't used it before, the [Zustand docs](https://zustand.docs.pmnd.rs/) are short and cover everything.
+This is standard Zustand; the [Zustand docs](https://zustand.docs.pmnd.rs/) are short.
 
 ## The Rest of the Registry
 
-This page covered the two patterns you'll actually use in most extensions - slotting components into existing pages, and adding new routes. The `ExtensionRegistry` surface is considerably larger than this, and designed to let extensions do almost anything with the UI. Rather than enumerate it (and go stale every time it grows), the authoritative reference is the typedocs:
+This page covered the two patterns most extensions use: slotting components into existing pages and adding new routes. The `ExtensionRegistry` can do much more; the typedocs are the full reference:
 
 **[ExtensionRegistry typedocs](https://typedocs.calagopus.com/classes/extensions_shared_src_registries.ExtensionRegistry)**
 

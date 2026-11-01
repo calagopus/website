@@ -2,6 +2,7 @@
 title: DB Agent Releases
 description: Changelog for the Calagopus DB Agent, newest release first.
 lastUpdated: false
+next: false
 ---
 
 # DB Agent Releases

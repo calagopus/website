@@ -15,10 +15,10 @@ The extension is published to both major registries, so it works in Visual Studi
 - [**Open VSX Registry**](https://open-vsx.org/extension/calagopus/calagopus) - for editors that cannot use the Microsoft marketplace, including [VSCodium](https://vscodium.com), [code-server](https://github.com/coder/code-server), [Gitpod](https://www.gitpod.io), Cursor, Windsurf, and most other VS Code forks.
 
 ::: info
-Pick the registry that matches your editor. The extension is identical on both - only the distribution channel differs. Any editor that can install from Open VSX is supported.
+Pick the registry that matches your editor. The extension is identical on both; only the distribution channel differs. Any editor that can install from Open VSX is supported.
 :::
 
-The extension is open source - you can browse the code, file issues, or build it yourself from the [`calagopus/vscode-extension`](https://github.com/calagopus/vscode-extension) repository.
+The extension is open source: you can browse the code, file issues, or build it yourself from the [`calagopus/vscode-extension`](https://github.com/calagopus/vscode-extension) repository.
 
 ## Requirements
 
@@ -57,7 +57,7 @@ The quickest way to get started is straight from your server's file manager. Ope
 Your editor opens, mounts the server's files as a workspace folder, and attaches to the console automatically. The same **Connect** dropdown is available in the header while editing a file, which will open that exact file in your editor once the server is mounted.
 
 ::: info
-The first time you connect to a panel, the extension signs you in through your browser - it provisions a scoped API key for you and stores it securely in your editor's secret storage, then reuses it on future connections. No copy-pasting keys required. See [Authentication](#authentication) for the full flow.
+The first time you connect to a panel, the extension signs you in through your browser: it provisions a scoped API key for you and stores it securely in your editor's secret storage, then reuses it on future connections. No copy-pasting keys required. See [Authentication](#authentication) for the full flow.
 :::
 
 ## Connecting from within the editor
@@ -90,7 +90,7 @@ A few more commands are contributed only where they make sense and are hidden fr
 
 ### Remote file editing
 
-Once a server is mounted, its files appear as an ordinary workspace folder. You can edit, create, rename, move, and delete files and directories using native editor tooling - every change is written back to the server over the `calagopus://` filesystem.
+Once a server is mounted, its files appear as an ordinary workspace folder. You can edit, create, rename, move, and delete files and directories using native editor tooling, and every change is written back to the server over the `calagopus://` filesystem.
 
 ### Searching files
 
@@ -110,7 +110,7 @@ Compression, extraction, and other long-running file operations report progress 
 
 Attach to your server's console as an integrated terminal. Output streams in real time and you can send commands straight from the terminal input, exactly as you would from the panel's console tab.
 
-Besides **Calagopus: Open Server Console**, the extension registers a **Calagopus Console** terminal profile - pick it from the dropdown next to the terminal's `+` button to choose a mounted server and attach.
+Besides **Calagopus: Open Server Console**, the extension registers a **Calagopus Console** terminal profile; pick it from the dropdown next to the terminal's `+` button to choose a mounted server and attach.
 
 ![VS Code integrated terminal attached to a Minecraft server console with a status bar server item](./images/vscode/integrated-terminal.webp)
 
@@ -120,19 +120,19 @@ Command snippets are the commands you keep re-running on your servers, saved to 
 
 From the view you can:
 
-- **Run** a snippet - it is sent to that server's console. If a console terminal for the server is already open it is focused and the command is sent right away; otherwise the extension opens one for you, and you run the snippet again once it has connected.
-- **Create** a snippet from the view's `+` button, or with **Calagopus: Create Command Snippet**. You give it a name, a command (pre-filled with the last command you typed in the console, if any), and a scope - either the egg of a mounted server or all eggs.
+- **Run** a snippet to send it to that server's console. If a console terminal for the server is already open it is focused and the command is sent right away; otherwise the extension opens one for you, and you run the snippet again once it has connected.
+- **Create** a snippet from the view's `+` button, or with **Calagopus: Create Command Snippet**. You give it a name, a command (pre-filled with the last command you typed in the console, if any), and a scope: either the egg of a mounted server or all eggs.
 - **Edit** or **Delete** an existing snippet from its inline actions.
 
 With a Calagopus console terminal focused, `Ctrl` + `Alt` + `S` (`Cmd` + `Alt` + `S` on macOS) opens a quick pick of the applicable snippets and runs the one you choose. The same picker is available anywhere as **Calagopus: Run Command Snippet...**.
 
 ::: info
-Snippets live on your account, not in the workspace, so they follow you across editors and servers. Creating, editing, and deleting them requires the `command-snippets` permissions on the extension's API key - if the actions fail, run [**Calagopus: Update API Key Permissions**](#updating-key-permissions).
+Snippets live on your account, not in the workspace, so they follow you across editors and servers. Creating, editing, and deleting them requires the `command-snippets` permissions on the extension's API key; if the actions fail, run [**Calagopus: Update API Key Permissions**](#updating-key-permissions).
 :::
 
 ### Real-time collaboration
 
-When more than one person opens the same server file, the extension keeps everyone's edits in sync live - you see each other's changes as they are typed, along with colored cursors and selections labeled with each participant's name. Editing is backed by a shared document (CRDT) synchronized through the panel, so concurrent edits merge cleanly without clobbering one another.
+When more than one person opens the same server file, the extension keeps everyone's edits in sync live: you see each other's changes as they are typed, along with colored cursors and selections labeled with each participant's name. Editing is backed by a shared document (CRDT) synchronized through the panel, so concurrent edits merge cleanly without clobbering one another.
 
 ![Remote collaborator's cursor and selection in the editor](./images/vscode/collab-cursors.gif)
 
@@ -144,7 +144,7 @@ Saves are coordinated through the panel: when you save a collaborative file, the
 
 #### When a file changes outside the editor
 
-If a file you have open changes on the server behind the session's back - someone edits it over SFTP, or a process rewrites it - the extension notices, marks the file with a warning badge in the Explorer, and asks what to do:
+If a file you have open changes on the server outside the session (someone edits it over SFTP, or a process rewrites it), the extension notices, marks the file with a warning badge in the Explorer, and asks what to do:
 
 - **View Diff** - compare the version on disk against the contents in your editor.
 - **Load Disk Version** - throw away the session's contents and reload from disk. Since everyone in the session shares one document, this replaces the contents for all participants, so you are asked to confirm when others are editing with you.
@@ -199,7 +199,7 @@ vscode://calagopus.calagopus/open?origin=<panel-url>&server=<server-uuid>
 | `apiKey` | No | An API key for an ephemeral, non-persisted session (credentials are not saved). |
 
 ::: warning
-A `vscode://` link is the canonical scheme for Visual Studio Code. Some forks register a different scheme (for example, `vscodium://` or `codium://`) - if a link does not open in your editor, click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme.
+A `vscode://` link is the canonical scheme for Visual Studio Code. Some forks register a different scheme (for example, `vscodium://` or `codium://`). If a link does not open in your editor, click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme.
 
 ![Files tab settings popover with a VSCode URI Scheme field set to vscode](./images/vscode/uri-scheme-setting.webp)
 :::
@@ -210,7 +210,7 @@ Sign-in is per panel and backed by your editor's secret storage, so your credent
 
 ### Browser sign-in
 
-Whenever you sign in without supplying a key - both from the panel's **Connect** button and via the **Calagopus: Sign In** command - the extension provisions an API key for you rather than asking you to paste one:
+Whenever you sign in without supplying a key, from the panel's **Connect** button or the **Calagopus: Sign In** command, the extension provisions an API key for you rather than asking you to paste one:
 
 1. It starts a short-lived local (loopback) HTTP server and opens the panel's API-key creation page in your browser, pre-filled with the key name, the permissions the extension needs, and a callback URL.
 2. You review and approve the key in the panel.
@@ -219,12 +219,12 @@ Whenever you sign in without supplying a key - both from the panel's **Connect**
 A progress notification is shown while this round-trip happens. If the callback never arrives (for example, in a locked-down browser), you can paste an API key into the same prompt manually as a fallback.
 
 ::: info
-This flow works across editors - including VS Code forks that don't register a custom URI scheme - and is forwarded automatically in Remote and Codespaces environments, so the browser round-trip still reaches your editor.
+This flow works across editors, including VS Code forks that don't register a custom URI scheme, and is forwarded automatically in Remote and Codespaces environments, so the browser round-trip still reaches your editor.
 :::
 
 ### Updating key permissions
 
-The key the extension provisions is scoped to exactly what it needs - reading your servers, reading and writing files, creating archives, the console and power controls, and managing your command snippets. When a new version of the extension needs a permission your existing key does not have, features backed by it start failing.
+The key the extension provisions is scoped to exactly what it needs: reading your servers, reading and writing files, creating archives, the console and power controls, and managing your command snippets. When a new version of the extension needs a permission your existing key does not have, features backed by it start failing.
 
 Run **Calagopus: Update API Key Permissions**, pick the panel (if you are signed in to more than one), and the extension opens the panel's key page in your browser with the updated permission set pre-filled. Approve it there and the same key keeps working - you do not get a new key and nothing needs to be re-entered in your editor.
 
@@ -233,7 +233,7 @@ Run **Calagopus: Update API Key Permissions**, pick the panel (if you are signed
 To revoke access, run **Calagopus: Sign Out**. If you are signed in to more than one panel, you can sign out of a single panel or all of them at once. Signing out only clears the stored key from your editor; to fully revoke the key, delete it from your panel's **Account → API Keys** page.
 
 ::: info
-Deep links that include an `apiKey` parameter open an **ephemeral** session - that key is used for the connection only and is never written to secret storage.
+Deep links that include an `apiKey` parameter open an **ephemeral** session: that key is used for the connection only and is never written to secret storage.
 :::
 
 ## Troubleshooting

@@ -5,7 +5,7 @@ description: Connect Git repositories full of eggs to your panel, then browse, i
 
 # Egg Repositories
 
-Egg repositories are Git repositories that store collections of eggs - the configuration files that tell the panel how to install and run a specific game server type. Calagopus has a built-in egg repository system that lets you browse and import eggs directly from the admin UI, similar to what Blueprint's Eggify extension provided for Pterodactyl.
+Egg repositories are Git repositories that store collections of eggs, the configuration files that tell the panel how to install and run a specific game server type. Calagopus has a built-in egg repository system that lets you browse and import eggs directly from the admin UI, similar to what Blueprint's Eggify extension provided for Pterodactyl.
 
 Calagopus has backwards compatibility for Pterodactyl eggs, so you can use the official Pterodactyl egg repositories as a starting point:
 - [pterodactyl/game-eggs](https://github.com/pterodactyl/game-eggs)
@@ -13,7 +13,7 @@ Calagopus has backwards compatibility for Pterodactyl eggs, so you can use the o
 - [pterodactyl/generic-eggs](https://github.com/pterodactyl/generic-eggs)
 
 ::: info
-You can also add egg repositories directly from the OOBE when first setting up Calagopus - select the repositories you want and click Import. Each one gets its own nest (**Games**, **Applications**, or **Generic**, reusing a nest of that name if it already exists) as its default nest, with automatic sync on. The setup wizard's server step then installs your chosen egg into that nest, and only asks for a nest name when the repository has no default nest.
+You can also add egg repositories directly from the OOBE when first setting up Calagopus: select the repositories you want and click Import. Each one gets its own nest (**Games**, **Applications**, or **Generic**, reusing a nest of that name if it already exists) as its default nest, with automatic sync on. The setup wizard's server step then installs your chosen egg into that nest, and only asks for a nest name when the repository has no default nest.
 
 ![Setup wizard Egg Repositories step with three Pterodactyl egg repositories ticked and an Import button](./images/egg-repos/oobe.webp)
 :::
@@ -41,7 +41,7 @@ Click **Save**. The panel starts syncing the repository in the background right 
 
 ![Update Egg Repository form for Games with the Sync button highlighted](./images/egg-repos/sync.webp)
 
-Syncing doesn't install any eggs - it populates the repository's Eggs tab and the [Egg Library](../features/admin/egg-library.md) with the full list from the repository so you can choose which ones to import.
+Syncing doesn't install any eggs; it fills the repository's Eggs tab and the [Egg Library](../features/admin/egg-library.md) with the full list from the repository so you can choose which ones to import.
 
 ## Importing Eggs
 

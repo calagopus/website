@@ -4,7 +4,7 @@ export const compareFaqs: Record<string, Faq[]> = {
   'compare/calagopus-vs-pterodactyl.md': [
     {
       q: 'Is Calagopus a fork of Pterodactyl?',
-      a: "No. Calagopus is a complete rewrite in a different language (Rust vs PHP). It draws on Pterodactyl's concepts - the egg system, Wings architecture, and panel/daemon split - but shares no code.",
+      a: "No. Calagopus is a complete rewrite in a different language (Rust vs PHP). It takes Pterodactyl's concepts, the egg system, the Wings architecture and the panel/daemon split, but shares no code.",
     },
     {
       q: 'Does Calagopus support Pterodactyl eggs?',
@@ -12,7 +12,7 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Does Calagopus support Blueprint extensions?',
-      a: "No. Blueprint targets Pterodactyl's PHP architecture and isn't compatible with Calagopus. Calagopus's native extension API covers all of the same use cases with better performance, type safety, and upgrade stability.",
+      a: "No. Blueprint targets Pterodactyl's PHP architecture and isn't compatible with Calagopus. Calagopus extensions are written against its own native extension API instead, which doesn't patch panel source files.",
     },
     {
       q: 'Can I run both panels simultaneously during migration?',
@@ -20,7 +20,7 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Is Wings compatible between the two?',
-      a: 'Calagopus ships its own Wings daemon (also written in Rust). You will need to install the Calagopus-flavored Wings on each node as part of migration. The process is documented in the migration guide.',
+      a: 'Calagopus ships its own Wings daemon, written in Rust. On each node, replace the Pterodactyl Wings binary with Calagopus Wings; it reads the existing config and server data where they are. The migration guide covers the steps.',
     },
   ],
   'compare/calagopus-vs-pelican.md': [
@@ -30,19 +30,19 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Can I use Blueprint extensions with Calagopus?',
-      a: 'No. Blueprint only targets Pterodactyl\'s PHP/Laravel internals. Calagopus uses a native Rust extension API instead - see the <a href="/docs/panel/extensions/">extension development guide</a> for how to build extensions for Calagopus.',
+      a: 'No. Blueprint only targets Pterodactyl\'s PHP/Laravel internals. Calagopus uses a native Rust extension API instead. See the <a href="/docs/panel/extensions/">extension development guide</a> for how to build extensions for Calagopus.',
     },
     {
       q: 'Does Calagopus use the same Wings as Pelican?',
-      a: 'No. Calagopus ships its own Wings daemon, rewritten in Rust. You will need to install Calagopus Wings on each node as part of migration. The migration guide walks through this.',
+      a: 'No. Calagopus ships its own Wings daemon, written in Rust. On each node, replace the Pelican Wings binary with Calagopus Wings; it reads the existing config and server data where they are. The migration guide covers the steps.',
     },
     {
       q: 'Which panel is easier to set up?',
-      a: 'Both panels offer Docker Compose setups that get a panel running in a few commands. Calagopus additionally provides binary and package manager installation options and runs natively on Windows, which can simplify homelab deployments.',
+      a: 'Both panels offer Docker Compose setups that get a panel running in a few commands. Calagopus can also be installed from packages or as a single binary, and the panel runs natively on Windows.',
     },
     {
       q: 'Which panel has better performance?',
-      a: 'Calagopus, by a significant margin against PHP-based panels: the Rust backend serves between 116x and 442x the panel API throughput of Pterodactyl on the same hardware and CPU quota, measured on the endpoint every panel answers without rate limiting. Go-based PufferPanel is closer, and faster on some configurations. For small deployments the difference is less critical; for production hosting providers it translates directly to hardware savings.',
+      a: 'Calagopus, by a wide margin over PHP-based panels: the Rust backend serves between 241x and 911x the panel API throughput of Pelican on the same hardware and CPU quota, measured on the endpoint every panel answers without rate limiting. Go-based PufferPanel is closer, and faster on some configurations. Small deployments will hardly notice; for hosting providers it means fewer CPU cores for the same load.',
     },
   ],
   'compare/index.md': [
@@ -100,7 +100,7 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Can I migrate from AMP to Calagopus?',
-      a: 'There is no automated migration path from AMP to Calagopus - the data models are different. You would need to set up Calagopus fresh and recreate server configurations. This is typically a manageable process for small installations. The <a href="/docs/panel/installation/">installation guide</a> is the starting point.',
+      a: 'There is no automated migration path from AMP to Calagopus, because the data models are different. You set up Calagopus fresh and recreate your servers, which is manageable for small installations. The <a href="/docs/panel/installation/">installation guide</a> is the starting point.',
     },
     {
       q: 'Does Calagopus have a commercial support option?',

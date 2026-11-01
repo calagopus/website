@@ -49,7 +49,7 @@ A connection only grants access to the ports the destination server *offers*. **
 
 Each entry is a port and one or both of **TCP** and **UDP**. **Add Port** appends a row; when the server has allocations whose ports aren't offered yet, they appear as `+ 25565` badges next to the button that add themselves in one click. The counter on the right reads "1 of 10 used" against the administrator's [per-server cap](../../admin/settings.md#server), and listing the same port twice is refused.
 
-Offered ports are not limited to the server's allocations. Anything the server listens on inside its container can be offered, including ports that were never published publicly - a database or an RCON port, say, that you deliberately never gave a public allocation.
+Offered ports are not limited to the server's allocations. Anything the server listens on inside its container can be offered, including ports that were never published publicly, such as a database or an RCON port that you deliberately never gave a public allocation.
 
 Offer nothing and the card says "You offer no ports, so nothing on this server can be reached." Connecting to a server in that state gives you a hostname that resolves and refuses every connection.
 
@@ -74,7 +74,7 @@ Each peer card lists the addresses and ports *you* would use to reach it. A peer
 
 ## Connecting a Server
 
-**Connect a Server** opens a picker of servers already on the private network - a server has to have joined before it can be connected - and then a switch per direction. Each switch previews the addresses it would make reachable. Admins get a **Show other user's servers** toggle to reach beyond their own.
+**Connect a Server** opens a picker of servers already on the private network (a server has to join before it can be connected), and then a switch per direction. Each switch previews the addresses it would make reachable. Admins get a **Show other user's servers** toggle to reach beyond their own.
 
 <img src="./images/connections/connect-form.webp" width="220" alt="Connect a Server dialog with a server selector and toggles for each connection direction" />
 
@@ -101,7 +101,7 @@ If the server you picked offers no ports at all, the dialog says so and offers t
 > **server** offers no ports. Connecting would give you a hostname that resolves and refuses every connection. Someone with access to *server* has to offer a port first.
 
 ::: warning
-A connection needs `connections.create` on **both** servers, because it is a grant against both of them, and it is the peer's quota that it spends. Granting the inbound direction is a change made on the peer, so it is checked against your permissions there - if you don't have them, it fails with a toast rather than being greyed out in advance.
+A connection needs `connections.create` on **both** servers, because it is a grant against both of them, and it is the peer's quota that it spends. Granting the inbound direction is a change made on the peer, so it is checked against your permissions there; if you don't have them, it fails with a toast rather than being greyed out in advance.
 :::
 
 ## Connections and the Firewall
@@ -119,5 +119,5 @@ An alert above the canvas spells this out:
 **Leave Private Network** takes the server back off entirely. It loses its private address, its offered ports and every connection in both directions, and rejoining afterwards assigns a new address rather than the old one.
 
 ::: info
-How many outgoing connections and offered ports a server may have is set by the administrator under [Settings > Server](../../admin/settings.md#server). Whether the node can carry private traffic at all is set per node under the node's [Private Network](../../admin/nodes.md#private-network) tab, and has to be enabled in that node's [wings configuration](../../../../wings/configuration.md#tundra-enabled) first.
+How many outgoing connections and offered ports a server may have is set by the administrator under [Settings > Server](../../admin/settings.md#server). Whether the node can carry private traffic at all is set per node under the node's [Private Network](../../admin/nodes.md#private-network) tab, and has to be enabled in that node's [Wings configuration](../../../../wings/configuration.md#tundra-enabled) first.
 :::

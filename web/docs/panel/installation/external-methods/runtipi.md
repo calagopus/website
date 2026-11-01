@@ -1,6 +1,6 @@
 ---
 title: Runtipi Panel Installation
-description: How to install Calagopus on Runtipi from the Calagopus Tipi App Store. Choose between a panel-only app, an All-in-One app with Wings included, or a Heavy AIO app for backend extensions.
+description: Install Calagopus on Runtipi from the Calagopus Tipi App Store, as a panel-only app, an All-in-One app with Wings, or a Heavy AIO app for backend extensions.
 ---
 
 # Runtipi Panel Installation

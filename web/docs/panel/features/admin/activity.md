@@ -1,5 +1,5 @@
 ---
-title: Activity
+title: Admin Activity
 description: The instance-wide audit log covering every admin-side action taken on the panel.
 ---
 

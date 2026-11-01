@@ -1,5 +1,5 @@
 ---
-title: Settings
+title: Admin Settings
 description: Every panel-wide setting in the Calagopus admin area, from application branding and mail to rate limits.
 ---
 
@@ -43,16 +43,16 @@ The tab is split into **General**, **Branding**, **Authentication**, **Sessions*
 
 Enabling registration also asks for confirmation and points out that doing it without a [captcha](#captcha) configured may be a mistake.
 
-Turning **Enable Password Login** off asks for confirmation too, because it reaches further than the login page. With it off, local registration, the forgot-password flow and SFTP password authentication all stop working as well, subusers can only be added by the email of an existing account (since Panel 1.2.8), and everyone needs an [OAuth provider](/docs/panel/features/admin/oauth-providers) or a [security key](/docs/panel/features/dashboard/account#security-keys) to get in.
+Turning **Enable Password Login** off asks for confirmation too, because it reaches further than the login page. With it off, local registration, the forgot-password flow and SFTP password authentication all stop working as well, subusers can only be added by the email of an existing account (since Panel 1.2.8), and everyone needs an [OAuth provider](/docs/panel/features/admin/oauth-providers) or a [security key](/docs/panel/features/dashboard/security-keys) to get in.
 
 Public key authentication over SFTP keeps working. The per-account **Password Login** switch disappears while the panel-wide one is off, since there's nothing left for it to decide.
 
 Four combinations are rejected when you save, with an error rather than a silent fix:
 
-- *"at least one two-factor method must be accepted while two-factor is required"* - you cleared **Accepted Two-Factor Methods** while the requirement is anything other than None.
-- *"email two-factor and email verification require a mail transport to be configured"* - one of the two email options is on while [Mail](#mail) is set to no transport.
-- *"an enabled oauth provider is required before password login can be disabled"* - there is nothing left to sign in with, so turning off **Enable Password Login** would lock out the whole panel.
-- *"a link to an enabled oauth provider or a security key is required before password login can be disabled"* - the panel has a way in, but **you** do not. Link your own account first, or register a security key.
+- *"at least one two-factor method must be accepted while two-factor is required"*: you cleared **Accepted Two-Factor Methods** while the requirement is anything other than None.
+- *"email two-factor and email verification require a mail transport to be configured"*: one of the two email options is on while [Mail](#mail) is set to no transport.
+- *"an enabled oauth provider is required before password login can be disabled"*: there is nothing left to sign in with, so turning off **Enable Password Login** would lock out the whole panel.
+- *"a link to an enabled oauth provider or a security key is required before password login can be disabled"*: the panel has a way in, but **you** do not. Link your own account first, or register a security key.
 
 ### Additional URLs
 
@@ -137,7 +137,7 @@ A variable's value is itself a MiniJinja snippet and can use the same variables 
 
 **Add Variable** creates a **Custom** variable for the current template, which you can reference from the template's content or subject. Use the reset icon on a system variable to drop your values for every language, and the delete icon to remove a custom one.
 
-**Global Variables** in the sidebar holds variables that every template can reference, handy for a shared signature or support address. A template variable with the same name takes precedence over a global one.
+**Global Variables** in the sidebar holds variables that every template can reference, such as a shared signature or support address. A template variable with the same name takes precedence over a global one.
 
 The `language` variable holds the language code a mail is rendered in, which the built-in templates put on the `<html>` tag.
 

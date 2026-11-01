@@ -4,7 +4,7 @@ description: Enforce per-server disk quotas on Wings nodes with Btrfs subvolumes
 
 # Disk Limiters
 
-Without per-server disk quotas, a malicious user can fill the node's disk entirely - disrupting other servers and potentially crashing the host. This has been a well-known attack vector against Pterodactyl-based panels for years.
+Without per-server disk quotas, a malicious user can fill the node's disk, disrupting other servers and possibly crashing the host. This has been a well-known attack vector against Pterodactyl-based panels for years.
 
 Calagopus provides several disk limiter options to prevent this. Not all are applicable to every setup.
 

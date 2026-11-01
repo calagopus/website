@@ -8,7 +8,7 @@ export const wingsConfigDoc: ConfigDoc = {
   description:
     'Reference for every Wings configuration option in config.yml, with defaults, explanations, and a full example file.',
   intro:
-    'This page is a reference for all Wings configuration options. The configuration file is located at `/etc/calagopus-wings/config.yml` on Linux (`C:\\ProgramData\\Calagopus-Wings\\config.yml` on Windows).\n\n::: info Migrating from Pterodactyl/Pelican\nIf no `-c`/`--config` flag is passed and `/etc/calagopus-wings/config.yml` doesn\'t exist, Wings automatically looks for a config at `/etc/pterodactyl/config.yml`, then `/etc/pelican/config.yml`, then `./config.yml`, in that order, and uses the first one it finds. This means an existing Pterodactyl or Pelican Wings install keeps working without moving its config file, though it\'s recommended to migrate to the `calagopus-wings` path when convenient.\n:::\n\n## Environment Overrides\n\nWings accepts configuration overrides through environment variables prefixed with `CALAGOPUS_`. Uppercase the key and replace dots with underscores: `api.port` becomes `CALAGOPUS_API_PORT`, and `system.backups.s3.streaming` becomes `CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING`.\n\n```yaml\nenvironment:\n  CALAGOPUS_API_PORT: "8080"\n  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: "false"\n  CALAGOPUS_ALLOWED_DEVICES: "[/dev/dri/renderD128]"\n```\n\nThis example belongs under the Wings service in Docker Compose. For a native service, set the variables in its service environment. String fields take the value literally; other fields accept YAML values such as `false`, `8080`, or a list. Set a whole map or list when adding entries. Unknown variable names produce a warning and are ignored; invalid values for a recognized option prevent the configuration from loading.\n\nOverrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.\n\nOn a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides.',
+    'This page is a reference for all Wings configuration options. The configuration file is located at `/etc/calagopus-wings/config.yml` on Linux (`C:\\ProgramData\\Calagopus-Wings\\config.yml` on Windows).\n\n::: info Migrating from Pterodactyl/Pelican\nIf no `-c`/`--config` flag is passed and `/etc/calagopus-wings/config.yml` doesn\'t exist, Wings automatically looks for a config at `/etc/pterodactyl/config.yml`, then `/etc/pelican/config.yml`, then `./config.yml`, in that order, and uses the first one it finds. This means an existing Pterodactyl or Pelican Wings install keeps working without moving its config file, though it\'s recommended to migrate to the `calagopus-wings` path when convenient.\n:::\n\n## Environment Overrides\n\nWings accepts configuration overrides through environment variables prefixed with `CALAGOPUS_`. Uppercase the key and replace dots with underscores: `api.port` becomes `CALAGOPUS_API_PORT`, and `system.backups.s3.streaming` becomes `CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING`.\n\n```yaml\nenvironment:\n  CALAGOPUS_API_PORT: "8080"\n  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: "false"\n  CALAGOPUS_ALLOWED_DEVICES: "[/dev/dri/renderD128]"\n```\n\nThis example belongs under the Wings service in Docker Compose. For a native service, set the variables in its service environment. String fields take the value literally; other fields accept YAML values such as `false`, `8080`, or a list. Set a whole map or list when adding entries. Unknown variable names produce a warning and are ignored; invalid values for a recognized option prevent the configuration from loading.\n\nOverrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.\n\nOn a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write the options tagged **Required** for you.',
   sections: [
     {
       title: 'Core Configuration',
@@ -26,19 +26,22 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'uuid',
           description: 'Unique identifier for this Wings node.',
-          default: 'UUID_HERE',
+          required: true,
+          example: 'UUID_HERE',
         },
         {
           key: 'token_id',
           description:
             'The identifier half of the credentials Wings uses to validate requests from the Panel. Written by `wings configure`.',
-          default: 'TOKEN_ID_HERE',
+          required: true,
+          example: 'TOKEN_ID_HERE',
         },
         {
           key: 'token',
           description:
             'The secret half of the credentials Wings uses to validate requests from the Panel. Must be kept secret. Written by `wings configure`.',
-          default: 'TOKEN_HERE',
+          required: true,
+          example: 'TOKEN_HERE',
         },
       ],
     },
@@ -197,7 +200,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'api.request_log_limit',
           description:
-            'The number of HTTP requests Wings writes a log line for each second, which keeps a busy node from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through - if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.',
+            'The number of HTTP requests Wings writes a log line for each second, which keeps a busy node from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through; if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.',
           default: 250,
         },
         {
@@ -264,7 +267,7 @@ export const wingsConfigDoc: ConfigDoc = {
     },
     {
       title: 'System Configuration',
-      body: "::: info Path placeholders\n`data`, `diffs_directory`, `vmount_directory`, `log_directory`, `archive_directory`, `backup_directory` and `tmp_directory` accept the `{root_directory}` placeholder in their value. It's substituted with the configured `system.root_directory` every time the path is used, so these default to living under `root_directory` and move together if you repoint it. This is also how a freshly generated `config.yml` writes these values: literally as `{root_directory}/...`, not pre-resolved, so editing `root_directory` alone is enough to relocate everything else that still uses the placeholder. `log_directory` defaults to a fixed, independent path on Unix - see its entry below.\n:::",
+      body: "::: info Path placeholders\n`data`, `diffs_directory`, `vmount_directory`, `log_directory`, `archive_directory`, `backup_directory` and `tmp_directory` accept the `{root_directory}` placeholder in their value. It's substituted with the configured `system.root_directory` every time the path is used, so these default to living under `root_directory` and move together if you repoint it. This is also how a freshly generated `config.yml` writes these values: literally as `{root_directory}/...`, not pre-resolved, so editing `root_directory` alone is enough to relocate everything else that still uses the placeholder. `log_directory` defaults to a fixed, independent path on Unix; see its entry below.\n:::",
       options: [
         {
           key: 'system.root_directory',
@@ -462,7 +465,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.tcp_congestion_control',
           description:
-            'The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel - Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
+            'The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel: Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
           default: 'bbr',
         },
       ],
@@ -1033,12 +1036,12 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'docker.firewall.backend',
           description:
-            'Which backend Wings uses to apply per-server firewall rules on the host.\n\n- `auto` - Pick a backend on boot. Wings prefers `nftables`, falls back to `iptables`, and uses the helper container when it runs inside a container that has its own network namespace.\n- `nftables` - Run `nft` directly on the host.\n- `iptables` - Run `iptables` directly on the host.\n- `container` - Run `nft` through a helper container started from the Wings image, named `calagopus-wings-firewall-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-firewall` before Wings 1.2.8). Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.\n- `disabled` - Never apply rules.',
+            'Which backend Wings uses to apply per-server firewall rules on the host.\n\n- `auto`: pick a backend on boot. Wings prefers `nftables`, falls back to `iptables`, and uses the helper container when it runs inside a container that has its own network namespace.\n- `nftables`: run `nft` directly on the host.\n- `iptables`: run `iptables` directly on the host.\n- `container`: run `nft` through a helper container started from the Wings image, named `calagopus-wings-firewall-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-firewall` before Wings 1.2.8). Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.\n- `disabled`: never apply rules.',
           default: 'auto',
           notesAfter: [
             {
               type: 'warning',
-              body: 'Server firewalls are Linux only, and are not supported with a rootless container engine - published port traffic does not traverse the host netfilter forward path there.\n\nWhen no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.\n\nThe `container` backend runs `nft` out of the Wings image itself, so that image has to carry the binary. The official Wings and All-in-One images do; a custom image may not, and Wings then reports that `nft` is missing from the image the helper container runs.',
+              body: 'Server firewalls are Linux only, and are not supported with a rootless container engine, because published port traffic does not traverse the host netfilter forward path there.\n\nWhen no backend ends up usable (an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start), a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.\n\nThe `container` backend runs `nft` out of the Wings image itself, so that image has to carry the binary. The official Wings and All-in-One images do; a custom image may not, and Wings then reports that `nft` is missing from the image the helper container runs.',
             },
           ],
         },
@@ -1417,7 +1420,8 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'remote',
           description: 'The URL of the Panel instance that this Wings node communicates with.',
-          default: 'https://panel.example.com',
+          required: true,
+          example: 'https://panel.example.com',
         },
         {
           key: 'remote_headers',
@@ -1492,7 +1496,7 @@ export const wingsConfigDoc: ConfigDoc = {
     },
     {
       title: 'SSL Configuration',
-      body: "::: info\nThis section assumes you've already generated a certificate. See [Generating SSL Certificates](../additional/ssl-certificates.md) if you haven't. Replace `<domain>` with your actual node domain.\n:::\n\n### Enabling SSL\nSSL is disabled by default. To secure Wings' communication, set `enabled` to `true` under `api.ssl` and point `cert`/`key` to your certificate files.\n\nIf you're using Let's Encrypt, your config should look like this:\n\n```yaml\napi:\n  host: 0.0.0.0\n  port: 8080\n  ssl:\n    enabled: true\n    cert: /etc/letsencrypt/live/<domain>/fullchain.pem\n    key: /etc/letsencrypt/live/<domain>/privkey.pem\n```\n\n### Applying Changes\nAfter saving `config.yml`, restart Wings for the new SSL configuration to take effect:\n\n```bash\nsudo systemctl restart wings\n```",
+      body: "::: info\nThis section is a quick reference. [Securing Wings with SSL](./next-steps/ssl.md) covers the full setup, including getting a certificate, Docker installs, pointing the Panel at the node and renewal. Replace `<domain>` with your actual node domain.\n:::\n\n### Enabling SSL\nSSL is disabled by default. To secure Wings' communication, set `enabled` to `true` under `api.ssl` and point `cert`/`key` to your certificate files.\n\nIf you're using Let's Encrypt, your config should look like this:\n\n```yaml\napi:\n  host: 0.0.0.0\n  port: 8080\n  ssl:\n    enabled: true\n    cert: /etc/letsencrypt/live/<domain>/fullchain.pem\n    key: /etc/letsencrypt/live/<domain>/privkey.pem\n```\n\n### Applying Changes\nAfter saving `config.yml`, restart Wings for the new SSL configuration to take effect:\n\n```bash\nsudo systemctl restart wings\n```",
     },
   ],
   example: {

@@ -1,5 +1,5 @@
 ---
-title: Servers
+title: Dashboard Servers
 description: Browse your servers, organize them into groups, and manage power state from the Calagopus dashboard.
 ---
 

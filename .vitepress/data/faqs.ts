@@ -6,26 +6,26 @@ export interface Faq {
 export const faqs: Faq[] = [
   {
     q: 'How is Calagopus different from Pterodactyl?',
-    a: "Calagopus is built in Rust, where Pterodactyl uses PHP. On identical hardware it serves between 116x and 442x Pterodactyl's panel API throughput, depending on the CPU quota, along with Rust's memory-safety guarantees. We provide a migration guide for existing Pterodactyl users.",
+    a: "Calagopus is built in Rust, where Pterodactyl uses PHP. On identical hardware it serves between 116x and 442x Pterodactyl's panel API throughput, depending on the CPU quota, and Rust rules out whole classes of memory-safety bugs. There is a migration guide for existing Pterodactyl installs.",
   },
   {
     q: 'What games does Calagopus support?',
-    a: 'Calagopus uses an egg system to support arbitrary games. Anything that runs in a Linux Docker container can be managed, including Minecraft (Java and Bedrock), Rust, ARK, Valheim, FiveM, and many more.',
+    a: 'Calagopus uses eggs to describe how a game is installed and started. Anything that runs in a Linux Docker container can be managed, including Minecraft (Java and Bedrock), Rust, ARK, Valheim, FiveM, and many more.',
   },
   {
     q: 'Is Calagopus free to use?',
-    a: 'Yes. Calagopus is free for both personal and commercial use, with no feature gating. Core components are MIT-licensed.',
+    a: 'Yes, for personal and commercial use. No features are held back for a paid tier, and the core components are MIT-licensed.',
   },
   {
     q: 'Can I migrate from Pterodactyl or Pelican?',
-    a: 'Yes. Calagopus provides migration tooling and documentation for both Pterodactyl and Pelican.',
+    a: 'Yes. The panel has a built-in importer for both Pterodactyl and Pelican, and the docs have a migration guide for each.',
   },
   {
     q: 'Does Calagopus have an Extension API?',
-    a: 'Yes. The Extension API uses Rust traits for type safety and performance. Extensions can add backend logic, custom routes, UI elements, database migrations, and more.',
+    a: 'Yes. Extensions are written against a Rust trait API and can add backend logic, custom routes, UI elements and database migrations.',
   },
   {
     q: 'Can I run Calagopus on a Raspberry Pi?',
-    a: 'Yes. Calagopus supports ARM64 and the Docker Compose setup works on a Raspberry Pi out of the box.',
+    a: 'Yes. Calagopus supports ARM64, and the Docker Compose setup runs on a Raspberry Pi without changes.',
   },
 ];

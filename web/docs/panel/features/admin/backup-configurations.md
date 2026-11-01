@@ -1,5 +1,5 @@
 ---
-title: Backup Configurations
+title: Admin Backup Configurations
 description: Manage the storage backends server backups are written to, and see which locations, nodes, and servers use each one.
 ---
 

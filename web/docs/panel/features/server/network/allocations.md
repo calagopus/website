@@ -13,7 +13,7 @@ Each row shows a primary indicator (a star with a **Primary** tooltip on the pri
 
 ## IPv4 and IPv6
 
-Allocations can be IPv4 or IPv6, and a server can hold both at once, for example a v4 and a v6 allocation on the same port. Which kinds exist depends entirely on what the admin added to the node's allocation pool. Note that reaching a server over IPv6 also requires IPv6 on the node's container network, which is a [Wings setting](../../../../wings/configuration.md#docker-network-interfaces-v6-enabled).
+Allocations can be IPv4 or IPv6, and a server can hold both at once, for example a v4 and a v6 allocation on the same port. Which kinds exist depends entirely on what the admin added to the node's allocation pool. Reaching a server over IPv6 also requires IPv6 on the node's container network, which is a [Wings setting](../../../../wings/configuration.md#docker-network-interfaces-v6-enabled).
 
 ## Adding an Allocation
 
@@ -25,7 +25,7 @@ Self-assigning allocations only works when an [egg configuration](../../admin/eg
 
 ## Notes
 
-Type directly into an allocation's **Notes** field; changes save automatically a moment after you stop typing. Handy for remembering what each port is for (`Query port`, `Voice chat`, and so on).
+Type directly into an allocation's **Notes** field; changes save automatically a moment after you stop typing. Use it to remember what each port is for (`Query port`, `Voice chat`, and so on).
 
 ## Primary, and Removing
 

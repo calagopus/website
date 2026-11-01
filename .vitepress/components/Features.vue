@@ -17,7 +17,7 @@ const features = [
     icon: faLock,
     title: 'Security',
     details:
-      'Calagopus is built with security in mind, utilizing best practices to minimize vulnerabilities and protect your game servers from potential threats. Servers run in isolated Docker containers, and the panel itself also follows best practices for secure web applications.',
+      "Every game server runs in its own Docker container. Wings keeps file operations inside each server's directory even though it runs as root, and the panel rate-limits logins and API requests. The security page lists each defense and the risks that remain.",
     link: {
       href: '/docs/about/security',
       label: 'Learn more about security',
@@ -27,7 +27,7 @@ const features = [
     icon: faBolt,
     title: 'Performance',
     details:
-      "With Rust's high performance and low-level control, Calagopus delivers fast and efficient game server management, with panel API throughput up to 442x that of PHP-based panels - making server administration smoother than ever. Our binaries are compiled to be as small and efficient as possible, and we use caching and other optimization techniques to ensure the best performance possible.",
+      'The panel and Wings are written in Rust. On the same hardware, the panel answers up to 442x as many API requests per second as PHP-based panels. The benchmark pages explain how that was measured and list the numbers for each system.',
     link: {
       href: '/docs/about/benchmarks',
       label: 'See the benchmarks',
@@ -37,7 +37,7 @@ const features = [
     icon: faPuzzlePiece,
     title: 'Modularity',
     details:
-      'The Extension API uses Rust traits to let extensions add backend logic, custom routes, CLI commands, and database migrations - and go further than fixed plugin slots: extensions can intercept or replace built-in UI elements, inject fields into admin forms, and even install from the admin UI with live build logs on the all-in-one image.',
+      'Extensions are written against a Rust trait API and can add backend logic, routes, CLI commands and database migrations. They are not limited to fixed plugin slots: they can intercept or replace built-in UI elements and add fields to admin forms. On the All-in-One image they install from the admin area with a live build log.',
     link: {
       href: '/docs/panel/extensions/',
       label: 'Explore the Extension API',
@@ -47,7 +47,7 @@ const features = [
     icon: faGlobe,
     title: 'Open Source',
     details:
-      'Calagopus is open source and available on GitHub, allowing the community to contribute to its development and improvement. We welcome contributions from developers of all skill levels and encourage collaboration to make Calagopus the best game server management solution available.',
+      'The source code is on GitHub and the core components are MIT-licensed. Bug reports, pull requests and translations are welcome. The licenses page lists which repositories use a different license.',
     link: {
       href: '/docs/about/licenses',
       label: 'View the licenses',
@@ -57,7 +57,7 @@ const features = [
     icon: faDesktop,
     title: 'User-Friendly Interface',
     details:
-      'A guided first-run wizard gets you from install to a running server, and day-to-day management includes real-time collaborative file editing, a disk usage treemap, revision diffs with one-click restore, and 14+ languages with automatic right-to-left support. An "Advanced Mode" toggle keeps expert options out of the way until you want them.',
+      'A first-run wizard takes you from install to a running server. Day to day you get collaborative file editing, a disk usage treemap, file history with one-click restore, and 14+ languages with right-to-left support. Expert options stay hidden until you turn on Advanced Mode.',
     link: {
       href: '/docs/about/features',
       label: 'Browse the feature reference',
@@ -67,7 +67,7 @@ const features = [
     icon: faRocket,
     title: 'Easy Deployment',
     details:
-      'Calagopus offers easy deployment options, including Docker and traditional installation methods, allowing users to quickly set up and start managing their game servers without hassle. Our documentation provides clear instructions for both methods, and our community is available to assist with any issues during deployment.',
+      'Install with Docker, from the APT, RPM, APK or AUR packages, or as a single binary. The All-in-One Docker image runs the panel and Wings together, and TrueNAS, Unraid, umbrelOS, Runtipi and Hostinger have their own guides.',
     link: {
       href: '/docs/panel/installation/docker',
       label: 'Read the Docker install guide',

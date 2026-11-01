@@ -26,7 +26,7 @@ Wings drives this by shelling out to the `btrfs` CLI: `btrfs subvolume create` o
 
 ## Migrating existing servers
 
-Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `btrfs_subvolume` will **not** automatically convert existing server directories into subvolumes - they will remain plain directories and will not have quotas enforced. A subvolume is a distinct filesystem object, so existing files have to be copied into a freshly-created subvolume; there is no way to turn a plain directory into one in place.
+Flipping `disk_limiter_mode` from `none` (or `fuse_quota`) to `btrfs_subvolume` will **not** automatically convert existing server directories into subvolumes; they remain plain directories and will not have quotas enforced. A subvolume is a distinct filesystem object, so existing files have to be copied into a freshly-created subvolume; there is no way to turn a plain directory into one in place.
 
 Wings ships a `migrate-disk-limiter` command that does this conversion for you. For each server it renames the existing directory aside, creates a new subvolume in its place, copies the data back in (using reflinks where possible, so on the same Btrfs filesystem this is fast and uses almost no extra space), applies the disk limit, and removes the old directory. Servers that are already subvolumes are detected and skipped.
 
@@ -34,18 +34,18 @@ Wings ships a `migrate-disk-limiter` command that does this conversion for you. 
 The Wings daemon and all running servers **must** be stopped before running the migration. Migrating a server's directory while its container is running can corrupt or lose data.
 :::
 
-1. Stop the Wings daemon (e.g. `systemctl stop wings`).
+1. Stop the Wings daemon (e.g. `sudo systemctl stop wings`).
 2. Set `disk_limiter_mode: btrfs_subvolume` in your config (see [How do I use it?](#how-do-i-use-it)). The command uses this as the default target, and Wings needs it set to attach the subvolumes on the next boot.
 3. Run a dry run to see what would be migrated:
 
    ```bash
-   wings migrate-disk-limiter --dry-run
+   sudo wings migrate-disk-limiter --dry-run
    ```
 
 4. Run the migration:
 
    ```bash
-   wings migrate-disk-limiter
+   sudo wings migrate-disk-limiter
    ```
 
 5. Start the Wings daemon again.
@@ -62,7 +62,7 @@ The command pulls the server list and per-server disk limits from the panel, so 
 If a migration fails partway through, the command rolls back automatically: it destroys the partial subvolume and restores the original directory, leaving the server exactly as it was.
 
 ::: details Alternative: transfer off the node and back
-If you'd rather not run the command, you can also move a server off the node and back - transfer it to another node, then transfer it back. Wings creates a fresh subvolume on the way back in. This is slower and moves data over the network, so the migration command is preferred.
+If you'd rather not run the command, you can also move a server off the node and back: transfer it to another node, then transfer it back. Wings creates a fresh subvolume on the way back in. This is slower and moves data over the network, so the migration command is preferred.
 :::
 
 ## When should I use it?
@@ -91,7 +91,7 @@ Wings needs access to the underlying block device and elevated permissions to cr
 :::
 
 ::: details Alternatively: privileged mode
-If you'd rather not manage individual capabilities and device paths, `privileged: true` works too - it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
+If you'd rather not manage individual capabilities and device paths, `privileged: true` works too; it grants everything Wings needs. It is broader than necessary, so the approach above is preferred.
 
 ```diff
  services:
@@ -103,8 +103,8 @@ If you'd rather not manage individual capabilities and device paths, `privileged
 After making either change, restart the stack:
 
 ```bash
-docker compose down
-docker compose up -d
+sudo docker compose down
+sudo docker compose up -d
 ```
 
 ## How do I use it?

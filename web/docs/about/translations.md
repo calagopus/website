@@ -1,5 +1,5 @@
 ---
-title: Translations
+title: Translating Calagopus
 description: How to contribute Calagopus translations through Crowdin, from joining the project to seeing your language ship in the panel.
 ---
 

@@ -7,7 +7,7 @@ description: Let your extension participate in the Panel form system.
 
 Panel forms are used everywhere: creating servers, editing users, configuring nodes, defining backup targets, tweaking application settings. The forms extension system lets your extension participate in any of those forms, adding new fields, providing their validation rules and default values, or tweaking properties of existing fields, without touching the built-in form components.
 
-The mechanism is simple. Every extensible form has a string ID. You call `enterForms` in your `initialize` method, call `extend` with the form ID and a slot describing your changes, and the Panel merges your slot into the form the next time it renders.
+Every extensible form has a string ID. You call `enterForms` in your `initialize` method, call `extend` with the form ID and a slot describing your changes, and the Panel merges your slot into the form the next time it renders.
 
 ## Registering
 
@@ -43,11 +43,11 @@ public initialize(ctx: ExtensionContext): void {
 
 `enterForms` gives you the `FormRegistry`. Calling `.extend(formId, slot)` registers a **slot**, a bundle of Zod schema additions, their initial values, and a field-list transform. Multiple extensions can each register a slot for the same form and they all compose cleanly; slots are applied in registration order, with each `transform` receiving the field list produced by the previous one.
 
-Form IDs are a typed union (`FormId`), so a typo is a compile error. The registered IDs cover the admin create/update forms (`admin.servers.create`, `admin.servers.update`, `admin.nodes.createOrUpdate`, `admin.users.createOrUpdate`, ...), the admin settings forms (`admin.settings.application`, `admin.settings.captcha.turnstile`, ...) and more - see `RegisteredFormIds` in `@/elements/form-engine/types.ts` for the authoritative list.
+Form IDs are a typed union (`FormId`), so a typo is a compile error. The registered IDs cover the admin create/update forms (`admin.servers.create`, `admin.servers.update`, `admin.nodes.createOrUpdate`, `admin.users.createOrUpdate`, ...), the admin settings forms (`admin.settings.application`, `admin.settings.captcha.turnstile`, ...) and more; `RegisteredFormIds` in `@/elements/form-engine/types.ts` has the full list.
 
 ## The Slot
 
-Each `extend` call takes a `FormExtensionSlot` object. The slot is **Zod-first**: `zodShape` is the required source of truth for the fields your extension adds, and `initialValues` is typed (and required) from it - TypeScript infers the exact value types, nested objects included, so a missing or mistyped default is a compile error:
+Each `extend` call takes a `FormExtensionSlot` object. The slot is **Zod-first**: `zodShape` is the required source of truth for the fields your extension adds, and `initialValues` is typed (and required) from it. TypeScript infers the exact value types, nested objects included, so a missing or mistyped default is a compile error:
 
 ```ts
 interface FormExtensionSlot<S extends ZodFieldShape> {
@@ -61,7 +61,7 @@ A slot that only tweaks existing fields (no new ones) passes empty objects for b
 
 ### `transform`
 
-A function that receives the form's current field definitions and returns a new list. This is how you add fields, move them, tweak existing ones, or remove them - anything you can express as an array transformation. Four helpers in `@/elements/form-engine/index.ts` cover the common cases:
+A function that receives the form's current field definitions and returns a new list. This is how you add, move, change or remove fields: anything you can express as an array transformation. Four helpers in `@/elements/form-engine/index.ts` cover the common cases:
 
 ```ts
 import { insertFieldsAfter, insertFieldsBefore, removeField, updateField } from '@/elements/form-engine/index.ts';
@@ -74,7 +74,7 @@ import { insertFieldsAfter, insertFieldsBefore, removeField, updateField } from 
 | `updateField(fields, name, (field) => field)` | Replace the named field with the result of the callback |
 | `removeField(fields, name)` | Drop the named field from the list |
 
-The insert helpers return the field list **unchanged** when the anchor field isn't present. That's deliberate: some form IDs render their fields in multiple sections (server create/update, for example), and your transform runs against each section - the no-op behavior means your field only lands in the section that actually contains your anchor. To unconditionally add a field at the start or end, spread the array yourself: `(fields) => [...fields, myField]` appends, `(fields) => [myField, ...fields]` prepends.
+The insert helpers return the field list **unchanged** when the anchor field isn't present. That's deliberate: some form IDs render their fields in multiple sections (server create/update, for example), and your transform runs against each section, and the no-op behavior means your field only lands in the section that contains your anchor. To unconditionally add a field at the start or end, spread the array yourself: `(fields) => [...fields, myField]` appends, `(fields) => [myField, ...fields]` prepends.
 
 Overriding an existing field is `updateField` with a spread:
 
@@ -87,7 +87,7 @@ transform: (fields) =>
   })),
 ```
 
-Don't change the `name` of an existing field (it's the key the form values are bound by), and be conservative about removing built-in fields - other extensions' transforms may be anchoring on them.
+Don't change the `name` of an existing field (it's the key the form values are bound by), and be careful about removing built-in fields, because other extensions' transforms may anchor on them.
 
 ### `zodShape`
 
@@ -110,7 +110,7 @@ Only provide entries for **new fields your extension adds**. To prevent conflict
 
 ### `initialValues`
 
-The initial (empty-state) values for the fields in your `zodShape` - the type is inferred from the shape, so every declared field needs a default of the right type. Defaults from all registered slots are deep-merged with one another and into the form's initial state, so the form doesn't start with `undefined` for your new fields (and nested defaults extend the core defaults instead of replacing them):
+The initial (empty-state) values for the fields in your `zodShape`. The type is inferred from the shape, so every declared field needs a default of the right type. Defaults from all registered slots are deep-merged with one another and into the form's initial state, so the form doesn't start with `undefined` for your new fields (and nested defaults extend the core defaults instead of replacing them):
 
 ```ts
 initialValues: {
@@ -291,6 +291,7 @@ For anything the built-in types don't cover. The `render` prop receives the full
 
 An extension that adds a "Provisioning Tag" and "Enable Monitoring" field to the server creation form, each validated by Zod:
 
+::: details Full example: two fields on the server form
 ```ts
 import { Extension, ExtensionContext } from 'shared';
 import { z } from 'zod';
@@ -330,8 +331,9 @@ class MyExtension extends Extension {
 
 export default new MyExtension();
 ```
+:::
 
-Because both fields are declared in `zodShape`, their values ride along in the submitted request body alongside the built-in fields (`provisioning_tag` and `monitoring_enabled` after snake_casing). Your backend route receives them and can act on them however it needs to - see [Extending Models](./extending-models.md) for how to persist per-server data on the backend.
+Because both fields are declared in `zodShape`, their values ride along in the submitted request body alongside the built-in fields (`provisioning_tag` and `monitoring_enabled` after snake_casing). Your backend route receives them and can act on them; see [Extending Models](./extending-models.md) for how to persist per-server data on the backend.
 
 ## Advanced Mode
 

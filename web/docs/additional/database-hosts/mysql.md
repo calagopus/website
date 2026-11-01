@@ -40,13 +40,13 @@ services:
 Start the service:
 
 ```bash
-docker compose up -d
+sudo docker compose up -d
 ```
 
 Then open a shell inside the container to continue with user setup:
 
 ```bash
-docker compose exec mariadb mariadb -u root -p
+sudo docker compose exec mariadb mariadb -u root -p
 ```
 
 === APT (Debian / Ubuntu)
@@ -95,7 +95,7 @@ sudo mariadb -u root -p
 By default, MariaDB only listens on `127.0.0.1`. To accept connections from the panel and Wings nodes, update the bind address.
 
 ::: info
-If you used Docker Compose, the `ports` entry already handles this - skip this section.
+If you used Docker Compose, the `ports` entry already handles this; skip this section.
 :::
 
 ::::tabs
@@ -136,7 +136,7 @@ sudo systemctl restart mariadb
 Inside the MariaDB shell, create a dedicated account that the panel uses to provision user databases:
 
 ::: danger
-The user below can connect from **any IP address** (`%`). Use a long, randomly generated password - a weak password on an exposed port is a critical security risk.
+The user below can connect from **any IP address** (`%`). Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
 :::
 
 ```sql

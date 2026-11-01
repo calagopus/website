@@ -28,128 +28,96 @@ This example belongs under the Wings service in Docker Compose. For a native ser
 
 Overrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.
 
-On a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides.
+On a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write the options tagged **Required** for you.
 
 ## Core Configuration
 
-### debug
+### debug <Badge type="info" text="Optional" />
+
 Enables debug mode for Wings. When enabled, detailed logs are printed for troubleshooting.
 
-Default value:
-```yaml
-debug: false
-```
+Default: `false`
 
-### app_name
+### app_name <Badge type="info" text="Optional" />
+
 A human-readable name for this Wings instance used to identify the node in log outputs.
 
-Default value:
-```yaml
-app_name: Calagopus
-```
+Default: `Calagopus`
 
-### uuid
+### uuid <Badge type="tip" text="Required" />
+
 Unique identifier for this Wings node.
 
-Default value:
-```yaml
-uuid: UUID_HERE
-```
+### token_id <Badge type="tip" text="Required" />
 
-### token_id
 The identifier half of the credentials Wings uses to validate requests from the Panel. Written by `wings configure`.
 
-Default value:
-```yaml
-token_id: TOKEN_ID_HERE
-```
+### token <Badge type="tip" text="Required" />
 
-### token
 The secret half of the credentials Wings uses to validate requests from the Panel. Must be kept secret. Written by `wings configure`.
-
-Default value:
-```yaml
-token: TOKEN_HERE
-```
 
 ## API Settings
 
-### api.host
+### api.host <Badge type="info" text="Optional" />
+
 The IP address Wings binds its internal API to. Alternatively, a Unix socket path can be specified here.
 
-Default value:
-```yaml
-host: "0.0.0.0"
-```
+Default: `"0.0.0.0"`
 
-### api.port
+### api.port <Badge type="info" text="Optional" />
+
 The port used by the Wings internal API.
 
-Default value:
-```yaml
-port: 8080
-```
+Default: `8080`
 
-### api.ssl.enabled
+### api.ssl.enabled <Badge type="info" text="Optional" />
+
 Determines whether HTTPS is enabled for the Wings API to ensure encrypted communication.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### api.ssl.ktls_enabled
+### api.ssl.ktls_enabled <Badge type="info" text="Optional" />
+
 Whether to hand HTTPS connections off to the kernel's TLS implementation (kTLS) once the handshake completes, so the kernel encrypts and decrypts records instead of userspace. This mainly speeds up large file transfers and backup downloads. Linux only, and it requires the `tls` kernel module; Wings probes for kernel support on boot, warns once and stays on userspace TLS if the kernel cannot do it, and falls back per connection when the negotiated cipher suite isn't kTLS compatible. Has no effect unless `api.ssl.enabled` is `true`.
 
-Default value:
-```yaml
-ktls_enabled: false
-```
+Default: `false`
 
-### api.ssl.cert
+### api.ssl.cert <Badge type="info" text="Optional" />
+
 The absolute filesystem path to the SSL certificate file used for API encryption.
 
-Default value:
-```yaml
-cert: ""
-```
+Default: `""`
 
-### api.ssl.key
+### api.ssl.key <Badge type="info" text="Optional" />
+
 The absolute filesystem path to the SSL private key file corresponding to the certificate.
 
-Default value:
-```yaml
-key: ""
-```
+Default: `""`
 
-### api.redirects
+### api.redirects <Badge type="info" text="Optional" />
+
 Custom HTTP redirects for the API server (e.g. `/ → Panel URL`).
 
-Default value:
-```yaml
-redirects: {}
-```
+Default: `{}`
 
-### api.disable_openapi_docs
+### api.disable_openapi_docs <Badge type="info" text="Optional" />
+
 Controls the availability of the `/openapi.json` endpoint.
 
-Default value:
-```yaml
-disable_openapi_docs: false
-```
+Default: `false`
 
-### api.disable_remote_download
+### api.disable_remote_download <Badge type="info" text="Optional" />
+
 Whether to prevent servers from downloading files directly through remote URLs via the file manager or API.
 
-Default value:
-```yaml
-disable_remote_download: false
-```
+Default: `false`
 
-### api.remote_download_blocked_cidrs
+### api.remote_download_blocked_cidrs <Badge type="info" text="Optional" />
+
 A security list of CIDR ranges blocked for remote downloads to prevent SSRF (Server-Side Request Forgery) attacks.
 
-Default value:
+Default:
+
 ```yaml
 remote_download_blocked_cidrs:
 - 0.0.0.0/8
@@ -171,166 +139,130 @@ remote_download_blocked_cidrs:
 - ff00::/8
 ```
 
-### api.disable_directory_size
+### api.disable_directory_size <Badge type="info" text="Optional" />
+
 Whether to disable the calculation of total directory sizes in the file manager.
 
-Default value:
-```yaml
-disable_directory_size: false
-```
+Default: `false`
 
-### api.directory_entry_limit
+### api.directory_entry_limit <Badge type="info" text="Optional" />
+
 The maximum number of files/folders returned in a single `/list-directory` API call (`0` = unlimited).
 
-Default value:
-```yaml
-directory_entry_limit: 10000
-```
+Default: `10000`
 
-### api.send_offline_server_logs
+### api.send_offline_server_logs <Badge type="info" text="Optional" />
+
 When enabled, Wings will transmit cached logs from an offline server immediately upon a websocket connection. This only works when containers are not removed on stop.
 
-Default value:
-```yaml
-send_offline_server_logs: false
-```
+Default: `false`
 
-### api.file_search_threads
+### api.file_search_threads <Badge type="info" text="Optional" />
+
 The number of concurrent worker threads Wings spawns to crawl and scan through server files during a search request.
 
-Default value:
-```yaml
-file_search_threads: 4
-```
+Default: `4`
 
-### api.file_search_context.max_matches
+### api.file_search_context.max_matches <Badge type="info" text="Optional" />
+
 The largest number of context blocks per file a search request may ask for. A request above this limit (or asking for `0`) is rejected outright rather than trimmed, so raising it lets clients pull more of each file into a single response.
 
-Default value:
-```yaml
-max_matches: 100
-```
+Default: `100`
 
-### api.file_search_context.max_response_size
+### api.file_search_context.max_response_size <Badge type="info" text="Optional" />
+
 The total size (in bytes) of preview context Wings will return across a whole search response. Context blocks are added until the budget is spent; files past it are still listed as matches but come back without preview content and are flagged as truncated. This is the effective ceiling on how large a preview-enabled search response can get.
 
-Default value:
-```yaml
-max_response_size: 8388608
-```
+Default: `8388608`
 
-### api.file_copy_threads
+### api.file_copy_threads <Badge type="info" text="Optional" />
+
 The number of concurrent worker threads allocated for duplicating files and directories within the file manager. Set to `0` to use every available core.
 
-Default value:
-```yaml
-file_copy_threads: 4
-```
+Default: `4`
 
-### api.file_delete_threads
+### api.file_delete_threads <Badge type="info" text="Optional" />
+
 The number of concurrent worker threads used to walk and remove a directory tree. Applies to deleting a directory from the file manager and to wiping a server's volume when it is deleted or reinstalled. Set to `0` to use every available core.
 
-Default value:
-```yaml
-file_delete_threads: 2
-```
+Default: `2`
 
-### api.file_decompression_threads
+### api.file_decompression_threads <Badge type="info" text="Optional" />
+
 The number of threads used for extracting archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.
 
-Default value:
-```yaml
-file_decompression_threads: 4
-```
+Default: `4`
 
-### api.file_compression_threads
+### api.file_compression_threads <Badge type="info" text="Optional" />
+
 The number of threads used for creating archives. Applies to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup`, `.7z`. Set to `0` to use every available core.
 
-Default value:
-```yaml
-file_compression_threads: 2
-```
+Default: `2`
 
-### api.file_fingerprint_threads
+### api.file_fingerprint_threads <Badge type="info" text="Optional" />
+
 The number of files Wings fingerprints in parallel for one request, for checksums from the file manager and the CurseForge hashes mod tooling asks for. Set to `0` to use every available core.
 
-Default value:
-```yaml
-file_fingerprint_threads: 4
-```
+Default: `4`
 
-### api.upload_limit
+### api.upload_limit <Badge type="info" text="Optional" />
+
 The maximum file size in `MiB` that can be uploaded through the web-based file manager. `0` means no limit, which is the default from Wings 1.2.6; earlier versions defaulted to `100`, which only affected enrolled or hand-written configs, since configs generated by the Panel always set this key (to `0` since Panel 1.1.1). SFTP uploads are not affected.
 
-Default value:
-```yaml
-upload_limit: 0
-```
+Default: `0`
 
-### api.max_jwt_uses
+### api.max_jwt_uses <Badge type="info" text="Optional" />
+
 The number of times a single JWT can be used for a download or backup before it is invalidated. This provides a security layer to prevent the reuse of temporary access tokens for file and backup downloads.
 
-Default value:
-```yaml
-max_jwt_uses: 5
-```
+Default: `5`
 
-### api.request_log_limit
-The number of HTTP requests Wings writes a log line for each second, which keeps a busy node from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through - if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.
+### api.request_log_limit <Badge type="info" text="Optional" />
 
-Default value:
-```yaml
-request_log_limit: 250
-```
+The number of HTTP requests Wings writes a log line for each second, which keeps a busy node from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through; if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.
 
-### api.trusted_proxies
+Default: `250`
+
+### api.trusted_proxies <Badge type="info" text="Optional" />
+
 A list of trusted IP addresses from proxy servers (like Cloudflare, NGINX, or a Load Balancer) that Wings uses to resolve the actual IP address of a user using the `X-Forwarded-For` or `X-Real-IP` header.
 
-Default value:
-```yaml
-trusted_proxies: []
-```
+Default: `[]`
 
 ## Schedule Steps
 
 These options govern the `HTTP Request` step that server schedules can run. The step sends a request to an arbitrary URL from the node, optionally storing the response status and body into schedule variables.
 
-### api.schedule.steps.http_request.enabled
+### api.schedule.steps.http_request.enabled <Badge type="info" text="Optional" />
+
 Whether servers on this node are allowed to run the `HTTP Request` schedule step at all. When disabled, any schedule reaching such a step fails with an error instead of sending the request.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### api.schedule.steps.http_request.requests
+### api.schedule.steps.http_request.requests <Badge type="info" text="Optional" />
+
 The number of `HTTP Request` steps a single server may execute per rate limit window. Once the limit is hit, further requests fail until the window rolls over.
 
-Default value:
-```yaml
-requests: 5
-```
+Default: `5`
 
-### api.schedule.steps.http_request.window_seconds
+### api.schedule.steps.http_request.window_seconds <Badge type="info" text="Optional" />
+
 The length (in seconds) of the rate limit window that `api.schedule.steps.http_request.requests` is counted against. The window is per server and restarts once it elapses.
 
-Default value:
-```yaml
-window_seconds: 60
-```
+Default: `60`
 
-### api.schedule.steps.http_request.max_response_size
+### api.schedule.steps.http_request.max_response_size <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of a response body captured by the step. Only relevant when the step stores the body into a schedule variable; anything past this limit is truncated. This should be kept at or below the 16 KiB schedule variable size limit, since a captured body larger than a variable may hold would fail the step outright.
 
-Default value:
-```yaml
-max_response_size: 16384
-```
+Default: `16384`
 
-### api.schedule.steps.http_request.blocked_cidrs
+### api.schedule.steps.http_request.blocked_cidrs <Badge type="info" text="Optional" />
+
 A security list of CIDR ranges that `HTTP Request` steps may not connect to, preventing SSRF (Server-Side Request Forgery) attacks against services reachable from the node. Enforced both on the URL host and on every address DNS resolves to, so a public hostname pointing at a private address is blocked as well.
 
-Default value:
+Default:
+
 ```yaml
 blocked_cidrs:
 - 0.0.0.0/8
@@ -355,189 +287,149 @@ blocked_cidrs:
 ## System Configuration
 
 ::: info Path placeholders
-`data`, `diffs_directory`, `vmount_directory`, `log_directory`, `archive_directory`, `backup_directory` and `tmp_directory` accept the `{root_directory}` placeholder in their value. It's substituted with the configured `system.root_directory` every time the path is used, so these default to living under `root_directory` and move together if you repoint it. This is also how a freshly generated `config.yml` writes these values: literally as `{root_directory}/...`, not pre-resolved, so editing `root_directory` alone is enough to relocate everything else that still uses the placeholder. `log_directory` defaults to a fixed, independent path on Unix - see its entry below.
+`data`, `diffs_directory`, `vmount_directory`, `log_directory`, `archive_directory`, `backup_directory` and `tmp_directory` accept the `{root_directory}` placeholder in their value. It's substituted with the configured `system.root_directory` every time the path is used, so these default to living under `root_directory` and move together if you repoint it. This is also how a freshly generated `config.yml` writes these values: literally as `{root_directory}/...`, not pre-resolved, so editing `root_directory` alone is enough to relocate everything else that still uses the placeholder. `log_directory` defaults to a fixed, independent path on Unix; see its entry below.
 :::
 
-### system.root_directory
+### system.root_directory <Badge type="info" text="Optional" />
+
 This is the root directory where Wings stores its own persistent data (mainly state of servers so it can restore them on restart).
 
-Default value:
-```yaml
-root_directory: /var/lib/calagopus-wings
-```
+Default: `/var/lib/calagopus-wings` (Windows: `C:\ProgramData\Calagopus-Wings`)
 
-### system.log_directory
+### system.log_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores its logs.
 
-Default value:
-```yaml
-log_directory: /var/log/calagopus-wings
-```
+Default: `/var/log/calagopus-wings` (Windows: `"{root_directory}\\logs"`)
 
 ::: info
 Unlike the other directories on this page, `log_directory` defaults to a fixed path on Unix and does **not** move with `root_directory`. On Windows, it defaults to `{root_directory}\logs` and does follow it.
 :::
 
-### system.data
+### system.data <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores server data. This is the directory that gets bind-mounted to server containers and is where all server files are stored.
 
-Default value:
-```yaml
-data: "{root_directory}/volumes"
-```
+Default: `"{root_directory}/volumes"` (Windows: `"{root_directory}\\volumes"`)
 
-### system.diffs_directory
+### system.diffs_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores the per-server SQLite databases used by [file history](#system-file-history-enabled) to track diffs/revisions of edited files.
 
-Default value:
-```yaml
-diffs_directory: "{root_directory}/diffs"
-```
+Default: `"{root_directory}/diffs"` (Windows: `"{root_directory}\\diffs"`)
 
-### system.vmount_directory
+### system.vmount_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores virtual mounts for servers. Currently mainly used for spoofing hardware UUIDs for containers. This directory **should not** be located on a tmpfs (temporary filesystem).
 
-Default value:
-```yaml
-vmount_directory: "{root_directory}/vmounts"
-```
+Default: `"{root_directory}/vmounts"` (Windows: `"{root_directory}\\vmounts"`)
 
-### system.archive_directory
+### system.archive_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores server archives. This is 100% unused in current code and is simply there for compatibility with Pterodactyl's codebase; it may be used in the future.
 
-Default value:
-```yaml
-archive_directory: "{root_directory}/archives"
-```
+Default: `"{root_directory}/archives"` (Windows: `"{root_directory}\\archives"`)
 
-### system.backup_directory
+### system.backup_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores server backups. This applies to backups using the `Wings` backup driver; `btrfs` and `zfs` backups also use this directory for snapshots.
 
-Default value:
-```yaml
-backup_directory: "{root_directory}/backups"
-```
+Default: `"{root_directory}/backups"` (Windows: `"{root_directory}\\backups"`)
 
-### system.tmp_directory
+### system.tmp_directory <Badge type="info" text="Optional" />
+
 This is the directory where Wings stores temporary files, such as the staging directories of installation scripts and binaries it extracts for its own use. Wings empties it on every start, except for the staging directories of installations it is about to resume.
 
-Default value:
-```yaml
-tmp_directory: "{root_directory}/tmp"
-```
+Default: `"{root_directory}/tmp"` (Windows: `"{root_directory}\\tmp"`)
 
 ::: info Moved from /tmp
 Older versions defaulted to `/tmp/calagopus-wings`. When Wings runs in a container that path is a bind mount, and a host cleaner deleting it left the mount stale, which broke every installation until the container was recreated. A config that still holds `/tmp/calagopus-wings` or `/tmp/pterodactyl` is rewritten to `{root_directory}/tmp` on start, with a warning that the old directory can be removed. If you run Wings with Docker Compose, the separate `/tmp/calagopus-wings` volume is no longer needed.
 :::
 
-### system.username
+### system.username <Badge type="info" text="Optional" />
+
 The operating system user account that the Wings process runs under on the host.
 
-Default value:
-```yaml
-username: calagopus
-```
+Default: `calagopus`
 
-### system.timezone
+### system.timezone <Badge type="info" text="Optional" />
+
 The timezone passed into server containers. Generated from `TZ`, then the first line of `/etc/timezone`, then the current local UTC offset. The example uses `+00:00`; the generated value depends on the host. A `TZ` variable on the server takes precedence, then a per-server timezone set in the Panel.
 
-### system.user.rootless.enabled
+### system.user.rootless.enabled <Badge type="info" text="Optional" />
+
 Enables rootless container execution, allowing Wings to run containers without requiring root privileges on the host. When enabled, Wings takes `system.username`, `system.user.uid` and `system.user.gid` from the user it runs as and derives `docker.userns_mode` from the container UID/GID below.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### system.user.rootless.container_uid
+### system.user.rootless.container_uid <Badge type="info" text="Optional" />
+
 The UID the server process runs as inside rootless containers. Left at `0` the server runs as container root, which the default rootless mapping already points at the user running Wings; setting it to that user's own UID works too, since Wings derives a matching `docker.userns_mode`. Unlike the other user settings, this one is never filled in automatically.
 
-Default value:
-```yaml
-container_uid: 0
-```
+Default: `0`
 
-### system.user.rootless.container_gid
+### system.user.rootless.container_gid <Badge type="info" text="Optional" />
+
 The GID the server process runs as inside rootless containers. Follows the same rules as `system.user.rootless.container_uid`.
 
-Default value:
-```yaml
-container_gid: 0
-```
+Default: `0`
 
-### system.user.uid
+### system.user.uid <Badge type="info" text="Optional" />
+
 The User ID (UID) on the host system that Wings uses when managing server files.
 
-Default value:
-```yaml
-uid: 995
-```
+Default: `995`
 
-### system.user.gid
+### system.user.gid <Badge type="info" text="Optional" />
+
 The Group ID (GID) on the host system that Wings uses when managing server files.
 
-Default value:
-```yaml
-gid: 985
-```
+Default: `985`
 
-### system.passwd.enabled
+### system.passwd.enabled <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
+
 Whether to enable dynamic generation of `/etc/passwd` files inside containers to ensure proper username resolution.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### system.passwd.directory
+### system.passwd.directory <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
+
 The absolute filesystem path where Wings generates and stores the dynamic passwd files.
 
-Default value:
-```yaml
-directory: /run/calagopus-wings/etc
-```
+Default: `/run/calagopus-wings/etc`
 
-### system.machine_id.enabled
+### system.machine_id.enabled <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
+
 Controls whether a unique, generated `machine-id` file should be mounted into each server container.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.disk_check_concurrency
+### system.disk_check_concurrency <Badge type="info" text="Optional" />
+
 The number of concurrent allowed disk scans Wings can perform across all servers. This limits the number of simultaneous disk usage checks to prevent excessive background resource consumption on large nodes.
 
-Default value:
-```yaml
-disk_check_concurrency: 2
-```
+Default: `2`
 
-### system.disk_check_interval
+### system.disk_check_interval <Badge type="info" text="Optional" />
+
 Defines how often (in seconds) Wings performs incremental disk usage checks using inotify. These checks are lightweight and rely on filesystem events rather than scanning the entire disk.
 
-Default value:
-```yaml
-disk_check_interval: 150
-```
+Default: `150`
 
-### system.full_disk_check_every
+### system.full_disk_check_every <Badge type="info" text="Optional" />
+
 Number of inotify disk check intervals before performing a full disk scan. Periodic full scans prevent desync between the OS and Wings (e.g. 150s × 4 = 600s / 10 min).
 
-Default value:
-```yaml
-full_disk_check_every: 4
-```
+Default: `4`
 
-### system.disk_check_use_inotify
+### system.disk_check_use_inotify <Badge type="info" text="Optional" />
+
 Uses inotify for selective scanning to reduce scanning overhead of large servers. When disabled, Wings will perform a full disk scan every time instead of relying on inotify events. Disabling this can lead to increased CPU and disk usage, especially on servers with large file counts, but may be necessary in environments where inotify is unreliable or unavailable.
 
-Default value:
-```yaml
-disk_check_use_inotify: true
-```
+Default: `true`
 
-### system.disk_limiter_mode
+### system.disk_limiter_mode <Badge type="info" text="Optional" />
+
 ::: info
 **Switching between drivers may require additional manual work**. Enabling the quota driver requires specific filesystem support (like `prjquota` on `XFS` or `ext4`) and manual mounting configurations on the host machine. If not configured correctly at the OS level, Wings will fail to start or manage disk limits.
 :::
@@ -546,697 +438,534 @@ The backend driver used to enforce storage quotas on servers. Available Options:
 
 `none`, `btrfs_subvolume`, `zfs_dataset`, `xfs_quota` or the experimental `fuse_quota`
 
-Default value:
-```yaml
-disk_limiter_mode: none
-```
+Default: `none`
 
-### system.activity_send_interval
+### system.activity_send_interval <Badge type="info" text="Optional" />
+
 The amount of time (in seconds) that elapses between sending aggregated server activity to the Panel. Wings collects activity over this period and sends it in a single batch.
 
-Default value:
-```yaml
-activity_send_interval: 60
-```
+Default: `60`
 
-### system.activity_send_count
+### system.activity_send_count <Badge type="info" text="Optional" />
+
 The number of activity events to send per batch to the Panel. This limits how many collected events are transmitted during each interval.
 
-Default value:
-```yaml
-activity_send_count: 100
-```
+Default: `100`
 
-### system.check_permissions_on_boot
+### system.check_permissions_on_boot <Badge type="info" text="Optional" />
+
 Whether to check and correct file permissions for a server whenever its process is booted. This can cause boot delays if the server has a large amount of files.
 
-Default value:
-```yaml
-check_permissions_on_boot: true
-```
+Default: `true`
 
-### system.check_permissions_on_boot_threads
+### system.check_permissions_on_boot_threads <Badge type="info" text="Optional" />
+
 The number of concurrent threads used to verify and correct file permissions (chown) during the server startup process.
 
-Default value:
-```yaml
-check_permissions_on_boot_threads: 4
-```
+Default: `4`
 
-### system.websocket_log_count
+### system.websocket_log_count <Badge type="info" text="Optional" />
+
 The number of lines to send when a user connects to the server websocket. This provides the initial "backlog" of console history visible in the Panel.
 
-Default value:
-```yaml
-websocket_log_count: 150
-```
+Default: `150`
 
-### system.tcp_congestion_control
-The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel - Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.
+### system.tcp_congestion_control <Badge type="info" text="Optional" />
 
-Default value:
-```yaml
-tcp_congestion_control: bbr
-```
+The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel: Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.
+
+Default: `bbr`
 
 ## SFTP Configuration
 
-### system.sftp.enabled
+### system.sftp.enabled <Badge type="info" text="Optional" />
+
 Whether to enable the integrated SFTP (SSH) server.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.sftp.bind_address
+### system.sftp.bind_address <Badge type="info" text="Optional" />
+
 The IP address that the internal SFTP/SSH server binds to.
 
-Default value:
-```yaml
-bind_address: "0.0.0.0"
-```
+Default: `"0.0.0.0"`
 
-### system.sftp.bind_port
+### system.sftp.bind_port <Badge type="info" text="Optional" />
+
 The port that the internal SFTP/SSH server binds to for incoming connections.
 
-Default value:
-```yaml
-bind_port: 2022
-```
+Default: `2022`
 
-### system.sftp.read_only
+### system.sftp.read_only <Badge type="info" text="Optional" />
+
 Whether the SFTP server should operate in read-only mode. If enabled, users can view and download files, but cannot upload, delete, or modify any content.
 
-Default value:
-```yaml
-read_only: false
-```
+Default: `false`
 
-### system.sftp.key_algorithm
+### system.sftp.key_algorithm <Badge type="info" text="Optional" />
+
 The cryptographic algorithm used for generating the SSH host key.
 
-Default value:
-```yaml
-key_algorithm: ssh-ed25519
-```
+Default: `ssh-ed25519`
 
-### system.sftp.disable_password_auth
+### system.sftp.disable_password_auth <Badge type="info" text="Optional" />
+
 If enabled, only SSH key authentication is permitted for SFTP/SSH.
 
-Default value:
-```yaml
-disable_password_auth: false
-```
+Default: `false`
 
-### system.sftp.directory_entry_limit
+### system.sftp.directory_entry_limit <Badge type="info" text="Optional" />
+
 The maximum number of files and folders returned in a single directory listing. This prevents the SFTP server from hanging when opening folders with massive amounts of data.
 
-Default value:
-```yaml
-directory_entry_limit: 20000
-```
+Default: `20000`
 
-### system.sftp.directory_entry_send_amount
+### system.sftp.directory_entry_send_amount <Badge type="info" text="Optional" />
+
 The number of directory entries to send in each response chunk to the SFTP client.
 
-Default value:
-```yaml
-directory_entry_send_amount: 500
-```
+Default: `500`
 
-### system.sftp.limits.authentication_password_attempts
+### system.sftp.limits.authentication_password_attempts <Badge type="info" text="Optional" />
+
 The maximum number of failed password attempts allowed within the cooldown window before the connection is dropped.
 
-Default value:
-```yaml
-authentication_password_attempts: 3
-```
+Default: `3`
 
-### system.sftp.limits.authentication_pubkey_attempts
+### system.sftp.limits.authentication_pubkey_attempts <Badge type="info" text="Optional" />
+
 The maximum number of failed public key authentication attempts allowed within the cooldown window before the connection is dropped.
 
-Default value:
-```yaml
-authentication_pubkey_attempts: 20
-```
+Default: `20`
 
-### system.sftp.limits.authentication_cooldown
+### system.sftp.limits.authentication_cooldown <Badge type="info" text="Optional" />
+
 Cooldown period in seconds once attempts are exceeded. This is a sliding window based on the most recent attempt. (3 failed attempts in 1min = 60s wait time from the last attempt)
 
-Default value:
-```yaml
-authentication_cooldown: 60
-```
+Default: `60`
 
-### system.sftp.limits.max_connections_per_user
+### system.sftp.limits.max_connections_per_user <Badge type="info" text="Optional" />
+
 The maximum number of simultaneous SFTP connections allowed per user account. This prevents a single user from opening too many connections and overwhelming the server.
 
-Default value:
-```yaml
-max_connections_per_user: 10
-```
+Default: `10`
 
-### system.sftp.limits.max_channels_per_connection
+### system.sftp.limits.max_channels_per_connection <Badge type="info" text="Optional" />
+
 The maximum number of concurrent channels (e.g., SFTP sessions, shell sessions) allowed within a single SSH connection. This limits the resources consumed by a single connection.
 
-Default value:
-```yaml
-max_channels_per_connection: 10
-```
+Default: `10`
 
-### system.sftp.limits.max_handles_per_channel
+### system.sftp.limits.max_handles_per_channel <Badge type="info" text="Optional" />
+
 The maximum number of open file handles allowed per channel in the SFTP server. This prevents resource exhaustion from too many open files in a single session.
 
-Default value:
-```yaml
-max_handles_per_channel: 32
-```
+Default: `32`
 
-### system.sftp.limits.max_handles_total
+### system.sftp.limits.max_handles_total <Badge type="info" text="Optional" />
+
 The maximum total number of open file handles across all channels and connections in the SFTP server. This is a global limit to prevent overall resource exhaustion.
 
-Default value:
-```yaml
-max_handles_total: 1024
-```
+Default: `1024`
 
-### system.sftp.shell.enabled
+### system.sftp.shell.enabled <Badge type="info" text="Optional" />
+
 Determines whether to allow server management and command-line access via the Wings remote shell over SSH.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.sftp.shell.cli.name
+### system.sftp.shell.cli.name <Badge type="info" text="Optional" />
+
 The name used for the internal CLI tool when accessing a server via the remote shell. This is the command users type (e.g., `.wings help`) to interact with the Wings shell helper.
 
-Default value:
-```yaml
-name: .wings
-```
+Default: `.wings`
 
-### system.sftp.activity.log_logins
+### system.sftp.activity.log_logins <Badge type="info" text="Optional" />
+
 Whether successful SFTP logins are recorded and displayed in the server's activity log.
 
-Default value:
-```yaml
-log_logins: false
-```
+Default: `false`
 
-### system.sftp.activity.log_file_reads
+### system.sftp.activity.log_file_reads <Badge type="info" text="Optional" />
+
 Whether reading or downloading files via SFTP is recorded in the server's activity log.
 
-Default value:
-```yaml
-log_file_reads: false
-```
+Default: `false`
 
 ## Crash Detection
 
-### system.crash_detection.enabled
+### system.crash_detection.enabled <Badge type="info" text="Optional" />
+
 Enables or disables the automatic crash detection system for all servers on the node.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.crash_detection.detect_clean_exit_as_crash
+### system.crash_detection.detect_clean_exit_as_crash <Badge type="info" text="Optional" />
+
 Whether to treat a "clean" exit (an exit code of `0`) as a server crash.
 
-Default value:
-```yaml
-detect_clean_exit_as_crash: true
-```
+Default: `true`
 
-### system.crash_detection.timeout
+### system.crash_detection.timeout <Badge type="info" text="Optional" />
+
 The amount of time in seconds, that Wings waits after a server process stops before determining it has crashed and attempting a restart.
 
-Default value:
-```yaml
-timeout: 60
-```
+Default: `60`
 
 ## File History Configuration
 
-### system.file_history.enabled
+### system.file_history.enabled <Badge type="info" text="Optional" />
+
 Enables or disables the file history tracking system. When enabled, Wings records a diff-based changelog of edits made to server files through the file manager and SFTP, allowing users to view and restore previous versions.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.file_history.zstd_level
+### system.file_history.zstd_level <Badge type="info" text="Optional" />
+
 The [Zstandard](https://facebook.github.io/zstd/) compression level used when storing snapshots and delta entries in the history database. Higher values produce smaller stored history at the cost of more CPU time. Valid range is `1`–`22`.
 
-Default value:
-```yaml
-zstd_level: 9
-```
+Default: `9`
 
 ::: info
 Wings 1.2.8 lowered the default from `19` to `9`. Wings writes its defaults into `config.yml`, so an existing node keeps `19` until you change it there.
 :::
 
-### system.file_history.anchor_interval
+### system.file_history.anchor_interval <Badge type="info" text="Optional" />
+
 The number of delta (diff) entries written in a chain before Wings stores a full snapshot (anchor) instead. A lower value creates anchors more frequently, making history reconstruction faster at the cost of more disk space.
 
-Default value:
-```yaml
-anchor_interval: 4
-```
+Default: `4`
 
-### system.file_history.keep_chains
+### system.file_history.keep_chains <Badge type="info" text="Optional" />
+
 The number of diff chains to retain per file. Once a new chain is started (after an anchor), older chains beyond this count are pruned. Increasing this retains more history depth.
 
-Default value:
-```yaml
-keep_chains: 5
-```
+Default: `5`
 
-### system.file_history.file_size_cap
+### system.file_history.file_size_cap <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of file content that Wings will read and track through the HTTP file manager. File writes whose pre-write or post-write content exceeds this size are silently skipped and not recorded in history.
 
-Default value:
-```yaml
-file_size_cap: 1048576
-```
+Default: `1048576`
 
-### system.file_history.per_file_disk_budget
+### system.file_history.per_file_disk_budget <Badge type="info" text="Optional" />
+
 The maximum amount of disk space (in bytes) that the history database may use for a single file. When exceeded, Wings drops the oldest diff chains for that file until the budget is met.
 
-Default value:
-```yaml
-per_file_disk_budget: 5242880
-```
+Default: `5242880`
 
-### system.file_history.per_server_disk_budget
+### system.file_history.per_server_disk_budget <Badge type="info" text="Optional" />
+
 The maximum total disk space (in bytes) that the history database may use across all files for a single server. When exceeded, Wings drops the globally oldest diff chains until the budget is met.
 
-Default value:
-```yaml
-per_server_disk_budget: 209715200
-```
+Default: `209715200`
 
-### system.file_history.maintenance_interval
+### system.file_history.maintenance_interval <Badge type="info" text="Optional" />
+
 The interval (in seconds) between background maintenance runs that clean up stale history entries and enforce disk budgets.
 
-Default value:
-```yaml
-maintenance_interval: 3600
-```
+Default: `3600`
 
 ## File Collaboration Configuration
 
-### system.file_collaboration.enabled
+### system.file_collaboration.enabled <Badge type="info" text="Optional" />
+
 Enables or disables the live file collaboration system. When enabled, multiple users can open and edit the same server file simultaneously through the file manager, seeing each other's changes in real time.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.file_collaboration.file_size_cap
+### system.file_collaboration.file_size_cap <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of a file that can be opened for collaborative editing. Files larger than this cannot be opened in a collaborative session.
 
-Default value:
-```yaml
-file_size_cap: 1048576
-```
+Default: `1048576`
 
-### system.file_collaboration.max_sessions_per_server
+### system.file_collaboration.max_sessions_per_server <Badge type="info" text="Optional" />
+
 The maximum number of concurrent collaborative editing sessions (distinct open files) allowed per server.
 
-Default value:
-```yaml
-max_sessions_per_server: 16
-```
+Default: `16`
 
-### system.file_collaboration.max_sessions_per_connection
+### system.file_collaboration.max_sessions_per_connection <Badge type="info" text="Optional" />
+
 The maximum number of concurrent collaborative editing sessions a single websocket connection may subscribe to at once.
 
-Default value:
-```yaml
-max_sessions_per_connection: 8
-```
+Default: `8`
 
-### system.file_collaboration.max_editors_per_session
+### system.file_collaboration.max_editors_per_session <Badge type="info" text="Optional" />
+
 The maximum number of editors (participants actively editing) allowed to join a single collaborative editing session at once.
 
-Default value:
-```yaml
-max_editors_per_session: 32
-```
+Default: `32`
 
-### system.file_collaboration.max_cursors_per_connection
+### system.file_collaboration.max_cursors_per_connection <Badge type="info" text="Optional" />
+
 The maximum number of remote cursors a single websocket connection will track across its subscribed collaborative sessions.
 
-Default value:
-```yaml
-max_cursors_per_connection: 64
-```
+Default: `64`
 
-### system.file_collaboration.session_grace_period
+### system.file_collaboration.session_grace_period <Badge type="info" text="Optional" />
+
 The amount of time (in seconds) Wings keeps a collaborative session alive after the last participant leaves before tearing it down. This allows a user to briefly disconnect and rejoin without losing the session state.
 
-Default value:
-```yaml
-session_grace_period: 30
-```
+Default: `30`
 
 ## Websocket Configuration
 
-### system.websocket.max_message_size
+### system.websocket.max_message_size <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of a single websocket message Wings accepts on a server console connection. A larger message closes the connection instead of being processed.
 
-Default value:
-```yaml
-max_message_size: 1048576
-```
+Default: `1048576`
 
-### system.websocket.max_frame_size
+### system.websocket.max_frame_size <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of a single websocket frame. A message may be split across multiple frames, so this bounds an individual frame rather than the whole message.
 
-Default value:
-```yaml
-max_frame_size: 1048576
-```
+Default: `1048576`
 
-### system.websocket.read_buffer_size
+### system.websocket.read_buffer_size <Badge type="info" text="Optional" />
+
 The size (in bytes) of the read buffer allocated for each websocket connection. Raising it lowers the number of reads on busy consoles at the cost of memory per open connection.
 
-Default value:
-```yaml
-read_buffer_size: 8192
-```
+Default: `8192`
 
-### system.websocket.authentication_timeout
+### system.websocket.authentication_timeout <Badge type="info" text="Optional" />
+
 The amount of time (in seconds) a websocket connection may stay unauthenticated before Wings closes it. It is checked on the same 30 second interval as the connection ping, so the close lands on the first ping past the timeout (`0` = unlimited).
 
-Default value:
-```yaml
-authentication_timeout: 60
-```
+Default: `60`
 
-### system.websocket.unauthenticated_connections_per_ip
+### system.websocket.unauthenticated_connections_per_ip <Badge type="info" text="Optional" />
+
 The number of websocket connections a single IP address may hold open before sending a valid token. The slot is released the moment a connection authenticates, so this only bounds connections sitting in the pre-authentication state. Connections past the limit are rejected with `429 Too Many Requests` (`0` = unlimited).
 
-Default value:
-```yaml
-unauthenticated_connections_per_ip: 32
-```
+Default: `32`
 
 ::: info
 Connections are counted against the client IP Wings resolved, so `api.trusted_proxies` has to be correct when Wings sits behind a reverse proxy. Without it every connection is attributed to the proxy and a single busy panel exhausts the limit for everyone.
 :::
 
-### system.websocket.max_connections_total
+### system.websocket.max_connections_total <Badge type="info" text="Optional" />
+
 The maximum number of websocket connections Wings holds open across all servers at once, authenticated or not. Connections past the limit are rejected with `429 Too Many Requests` (`0` = unlimited).
 
-Default value:
-```yaml
-max_connections_total: 0
-```
+Default: `0`
 
 ## Backups Configuration
 
-### system.backups.write_limit
+### system.backups.write_limit <Badge type="info" text="Optional" />
+
 The maximum disk write speed (in `MiB/s`) for creating backups. This prevents restoration processes from saturating the disk I/O and slowing down the rest of the node (`0` = unlimited).
 
-Default value:
-```yaml
-write_limit: 0
-```
+Default: `0`
 
-### system.backups.read_limit
+### system.backups.read_limit <Badge type="info" text="Optional" />
+
 The maximum disk read speed (in `MiB/s`) when restoring backups. Prevents backups from slowing down the rest of the node (`0` = unlimited).
 
-Default value:
-```yaml
-read_limit: 0
-```
+Default: `0`
 
-### system.backups.compression_level
+### system.backups.compression_level <Badge type="info" text="Optional" />
+
 Defines the CPU vs. compression ratio. Higher compression saves disk space but uses more CPU (`best_speed` = fastest, `best_compression` = smallest file).
 
-Available options:
+Options: `best_speed`, `good_speed`, `good_compression`, `best_compression`
 
-`best_speed`, `good_speed`, `good_compression`, `best_compression`
+Default: `best_speed`
 
-Default value:
-```yaml
-compression_level: best_speed
-```
+### system.backups.mounting.enabled <Badge type="info" text="Optional" />
 
-### system.backups.mounting.enabled
 Allows users to browse and interact with backup contents directly via the File Manager without needing to download them first.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### system.backups.mounting.path
+### system.backups.mounting.path <Badge type="info" text="Optional" />
+
 The path prefix used for the virtual backup mount (e.g., `.backups/<uuid>`).
 
-Default value:
-```yaml
-path: .backups
-```
+Default: `.backups`
 
-### system.backups.wings.create_threads
+### system.backups.wings.create_threads <Badge type="info" text="Optional" />
+
 The number of CPU threads used when compressing local backups. This applies specifically to `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.zst`, and `.7z`.
 
-Default value:
-```yaml
-create_threads: 4
-```
+Default: `4`
 
-### system.backups.wings.restore_threads
+### system.backups.wings.restore_threads <Badge type="info" text="Optional" />
+
 The number of CPU threads used for extracting local backup archives. This applies specifically to `.tar.xz`, `.tar.lz`, `.zip`, `.ddup` and `.7z`.
 
-Default value:
-```yaml
-restore_threads: 4
-```
+Default: `4`
 
-### system.backups.wings.archive_format
+### system.backups.wings.archive_format <Badge type="info" text="Optional" />
+
 The compression format used for local backups.
 
-Available options:
+Options: `tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
 
-`tar`, `tar_gz`, `tar_xz`, `tar_lzip`, `tar_bz2`, `tar_lz4`, `tar_zstd`, `zip`, `seven_zip`
+Default: `tar_gz`
 
-Default value:
-```yaml
-archive_format: tar_gz
-```
+### system.backups.s3.create_threads <Badge type="info" text="Optional" />
 
-### system.backups.s3.create_threads
 The number of CPU threads used when compressing backups for S3 storage. This applies specifically to `.tar.gz`, `.tar.xz`, `.tar.lz` and `.tar.zst`.
 
-Default value:
-```yaml
-create_threads: 4
-```
+Default: `4`
 
-### system.backups.s3.streaming
+### system.backups.s3.streaming <Badge type="info" text="Optional" />
+
 Whether server-file S3 backups try the streaming endpoint before falling back to a buffered upload. Set to `false` to skip the probe and use buffered uploads directly, for example with a Panel that does not support that endpoint. Database dumps use a separate streaming path and are unaffected.
 
-Default value:
-```yaml
-streaming: true
-```
+Default: `true`
 
-### system.backups.s3.part_upload_timeout
+### system.backups.s3.part_upload_timeout <Badge type="info" text="Optional" />
+
 The maximum time (in seconds) to wait for a single part of a multipart upload.
 
-Default value:
-```yaml
-part_upload_timeout: 7200
-```
+Default: `7200`
 
-### system.backups.s3.retry_limit
+### system.backups.s3.retry_limit <Badge type="info" text="Optional" />
+
 The number of retry attempts for each failed upload part.
 
-Default value:
-```yaml
-retry_limit: 10
-```
+Default: `10`
 
-### system.backups.ddup_bak.create_threads
+### system.backups.ddup_bak.create_threads <Badge type="info" text="Optional" />
+
 The number of threads used for `ddup-bak` backup creation.
 
-Default value:
-```yaml
-create_threads: 4
-```
+Default: `4`
 
-### system.backups.ddup_bak.restore_threads
+### system.backups.ddup_bak.restore_threads <Badge type="info" text="Optional" />
+
 The number of threads used for restoring `ddup-bak` backups. Each thread restores one file, so with 4 threads, up to 4 files are restored concurrently.
 
-Default value:
-```yaml
-restore_threads: 4
-```
+Default: `4`
 
-### system.backups.ddup_bak.compression_format
+### system.backups.ddup_bak.compression_format <Badge type="info" text="Optional" />
+
 Compression for DdupBak backups: `none`, `deflate`, `gzip`, `brotli`, or `zstd`. New configurations default to `zstd`; an existing explicit value such as `deflate` is kept.
 
-Available options:
+Options: `none`, `deflate`, `gzip`, `brotli`, `zstd`
 
-`none`, `deflate`, `gzip`, `brotli`, `zstd`
+Default: `zstd`
 
-Default value:
-```yaml
-compression_format: zstd
-```
+### system.backups.restic.repository <Badge type="info" text="Optional" />
 
-### system.backups.restic.repository
 ::: info
 On Calagopus, restic is normally configured through a backup configuration in the panel. If the file at `password_file` exists, Wings uses these local options instead, for every restic backup on the node.
 :::
 
 The Restic repository path used for backups. This must already be initialized and can be overridden by the panel.
 
-Default value:
-```yaml
-repository: "{root_directory}/backups/restic"
-```
+Default: `"{root_directory}/backups/restic"` (Windows: `"{root_directory}\\backups\\restic"`)
 
-### system.backups.restic.password_file
+### system.backups.restic.password_file <Badge type="info" text="Optional" />
+
 The local path to the file containing the Restic repository password used for authentication. This can be overridden by the panel.
 
-Default value:
-```yaml
-password_file: "{root_directory}/backups/restic_password"
-```
+Default: `"{root_directory}/backups/restic_password"` (Windows: `"{root_directory}\\backups\\restic_password"`)
 
-### system.backups.restic.retry_lock_seconds
+### system.backups.restic.retry_lock_seconds <Badge type="info" text="Optional" />
+
 The amount of time (in seconds) Wings will wait if the Restic repository is locked by another process before failing the backup task. This can be overridden by the panel.
 
-Default value:
-```yaml
-retry_lock_seconds: 60
-```
+Default: `60`
 
-### system.backups.restic.environment
+### system.backups.restic.environment <Badge type="info" text="Optional" />
+
 The environment variables passed to the restic process for authentication and configuration. Every variable except `PATH` is passed through. Panel configuration patches cannot change this key.
 
-Default value:
-```yaml
-environment: {}
-```
+Default: `{}`
 
-### system.backups.btrfs.restore_threads
+### system.backups.btrfs.restore_threads <Badge type="info" text="Optional" />
+
 The number of threads used for restoring Btrfs snapshots. Each thread processes one file, so with 4 threads, up to 4 files are restored concurrently.
 
-Default value:
-```yaml
-restore_threads: 4
-```
+Default: `4`
 
-### system.backups.btrfs.create_read_only
+### system.backups.btrfs.create_read_only <Badge type="info" text="Optional" />
+
 Whether to create read-only snapshots to prevent data modification after the backup is taken.
 
-Default value:
-```yaml
-create_read_only: true
-```
+Default: `true`
 
-### system.backups.zfs.restore_threads
+### system.backups.zfs.restore_threads <Badge type="info" text="Optional" />
+
 The number of threads used for restoring ZFS snapshots. Each thread processes one file, so with 4 threads, up to 4 files are restored concurrently.
 
-Default value:
-```yaml
-restore_threads: 4
-```
+Default: `4`
 
-### system.backups.pbs.create_threads
+### system.backups.pbs.create_threads <Badge type="info" text="Optional" />
+
 The number of threads used when creating Proxmox Backup Server (PBS) backups. Each thread processes one file concurrently while the backup is being uploaded.
 
-Default value:
-```yaml
-create_threads: 4
-```
+Default: `4`
 
-### system.backups.pbs.download_concurrency
+### system.backups.pbs.download_concurrency <Badge type="info" text="Optional" />
+
 The number of chunks downloaded concurrently when restoring a Proxmox Backup Server (PBS) backup.
 
-Default value:
-```yaml
-download_concurrency: 4
-```
+Default: `4`
 
 ## Transfers
 
-### system.transfers.download_limit
+### system.transfers.download_limit <Badge type="info" text="Optional" />
+
 The download rate limit for transfers in MiB/s (`0` = unlimited).
 
-Default value:
-```yaml
-download_limit: 0
-```
+Default: `0`
 
 ## Docker Configuration
 
-### docker.socket
+### docker.socket <Badge type="info" text="Optional" />
+
 The path to the Docker daemon socket or HTTP address.
 
-Default value:
-```yaml
-socket: /var/run/docker.sock
-```
+Default: `/var/run/docker.sock` (Windows: `//./pipe/docker_engine`)
 
-### docker.server_name_in_container_name
+### docker.server_name_in_container_name <Badge type="info" text="Optional" />
+
 Whether to include the server's name within the Docker container name for easier identification in tools like `docker ps`.
 
-Default value:
-```yaml
-server_name_in_container_name: false
-```
+Default: `false`
 
-### docker.delete_container_on_stop
+### docker.delete_container_on_stop <Badge type="info" text="Optional" />
+
 When enabled, containers are deleted as soon as a server stops, is killed, or crashes. This significantly reduces long-term CPU/resource overhead.
 
-Default value:
-```yaml
-delete_container_on_stop: true
-```
+Default: `true`
 
-### docker.network.interface
+### docker.network.interface <Badge type="info" text="Optional" />
+
 The specific IP interface used for the Docker network bridge.
 
-Default value:
-```yaml
-interface: "172.18.0.1"
-```
+Default: `"172.18.0.1"`
 
-### docker.network.disable_interface_binding
+### docker.network.disable_interface_binding <Badge type="info" text="Optional" />
+
 Whether to disable binding containers to a specific network interface on the host.
 
-Default value:
-```yaml
-disable_interface_binding: false
-```
+Default: `false`
 
-### docker.network.dns
+### docker.network.dns <Badge type="info" text="Optional" />
+
 The list of DNS servers used by containers for name resolution.
 
-Default value:
+Default:
+
 ```yaml
 dns:
 - "1.1.1.1"
 - "1.0.0.1"
 ```
 
-### docker.network.dns_options
+### docker.network.dns_options <Badge type="info" text="Optional" />
+
 Resolver options (as used in `/etc/resolv.conf`'s `options` line) applied to containers alongside `docker.network.dns`.
 
-Default value:
+Default:
+
 ```yaml
 dns_options:
 - ndots:0
@@ -1245,149 +974,118 @@ dns_options:
 - single-request-reopen
 ```
 
-### docker.network.name
+### docker.network.name <Badge type="info" text="Optional" />
+
 The name of the Docker network used by Wings to manage container communication.
 
-Default value:
-```yaml
-name: calagopus_nw
-```
+Default: `calagopus_nw`
 
-### docker.network.ispn
+### docker.network.ispn <Badge type="info" text="Optional" />
+
 The flag that determines if the Docker network used by Wings is "internal", meaning it has no access to the external internet.
 
-Default value:
-```yaml
-ispn: false
-```
+Default: `false`
 
-### docker.network.driver
+### docker.network.driver <Badge type="info" text="Optional" />
+
 The Docker network driver used for the container network (e.g. `bridge`).
 
-Default value:
-```yaml
-driver: bridge
-```
+Default: `bridge`
 
-### docker.network.mode
+### docker.network.mode <Badge type="info" text="Optional" />
+
 The network mode containers are attached to, passed to the Docker daemon as-is. This should match `docker.network.name`; if `name` is changed without changing `mode`, Wings warns on startup that containers are being attached to a network that does not exist. Also accepted under the legacy key `network_mode`.
 
-Default value:
-```yaml
-mode: calagopus_nw
-```
+Default: `calagopus_nw`
 
-### docker.network.is_internal
+### docker.network.is_internal <Badge type="info" text="Optional" />
+
 Whether to mark the network as internal-only, restricting containers from accessing the outside internet.
 
-Default value:
-```yaml
-is_internal: false
-```
+Default: `false`
 
-### docker.network.enable_icc
+### docker.network.enable_icc <Badge type="info" text="Optional" />
+
 Enables Inter-Container Communication, allowing containers on the same network to talk to one another.
 
-Default value:
-```yaml
-enable_icc: true
-```
+Default: `true`
 
-### docker.network.network_mtu
+### docker.network.network_mtu <Badge type="info" text="Optional" />
+
 Sets the Maximum Transmission Unit (MTU) size for the container network.
 
-Default value:
-```yaml
-network_mtu: 1500
-```
+Default: `1500`
 
-### docker.network.interfaces.v4.enabled
+### docker.network.interfaces.v4.enabled <Badge type="info" text="Optional" />
+
 Whether to enable IPv4 on the Docker network bridge. At least one of `docker.network.interfaces.v4.enabled` and `docker.network.interfaces.v6.enabled` must stay `true` - Wings refuses to create the network if both are disabled.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### docker.network.interfaces.v4.subnet
+### docker.network.interfaces.v4.subnet <Badge type="info" text="Optional" />
+
 The IPv4 subnet range used by the Docker network.
 
-Default value:
-```yaml
-subnet: 172.18.0.0/16
-```
+Default: `172.18.0.0/16`
 
-### docker.network.interfaces.v4.gateway
+### docker.network.interfaces.v4.gateway <Badge type="info" text="Optional" />
+
 The IPv4 gateway address for the Docker network. This will automatically be incremented if the address is already in use by another network on the host.
 
-Default value:
-```yaml
-gateway: "172.18.0.1"
-```
+Default: `"172.18.0.1"`
 
-### docker.network.interfaces.v6.enabled
+### docker.network.interfaces.v6.enabled <Badge type="info" text="Optional" />
+
 Whether to enable IPv6 on the Docker network bridge. At least one of `docker.network.interfaces.v4.enabled` and `docker.network.interfaces.v6.enabled` must stay `true` - Wings refuses to create the network if both are disabled.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### docker.network.interfaces.v6.subnet
+### docker.network.interfaces.v6.subnet <Badge type="info" text="Optional" />
+
 The IPv6 subnet range used by the Docker network.
 
-Default value:
-```yaml
-subnet: fdba:17c8:6c94::/64
-```
+Default: `fdba:17c8:6c94::/64`
 
-### docker.network.interfaces.v6.gateway
+### docker.network.interfaces.v6.gateway <Badge type="info" text="Optional" />
+
 The IPv6 gateway address for the Docker network.
 
-Default value:
-```yaml
-gateway: fdba:17c8:6c94::1011
-```
+Default: `fdba:17c8:6c94::1011`
 
-### docker.firewall.backend
+### docker.firewall.backend <Badge type="info" text="Optional" />
+
 Which backend Wings uses to apply per-server firewall rules on the host.
 
-- `auto` - Pick a backend on boot. Wings prefers `nftables`, falls back to `iptables`, and uses the helper container when it runs inside a container that has its own network namespace.
-- `nftables` - Run `nft` directly on the host.
-- `iptables` - Run `iptables` directly on the host.
-- `container` - Run `nft` through a helper container started from the Wings image, named `calagopus-wings-firewall-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-firewall` before Wings 1.2.8). Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.
-- `disabled` - Never apply rules.
+- `auto`: pick a backend on boot. Wings prefers `nftables`, falls back to `iptables`, and uses the helper container when it runs inside a container that has its own network namespace.
+- `nftables`: run `nft` directly on the host.
+- `iptables`: run `iptables` directly on the host.
+- `container`: run `nft` through a helper container started from the Wings image, named `calagopus-wings-firewall-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-firewall` before Wings 1.2.8). Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.
+- `disabled`: never apply rules.
 
-Default value:
-```yaml
-backend: auto
-```
+Default: `auto`
 
 ::: warning
-Server firewalls are Linux only, and are not supported with a rootless container engine - published port traffic does not traverse the host netfilter forward path there.
+Server firewalls are Linux only, and are not supported with a rootless container engine, because published port traffic does not traverse the host netfilter forward path there.
 
-When no backend ends up usable - an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start - a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.
+When no backend ends up usable (an unsupported platform, a rootless engine, neither `nft` nor `iptables` present, or a helper container that fails to start), a server that has firewall rules configured refuses to start rather than running unprotected. Set this to `disabled` to start such servers anyway, in which case Wings logs a warning per server and leaves its rules unapplied.
 
 The `container` backend runs `nft` out of the Wings image itself, so that image has to carry the binary. The official Wings and All-in-One images do; a custom image may not, and Wings then reports that `nft` is missing from the image the helper container runs.
 :::
 
-### docker.firewall.source_file_max_entries
+### docker.firewall.source_file_max_entries <Badge type="info" text="Optional" />
+
 The maximum number of entries Wings loads from the source file of a firewall rule. A file holding more than this is rejected as a whole, and the rule keeps the entries it last loaded.
 
-Default value:
-```yaml
-source_file_max_entries: 10000
-```
+Default: `10000`
 
-### docker.firewall.source_file_max_bytes
+### docker.firewall.source_file_max_bytes <Badge type="info" text="Optional" />
+
 The maximum size (in bytes) of the source file of a firewall rule. A file larger than this is rejected as a whole, and the rule keeps the entries it last loaded.
 
-Default value:
-```yaml
-source_file_max_bytes: 1048576
-```
+Default: `1048576`
 
-### docker.bandwidth.backend
+### docker.bandwidth.backend <Badge type="info" text="Optional" />
+
 How Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart.
 
 - `auto`: `local` when Wings runs on the host, or in a container that shares the host PID namespace and holds `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`. Otherwise `container`. With `system.user.rootless.enabled` on, the capabilities are not checked.
@@ -1395,14 +1093,9 @@ How Wings enforces the per-server upload and download limits set in the Panel. L
 - `container`: Wings starts a helper container, named `calagopus-wings-bandwidth-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-bandwidth` before Wings 1.2.8), from its own image with the host PID namespace, no network, and `NET_ADMIN` and `SYS_ADMIN`, and applies the limits through it. Only works when Wings itself runs as a container on the Docker engine it manages, and not with rootless container engines.
 - `disabled`: limited servers start without their limits, and Wings logs a warning for each one.
 
-Available options:
+Options: `auto`, `local`, `container`, `disabled`
 
-`auto`, `local`, `container`, `disabled`
-
-Default value:
-```yaml
-backend: auto
-```
+Default: `auto`
 
 ::: warning
 Bandwidth limits are Linux only. The Wings Docker Compose file shares the host PID namespace (`pid: host`) since Wings 1.2.6, but the Wings container does not hold `CAP_NET_ADMIN` or `CAP_SYS_ADMIN`. Wings 1.2.8 and newer check for those capabilities and `auto` uses the helper container. On Wings 1.2.6 and 1.2.7, `auto` picks `local` there and limits stay unavailable, so set this option to `container`. Adding `cap_add: [NET_ADMIN, SYS_ADMIN]` to the `wings` service gives Wings the same privileges as the helper container instead, and `auto` then picks `local`. An older Compose file without `pid: host` gets the helper container through `auto`.
@@ -1416,93 +1109,71 @@ The Panel shows the reason on the server's limit fields when a node can't apply 
 This option replaced `docker.bandwidth.enabled` in Wings 1.2.6. On startup Wings turns `enabled: false` into `backend: disabled`, drops the old key from `config.yml`, and logs `migrated docker.bandwidth.enabled to docker.bandwidth.backend`.
 :::
 
-### docker.domainname
+### docker.domainname <Badge type="info" text="Optional" />
+
 The domain name assigned to containers, useful for internal networking resolution.
 
-Default value:
-```yaml
-domainname: ""
-```
+Default: `""`
 
-### docker.registries
+### docker.registries <Badge type="info" text="Optional" />
+
 The Docker registry authentication configurations used for pulling private images.
 
-Default value:
-```yaml
-registries: {}
-```
+Default: `{}`
 
-### docker.registry_image_fetch_cache.enabled
+### docker.registry_image_fetch_cache.enabled <Badge type="info" text="Optional" />
+
 Whether to enable caching of image metadata (e.g., digests, tags) from Docker registries to reduce API calls and speed up repeated server starts.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### docker.registry_image_fetch_cache.duration
+### docker.registry_image_fetch_cache.duration <Badge type="info" text="Optional" />
+
 The duration (in seconds) that cached image metadata is considered valid before it is refreshed with a new request to the Docker registry.
 
-Default value:
-```yaml
-duration: 300
-```
+Default: `300`
 
-### docker.registry_image_fetch_cache.background_refresh
+### docker.registry_image_fetch_cache.background_refresh <Badge type="info" text="Optional" />
+
 Whether a stale image is refreshed in the background instead of holding up the server boot. When enabled and the image already exists on the host, Wings boots the server from the local copy right away and pulls the newer image in a background task, so the update only takes effect on the next start. Images that are not on the host yet are still pulled before the server boots.
 
-Default value:
-```yaml
-background_refresh: false
-```
+Default: `false`
 
-### docker.tmpfs_size
+### docker.tmpfs_size <Badge type="info" text="Optional" />
+
 The size (in `MiB`) of the `/tmp` directory mounted as a tmpfs in containers.
 
-Default value:
-```yaml
-tmpfs_size: 100
-```
+Default: `100`
 
-### docker.shm_size
+### docker.shm_size <Badge type="info" text="Optional" />
+
 The size (in `MiB`) of `/dev/shm` inside containers. `0` leaves Docker's own default (64 MiB) in place. Raise it for games that map large amounts of shared memory.
 
-Default value:
-```yaml
-shm_size: 0
-```
+Default: `0`
 
-### docker.container_pid_limit
+### docker.container_pid_limit <Badge type="info" text="Optional" />
+
 The maximum number of processes (PIDs) allowed to run simultaneously within a single container.
 
-Default value:
-```yaml
-container_pid_limit: 5120
-```
+Default: `5120`
 
-### docker.container_apply_seccomp
+### docker.container_apply_seccomp <Badge type="info" text="Optional" />
+
 Whether to apply a modified seccomp profile with additional syscalls toggled from the panel, this can break on podman.
 
-Default value:
-```yaml
-container_apply_seccomp: true
-```
+Default: `true`
 
-### docker.container_apparmor_profile
+### docker.container_apparmor_profile <Badge type="info" text="Optional" />
+
 The name of an AppArmor profile to confine server containers with, passed to Docker as `apparmor=<profile>`. The profile must already be loaded on the host. Leaving this empty lets Docker apply its own `docker-default` profile.
 
-Default value:
-```yaml
-container_apparmor_profile: ""
-```
+Default: `""`
 
-### docker.container_ulimits
+### docker.container_ulimits <Badge type="info" text="Optional" />
+
 Per-container resource limits, applied to every server container Wings creates. Each entry is a `name`, a `soft` limit and a `hard` limit, matching the `--ulimit` flag of `docker run` (`-1` means unlimited). An empty list leaves the daemon defaults in place. A `nofile` hard limit larger than what the host lets Wings raise its own limit to is clamped down to that ceiling, with a warning logged once.
 
-Default value:
-```yaml
-container_ulimits: []
-```
+Default: `[]`
 
 ::: info
 Each entry is a map, so a raised file descriptor limit looks like this:
@@ -1515,295 +1186,225 @@ container_ulimits:
 ```
 :::
 
-### docker.container_sysctls
+### docker.container_sysctls <Badge type="info" text="Optional" />
+
 Kernel parameters set inside every server container, matching the `--sysctl` flag of `docker run`. Only namespaced sysctls can be set this way; the Docker daemon rejects the container outright for anything else. Entries starting with `net.` are skipped for containers that share a foreign network namespace (`host` or `container:<id>` network modes), since those sysctls belong to the namespace owner.
 
-Default value:
-```yaml
-container_sysctls: {}
-```
+Default: `{}`
 
-### docker.numa_memory_binding
+### docker.numa_memory_binding <Badge type="info" text="Optional" />
+
 Whether to bind a container's memory to the NUMA nodes its pinned CPU threads live on, keeping allocations local instead of spread across sockets. Only takes effect on a multi-node host for servers that have CPU pinning set; single-node machines and unpinned servers are unaffected.
 
-Default value:
-```yaml
-numa_memory_binding: true
-```
+Default: `true`
 
-### docker.cpu_period
+### docker.cpu_period <Badge type="info" text="Optional" />
+
 The CFS scheduling period (in microseconds) used for container CPU limits. A server's CPU limit is turned into a quota of `limit% × cpu_period`, so a shorter period hands out CPU time in smaller, more frequent slices, at the cost of more scheduler overhead. Values are clamped to the kernel's accepted range of `1000` - `1000000`.
 
-Default value:
-```yaml
-cpu_period: 100000
-```
+Default: `100000`
 
-### docker.cfs_burst.enabled
+### docker.cfs_burst.enabled <Badge type="info" text="Optional" />
+
 Whether to grant containers CFS burst, letting a server bank unused CPU time within a period and spend it on a later spike instead of being throttled. Requires a kernel with CFS burst support (`cpu.max.burst` on cgroup v2, `cpu.cfs_burst_us` on v1); where it is unsupported, Wings leaves it alone and warns about it once. Servers without a CPU limit are unaffected, they are not throttled to begin with.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### docker.cfs_burst.multiple
+### docker.cfs_burst.multiple <Badge type="info" text="Optional" />
+
 The fraction of a server's CPU quota that may be banked as burst. `1.0` allows a full extra period's worth of CPU time, `0.5` half of it, `0` disables bursting for the same effect as turning `enabled` off. The kernel refuses a burst larger than the quota, so values above `1.0` are clamped.
 
-Default value:
-```yaml
-multiple: 1.0
-```
+Default: `1.0`
 
-### docker.startup_boost.enabled
+### docker.startup_boost.enabled <Badge type="info" text="Optional" />
+
 Whether to lift a server's CPU limit while it is booting. With this on, a starting container runs without a CPU quota until it reports as running (or `docker.startup_boost.timeout` elapses), after which the configured limit and CFS burst are put back. This mainly helps single-threaded boot work like world generation or mod loading. Servers without a CPU limit are unaffected, they are already unthrottled. These are the node-wide defaults and can be overridden by the panel, which may give an individual server its own `enabled` and `timeout` to use in place of the values here.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### docker.startup_boost.timeout
+### docker.startup_boost.timeout <Badge type="info" text="Optional" />
+
 The maximum time (in seconds) a server may stay boosted. Once the server leaves the starting state or this many seconds pass, whichever comes first, its CPU quota is restored.
 
-Default value:
-```yaml
-timeout: 120
-```
+Default: `120`
 
-### docker.startup_boost.max_concurrent
+### docker.startup_boost.max_concurrent <Badge type="info" text="Optional" />
+
 The number of servers that may be boosted at the same time on this node. Servers that start while this many boosts are already active simply boot with their normal CPU limit, so a mass restart cannot hand out unlimited CPU to every server at once. Unlike the other options in this block, this one is always taken from the node config, a per-server override from the panel cannot raise it.
 
-Default value:
-```yaml
-max_concurrent: 3
-```
+Default: `3`
 
-### docker.runtime_boost.enabled
+### docker.runtime_boost.enabled <Badge type="info" text="Optional" />
+
 Whether to temporarily raise a server's CPU quota when it is pinned against its limit while running. Wings watches the per-second CPU samples it already collects for the stats websocket, and once a server has sat at or above `docker.runtime_boost.threshold` of its limit for `docker.runtime_boost.sustained` samples in a row it hands out extra quota for `docker.runtime_boost.duration` seconds before restoring the configured limit. Unlike `docker.startup_boost`, this applies to a server that is already running, so it covers spikes like a large world save or a burst of players joining rather than boot work. Servers without a CPU limit are unaffected, they are already unthrottled, and a server that is currently startup boosted is never boosted again on top of it. These are the node-wide defaults and can be overridden by the panel, which may give an individual server its own values for every option below except `docker.runtime_boost.max_concurrent`.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### docker.runtime_boost.threshold
+### docker.runtime_boost.threshold <Badge type="info" text="Optional" />
+
 The share (`%`) of a server's configured CPU limit that counts as pinned. A server limited to `200%` with the default threshold of `90` has to use at least `180%` CPU for a sample to count towards a boost.
 
-Default value:
-```yaml
-threshold: 90
-```
+Default: `90`
 
-### docker.runtime_boost.sustained
+### docker.runtime_boost.sustained <Badge type="info" text="Optional" />
+
 The number of consecutive one second samples a server must spend at or above the threshold before it is boosted, so brief spikes do not trigger one. The streak resets whenever a sample falls below the threshold, the server leaves the running state, or a boost is granted.
 
-Default value:
-```yaml
-sustained: 10
-```
+Default: `10`
 
-### docker.runtime_boost.multiple
+### docker.runtime_boost.multiple <Badge type="info" text="Optional" />
+
 The multiplier applied to the server's CPU quota while boosted. `2.0` gives it twice its configured limit for the duration of the boost. Values below `1.0` are clamped to `1.0`, since a boost never hands out less CPU than the server already has.
 
-Default value:
-```yaml
-multiple: 2.0
-```
+Default: `2.0`
 
-### docker.runtime_boost.duration
+### docker.runtime_boost.duration <Badge type="info" text="Optional" />
+
 How long (in seconds) a boost lasts. Once this elapses the server's configured CPU limit and CFS burst are put back, whether or not it is still pinned.
 
-Default value:
-```yaml
-duration: 60
-```
+Default: `60`
 
-### docker.runtime_boost.cooldown
+### docker.runtime_boost.cooldown <Badge type="info" text="Optional" />
+
 How long (in seconds) a server has to wait after a boost ends before it may be boosted again, so a permanently overloaded server cannot simply run at its boosted limit forever.
 
-Default value:
-```yaml
-cooldown: 300
-```
+Default: `300`
 
-### docker.runtime_boost.max_concurrent
+### docker.runtime_boost.max_concurrent <Badge type="info" text="Optional" />
+
 The number of servers that may be boosted at the same time on this node. While this many boosts are active, a server that hits the threshold keeps its normal CPU limit and its streak resets, so a node-wide load spike cannot boost every server at once. Unlike the other options in this block, this one is always taken from the node config, a per-server override from the panel cannot raise it.
 
-Default value:
-```yaml
-max_concurrent: 3
-```
+Default: `3`
 
-### docker.lxcfs.enabled
+### docker.lxcfs.enabled <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
+
 Bind host lxcfs files into server containers so software reading `/proc` and `/sys` can see container resource limits. Requires lxcfs to be running on the container host; Wings does not start it itself. Installer containers are unaffected. Restart Wings and then each server after changing this setting. See [LXCFS Setup](./installation/binary.md#optional-lxcfs).
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### docker.lxcfs.directory
+### docker.lxcfs.directory <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
+
 The lxcfs mount directory on the container host. An existing distribution service commonly uses `/var/lib/lxcfs`; `wings service-install --lxcfs` creates a separate service at `/var/lib/calagopus-wings/lxcfs` and saves that path when a Wings configuration is loaded. Change this path locally, because configuration patches from the Panel cannot alter it.
 
-Default value:
-```yaml
-directory: /var/lib/lxcfs
-```
+Default: `/var/lib/lxcfs`
 
-### docker.installer_limits.timeout
+### docker.installer_limits.timeout <Badge type="info" text="Optional" />
+
 The maximum time (in seconds) allowed for an installation container to run before it is considered failed (`0` = no limit).
 
-Default value:
-```yaml
-timeout: 1800
-```
+Default: `1800`
 
-### docker.installer_limits.memory
+### docker.installer_limits.memory <Badge type="info" text="Optional" />
+
 The memory limit (in `MiB`) for installer containers. This will be overwritten with the server's memory limit **if it is higher**.
 
-Default value:
-```yaml
-memory: 1024
-```
+Default: `1024`
 
-### docker.installer_limits.cpu
+### docker.installer_limits.cpu <Badge type="info" text="Optional" />
+
 The CPU limit (`%`) for installer containers. This will be overwritten with the server's CPU limit **if it is higher**.
 
-Default value:
-```yaml
-cpu: 100
-```
+Default: `100`
 
-### docker.overhead.override
+### docker.overhead.override <Badge type="info" text="Optional" />
+
 The toggle to enable or disable custom memory overhead multipliers.
 
-Default value:
-```yaml
-override: false
-```
+Default: `false`
 
-### docker.overhead.default_multiplier
+### docker.overhead.default_multiplier <Badge type="info" text="Optional" />
+
 The default multiplier applied to a server's memory limit to account for Docker container overhead.
 
-Default value:
-```yaml
-default_multiplier: 1.05
-```
+Default: `1.05`
 
-### docker.overhead.multipliers
+### docker.overhead.multipliers <Badge type="info" text="Optional" />
+
 A map of specific memory thresholds to custom multipliers, allowing for granular overhead control based on server size.
 
-Default value:
-```yaml
-multipliers: {}
-```
+Default: `{}`
 
-### docker.userns_mode
+### docker.userns_mode <Badge type="info" text="Optional" />
+
 The user namespace mode for containers, used to isolate container users from host users for enhanced security. Left empty with `system.user.rootless.enabled` on, Wings derives `keep-id:uid=<container_uid>,gid=<container_gid>` from the rootless settings; setting it explicitly opts out of that and is passed through untouched.
 
-Default value:
-```yaml
-userns_mode: ""
-```
+Default: `""`
 
-### docker.mount_options
+### docker.mount_options <Badge type="info" text="Optional" />
+
 Extra options appended to every bind mount of server, installer and script runner containers, such as `idmap`, which together with `docker.userns_mode` keeps file ownership identical inside and outside the container. Options are passed to the container engine untouched and are engine-specific: rootful Podman supports `idmap`, while Docker rejects options it does not know and the container then fails to create. Kernel filesystem sources (`/dev`, `/proc`, `/sys`) and lxcfs mounts never get them. Changes apply to containers created afterwards.
 
-Default value:
-```yaml
-mount_options: []
-```
+Default: `[]`
 
-### docker.log_config.type
+### docker.log_config.type <Badge type="info" text="Optional" />
+
 The Docker logging driver type used to capture and store container output.
 
-Default value:
-```yaml
-type: local
-```
+Default: `local`
 
-### docker.log_config.config.compress
+### docker.log_config.config.compress <Badge type="info" text="Optional" />
+
 Whether to enable compression for stored log files to save disk space.
 
-Default value:
-```yaml
-compress: "false"
-```
+Default: `"false"`
 
-### docker.log_config.config.max-file
+### docker.log_config.config.max-file <Badge type="info" text="Optional" />
+
 The maximum number of log files to retain before the oldest ones are rotated out.
 
-Default value:
-```yaml
-max-file: "1"
-```
+Default: `"1"`
 
-### docker.log_config.config.max-size
+### docker.log_config.config.max-size <Badge type="info" text="Optional" />
+
 The maximum size allowed for a single log file before it is rotated.
 
-Default value:
-```yaml
-max-size: 5m
-```
+Default: `5m`
 
-### docker.log_config.config.mode
+### docker.log_config.config.mode <Badge type="info" text="Optional" />
+
 The delivery mode for logs (e.g. `non-blocking`), determining how Docker handles log data when the buffer is full.
 
-Default value:
-```yaml
-mode: non-blocking
-```
+Default: `non-blocking`
 
 ## Limits
 
 Per-server caps on long-running file operations. An operation over a limit is refused straight away with `417 Expectation Failed` rather than queued, so the user sees the error and can retry once something finishes.
 
-### limits.server_concurrent_pulls
+### limits.server_concurrent_pulls <Badge type="info" text="Optional" />
+
 The maximum number of remote file pulls (downloads from a URL) one server can run at once. Set to `0` for no limit.
 
-Default value:
-```yaml
-server_concurrent_pulls: 3
-```
+Default: `3`
 
 ::: info
 This replaces `api.server_remote_download_limit`. A config that still sets the old key is migrated on start and whenever the panel pushes a config, with a warning in the log: its value moves here, except `0`, which used to block remote pulls entirely and now turns on `api.disable_remote_download` instead, since `0` means unlimited here.
 :::
 
-### limits.server_concurrent_operations
+### limits.server_concurrent_operations <Badge type="info" text="Optional" />
+
 The maximum number of file operations one server can run at once: archiving, extracting, copies (including to other servers), remote pulls and backup exports, whether started from the file manager or a schedule. Pulls count toward this limit as well as their own. Set to `0` for no limit.
 
-Default value:
-```yaml
-server_concurrent_operations: 0
-```
+Default: `0`
 
 ## Throttles
 
-### throttles.enabled
+### throttles.enabled <Badge type="info" text="Optional" />
+
 The toggle to enable or disable console output throttling for all containers.
 
-Default value:
-```yaml
-enabled: true
-```
+Default: `true`
 
-### throttles.lines
+### throttles.lines <Badge type="info" text="Optional" />
+
 The maximum number of console lines stored in the buffer for each server.
 
-Default value:
-```yaml
-lines: 2000
-```
+Default: `2000`
 
-### throttles.line_reset_interval
+### throttles.line_reset_interval <Badge type="info" text="Optional" />
+
 The interval (in seconds) at which the console line counters are reset.
 
-Default value:
-```yaml
-line_reset_interval: 100
-```
+Default: `100`
 
 ## Private Network
 
@@ -1815,137 +1416,103 @@ Turning it on here only makes the node capable of it. An administrator still has
 The private network is Linux only. Rootless Podman carries it, because the daemon runs in the same user namespace that owns the server containers, so it can still bind sockets inside their network namespaces. Rootless Docker cannot: host networking there is RootlessKit's own namespace rather than the host's, so peers never reach the tunnel port. Wings does not check for this, so a rootless Docker node with `enabled` set still reports itself as supported in the panel.
 :::
 
-### tundra.enabled
+### tundra.enabled <Badge type="info" text="Optional" />
+
 Whether Wings runs the tundra daemon on this node. With this off, servers on the node cannot join the private network, and the panel reports the node as unable to run it.
 
-Default value:
-```yaml
-enabled: false
-```
+Default: `false`
 
-### tundra.data_directory
+### tundra.data_directory <Badge type="info" text="Optional" />
+
 Where the daemon's persistent state lives, including the node's local CA, its identity and the control socket Wings talks to it over.
 
-Default value:
-```yaml
-data_directory: "{root_directory}/tundra"
-```
+Default: `"{root_directory}/tundra"` (Windows: `"{root_directory}\\tundra"`)
 
-### tundra.binary
+### tundra.binary <Badge type="info" text="Optional" />
+
 Path to a tundra binary to run instead of the bundled one. Leave empty and Wings extracts the binary from `source_image`.
 
-Default value:
-```yaml
-binary: ""
-```
+Default: `""`
 
-### tundra.image
+### tundra.image <Badge type="info" text="Optional" />
+
 The base image the daemon container runs on.
 
-Default value:
-```yaml
-image: debian:trixie-slim
-```
+Default: `debian:trixie-slim`
 
-### tundra.source_image
+### tundra.source_image <Badge type="info" text="Optional" />
+
 The image the tundra binary is extracted from when `binary` is empty. Pin this to control which tundra version the node runs.
 
-Default value:
-```yaml
-source_image: ghcr.io/calagopus/tundra:latest
-```
+Default: `ghcr.io/calagopus/tundra:latest`
 
-### tundra.metrics_port
+### tundra.metrics_port <Badge type="info" text="Optional" />
+
 The loopback port the daemon serves its metrics on, which is what feeds the node's live peer links in the panel. It is not the port peers connect on; that one is set per node in the panel.
 
-Default value:
-```yaml
-metrics_port: 7101
-```
+Default: `7101`
 
 ## Remote Configuration
 
-### remote
+### remote <Badge type="tip" text="Required" />
+
 The URL of the Panel instance that this Wings node communicates with.
 
-Default value:
-```yaml
-remote: https://panel.example.com
-```
+### remote_headers <Badge type="info" text="Optional" />
 
-### remote_headers
 Custom HTTP headers that Wings includes in every outgoing HTTP request to the Panel.
 
-Default value:
-```yaml
-remote_headers: {}
-```
+Default: `{}`
 
-### remote_query.timeout
+### remote_query.timeout <Badge type="info" text="Optional" />
+
 The maximum number of retries for critical API requests. This uses an exponential backoff strategy.
 
-Default value:
-```yaml
-timeout: 30
-```
+Default: `30`
 
-### remote_query.boot_servers_per_page
+### remote_query.boot_servers_per_page <Badge type="info" text="Optional" />
+
 The number of servers Wings requests from the Panel API in a single batch during the initial boot sequence.
 
-Default value:
-```yaml
-boot_servers_per_page: 50
-```
+Default: `50`
 
-### remote_query.retry_limit
+### remote_query.retry_limit <Badge type="info" text="Optional" />
+
 The maximum number of times Wings will attempt to re-send a failed request to the Panel before giving up.
 
-Default value:
-```yaml
-retry_limit: 10
-```
+Default: `10`
 
 ## Security / Behaviour Flags
 
-### allowed_mounts
+### allowed_mounts <Badge type="info" text="Optional" />
+
 A security whitelist defining which specific directories or files on the host system are permitted to be mounted into a server's Docker container.
 
-Default value:
-```yaml
-allowed_mounts: []
-```
+Default: `[]`
 
-### allowed_devices
+### allowed_devices <Badge type="info" text="Optional" />
+
 Host device paths or directories whose devices may be passed into server containers through the Panel [Devices](../panel/features/admin/devices.md) feature. Empty by default, so no Panel-defined device mappings are allowed. Sources must resolve to character or block devices within an allowed path; invalid mappings are skipped with a warning. Prefer individual device paths over broad directories. Change this on the Wings host, because the Panel cannot update it. The separate built-in KVM passthrough setting is unaffected.
 
-Default value:
-```yaml
-allowed_devices: []
-```
+Default: `[]`
 
-### allowed_origins
+### allowed_origins <Badge type="info" text="Optional" />
+
 A list of specific URLs (origins) that are permitted to make cross-origin requests to the Wings API. By default, the URL defined in the `remote:` setting is the only allowed origin.
 
-Default value:
-```yaml
-allowed_origins: []
-```
+Default: `[]`
 
-### allow_cors_private_network
+### allow_cors_private_network <Badge type="info" text="Optional" />
+
 Determines whether Wings permits Cross-Origin Resource Sharing (CORS) requests originating from private network addresses.
 
-Default value:
-```yaml
-allow_cors_private_network: false
-```
+Default: `false`
 
-### ignore_panel_config_updates
+### ignore_panel_config_updates <Badge type="info" text="Optional" />
+
 When set to `true`, Wings will ignore configuration update commands sent by the Panel.
 
-Default value:
-```yaml
-ignore_panel_config_updates: false
-```
+Default: `false`
 
 ::: info Options the panel can never change
 Even with panel config updates enabled, a set of paths is stripped out of every patch the panel sends, so change them locally in `config.yml` or through environment overrides:
@@ -1959,18 +1526,16 @@ Even with panel config updates enabled, a set of paths is stripped out of every 
 The rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.
 :::
 
-### ignore_panel_wings_upgrades
+### ignore_panel_wings_upgrades <Badge type="info" text="Optional" />
+
 When set to `true`, Wings will ignore remote upgrade commands sent by the Panel.
 
-Default value:
-```yaml
-ignore_panel_wings_upgrades: false
-```
+Default: `false`
 
 ## SSL Configuration
 
 ::: info
-This section assumes you've already generated a certificate. See [Generating SSL Certificates](../additional/ssl-certificates.md) if you haven't. Replace `<domain>` with your actual node domain.
+This section is a quick reference. [Securing Wings with SSL](./next-steps/ssl.md) covers the full setup, including getting a certificate, Docker installs, pointing the Panel at the node and renewal. Replace `<domain>` with your actual node domain.
 :::
 
 ### Enabling SSL
@@ -1998,6 +1563,8 @@ sudo systemctl restart wings
 ## Example Config
 
 The following is an example of a standard generated `config.yml` for Wings with standard values. A handful of defaults differ between platforms (mainly paths and the Unix-only `passwd`/`machine_id` sections), so both are shown below.
+
+::::: details Show the example config
 
 ::::tabs
 === Unix
@@ -2621,3 +2188,5 @@ ignore_panel_wings_upgrades: false
 ```
 
 ::::
+
+:::::

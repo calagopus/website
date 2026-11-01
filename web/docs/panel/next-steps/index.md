@@ -1,10 +1,11 @@
 ---
-description: "What to do after installing the Calagopus panel: use your existing node or connect Wings, then add game server templates."
+title: Panel Next Steps
+description: "What to do after installing the Calagopus panel: use your existing node or connect Wings, add game server templates, and serve the panel over HTTPS."
 ---
 
 # Next Steps
 
-The panel is installed and the OOBE is complete. Here's what to do next:
+The panel is installed and the OOBE is complete. Next, set up a node, add egg repositories, and put the panel behind HTTPS.
 
 ## Add a Node
 
@@ -15,3 +16,7 @@ If you still need a node, follow [Configuring a New Node](../../wings/next-steps
 ## Add Egg Repositories
 
 Eggs define how a specific type of game server is installed and configured. Calagopus has a built-in egg repository system that lets you browse and import eggs from Git repositories. See [Adding Egg Repositories](./egg-repos.md) to get started.
+
+## Set Up a Reverse Proxy
+
+Passkeys, secure session cookies and several browser features only work when the panel is served over HTTPS. A reverse proxy in front of the panel serves it on port 443 with a certificate. See [Setting up a Reverse Proxy](./reverse-proxy.md).

@@ -5,13 +5,13 @@ description: Pre-export checks and packaging steps that turn a finished extensio
 
 # Getting your Extension ready
 
-Once you've finished developing your extension, there are a few things to do before it's ready to ship. This guide walks through the pre-export checks you should run, then how to produce the `.c7s.zip` file that users will install.
+This guide covers the checks to run before releasing an extension, and how to produce the `.c7s.zip` file that users install.
 
-This guide assumes you already have a working [Development Environment](./dev-environment.md) and an extension initialized under `backend-extensions/<package_identifier>` (see [Extension File Structure](./file-structure.md) for how the layout works). Throughout this guide, `<package_name>` refers to your extension's regular (dotted) package name - for example, `dev.0x7d8.test`. The exported file uses the underscored form of that same name (e.g. `dev_0x7d8_test.c7s.zip`).
+This guide assumes you already have a working [Development Environment](./dev-environment.md) and an extension initialized under `backend-extensions/<package_identifier>` (see [Extension File Structure](./file-structure.md) for how the layout works). Throughout this guide, `<package_name>` refers to your extension's regular (dotted) package name, for example `dev.0x7d8.test`. The exported file uses the underscored form of that same name (e.g. `dev_0x7d8_test.c7s.zip`).
 
 ## Pre-export checks
 
-These checks are not strictly required for `panel-rs extensions export` to succeed, but you should run them before every export. They catch the vast majority of issues that would otherwise bite your users on install.
+These checks are not strictly required for `panel-rs extensions export` to succeed, but you should run them before every export. They catch most of the problems your users would otherwise hit on install.
 
 ### Backend: format and lint
 
@@ -24,7 +24,7 @@ cargo clippy
 
 `cargo fmt` rewrites your extension's Rust code to match the project's formatting style. It edits files in place, so always commit or stash before running it if you want to review the diff.
 
-`cargo clippy` runs Rust's linter against your code. Clippy warnings often point at real correctness issues (misuse of `unwrap`, unnecessary clones, suspicious patterns), not just style - read them rather than silencing them. Your extension should produce no new warnings before you export.
+`cargo clippy` runs Rust's linter against your code. Clippy warnings often point at real correctness issues (misuse of `unwrap`, unnecessary clones, suspicious patterns), not just style; read them instead of silencing them. Your extension should produce no new warnings before you export.
 
 ### Frontend: format, lint, and build check
 
@@ -36,12 +36,12 @@ pnpm biome:fix-unsafe
 pnpm build:ci
 ```
 
-`pnpm biome:fix-unsafe` runs [Biome](https://biomejs.dev) with its auto-fixes enabled, including the ones Biome marks unsafe. This normalizes formatting and fixes a broader set of lint issues - after running it once, run it again to see things that you need to manually look at. Like `cargo fmt`, it edits files in place, so commit or stash before running if you want to review the diff. `pnpm biome:fix` is the same with the unsafe fixes left out.
+`pnpm biome:fix-unsafe` runs [Biome](https://biomejs.dev) with its auto-fixes enabled, including the ones Biome marks unsafe. This normalizes formatting and fixes a broader set of lint issues. Run it a second time to see what's left to fix by hand. Like `cargo fmt`, it edits files in place, so commit or stash before running if you want to review the diff. `pnpm biome:fix` is the same with the unsafe fixes left out.
 
 `pnpm build:ci` type-checks and does a full production frontend build with all extensions compiled in. If your extension has a TypeScript error, a bad import, or a missing dependency in its `package.json`, this is where you'll catch it. The exported `.c7s.zip` ships your source, not a build artifact, so users will hit the same error on their side if you skip this step. Unlike `pnpm build`, it does not regenerate the translation files first, so run `pnpm build:translations` before it if you changed `translations.ts`.
 
 ::: warning
-If `pnpm build:ci` fails because of an extension other than yours, that extension has problems of its own - but your extension still won't build cleanly alongside it. Fix what you own; for anything else, reach out to that extension's author or temporarily disable it while you iterate.
+If `pnpm build:ci` fails because of an extension other than yours, that extension has problems of its own, but yours still won't build cleanly alongside it. Fix what you own; for anything else, reach out to that extension's author or temporarily disable it while you iterate.
 :::
 
 ## Exporting the extension
@@ -65,7 +65,7 @@ ls -lh ./exported-extensions/
 # dev_0x7d8_test.c7s.zip
 ```
 
-That `.c7s.zip` is the file you distribute. Users can install it through either a `:heavy` Docker deployment or a local dev environment - see [Installing Extensions](./installing-extensions.md) for their side of the process.
+That `.c7s.zip` is the file you distribute. Users install it on a `:heavy` Docker deployment or in a local dev environment; see [Installing Extensions](./installing-extensions.md) for their side of the process.
 
 ## Shipping checklist
 
@@ -76,7 +76,7 @@ Before you publish a release, quickly run through:
 - `pnpm biome:fix-unsafe` produced no unexpected changes.
 - `pnpm build:ci` succeeds.
 - The `version` field in your extension's `Cargo.toml` has been bumped if this is a new release.
-- The panel version requirement in your extension's `Metadata.toml` is still correct - bump it if your extension relies on APIs added in a newer Panel release.
+- The panel version requirement in your extension's `Metadata.toml` is still correct. Raise it if your extension relies on APIs added in a newer Panel release.
 - `panel-rs extensions export <package_name>` produced a `.c7s.zip` in `./exported-extensions/`.
 - You've test-installed the exported `.c7s.zip` into a clean Panel instance to confirm it works end-to-end.
 

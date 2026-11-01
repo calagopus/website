@@ -86,7 +86,7 @@ The user's account audit log, the same one they see on their own [Activity](../d
 
 ## Impersonation
 
-**Impersonate** on the General tab logs you in as the user and drops you on their dashboard, useful for reproducing exactly what they see. A banner stays at the top the whole time: "You are currently impersonating a user. Please be aware that your actions may affect the impersonated user's account." While impersonating, the sidebar account menu shows **Stop Impersonating** in place of **Logout**; use it to return to your own session.
+**Impersonate** on the General tab logs you in as the user and drops you on their dashboard, so you can reproduce what they see. A banner stays at the top the whole time: "You are currently impersonating a user. Please be aware that your actions may affect the impersonated user's account." While impersonating, the sidebar account menu shows **Stop Impersonating** in place of **Logout**; use it to return to your own session.
 
 ![Servers page showing the impersonation warning banner while viewing as the impersonated user](./images/users/impersonation-banner.webp)
 
