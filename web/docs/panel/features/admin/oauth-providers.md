@@ -7,7 +7,7 @@ description: Let users log in to the panel through external OAuth2 providers, wi
 
 **OAuth Providers** under **Users & Access** let users log in to the panel (and link their account) through an external OAuth2 service like Discord, GitHub, or Google. This page covers the admin UI; for step-by-step walkthroughs of registering the app on each provider's side, see [Setting up OAuth](../../../additional/setting-up-oauth/index.md).
 
-The list shows ID, Name, Enabled, Login Only, Link Viewable, User Manageable (all Yes/No), and Created. The four flags come straight from the provider form:
+The list shows ID, Name, Enabled, Login Only, Link Viewable, User Manageable (all Yes/No), and Created. The four flags, and a fifth that is not a column, come straight from the provider form:
 
 | Flag | Meaning |
 | --- | --- |
@@ -15,8 +15,9 @@ The list shows ID, Name, Enabled, Login Only, Link Viewable, User Manageable (al
 | **Login Only** (**Only allow Login**) | Users with an existing link can sign in, but signing in never registers a new panel account from the provider's profile. |
 | **Link Viewable** (**Link Viewable to User**) | "Allows the user to see the connection and its identifier in the client UI." |
 | **User Manageable** (**Link Manageable by User**) | "Allows the user to connect and disconnect with this provider." |
+| **Viewable on Login** | Since Panel 1.2.8. Whether the provider gets a button on the login page. On by default. Turned off, the provider stays enabled, and users can still connect it from their [OAuth Links](../dashboard/oauth-links.md) page when **Link Manageable by User** is on. A login can still start from `<panel URL>/api/auth/oauth/redirect/<uuid>`, so a billing site or another page can still offer it by linking to that URL. |
 
-The last two control what users see on their own [OAuth Links](../dashboard/oauth-links.md) page.
+**Link Viewable** and **User Manageable** control what users see on their own [OAuth Links](../dashboard/oauth-links.md) page.
 
 ![OAuth provider list](./images/oauth-providers/list.webp)
 
@@ -38,7 +39,7 @@ The last two control what users see on their own [OAuth Links](../dashboard/oaut
 | **Identifier Path** | Required. Extracts the unique user identifier from the Info URL response. |
 | **Email Path** / **Username Path** / **First Name Path** / **Last Name Path** | Optional paths for profile fields, used to fill in accounts registered through this provider. |
 | **Avatar URL Template** / **Overwrite Existing Avatars** | Optional. Import the user's profile picture from the provider, see [Avatars](#avatars). |
-| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Linkable with API Keys** / **Link Manageable by User** / **Enabled** | The behavior switches; **Only allow Login**, **Link Viewable to User**, **Link Manageable by User** and **Enabled** are [explained above](#oauth-providers). |
+| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Linkable with API Keys** / **Link Manageable by User** / **Viewable on Login** / **Enabled** | The behavior switches; **Only allow Login**, **Link Viewable to User**, **Link Manageable by User**, **Viewable on Login** and **Enabled** are [explained above](#oauth-providers). |
 
 The path fields use JSONPath syntax (see [serdejsonpath.live](https://serdejsonpath.live)) evaluated against the Info URL response. They never read the additional info URLs.
 
@@ -52,7 +53,7 @@ On every login the Panel fetches the Info URL with the user's access token. The 
 
 Finish with **Save** (or **Save & Stay** when creating). An existing provider also offers **Export** (as JSON or YAML), **Duplicate**, **Delete**, and a **View Documentation** shortcut to the setup guides.
 
-While **Enable Password Login** is off in [Settings](./settings.md#application), the panel refuses to delete or disable the last enabled provider, since nobody without a security key would be able to sign in afterwards. Turn password login back on first if that is what you want.
+While **Enable Password Login** is off in [Settings](./settings.md#application), the panel refuses to delete or disable the last enabled provider, since nobody without a security key would be able to sign in afterwards. The check doesn't look at **Viewable on Login**, so with every provider hidden the login page shows no OAuth buttons at all. Turn password login back on first if that is what you want.
 
 ![Configured provider with censored credentials](./images/oauth-providers/general.webp)
 

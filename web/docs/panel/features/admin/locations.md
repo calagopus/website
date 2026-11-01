@@ -13,7 +13,7 @@ Locations group nodes together, usually by region or provider. They do three thi
 
 You need at least one location before you can create nodes; the Nodes page prompts you to create one if none exist. For the full node setup walkthrough, see [Configuring a New Node](../../../wings/next-steps/configure-node.md).
 
-The list shows each location's ID, Name (with its flag, if set), Backup Configuration, and Created timestamp. Click an ID to open the location.
+The list shows each location's ID, Name (with its flag, if set), Backup Configuration, how many **Nodes** and **Servers** it has, and Created timestamp. Click an ID to open the location.
 
 ![Admin location list with Frankfurt and Vienna, their flags, backup configuration, and a Create button](./images/locations/list.webp)
 

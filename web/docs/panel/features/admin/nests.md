@@ -7,7 +7,7 @@ description: Organize eggs into nests and manage everything about an egg, from i
 
 Nests are categories for eggs, and eggs are the templates that define how a server type is installed, started, stopped, and configured. Everything egg-related lives here: a nest holds its eggs, and each egg holds its install script, startup and stop configuration, variables, and Docker images.
 
-The list shows each nest's ID, name, author, description, and created timestamp. Use the search box to filter, click a nest's ID to open it, or hit **Create** in the top right for a new one.
+The list shows each nest's ID, name, author, description, how many **Eggs** it holds, how many **Servers** use them, and created timestamp. Use the search box to filter, click a nest's ID to open it, or hit **Create** in the top right for a new one.
 
 ![Admin nest list with the Games nest, a search box, and a Create button](./images/nests/list.webp)
 
@@ -23,7 +23,7 @@ Opening an existing nest shows two tabs: **General**, the same form plus a **Del
 
 ## Eggs
 
-The **Eggs** tab lists the nest's eggs with the same columns as the nest list (ID, Name, Author, Description, Created) plus a selection checkbox per row.
+The **Eggs** tab lists the nest's eggs with ID, Name, Author, Description, **Servers** (how many servers use the egg) and Created, plus a selection checkbox per row.
 
 ![Games nest Eggs tab listing eggs with Import and Create buttons](./images/nests/eggs.webp)
 

@@ -1355,7 +1355,7 @@ Which backend Wings uses to apply per-server firewall rules on the host.
 - `auto` - Pick a backend on boot. Wings prefers `nftables`, falls back to `iptables`, and uses the helper container when it runs inside a container that has its own network namespace.
 - `nftables` - Run `nft` directly on the host.
 - `iptables` - Run `iptables` directly on the host.
-- `container` - Run `nft` through a helper container started from the Wings image. Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.
+- `container` - Run `nft` through a helper container started from the Wings image, named `calagopus-wings-firewall-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-firewall` before Wings 1.2.8). Use this when Wings runs as a container without host networking, where rules applied in its own network namespace would never see server traffic.
 - `disabled` - Never apply rules.
 
 Default value:
@@ -1390,9 +1390,9 @@ source_file_max_bytes: 1048576
 ### docker.bandwidth.backend
 How Wings enforces the per-server upload and download limits set in the Panel. Limits are applied inside each server's network namespace with `tbf` and `fq_codel`: upload on the container's interface, download through an `ifb` device named `wings-dl` that Wings creates inside the container. They are applied when the server starts and updated live when its limits change, without a restart.
 
-- `auto`: `local` when Wings runs on the host, or in a container that shares the host PID namespace. Otherwise `container`.
+- `auto`: `local` when Wings runs on the host, or in a container that shares the host PID namespace and holds `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`. Otherwise `container`. With `system.user.rootless.enabled` on, the capabilities are not checked.
 - `local`: Wings applies the limits itself. Rootful Wings needs `CAP_NET_ADMIN` and `CAP_SYS_ADMIN`, which it has when it runs as root on the host. Rootless Wings needs user namespaces (`/proc/sys/user/max_user_namespaces` above `0`). Wings in a container without the host PID namespace cannot reach server network namespaces, so limits are unavailable with this backend there.
-- `container`: Wings starts a helper container, `calagopus-wings-bandwidth`, from its own image with the host PID namespace, no network, and `NET_ADMIN` and `SYS_ADMIN`, and applies the limits through it. Only works when Wings itself runs as a container on the Docker engine it manages, and not with rootless container engines.
+- `container`: Wings starts a helper container, named `calagopus-wings-bandwidth-` followed by the first 12 characters of the ID of the Wings container (`calagopus-wings-bandwidth` before Wings 1.2.8), from its own image with the host PID namespace, no network, and `NET_ADMIN` and `SYS_ADMIN`, and applies the limits through it. Only works when Wings itself runs as a container on the Docker engine it manages, and not with rootless container engines.
 - `disabled`: limited servers start without their limits, and Wings logs a warning for each one.
 
 Available options:
@@ -1405,7 +1405,9 @@ backend: auto
 ```
 
 ::: warning
-Bandwidth limits are Linux only. The Wings Docker Compose file shares the host PID namespace (`pid: host`) since Wings 1.2.6, so `auto` picks `local`, but the Wings container does not hold `CAP_NET_ADMIN` or `CAP_SYS_ADMIN` and limits stay unavailable. Set this option to `container` in that setup. Adding `cap_add: [NET_ADMIN, SYS_ADMIN]` to the `wings` service gives Wings the same privileges as the helper container instead. An older Compose file without `pid: host` gets the helper container through `auto`.
+Bandwidth limits are Linux only. The Wings Docker Compose file shares the host PID namespace (`pid: host`) since Wings 1.2.6, but the Wings container does not hold `CAP_NET_ADMIN` or `CAP_SYS_ADMIN`. Wings 1.2.8 and newer check for those capabilities and `auto` uses the helper container. On Wings 1.2.6 and 1.2.7, `auto` picks `local` there and limits stay unavailable, so set this option to `container`. Adding `cap_add: [NET_ADMIN, SYS_ADMIN]` to the `wings` service gives Wings the same privileges as the helper container instead, and `auto` then picks `local`. An older Compose file without `pid: host` gets the helper container through `auto`.
+
+Each Wings container gets its own helper, so several Wings containers can share one Docker engine. On startup Wings removes its own old helper, helpers left behind by a Wings container that is gone or no longer running, and the unsuffixed helper older versions created. The firewall helper works the same way.
 
 The Panel shows the reason on the server's limit fields when a node can't apply limits, and refuses to save a non-zero limit there, including when this option is `disabled`. A limited server needs a bridge network with exactly one interface; `host`, `none` and `container:` network modes are rejected, as is a server container granted `NET_ADMIN`, `NET_RAW` or `SYS_ADMIN`. If limits are unavailable or shaping fails when a limited server starts, the start fails rather than running the server unthrottled. Set this option to `disabled` to start such servers without their limits.
 :::
@@ -1703,6 +1705,14 @@ The user namespace mode for containers, used to isolate container users from hos
 Default value:
 ```yaml
 userns_mode: ""
+```
+
+### docker.mount_options
+Extra options appended to every bind mount of server, installer and script runner containers, such as `idmap`, which together with `docker.userns_mode` keeps file ownership identical inside and outside the container. Options are passed to the container engine untouched and are engine-specific: rootful Podman supports `idmap`, while Docker rejects options it does not know and the container then fails to create. Kernel filesystem sources (`/dev`, `/proc`, `/sys`) and lxcfs mounts never get them. Changes apply to containers created afterwards.
+
+Default value:
+```yaml
+mount_options: []
 ```
 
 ### docker.log_config.type
@@ -2268,6 +2278,7 @@ docker:
     default_multiplier: 1.05
     multipliers: {}
   userns_mode: ""
+  mount_options: []
   log_config:
     type: local
     config:
@@ -2573,6 +2584,7 @@ docker:
     default_multiplier: 1.05
     multipliers: {}
   userns_mode: ""
+  mount_options: []
   log_config:
     type: local
     config:

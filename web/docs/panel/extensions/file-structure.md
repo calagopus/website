@@ -35,6 +35,7 @@ backend-extensions/
         file1.jpg # this file would be available at <url>/file1.jpg
       src/ # REQUIRED directory for typescript src
         app.css # optional css file, bundled as its own chunk so it can be disabled with the extension
+        boot.html # optional markup replacing the loading spinner shown before the Panel starts
         index.(ts|tsx) # REQUIRED file containing extension entrypoint
         translations.ts # optional file containing extension translations
 ```
@@ -60,6 +61,20 @@ Add dependencies for your frontend extension code to this `package.json`, or lea
   }
 }
 ```
+
+### src/boot.html
+
+The Panel shows a small loading spinner while the page loads, before any extension code runs. An extension can replace that spinner with its own markup by adding `src/boot.html`. The file is an HTML fragment that is placed inside `#root` and replaced once the Panel renders. Style it from `src/app.css`, which already applies at that point, or with inline styles.
+
+```html
+<div class="my-boot-screen">
+  <img src="/my-logo.svg" alt="" width="64" height="64"/>
+</div>
+```
+
+Only one installed extension can provide `boot.html`, the build fails if several do. While the extension is disabled, the default spinner is shown instead. The fragment cannot contain scripts that run, as the Panel's content security policy blocks inline scripts.
+
+The fragment is rendered as a MiniJinja template that can use your extension's [index HTML variables](./concepts/index-html-variables.md#using-variables-in-the-boot-screen), for example <code v-pre>{{ variables.accent_color }}</code>. If it fails to render, the default spinner is shown.
 
 ### src/index.ts
 

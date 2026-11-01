@@ -516,6 +516,7 @@ export default withMermaid({
                   { text: 'Toasts', link: '/docs/panel/extensions/concepts/toasts' },
                   { text: 'Extending Models', link: '/docs/panel/extensions/concepts/extending-models' },
                   { text: 'Email Templates', link: '/docs/panel/extensions/concepts/email-templates' },
+                  { text: 'Index HTML Variables', link: '/docs/panel/extensions/concepts/index-html-variables' },
                   { text: 'Speaking Game Protocols', link: '/docs/panel/extensions/concepts/speaking-game-protocols' },
                   { text: 'File Storage', link: '/docs/panel/extensions/concepts/file-storage' },
                 ],

@@ -29,7 +29,7 @@ docker compose logs --tail 50
 
 Docker handles the restart as part of `up -d`. Keep the existing configuration and data mounts. Wings in a container cannot upgrade itself from the Panel.
 
-Wings 1.2.6 changed the Compose file to share the host PID and cgroup namespaces (`pid: host`, `cgroup: host`), which Wings uses to reach server containers for bandwidth limits, resource stats and CFS burst. An existing `compose.yml` is not updated by `docker compose pull`; add the two lines to the `wings` service yourself, or download the file again. If you use bandwidth limits, set [`docker.bandwidth.backend`](./configuration.md#docker-bandwidth-backend) to `container` when you add `pid: host`, because the Wings container does not hold the capabilities the default `auto` choice then needs.
+Wings 1.2.6 changed the Compose file to share the host PID and cgroup namespaces (`pid: host`, `cgroup: host`), which Wings uses to reach server containers for bandwidth limits, resource stats and CFS burst. An existing `compose.yml` is not updated by `docker compose pull`; add the two lines to the `wings` service yourself, or download the file again. If you use bandwidth limits on Wings 1.2.6 or 1.2.7, set [`docker.bandwidth.backend`](./configuration.md#docker-bandwidth-backend) to `container` when you add `pid: host`, because the Wings container does not hold the capabilities the default `auto` choice then needs. From Wings 1.2.8, `auto` checks for those capabilities and uses the helper container without them.
 
 === APT / RPM / APK
 

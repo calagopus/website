@@ -11,7 +11,7 @@ A database host is an external MySQL, PostgreSQL, or MongoDB server the panel co
 This page covers the panel side. Preparing the database server itself, creating the privileged account, and allowing remote access is covered in [Setting up Database Hosts](../../../additional/database-hosts/index.md), with dedicated guides for MySQL (MariaDB), PostgreSQL, and MongoDB. Do that first.
 :::
 
-The list at `/admin/database-hosts` shows a health indicator, ID, Name, Type, and Created date for each host. The heart is green when the panel can connect to the database server, with its version on hover, and broken red when it can't (the check gives up after 5 seconds). The same indicator appears on a node's and a location's **Database Hosts** tabs. Click a host's ID to open it, and use the search box to filter.
+The list at `/admin/database-hosts` shows a health indicator, ID, Name, Type, **Databases** (how many server databases it holds), and Created date for each host. The heart is green when the panel can connect to the database server, with its version on hover, and broken red when it can't (the check gives up after 5 seconds). The same indicator appears on a node's and a location's **Database Hosts** tabs. Click a host's ID to open it, and use the search box to filter.
 
 ![Database hosts list with a green health heart for two reachable hosts and a broken red heart for one that cannot be reached](./images/database-hosts/list.webp)
 

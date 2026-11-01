@@ -115,8 +115,11 @@ feature compatibility first: Wings server firewalls are not supported with a
 rootless container engine.
 :::
 
-These settings describe runtime containers. Installer images and scripts use a
-separate container configuration and are trusted administrator-supplied code.
+The dropped capabilities and the read-only root filesystem apply to runtime
+containers only. Since Wings 1.2.8, installer and script runner containers get
+`no-new-privileges`, the seccomp profile and the AppArmor profile as well; before
+that they ran with the container engine's defaults. Installer images and scripts
+are trusted administrator-supplied code.
 Administrator-approved host mounts and device passthrough also widen the resources
 available to a container; review them as part of the server's privileges.
 

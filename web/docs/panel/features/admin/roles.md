@@ -12,7 +12,7 @@ description: Give staff scoped admin access with roles, named sets of admin and 
 
 Every key is documented in the [Permissions Reference](../dashboard/permissions.md). Root admins bypass roles entirely; a role only matters for accounts without the **Admin** toggle. Users get a role on their [admin user page](./users.md), or automatically through [OAuth provider mappings](./oauth-providers.md#mappings).
 
-The list shows each role's ID, Name, Server Permissions and Admin Permissions (as counts), and Created date. **Create** requires `roles.create`.
+The list shows each role's ID, Name, Server Permissions and Admin Permissions (as counts), **Users** (how many hold the role), and Created date. **Create** requires `roles.create`.
 
 ![Admin role list with the Admin role, its server and admin permission counts, and a Create button](./images/roles/list.webp)
 

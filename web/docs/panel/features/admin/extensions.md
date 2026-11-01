@@ -15,7 +15,7 @@ Web installation, removal, rebuild, restart, and build log controls are unavaila
 
 ## Installed Extensions
 
-Each installed extension gets a card with its name, package name, **Version**, **Authors**, and description. Badges flag incomplete states:
+Each installed extension gets a card with its name, package name, **Version**, **Authors**, and up to three lines of its description. Hovering a card with the mouse for a moment opens a larger preview with the full description, the **Panel Version** requirement from its `Metadata.toml`, and any details the extension adds itself, along with the same buttons. Badges flag incomplete states:
 
 ![Red Frontend missing status badge](./images/extensions/frontend-missing.webp) ![Red Backend missing status badge](./images/extensions/backend-missing.webp) ![Yellow Pending build status badge](./images/extensions/pending-build.webp) ![Yellow Pending removal status badge](./images/extensions/pending-removal.webp)
 

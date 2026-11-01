@@ -7,7 +7,7 @@ description: Connect Git repositories full of eggs, keep them synced automatical
 
 Egg repositories connect Git repositories containing egg definitions to your panel, so you can browse and install eggs without downloading files by hand. This page describes the admin surface; the full setup and usage walkthrough, including importing and updating eggs, lives in [Setting up Egg Repositories](../../next-steps/egg-repos.md). The eggs of all your repositories together are browsable in the [Egg Library](./egg-library.md).
 
-The list shows ID, Name, Description, **Git Repository**, and Created. Repositories you selected during the panel's first-time setup appear here already; use the search box to filter.
+The list shows ID, Name, Description, **Git Repository**, **Eggs** (how many eggs the last sync found), and Created. Repositories you selected during the panel's first-time setup appear here already; use the search box to filter.
 
 ![Admin egg repository list showing three Pterodactyl repositories with their Git URLs and a Create button](./images/egg-repositories/list.webp)
 

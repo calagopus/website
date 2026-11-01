@@ -16,7 +16,7 @@ Enter your identifier into **Username/Email** ("Your username or email address")
 Below the **OR** separator are the alternate ways in:
 
 - **Sign in with a Passkey**, for [passkeys stored on your device](#sign-in-with-a-passkey). Only shown when the admin has both security keys and usernameless login enabled.
-- One **Login with `<name>`** button per enabled [OAuth provider](#oauth-login). With more than three providers they collapse into a single **OAuth Login** button instead, which leads to `/auth/login/oauth`, a page listing them all.
+- One **Login with `<name>`** button per enabled [OAuth provider](#oauth-login) that has **Viewable on Login** on (Panel 1.2.8). With more than three such providers they collapse into a single **OAuth Login** button instead, which leads to `/auth/login/oauth`, a page listing them all.
 
 If registration is enabled, a "Not registered? **Create account**" link points to [Register](./register.md).
 

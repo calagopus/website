@@ -44,7 +44,7 @@ The **New** menu (shown when you can write to the current directory and hold `fi
 |---|---|
 | **File from Editor** | Opens an empty code editor; **Create** asks for a file name. |
 | **Directory** | Creates a new directory. |
-| **Symlink** | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in", and the modal previews both resolved paths before you commit. |
+| **Symlink** | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in, or to the server root when starting with /", and the modal previews both resolved paths before you commit. |
 | **File from Pull** | Downloads a file from a URL directly onto the server, see [Pulling from a URL](#pulling-from-a-url). |
 | **File from Upload** | Uploads files from your device. |
 | **Directory from Upload** | Uploads an entire folder, keeping its structure. |
@@ -283,7 +283,7 @@ The maximum size per uploaded file is set by the Wings option [`api.upload_limit
 
 ### Upload Conflicts
 
-With **Always overwrite existing files** off, the panel checks whether the names you are uploading already exist in the target directory before sending anything. If matching names exist, a **Resolve Upload Conflicts** modal lists them next to the existing entries, and you pick one of three actions per item:
+With **Always overwrite existing files** off, the panel checks whether the names you are uploading already exist in the target directory before sending anything. Since Panel 1.2.8, a check that takes longer than 300 ms shows a "Checking 3 Files for existing files..." toast until it's done. If matching names exist, a **Resolve Upload Conflicts** modal lists them next to the existing entries, and you pick one of three actions per item:
 
 ![Resolve Upload Conflicts dialog with Skip, Overwrite, and Rename choices per file](./images/files/upload-conflicts-modal.webp)
 

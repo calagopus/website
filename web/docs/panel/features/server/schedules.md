@@ -53,6 +53,12 @@ By default the cron trigger uses friendly controls: pick how often it **Runs** (
 
 Flip **Edit as cron expression** to write the expression yourself; clicking the field opens a small per-segment editor.
 
+With **Weekly**, or with a cron expression, an **Every (weeks)** field (1 to 52) lets the trigger fire only every second, third or later week. Above 1, an **Aligned to the week of** date picks which weeks count, filled with today's date in the server's timezone the first time the interval goes above 1. Weeks are counted in seven-day blocks from that date, so they start on its weekday rather than on Monday. The description underneath gets ", every 2 weeks" (or similar) added, and the calendar and the cron card's next run follow the interval. Switching **Runs** away from **Weekly** sets it back to 1.
+
+The week interval needs Panel and Wings 1.2.8 or newer. Wings 1.2.7 and older ignore it and run the trigger on every match of the expression, as if **Every (weeks)** were 1.
+
+![Weekly cron trigger running every 2 weeks on Sunday at 12:00 AM, aligned to the week of 2026-11-01](./images/schedules/cron-weekly.webp)
+
 ::: warning
 Calagopus cron expressions put **seconds** first: `second minute hour day month weekday`. So `0 0 0 * * *` is daily at midnight. Classic five-field crontab lines work as-is (5 to 7 fields are accepted); the seconds field only applies when present.
 :::

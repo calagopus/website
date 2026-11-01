@@ -7,7 +7,7 @@ description: Create and manage Calagopus nodes, from the connection settings and
 
 A node is a machine running wings that hosts servers. This page covers the admin UI surface; for the step-by-step setup of a new node, follow [Configuring a New Node](../../../wings/next-steps/configure-node.md).
 
-The list shows a health indicator, ID, Name, Location, and Created timestamp for each node. The heart is green when the panel can reach wings, yellow and pulsing when a wings update is available, grey when the latest version could not be determined, and broken red when the node is unreachable.
+The list shows a health indicator, ID, Name, Location, **Servers** (how many servers it hosts), and Created timestamp for each node. The heart is green when the panel can reach wings, yellow and pulsing when a wings update is available, grey when the latest version could not be determined, and broken red when the node is unreachable.
 
 Next to the name, a badge shows whether the node can still take new servers:
 
