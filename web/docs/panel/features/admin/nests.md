@@ -138,7 +138,7 @@ Each variable is a card in a grid; drag a card by the grip handle in its top-rig
 | **Default Value** | Value used when the user hasn't set one. |
 | **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page. |
 | **Secret** | Hides the value like a password. |
-| **Rules** | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/docs/12.x/validation#available-validation-rules) syntax. |
+| **Rules** | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/framework/docs/12.x/validation#available-validation-rules) syntax. |
 
 Each card has its own **Save**, **Duplicate**, and **Remove** buttons.
 

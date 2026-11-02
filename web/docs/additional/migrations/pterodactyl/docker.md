@@ -6,7 +6,7 @@ description: Step-by-step guide to migrating a Dockerized Pterodactyl or Bluepri
 
 # Migrating from Pterodactyl (Dockerized)
 
-This guide is for Pterodactyl installs running in Docker. If Pterodactyl runs directly on the host without containers, use the [Standalone](./standalone.md) guide instead. It works with Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml) and Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/docker/blob/Master/docker-compose.yml).
+This guide is for Pterodactyl installs running in Docker. If Pterodactyl runs directly on the host without containers, use the [Standalone](./standalone.md) guide instead. It works with Pterodactyl's standard [Docker compose setup](https://github.com/pterodactyl/panel/blob/1.0-develop/docker-compose.example.yml) and Blueprint's [Docker compose variant](https://github.com/BlueprintFramework/framework-docker/blob/Master/docker-compose.yml).
 
 You point the Calagopus importer at a `.env` file with Pterodactyl's database connection details, and it reads everything across. The Docker-specific part is building that file, because the database hostname inside Pterodactyl's Docker network doesn't work from anywhere else.
 

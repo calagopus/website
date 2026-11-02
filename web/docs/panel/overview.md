@@ -38,10 +38,10 @@ The panel is split into a React frontend and a Rust backend.
 The frontend is built with React and communicates with the backend via REST APIs.
 
 - **Language**: TypeScript
-- **Framework**: [React.js](https://reactjs.org/)
+- **Framework**: [React.js](https://react.dev/)
 - **State Management**: [Zustand](https://zustand.docs.pmnd.rs/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
+- **Build Tool**: [Vite](https://vite.dev/)
 - **Linting**: [Biome](https://biomejs.dev/)
 
 ### Backend

@@ -12,7 +12,7 @@ The **Calagopus** extension lets you browse and edit your server's files and att
 The extension is published to both major registries, so it works in Visual Studio Code and the wider ecosystem of compatible editors:
 
 - [**Visual Studio Code Marketplace**](https://marketplace.visualstudio.com/items?itemName=calagopus.calagopus) - for Visual Studio Code.
-- [**Open VSX Registry**](https://open-vsx.org/extension/calagopus/calagopus) - for editors that cannot use the Microsoft marketplace, including [VSCodium](https://vscodium.com), [code-server](https://github.com/coder/code-server), [Gitpod](https://www.gitpod.io), Cursor, Windsurf, and most other VS Code forks.
+- [**Open VSX Registry**](https://open-vsx.org/extension/calagopus/calagopus) - for editors that cannot use the Microsoft marketplace, including [VSCodium](https://vscodium.com), [code-server](https://github.com/coder/code-server), [Ona (formerly Gitpod)](https://ona.com), Cursor, Windsurf, and most other VS Code forks.
 
 ::: info
 Pick the registry that matches your editor. The extension is identical on both; only the distribution channel differs. Any editor that can install from Open VSX is supported.

@@ -8,7 +8,7 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Does Calagopus support Pterodactyl eggs?',
-      a: 'Yes. The egg format is compatible, so eggs from the <a href="https://github.com/parkervcp/eggs" target="_blank" rel="noreferrer">Pterodactyl community</a> and other sources work in Calagopus without modification.',
+      a: 'Yes. The egg format is compatible, so eggs from the <a href="https://github.com/pterodactyl/game-eggs" target="_blank" rel="noreferrer">Pterodactyl community</a> and other sources work in Calagopus without modification.',
     },
     {
       q: 'Does Calagopus support Blueprint extensions?',

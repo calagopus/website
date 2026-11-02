@@ -202,7 +202,7 @@ Backups are created as Kopia snapshots tagged with the backup UUID, deduplicated
 | **Tags** | Optional key/value tags (up to 50) applied to every snapshot created with this configuration, in addition to the automatic backup-UUID tag. Useful for grouping or policy targeting in Kopia. |
 
 ::: info
-The username and password must correspond to a user that the Kopia repository server has been configured to accept (see [Kopia server access control](https://kopia.io/docs/repository-server/#server-access-control)). The fingerprint is the server's certificate fingerprint, which `kopia server start` prints on startup (and which you pass to clients as `--server-cert-fingerprint`). It is generated self-signed by default, so unless you started the server with a certificate from a trusted CA, you need the fingerprint.
+The username and password must correspond to a user that the Kopia repository server has been configured to accept (see [configuring allowed users](https://kopia.io/docs/repository-server/#configuring-allowed-users)). The fingerprint is the server's certificate fingerprint, which `kopia server start` prints on startup (and which you pass to clients as `--server-cert-fingerprint`). It is generated self-signed by default, so unless you started the server with a certificate from a trusted CA, you need the fingerprint.
 :::
 ::::
 

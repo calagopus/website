@@ -614,7 +614,7 @@ Default: `true`
 
 ### system.file_history.zstd_level <Badge type="info" text="Optional" />
 
-The [Zstandard](https://facebook.github.io/zstd/) compression level used when storing snapshots and delta entries in the history database. Higher values produce smaller stored history at the cost of more CPU time. Valid range is `1`–`22`.
+The [Zstandard](https://github.com/meta/zstd) compression level used when storing snapshots and delta entries in the history database. Higher values produce smaller stored history at the cost of more CPU time. Valid range is `1`–`22`.
 
 Default: `9`
 

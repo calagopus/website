@@ -150,5 +150,5 @@ By default, new database hosts are not visible to any client API endpoints. To f
 ![Create Location Database Host dialog with a Database Host dropdown over the location's database host list](./files/location.webp)
 
 ::: info
-For further reference on MariaDB configuration, see the [official MariaDB documentation](https://mariadb.com/kb/en/documentation/).
+For further reference on MariaDB configuration, see the [official MariaDB documentation](https://mariadb.com/docs/).
 :::

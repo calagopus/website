@@ -147,7 +147,7 @@ pub async fn query_minecraft(
 - **We send the protocol version as `-1`.** When you only want the status, you don't have to pretend to be a specific client version; `-1` is the conventional "I'm just pinging" value and avoids "outdated client/server" rejections.
 - **`read_exact` handles the framing.** Because the tunnel is a real `AsyncRead`, it reads the exact JSON length even if it arrives split across several WebSocket frames; the `tokio` extension trait loops until it has every byte.
 
-The MOTD is the `description` field of the returned JSON. Depending on the server it's either a plain string or a [chat component](https://minecraft.wiki/w/Raw_JSON_text_format) object, so handle both:
+The MOTD is the `description` field of the returned JSON. Depending on the server it's either a plain string or a [chat component](https://minecraft.wiki/w/Text_component_format) object, so handle both:
 
 ```rs
 let host = allocation
