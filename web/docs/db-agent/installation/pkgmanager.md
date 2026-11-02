@@ -7,7 +7,7 @@ description: How to install Calagopus DB Agent via a system package manager (APT
 
 Install DB Agent directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager. Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block. If your system doesn't have `sudo`, like Alpine, run the commands as root and leave it out.
 
-::::tabs
+::::tabs key:pkg
 === APT (Debian / Ubuntu)
 
 ### Install Docker
@@ -36,6 +36,41 @@ echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://
 sudo apt update
 sudo apt install -y calagopus-db-agent
 sudo calagopus-db-agent version
+```
+
+### Add an Alias (Optional)
+
+If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
+
+```bash
+sudo ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+```
+
+### Configure DB Agent
+
+Set an API token that clients will use to authenticate against the management API:
+
+```bash
+sudo calagopus-db-agent configure --token <TOKEN>
+```
+
+This writes the token into the config file at the default path (`/etc/calagopus-db-agent/config.yml`), creating it with defaults first if it doesn't exist yet. See the [Configuration](../configuration.md) reference for every other available option.
+
+Test the configuration by running DB Agent in the foreground:
+
+```bash
+sudo calagopus-db-agent
+```
+
+Kill it with `Ctrl-C` once you've confirmed it starts without errors.
+
+### Install as a Service
+
+This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot, then shows its status:
+
+```bash
+sudo calagopus-db-agent service-install
+sudo systemctl status db-agent --no-pager
 ```
 
 === RPM (RHEL / Fedora / Rocky / Alma)
@@ -88,6 +123,41 @@ sudo dnf install -y calagopus-db-agent
 sudo calagopus-db-agent version
 ```
 
+### Add an Alias (Optional)
+
+If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
+
+```bash
+sudo ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+```
+
+### Configure DB Agent
+
+Set an API token that clients will use to authenticate against the management API:
+
+```bash
+sudo calagopus-db-agent configure --token <TOKEN>
+```
+
+This writes the token into the config file at the default path (`/etc/calagopus-db-agent/config.yml`), creating it with defaults first if it doesn't exist yet. See the [Configuration](../configuration.md) reference for every other available option.
+
+Test the configuration by running DB Agent in the foreground:
+
+```bash
+sudo calagopus-db-agent
+```
+
+Kill it with `Ctrl-C` once you've confirmed it starts without errors.
+
+### Install as a Service
+
+This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot, then shows its status:
+
+```bash
+sudo calagopus-db-agent service-install
+sudo systemctl status db-agent --no-pager
+```
+
 === APK (Alpine)
 
 ### Install Docker
@@ -120,6 +190,41 @@ apk add calagopus-db-agent
 calagopus-db-agent version
 ```
 
+### Add an Alias (Optional)
+
+If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
+
+```bash
+ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
+```
+
+### Configure DB Agent
+
+Set an API token that clients will use to authenticate against the management API:
+
+```bash
+calagopus-db-agent configure --token <TOKEN>
+```
+
+This writes the token into the config file at the default path (`/etc/calagopus-db-agent/config.yml`), creating it with defaults first if it doesn't exist yet. See the [Configuration](../configuration.md) reference for every other available option.
+
+Test the configuration by running DB Agent in the foreground:
+
+```bash
+calagopus-db-agent
+```
+
+Kill it with `Ctrl-C` once you've confirmed it starts without errors.
+
+### Install as a Service
+
+This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot, then shows its status:
+
+```bash
+calagopus-db-agent service-install
+rc-service db-agent status
+```
+
 === AUR (Arch Linux)
 
 ### Install Docker
@@ -150,9 +255,7 @@ yay -S --noconfirm calagopus-db-agent-bin
 sudo calagopus-db-agent version
 ```
 
-::::
-
-## Add an Alias (Optional)
+### Add an Alias (Optional)
 
 If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a symlink:
 
@@ -160,7 +263,7 @@ If you'd prefer to type `db-agent` instead of `calagopus-db-agent`, create a sym
 sudo ln -s $(whereis -b calagopus-db-agent | awk '{print $2}') /usr/local/bin/db-agent
 ```
 
-## Configure DB Agent
+### Configure DB Agent
 
 Set an API token that clients will use to authenticate against the management API:
 
@@ -178,20 +281,16 @@ sudo calagopus-db-agent
 
 Kill it with `Ctrl-C` once you've confirmed it starts without errors.
 
-## Install as a Service
+### Install as a Service
 
 This creates and enables a systemd or OpenRC service (auto-detected) that starts on boot, then shows its status:
 
-::: code-group
-```bash [systemd]
+```bash
 sudo calagopus-db-agent service-install
 sudo systemctl status db-agent --no-pager
 ```
-```bash [OpenRC (Alpine)]
-calagopus-db-agent service-install
-rc-service db-agent status
-```
-:::
+
+::::
 
 ## Next Steps
 

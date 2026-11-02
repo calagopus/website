@@ -9,70 +9,43 @@ description: "Install the Calagopus Panel as a standalone binary on Linux or Win
 The binary installation method does not support extensions in any capacity. If you need extensions, use the [Docker](./docker.md) installation instead.
 :::
 
-Calagopus Panel ships as a compiled binary available on [GitHub Releases](https://github.com/calagopus/panel/releases/latest). On Linux, run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block.
+Calagopus Panel ships as a compiled binary available on [GitHub Releases](https://github.com/calagopus/panel/releases/latest). Pick your system:
 
-## Prerequisites
+::::tabs key:os
+=== Linux
 
-This guide assumes you have PostgreSQL and Valkey installed on your server. You can substitute Redis for Valkey, though Valkey is notably faster.
+Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block.
 
-::::tabs
-=== Linux (APT)
-Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then install both:
-```bash
+### 1. Install PostgreSQL and Valkey
+
+Skip this if you already have them. You can substitute Redis for Valkey, though Valkey is notably faster.
+
+On APT, first add the PostgreSQL repository following [this guide](https://wiki.postgresql.org/wiki/Apt). The RPM example is for Fedora 43 (x86_64). On anything else, take the first line from the [PostgreSQL RPM guide](https://www.postgresql.org/download/linux/redhat/).
+
+::: code-group
+```bash [APT]
 sudo apt update
 sudo apt install -y postgresql-18 valkey
 sudo systemctl enable --now postgresql valkey-server
 ```
-=== Linux (RPM)
-This example is for Fedora 43 (x86_64). On anything else, take the first line from the [PostgreSQL RPM guide](https://www.postgresql.org/download/linux/redhat/).
-```bash
+```bash [RPM]
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server postgresql18-contrib valkey
 sudo /usr/pgsql-18/bin/postgresql-18-setup initdb
 sudo systemctl enable --now postgresql-18 valkey
 ```
-=== Windows
-Install PostgreSQL using the [interactive installer](https://www.postgresql.org/download/windows/). Setup instructions are available [here](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/windows/).
+:::
 
-Valkey is not available on Windows. If you cannot install Valkey, remove the `REDIS_URL` line from your `.env` file and the panel will fall back to in-memory caching (not recommended for production due to rate-limiting limitations).
-::::
+### 2. Download the Binary
 
-## Download the Binary
-
-::::tabs
-=== Linux
 ```bash
 sudo curl -L "https://github.com/calagopus/panel/releases/latest/download/panel-rs-$(uname -m)-linux" -o /usr/local/bin/calagopus-panel
 sudo chmod +x /usr/local/bin/calagopus-panel
 
 sudo /usr/local/bin/calagopus-panel version
 ```
-=== Windows
-Download the latest executable [here](https://github.com/calagopus/panel/releases/latest/download/panel-rs-x86_64-windows.exe) and move it to a folder you keep CLI tools in (e.g. `C:\bin`).
-![Placing executable to C:\bin](./images/bin.webp)
 
-Rename it to `calagopus-panel`:
-![Renaming executable](./images/rename.webp)
-
-Open the Run dialog with `Win + R`, type `rundll32.exe sysdm.cpl,EditEnvironmentVariables`, and click OK:
-![Open the Run dialog](./images/winr.webp)
-
-Under **System variables**, find `Path`, click **Edit**, then **New**, and add the full path to the folder (e.g. `C:\bin`):
-![Show ENVs](./images/env.webp)
-![Add PATH](./images/path.webp)
-
-Click OK on both dialogs. Open a new terminal and verify:
-```powershell
-calagopus-panel version
-```
-::::
-
-## Database Configuration
-
-Create the database user and database, then the `.env` file that points at them.
-
-::::tabs
-=== Linux
+### 3. Create the Database and Configuration
 
 This creates the user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
 
@@ -92,7 +65,61 @@ sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
 sudo sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
 ```
 
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
+
+### 4. Test the Configuration
+
+Run the panel once from the folder with the `.env`, because that is where it looks for it:
+
+```bash
+cd /etc/calagopus
+sudo /usr/local/bin/calagopus-panel
+```
+
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
+
+### 5. Install as a Service
+
+This creates and enables a systemd service that starts on boot, then shows its status:
+
+```bash
+sudo /usr/local/bin/calagopus-panel service-install
+sudo systemctl status calagopus-panel --no-pager
+```
+
+If everything went well, the panel is available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
+
+![Calagopus Panel OOBE](../oobe.webp)
+
 === Windows
+
+### 1. Install PostgreSQL and Valkey
+
+Skip PostgreSQL if you already have it. Install it using the [interactive installer](https://www.postgresql.org/download/windows/). Setup instructions are available [here](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installing/windows/).
+
+Valkey is not available on Windows. If you cannot install Valkey, remove the `REDIS_URL` line from your `.env` file in step 3 and the panel will fall back to in-memory caching (not recommended for production due to rate-limiting limitations).
+
+### 2. Download the Binary
+
+Download the latest executable [here](https://github.com/calagopus/panel/releases/latest/download/panel-rs-x86_64-windows.exe) and move it to a folder you keep CLI tools in (e.g. `C:\bin`).
+![Placing executable to C:\bin](./images/bin.webp)
+
+Rename it to `calagopus-panel`:
+![Renaming executable](./images/rename.webp)
+
+Open the Run dialog with `Win + R`, type `rundll32.exe sysdm.cpl,EditEnvironmentVariables`, and click OK:
+![Open the Run dialog](./images/winr.webp)
+
+Under **System variables**, find `Path`, click **Edit**, then **New**, and add the full path to the folder (e.g. `C:\bin`):
+![Show ENVs](./images/env.webp)
+![Add PATH](./images/path.webp)
+
+Click OK on both dialogs. Open a new terminal and verify:
+```powershell
+calagopus-panel version
+```
+
+### 3. Create the Database and Configuration
 
 Open the SQL Shell by searching for `psql` in the Start menu. Press Enter through the server, port, and username prompts to accept the defaults, then enter the password you set during installation:
 ![psql Shell](./images/psqlshell.webp)
@@ -122,41 +149,22 @@ From the same folder, set `APP_ENCRYPTION_KEY` to a random value:
 $RandomString = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 (Get-Content .env) -replace 'CHANGEME', $RandomString | Set-Content .env
 ```
-::::
 
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
 
-## Test the Configuration
+### 4. Test the Configuration
 
 Run the panel once from the folder with the `.env`, because that is where it looks for it:
 
-::: code-group
-```bash [Linux]
-cd /etc/calagopus
-sudo /usr/local/bin/calagopus-panel
-```
-```powershell [Windows]
+```powershell
 cd C:\bin
 calagopus-panel
 ```
-:::
 
-If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C` and proceed to install it as a service.
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
 
-## Install as a Service
+### 5. Install as a Service
 
-::::tabs
-=== Linux
-This creates and enables a systemd service that starts on boot, then shows its status:
-```bash
-sudo /usr/local/bin/calagopus-panel service-install
-sudo systemctl status calagopus-panel --no-pager
-```
-
-If everything went well, the panel is available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-=== Windows
 Download [NSSM](https://github.com/dkxce/NSSM/releases/download/v2.25/NSSM_v2.25.zip) and extract the `nssm.exe` for your architecture (win32 for x86, win64 for x64) into the same folder as the panel executable.
 ![Explorer copying nssm.exe from the win64 folder into the folder with the panel executable](./images/nssm.webp)
 
@@ -170,4 +178,5 @@ nssm start "Calagopus Panel"
 The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE setup screen.
 
 ![Calagopus Panel OOBE](../oobe.webp)
+
 ::::

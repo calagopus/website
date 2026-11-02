@@ -28,7 +28,7 @@ This example belongs under the Wings service in Docker Compose. For a native ser
 
 Overrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.
 
-On a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write the options tagged **Required** for you.
+On a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write `uuid`, `token_id`, `token` and `remote` for you.
 
 ## Core Configuration
 
@@ -82,17 +82,13 @@ Whether to hand HTTPS connections off to the kernel's TLS implementation (kTLS) 
 
 Default: `false`
 
-### api.ssl.cert <Badge type="info" text="Optional" />
+### api.ssl.cert <Badge type="tip" text="Required for SSL" />
 
 The absolute filesystem path to the SSL certificate file used for API encryption.
 
-Default: `""`
-
-### api.ssl.key <Badge type="info" text="Optional" />
+### api.ssl.key <Badge type="tip" text="Required for SSL" />
 
 The absolute filesystem path to the SSL private key file corresponding to the certificate.
-
-Default: `""`
 
 ### api.redirects <Badge type="info" text="Optional" />
 
@@ -348,7 +344,7 @@ Older versions defaulted to `/tmp/calagopus-wings`. When Wings runs in a contain
 
 ### system.username <Badge type="info" text="Optional" />
 
-The operating system user account that the Wings process runs under on the host.
+The operating system user account that the Wings process runs under on the host. In a container, Wings takes it from `WINGS_USERNAME` instead.
 
 Default: `calagopus`
 
@@ -376,15 +372,11 @@ Default: `0`
 
 ### system.user.uid <Badge type="info" text="Optional" />
 
-The User ID (UID) on the host system that Wings uses when managing server files.
-
-Default: `995`
+The User ID (UID) on the host system that Wings uses when managing server files. Wings sets this on startup from `system.username`, or from `WINGS_UID` in a container (`988` if unset), so you do not set it yourself.
 
 ### system.user.gid <Badge type="info" text="Optional" />
 
-The Group ID (GID) on the host system that Wings uses when managing server files.
-
-Default: `985`
+The Group ID (GID) on the host system that Wings uses when managing server files. Wings sets this on startup from `system.username`, or from `WINGS_GID` in a container (`988` if unset), so you do not set it yourself.
 
 ### system.passwd.enabled <Badge type="info" text="Optional" /> <Badge type="info" text="Unix only" />
 
@@ -1117,7 +1109,7 @@ Default: `""`
 
 ### docker.registries <Badge type="info" text="Optional" />
 
-The Docker registry authentication configurations used for pulling private images.
+The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.
 
 Default: `{}`
 
@@ -1456,7 +1448,7 @@ Default: `7101`
 
 ### remote <Badge type="tip" text="Required" />
 
-The URL of the Panel instance that this Wings node communicates with.
+The URL of the Panel instance that this Wings node communicates with. Wings refuses to start if it is empty, or does not start with `http://` or `https://`.
 
 ### remote_headers <Badge type="info" text="Optional" />
 

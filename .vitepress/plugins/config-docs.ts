@@ -183,7 +183,8 @@ const platformLabel = (doc: ConfigDoc, id: string): string =>
   doc.example.platforms.find((platform) => platform.id === id)?.label ?? id;
 
 function renderHeading(option: ConfigOption, doc: ConfigDoc): string {
-  const badges = [option.required ? badge('tip', 'Required') : badge('info', 'Optional')];
+  const required = typeof option.required === 'string' ? `Required for ${option.required}` : 'Required';
+  const badges = [option.required ? badge('tip', required) : badge('info', 'Optional')];
   if (option.platforms) {
     badges.push(badge('info', `${option.platforms.map((id) => platformLabel(doc, id)).join(', ')} only`));
   }

@@ -11,14 +11,16 @@ The package manager installation method does not support extensions in any capac
 
 Install Calagopus Panel directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block. If your system doesn't have `sudo`, like Alpine, run the commands as root and leave it out.
 
-## Install the Packages
-
 This installs PostgreSQL, Valkey and the Panel. Already have PostgreSQL and Valkey? Leave out the lines that install and start them. You can substitute Redis for Valkey, though Valkey is notably faster.
 
 If you only plan to run a single node (Panel + Wings on the same host), pick the **All-in-One** block. It bundles Wings alongside the Panel so you don't need to install it separately.
 
-::::tabs
+Select your package manager:
+
+::::tabs key:pkg
 === APT (Debian / Ubuntu)
+
+### Install the Packages
 
 Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then run:
 
@@ -45,7 +47,55 @@ sudo apt install -y calagopus-panel-aio
 ```
 :::
 
+### Create the Database and Configuration
+
+This creates the database user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
+
+```bash
+DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+sudo -u postgres psql <<SQL
+CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
+CREATE DATABASE panel OWNER calagopus;
+GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
+SQL
+
+sudo mkdir -p /etc/calagopus
+sudo curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
+sudo sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
+```
+
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
+
+### Test the Configuration
+
+Run the panel once from `/etc/calagopus`, because it looks for the `.env` in the current directory:
+
+```bash
+cd /etc/calagopus
+sudo calagopus-panel
+```
+
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
+
+### Install as a Service
+
+This creates and enables a service that starts on boot, then shows its status:
+
+```bash
+sudo calagopus-panel service-install
+sudo systemctl status calagopus-panel --no-pager
+```
+
+The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
+
+![Calagopus Panel OOBE](../oobe.webp)
+
 === RPM (RHEL / Fedora / Rocky / Alma)
+
+### Install the Packages
 
 This example is for Fedora 43 (x86_64). On anything else, take the first line from the [PostgreSQL RPM guide](https://www.postgresql.org/download/linux/redhat/).
 
@@ -86,7 +136,55 @@ sudo dnf install -y calagopus-panel-aio
 ```
 :::
 
+### Create the Database and Configuration
+
+This creates the database user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
+
+```bash
+DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+sudo -u postgres psql <<SQL
+CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
+CREATE DATABASE panel OWNER calagopus;
+GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
+SQL
+
+sudo mkdir -p /etc/calagopus
+sudo curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
+sudo sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
+```
+
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
+
+### Test the Configuration
+
+Run the panel once from `/etc/calagopus`, because it looks for the `.env` in the current directory:
+
+```bash
+cd /etc/calagopus
+sudo calagopus-panel
+```
+
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
+
+### Install as a Service
+
+This creates and enables a service that starts on boot, then shows its status:
+
+```bash
+sudo calagopus-panel service-install
+sudo systemctl status calagopus-panel --no-pager
+```
+
+The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
+
+![Calagopus Panel OOBE](../oobe.webp)
+
 === APK (Alpine)
+
+### Install the Packages
 
 ::: code-group
 ```bash [Panel]
@@ -115,7 +213,55 @@ apk add calagopus-panel-aio
 ```
 :::
 
+### Create the Database and Configuration
+
+This creates the database user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
+
+```bash
+DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+
+su postgres -c psql <<SQL
+CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
+CREATE DATABASE panel OWNER calagopus;
+GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
+SQL
+
+mkdir -p /etc/calagopus
+curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
+sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
+```
+
+`REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
+
+### Test the Configuration
+
+Run the panel once from `/etc/calagopus`, because it looks for the `.env` in the current directory:
+
+```bash
+cd /etc/calagopus
+calagopus-panel
+```
+
+If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
+
+### Install as a Service
+
+This creates and enables a service that starts on boot, then shows its status:
+
+```bash
+calagopus-panel service-install
+rc-service calagopus-panel status
+```
+
+The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
+
+![Calagopus Panel OOBE](../oobe.webp)
+
 === AUR (Arch Linux)
+
+### Install the Packages
 
 The Panel is published to the AUR as [`calagopus-panel-bin`](https://aur.archlinux.org/packages/calagopus-panel-bin), and the All-in-One as [`calagopus-panel-aio-bin`](https://aur.archlinux.org/packages/calagopus-panel-aio-bin). Use another AUR helper if you prefer.
 
@@ -136,14 +282,11 @@ yay -S --noconfirm calagopus-panel-aio-bin
 ```
 :::
 
-::::
-
-## Create the Database and Configuration
+### Create the Database and Configuration
 
 This creates the database user and database, downloads the example `.env` to `/etc/calagopus`, and fills in a random `APP_ENCRYPTION_KEY` and `DATABASE_URL`. Run it once: running it again replaces the `.env` and its encryption key.
 
-::: code-group
-```bash [APT / RPM / AUR]
+```bash
 DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
 
 sudo -u postgres psql <<SQL
@@ -158,26 +301,10 @@ RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | he
 sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
 sudo sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
 ```
-```bash [APK]
-DB_PASSWORD=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-
-su postgres -c psql <<SQL
-CREATE USER calagopus WITH PASSWORD '$DB_PASSWORD';
-CREATE DATABASE panel OWNER calagopus;
-GRANT ALL PRIVILEGES ON DATABASE panel TO calagopus;
-SQL
-
-mkdir -p /etc/calagopus
-curl -o /etc/calagopus/.env https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/.env.example
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" /etc/calagopus/.env
-sed -i -e "s|^DATABASE_URL=.*|DATABASE_URL=\"postgresql://calagopus:$DB_PASSWORD@localhost:5432/panel\"|" /etc/calagopus/.env
-```
-:::
 
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host. See the [Environment Configuration](../environment.md) reference for every other variable.
 
-## Test the Configuration
+### Test the Configuration
 
 Run the panel once from `/etc/calagopus`, because it looks for the `.env` in the current directory:
 
@@ -188,21 +315,17 @@ sudo calagopus-panel
 
 If everything is configured correctly the panel will start the HTTP server without errors. Kill it with `Ctrl-C`.
 
-## Install as a Service
+### Install as a Service
 
 This creates and enables a service that starts on boot, then shows its status:
 
-::: code-group
-```bash [APT / RPM / AUR]
+```bash
 sudo calagopus-panel service-install
 sudo systemctl status calagopus-panel --no-pager
 ```
-```bash [APK]
-calagopus-panel service-install
-rc-service calagopus-panel status
-```
-:::
 
 The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE (Out Of Box Experience) setup screen.
 
 ![Calagopus Panel OOBE](../oobe.webp)
+
+::::

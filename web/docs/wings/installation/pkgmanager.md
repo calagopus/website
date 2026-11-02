@@ -7,7 +7,7 @@ description: Install Calagopus Wings from the APT, RPM, or APK repository, or fr
 
 Install Wings directly from the APT, RPM or APK repository, or from the Arch User Repository (AUR). Select your package manager. Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block. If your system doesn't have `sudo`, like Alpine, run the commands as root and leave it out.
 
-::::tabs
+::::tabs key:pkg
 === APT (Debian / Ubuntu)
 
 ### Install Docker
@@ -36,6 +36,36 @@ echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://
 sudo apt update
 sudo apt install -y calagopus-wings
 sudo calagopus-wings version
+```
+
+### Add an Alias (Optional)
+
+If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
+
+```bash
+sudo ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
+```
+
+### Configure Wings
+
+On a fresh installation, Wings starts in setup mode when no configuration file exists. You can start it in the foreground:
+
+```bash
+sudo calagopus-wings
+```
+
+Read the pairing code printed in the terminal, then follow [Pair a Waiting Node](../next-steps/configure-node.md#pair-a-waiting-node) in the Panel. Keep Wings running while you pair it; it writes its configuration and starts normal operation when pairing succeeds.
+
+To create the node entry first, use the Panel's [enrollment command](../next-steps/configure-node.md#use-an-enrollment-command), or apply the generated YAML or `configure --join-data` command. Existing configurations continue to load normally.
+
+### Install as a Service
+
+Stop any foreground Wings process with `Ctrl+C` before starting the service. The installer creates, enables, and starts a service for the host's init system. An unconfigured installation starts in setup mode; a configured one starts normal operation. This also shows its status and the pairing code:
+
+```bash
+sudo calagopus-wings service-install
+sudo systemctl status wings --no-pager
+sudo journalctl -u wings -n 50 --no-pager
 ```
 
 === RPM (RHEL / Fedora / Rocky / Alma)
@@ -88,6 +118,36 @@ sudo dnf install -y calagopus-wings
 sudo calagopus-wings version
 ```
 
+### Add an Alias (Optional)
+
+If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
+
+```bash
+sudo ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
+```
+
+### Configure Wings
+
+On a fresh installation, Wings starts in setup mode when no configuration file exists. You can start it in the foreground:
+
+```bash
+sudo calagopus-wings
+```
+
+Read the pairing code printed in the terminal, then follow [Pair a Waiting Node](../next-steps/configure-node.md#pair-a-waiting-node) in the Panel. Keep Wings running while you pair it; it writes its configuration and starts normal operation when pairing succeeds.
+
+To create the node entry first, use the Panel's [enrollment command](../next-steps/configure-node.md#use-an-enrollment-command), or apply the generated YAML or `configure --join-data` command. Existing configurations continue to load normally.
+
+### Install as a Service
+
+Stop any foreground Wings process with `Ctrl+C` before starting the service. The installer creates, enables, and starts a service for the host's init system. An unconfigured installation starts in setup mode; a configured one starts normal operation. This also shows its status and the pairing code:
+
+```bash
+sudo calagopus-wings service-install
+sudo systemctl status wings --no-pager
+sudo journalctl -u wings -n 50 --no-pager
+```
+
 === APK (Alpine)
 
 ### Install Docker
@@ -120,6 +180,37 @@ apk add calagopus-wings
 calagopus-wings version
 ```
 
+### Add an Alias (Optional)
+
+If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
+
+```bash
+ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
+```
+
+### Configure Wings
+
+On a fresh installation, Wings starts in setup mode when no configuration file exists. You can start it in the foreground:
+
+```bash
+calagopus-wings
+```
+
+Read the pairing code printed in the terminal, then follow [Pair a Waiting Node](../next-steps/configure-node.md#pair-a-waiting-node) in the Panel. Keep Wings running while you pair it; it writes its configuration and starts normal operation when pairing succeeds.
+
+To create the node entry first, use the Panel's [enrollment command](../next-steps/configure-node.md#use-an-enrollment-command), or apply the generated YAML or `configure --join-data` command. Existing configurations continue to load normally.
+
+### Install as a Service
+
+Stop any foreground Wings process with `Ctrl+C` before starting the service. The installer creates, enables, and starts a service for the host's init system. An unconfigured installation starts in setup mode; a configured one starts normal operation. This also shows its status:
+
+```bash
+calagopus-wings service-install
+rc-service wings status
+```
+
+On Alpine/OpenRC, if the pairing code is not visible in service logs, configure it using the enrollment command before starting the service.
+
 === AUR (Arch Linux)
 
 ### Install Docker
@@ -150,9 +241,7 @@ yay -S --noconfirm calagopus-wings-bin
 sudo calagopus-wings version
 ```
 
-::::
-
-## Add an Alias (Optional)
+### Add an Alias (Optional)
 
 If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
 
@@ -160,7 +249,7 @@ If you'd prefer to type `wings` instead of `calagopus-wings`, create a symlink:
 sudo ln -s $(whereis -b calagopus-wings | awk '{print $2}') /usr/local/bin/wings
 ```
 
-## Configure Wings
+### Configure Wings
 
 On a fresh installation, Wings starts in setup mode when no configuration file exists. You can start it in the foreground:
 
@@ -172,23 +261,17 @@ Read the pairing code printed in the terminal, then follow [Pair a Waiting Node]
 
 To create the node entry first, use the Panel's [enrollment command](../next-steps/configure-node.md#use-an-enrollment-command), or apply the generated YAML or `configure --join-data` command. Existing configurations continue to load normally.
 
-## Install as a Service
+### Install as a Service
 
-Stop any foreground Wings process with `Ctrl+C` before starting the service. The installer creates, enables, and starts a service for the host's init system. An unconfigured installation starts in setup mode; a configured one starts normal operation. On systemd, this also shows its status and the pairing code:
+Stop any foreground Wings process with `Ctrl+C` before starting the service. The installer creates, enables, and starts a service for the host's init system. An unconfigured installation starts in setup mode; a configured one starts normal operation. This also shows its status and the pairing code:
 
-::: code-group
-```bash [systemd]
+```bash
 sudo calagopus-wings service-install
 sudo systemctl status wings --no-pager
 sudo journalctl -u wings -n 50 --no-pager
 ```
-```bash [OpenRC (Alpine)]
-calagopus-wings service-install
-rc-service wings status
-```
-:::
 
-On Alpine/OpenRC, if the pairing code is not visible in service logs, configure it using the enrollment command before starting the service.
+::::
 
 ## Next Steps
 

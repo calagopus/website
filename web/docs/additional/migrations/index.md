@@ -46,6 +46,6 @@ SQL
 sudo systemctl start calagopus-panel
 ```
 
-On Windows, run `nssm stop "Calagopus Panel"`, then run the three SQL lines above in the SQL Shell ([how to open it](../../panel/installation/binary.md#database-configuration)), and finish with `nssm start "Calagopus Panel"`.
+On Windows, run `nssm stop "Calagopus Panel"`, then run the three SQL lines above in the SQL Shell (the Windows tab of the [binary guide](../../panel/installation/binary.md) shows how to open it), and finish with `nssm start "Calagopus Panel"`.
 
 ::::

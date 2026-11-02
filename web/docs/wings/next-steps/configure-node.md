@@ -126,7 +126,7 @@ For a **package installation**, use `sudo calagopus-wings configure --join-data 
 ![Setup wizard Node Configuration step showing the config and a highlighted copy button for the join-data command](./images/configure-node/oobe-nodeconf.webp)
 ![Node page Configuration tab highlighted, showing the config file and wings configure join-data command](./images/configure-node/config.webp)
 
-After applying the configuration, return to your [Docker](../installation/docker.md#start-wings), [Binary](../installation/binary.md#configure-wings), or [Package Manager](../installation/pkgmanager.md#configure-wings) guide to start Wings and check the connection.
+After applying the configuration, return to your [Docker](../installation/docker.md#start-wings), [Binary](../installation/binary.md#configure-wings), or [Package Manager](../installation/pkgmanager.md) guide to start Wings and check the connection.
 
 ## Next step: secure the browser connection
 

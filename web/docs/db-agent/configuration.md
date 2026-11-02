@@ -159,7 +159,7 @@ Default: `/var/run/docker.sock`
 
 ### docker.registries <Badge type="info" text="Optional" />
 
-The Docker registry authentication configurations used for pulling private images, keyed by registry hostname.
+The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.
 
 Default: `{}`
 
@@ -295,7 +295,7 @@ TLS configuration for the management API itself. See [TLS Configuration](#tls-co
 
 ### api.token <Badge type="tip" text="Required" />
 
-The API token clients must present to authenticate against the management API. Must be kept secret. Set it with `sudo calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.
+The API token clients must present to authenticate against the management API. While it is empty, the API rejects every request. Must be kept secret. Set it with `sudo calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.
 
 ### api.disable_openapi_docs <Badge type="info" text="Optional" />
 

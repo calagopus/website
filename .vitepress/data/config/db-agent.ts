@@ -164,7 +164,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'docker.registries',
           description:
-            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname.',
+            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.',
           default: {},
         },
         {
@@ -290,7 +290,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'api.token',
           description:
-            'The API token clients must present to authenticate against the management API. Must be kept secret. Set it with `sudo calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.',
+            'The API token clients must present to authenticate against the management API. While it is empty, the API rejects every request. Must be kept secret. Set it with `sudo calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.',
           required: true,
           example: '',
         },

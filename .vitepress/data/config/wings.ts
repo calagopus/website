@@ -8,7 +8,7 @@ export const wingsConfigDoc: ConfigDoc = {
   description:
     'Reference for every Wings configuration option in config.yml, with defaults, explanations, and a full example file.',
   intro:
-    'This page is a reference for all Wings configuration options. The configuration file is located at `/etc/calagopus-wings/config.yml` on Linux (`C:\\ProgramData\\Calagopus-Wings\\config.yml` on Windows).\n\n::: info Migrating from Pterodactyl/Pelican\nIf no `-c`/`--config` flag is passed and `/etc/calagopus-wings/config.yml` doesn\'t exist, Wings automatically looks for a config at `/etc/pterodactyl/config.yml`, then `/etc/pelican/config.yml`, then `./config.yml`, in that order, and uses the first one it finds. This means an existing Pterodactyl or Pelican Wings install keeps working without moving its config file, though it\'s recommended to migrate to the `calagopus-wings` path when convenient.\n:::\n\n## Environment Overrides\n\nWings accepts configuration overrides through environment variables prefixed with `CALAGOPUS_`. Uppercase the key and replace dots with underscores: `api.port` becomes `CALAGOPUS_API_PORT`, and `system.backups.s3.streaming` becomes `CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING`.\n\n```yaml\nenvironment:\n  CALAGOPUS_API_PORT: "8080"\n  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: "false"\n  CALAGOPUS_ALLOWED_DEVICES: "[/dev/dri/renderD128]"\n```\n\nThis example belongs under the Wings service in Docker Compose. For a native service, set the variables in its service environment. String fields take the value literally; other fields accept YAML values such as `false`, `8080`, or a list. Set a whole map or list when adding entries. Unknown variable names produce a warning and are ignored; invalid values for a recognized option prevent the configuration from loading.\n\nOverrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.\n\nOn a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write the options tagged **Required** for you.',
+    'This page is a reference for all Wings configuration options. The configuration file is located at `/etc/calagopus-wings/config.yml` on Linux (`C:\\ProgramData\\Calagopus-Wings\\config.yml` on Windows).\n\n::: info Migrating from Pterodactyl/Pelican\nIf no `-c`/`--config` flag is passed and `/etc/calagopus-wings/config.yml` doesn\'t exist, Wings automatically looks for a config at `/etc/pterodactyl/config.yml`, then `/etc/pelican/config.yml`, then `./config.yml`, in that order, and uses the first one it finds. This means an existing Pterodactyl or Pelican Wings install keeps working without moving its config file, though it\'s recommended to migrate to the `calagopus-wings` path when convenient.\n:::\n\n## Environment Overrides\n\nWings accepts configuration overrides through environment variables prefixed with `CALAGOPUS_`. Uppercase the key and replace dots with underscores: `api.port` becomes `CALAGOPUS_API_PORT`, and `system.backups.s3.streaming` becomes `CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING`.\n\n```yaml\nenvironment:\n  CALAGOPUS_API_PORT: "8080"\n  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: "false"\n  CALAGOPUS_ALLOWED_DEVICES: "[/dev/dri/renderD128]"\n```\n\nThis example belongs under the Wings service in Docker Compose. For a native service, set the variables in its service environment. String fields take the value literally; other fields accept YAML values such as `false`, `8080`, or a list. Set a whole map or list when adding entries. Unknown variable names produce a warning and are ignored; invalid values for a recognized option prevent the configuration from loading.\n\nOverrides apply when Wings loads or replaces its configuration, including updates from the Panel, and are saved into `config.yml`. Removing a variable leaves its last saved value in the file; edit the file as well if you want to undo the override.\n\nOn a fresh installation without a configuration file, Wings waits for [pairing with the Panel](./next-steps/configure-node.md). `WINGS_ENROLL_PANEL_URL` and `WINGS_ENROLL_CODE` can enroll it automatically during that first start. These enrollment variables are separate from `CALAGOPUS_` configuration overrides. Pairing and enrollment write `uuid`, `token_id`, `token` and `remote` for you.',
   sections: [
     {
       title: 'Core Configuration',
@@ -73,12 +73,14 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'api.ssl.cert',
           description: 'The absolute filesystem path to the SSL certificate file used for API encryption.',
-          default: '',
+          required: 'SSL',
+          example: '',
         },
         {
           key: 'api.ssl.key',
           description: 'The absolute filesystem path to the SSL private key file corresponding to the certificate.',
-          default: '',
+          required: 'SSL',
+          example: '',
         },
         {
           key: 'api.redirects',
@@ -339,7 +341,8 @@ export const wingsConfigDoc: ConfigDoc = {
         },
         {
           key: 'system.username',
-          description: 'The operating system user account that the Wings process runs under on the host.',
+          description:
+            'The operating system user account that the Wings process runs under on the host. In a container, Wings takes it from `WINGS_USERNAME` instead.',
           default: 'calagopus',
         },
         {
@@ -368,13 +371,15 @@ export const wingsConfigDoc: ConfigDoc = {
         },
         {
           key: 'system.user.uid',
-          description: 'The User ID (UID) on the host system that Wings uses when managing server files.',
-          default: 995,
+          description:
+            'The User ID (UID) on the host system that Wings uses when managing server files. Wings sets this on startup from `system.username`, or from `WINGS_UID` in a container (`988` if unset), so you do not set it yourself.',
+          example: 995,
         },
         {
           key: 'system.user.gid',
-          description: 'The Group ID (GID) on the host system that Wings uses when managing server files.',
-          default: 985,
+          description:
+            'The Group ID (GID) on the host system that Wings uses when managing server files. Wings sets this on startup from `system.username`, or from `WINGS_GID` in a container (`988` if unset), so you do not set it yourself.',
+          example: 985,
         },
         {
           key: 'system.passwd.enabled',
@@ -1081,7 +1086,8 @@ export const wingsConfigDoc: ConfigDoc = {
         },
         {
           key: 'docker.registries',
-          description: 'The Docker registry authentication configurations used for pulling private images.',
+          description:
+            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.',
           default: {},
         },
         {
@@ -1419,7 +1425,8 @@ export const wingsConfigDoc: ConfigDoc = {
       options: [
         {
           key: 'remote',
-          description: 'The URL of the Panel instance that this Wings node communicates with.',
+          description:
+            'The URL of the Panel instance that this Wings node communicates with. Wings refuses to start if it is empty, or does not start with `http://` or `https://`.',
           required: true,
           example: 'https://panel.example.com',
         },

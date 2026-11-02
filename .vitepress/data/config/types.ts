@@ -21,7 +21,8 @@ export interface ConfigNote {
 export interface ConfigOption {
   key: string;
   description: string;
-  required?: boolean;
+  /** `true` shows a Required tag. A string shows "Required for <string>", for options only some setups need. */
+  required?: boolean | string;
   values?: string[];
   default?: YamlValue;
   platformDefaults?: Record<string, YamlValue>;

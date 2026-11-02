@@ -17,7 +17,7 @@ description: How to install Calagopus Wings using Docker. Wings is the node daem
 
 
 ::: info Using Podman instead?
-Podman is supported as an alternative to Docker. If you'd prefer to use Podman, install Wings via the [Docker](./docker.md#configure-wings), [Binary](./binary.md#configure-wings), or [Package Manager](./pkgmanager.md#configure-wings) method and follow the [Running Wings with Podman](../advanced/running-wings-with-podman.md) guide. The Docker Compose method requires Docker.
+Podman is supported as an alternative to Docker. If you'd prefer to use Podman, install Wings via the [Docker](./docker.md#configure-wings), [Binary](./binary.md#configure-wings), or [Package Manager](./pkgmanager.md) method and follow the [Running Wings with Podman](../advanced/running-wings-with-podman.md) guide. The Docker Compose method requires Docker.
 :::
 
 Verify your Docker installation:
