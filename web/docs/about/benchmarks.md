@@ -294,7 +294,7 @@ For the node agent that runs game servers, see [daemon benchmarks](./daemon-benc
 </Card>
 
 ::: tip Reading the CPU charts
-On `settings (unauth)`, Calagopus spends 0.02 to 0.16 ms per request and the PHP panels spend 2 to 138 ms, two to three orders of magnitude more. PufferPanel, the other compiled panel, is in the same class as Calagopus and slightly cheaper on all but four configurations.
+On `settings (unauth)`, Calagopus spends 0.03 to 0.16 ms per request. Pterodactyl, Pelican and Hydrodactyl spend 7 to 153 ms, two to three orders of magnitude more, and FeatherPanel, the cheapest PHP panel, spends 0.26 to 3 ms. PufferPanel, the other compiled panel, is in the same class as Calagopus and slightly cheaper on all but three configurations.
 
 This matters most when the panel shares a box with game servers. A game server runs under a hard CPU quota and a tick deadline, so time taken from it is lost rather than delayed. A PHP panel under load takes enough to notice. The [daemon](./daemon-benchmarks.md) always runs next to the game servers, so the same argument applies to it more strongly.
 :::
@@ -318,13 +318,13 @@ This matters most when the panel shares a box with game servers. A game server r
 </Card>
 
 ::: tip Reading the memory charts
-The gap between the idle and peak charts is what a panel costs above its resting footprint. Calagopus stays within about 15 MiB of idle, and PufferPanel starts smaller and ends up in the same range. The PHP panels grow: on the Ryzen at eight CPUs, Pelican rests at 174 MiB and reaches 384 MiB under load.
+The gap between the idle and peak charts is what a panel costs above its resting footprint. Calagopus stays within about 10 MiB of idle, and PufferPanel starts smaller and ends up in the same range. The PHP panels grow: on the Ryzen at eight CPUs, Pelican rests at 178 MiB and reaches 328 MiB under load.
 :::
 
 ## Test setup
 
 ::: info Methodology
-Every panel runs from its official `:latest` Docker image (as of {{ runDate }}) with no configuration beyond initial setup, driven by our open-source [benchmarking suite](https://github.com/calagopus/benchmarking). Each one is swept across CPU limits of 1, 2, 4 and 8 CPUs while its container's CPU and memory are sampled. Each scenario holds 384 concurrent connections for 10 seconds after a 1-second warmup (the suite defaults to 32; this run passed `-c 384`) against three endpoints: public settings, account details and the server list. Panels keep their default rate limiting, so the two authenticated endpoints mostly return `429`s and their throughput measures how fast a panel refuses. This is a saturation test of each panel's fixed cost per request, so the ratios between panels compare overhead, not how many users a panel can serve.
+Every panel runs from its official `:latest` Docker image (as of {{ runDate }}) with no configuration beyond initial setup, driven by our open-source [benchmarking suite](https://github.com/calagopus/benchmarking). Each one is swept across CPU limits of 1, 2, 4 and 8 CPUs while its container's CPU and memory are sampled. Each scenario holds 384 concurrent connections for 10 seconds after a 1-second warmup (the suite defaults to 32; this run passed `-c 384`) against three endpoints: public settings, account details and the server list. Panels keep their default rate limiting, so the two authenticated endpoints mostly return `429`s and their throughput measures how fast a panel refuses. The load generator requests uncompressed responses, so a panel that compresses by default is not charged for it. This is a saturation test of each panel's fixed cost per request, so the ratios between panels compare overhead, not how many users a panel can serve.
 
 Only the panel's own container is limited and measured. Databases and caches run unlimited and unmeasured, so work a panel pushes into them is free here.
 

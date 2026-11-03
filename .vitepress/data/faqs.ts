@@ -6,7 +6,7 @@ export interface Faq {
 export const faqs: Faq[] = [
   {
     q: 'How is Calagopus different from Pterodactyl?',
-    a: "Calagopus is built in Rust, where Pterodactyl uses PHP. On identical hardware it serves between 116x and 442x Pterodactyl's panel API throughput, depending on the CPU quota, and Rust rules out whole classes of memory-safety bugs. There is a migration guide for existing Pterodactyl installs.",
+    a: "Calagopus is built in Rust, where Pterodactyl uses PHP. On identical hardware it serves between 108x and 447x Pterodactyl's panel API throughput, depending on the CPU quota, and Rust rules out whole classes of memory-safety bugs. There is a migration guide for existing Pterodactyl installs.",
   },
   {
     q: 'What games does Calagopus support?',

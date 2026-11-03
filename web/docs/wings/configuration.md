@@ -1436,7 +1436,7 @@ Default: `debian:trixie-slim`
 
 The image the tundra binary is extracted from when `binary` is empty. Pin this to control which tundra version the node runs.
 
-Default: `ghcr.io/calagopus/tundra:latest`
+Default: `calagopus/tundra:latest`
 
 ### tundra.metrics_port <Badge type="info" text="Optional" />
 
@@ -1857,7 +1857,7 @@ tundra:
   data_directory: "{root_directory}/tundra"
   binary: ""
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:latest
+  source_image: calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}
@@ -2163,7 +2163,7 @@ tundra:
   data_directory: "{root_directory}\\tundra"
   binary: ""
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:latest
+  source_image: calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}

@@ -1410,7 +1410,7 @@ export const wingsConfigDoc: ConfigDoc = {
           key: 'tundra.source_image',
           description:
             'The image the tundra binary is extracted from when `binary` is empty. Pin this to control which tundra version the node runs.',
-          default: 'ghcr.io/calagopus/tundra:latest',
+          default: 'calagopus/tundra:latest',
         },
         {
           key: 'tundra.metrics_port',

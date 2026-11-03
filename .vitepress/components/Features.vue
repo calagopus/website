@@ -27,7 +27,7 @@ const features = [
     icon: faBolt,
     title: 'Performance',
     details:
-      'The panel and Wings are written in Rust. On the same hardware, the panel answers up to 442x as many API requests per second as PHP-based panels. The benchmark pages explain how that was measured and list the numbers for each system.',
+      'The panel and Wings are written in Rust. On the same hardware, the panel answers up to 447x as many API requests per second as PHP-based panels. The benchmark pages explain how that was measured and list the numbers for each system.',
     link: {
       href: '/docs/about/benchmarks',
       label: 'See the benchmarks',

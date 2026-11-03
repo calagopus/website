@@ -30,7 +30,7 @@ Nodes talk to each other directly on a UDP port, `7100` by default. That port ha
 - **Linux nodes.** Wings on Windows does not include the tunnel daemon. All-in-One nodes (wings built into the panel container) can take part: the daemon is a sibling container on the host, and a fresh All-in-One install has `tundra.enabled` turned on for it. An All-in-One install from before that got the default has it off like any other node, so turn it on the same way.
 - **A rootful container engine, or rootless Podman.** Under rootless Podman the daemon runs in the same user namespace that owns the server containers, so it can still bind sockets inside their network namespaces. Rootless Docker is not supported: host networking there is RootlessKit's own namespace rather than the host's, so peers never reach the tunnel port.
 - **Direct UDP reachability between every pair of nodes** on their tunnel ports. There is no NAT traversal and no relay, so nodes behind NAT need a port forward.
-- **Image access.** Wings pulls `ghcr.io/calagopus/tundra` for the daemon binary and `debian:trixie-slim` as the container base, unless you point [`tundra.binary`](../configuration.md#tundra-binary) at a binary of your own.
+- **Image access.** Wings pulls `calagopus/tundra` for the daemon binary and `debian:trixie-slim` as the container base, unless you point [`tundra.binary`](../configuration.md#tundra-binary) at a binary of your own.
 - **Wings 1.2.0 or newer** with a panel of the same generation.
 
 ## Step 1: Enable the Daemon on Each Node
@@ -179,7 +179,7 @@ sudo docker rm -f calagopus-wings-tundra
 | Symptom | What to check |
 | --- | --- |
 | The tab says the node **cannot run the private network** | `tundra.enabled` is still `false`, or Wings was not restarted after changing it. |
-| The tab says the node **has not reported a certificate** | The daemon never enrolled. Read `sudo docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `ghcr.io/calagopus/tundra` never gets a binary. |
+| The tab says the node **has not reported a certificate** | The daemon never enrolled. Read `sudo docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `calagopus/tundra` never gets a binary. |
 | `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log | Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself. |
 | **Peers Connected** stays at zero | The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy. |
 | A peer's `.tunnel` hostname does not resolve inside a server | The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on. |

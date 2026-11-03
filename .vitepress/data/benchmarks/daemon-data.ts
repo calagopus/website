@@ -1,5 +1,5 @@
 import { daemonIds, daemons } from './daemons/index.ts';
-import { assertCoverage, assertSingleRun, targetVersion } from './shared.ts';
+import { assertCoverage, assertSingleRun, assertSingleStorage, targetVersion } from './shared.ts';
 import { systems } from './systems.ts';
 import type { ScenarioResult, TaskOperation } from './types.ts';
 
@@ -8,6 +8,7 @@ export { daemonIds, daemons } from './daemons/index.ts';
 
 export const daemonCoveredSystems: string[] = assertCoverage('daemons', daemons);
 export const daemonRunDate: string = assertSingleRun('daemons', daemons);
+export const daemonStorage: string | null = assertSingleStorage('daemons', daemons);
 export const daemonChartSystems = systems.filter((system) => daemonCoveredSystems.includes(system.id));
 export const daemonPendingSystems = systems.filter((system) => !daemonCoveredSystems.includes(system.id));
 
@@ -49,18 +50,25 @@ export const daemonScenarios: DaemonScenario[] = buildScenarios();
 export const loadScenarios = daemonScenarios.filter((s) => s.kind === 'load');
 export const taskScenarios = daemonScenarios.filter((s) => s.kind === 'task');
 
-const FAMILY_LABELS: Record<string, string> = {
-  compress: 'Compression',
-  decompress: 'Decompression',
-  deleteTree: 'Deletion',
-  writeFile: 'Transfer',
-  listDirectory: 'Large directory listings',
-};
+const FAMILIES: { label: string; operations: TaskOperation[] }[] = [
+  { label: 'Compression', operations: ['compress'] },
+  { label: 'Decompression', operations: ['decompress'] },
+  { label: 'Deletion', operations: ['deleteTree'] },
+  { label: 'Transfer', operations: ['writeFile'] },
+  { label: 'Large directory listings', operations: ['listDirectory'] },
+  {
+    label: 'SFTP',
+    operations: ['sftpLogin', 'sftpList', 'sftpUpload', 'sftpDownload', 'sftpGetTree', 'sftpPutTree'],
+  },
+];
 
-export const taskFamilies = (Object.keys(FAMILY_LABELS) as TaskOperation[])
-  .map((operation) => ({
-    operation,
-    label: FAMILY_LABELS[operation],
-    scenarios: taskScenarios.filter((s) => s.operation === operation),
-  }))
-  .filter((family) => family.scenarios.length > 0);
+const familyOperations = new Set<string>(FAMILIES.flatMap((family) => family.operations));
+const unfamilied = taskScenarios.filter((s) => !familyOperations.has(s.operation));
+if (unfamilied.length > 0) {
+  throw new Error(`daemons: task scenarios with no family: ${unfamilied.map((s) => s.name).join(', ')}`);
+}
+
+export const taskFamilies = FAMILIES.map(({ label, operations }) => ({
+  label,
+  scenarios: taskScenarios.filter((s) => (operations as string[]).includes(s.operation)),
+})).filter((family) => family.scenarios.length > 0);

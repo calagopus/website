@@ -56,8 +56,8 @@ If you're on an `:aio` variant (panel + Wings bundled in one container), switch 
 ```diff
  services:
    web:
--    image: ghcr.io/calagopus/panel:latest
-+    image: ghcr.io/calagopus/panel:heavy
+-    image: calagopus/panel:latest
++    image: calagopus/panel:heavy
 ```
 
 **Change 2: Add four new volume mounts** for the build artifacts the heavy image produces. These get added to the existing `volumes:` block under `web`:

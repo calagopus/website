@@ -39,6 +39,23 @@ export function assertSingleRun(group: string, targets: Record<string, TargetBen
   return [...dates][0];
 }
 
+/** tmpfs and disk file-task results are not comparable, and the page's methodology names one mode. */
+export function assertSingleStorage(group: string, targets: Record<string, TargetBenchmarks>): string | null {
+  const modes = new Map<string, string[]>();
+  for (const [id, target] of Object.entries(targets)) {
+    for (const bench of target.systems) {
+      const mode = bench.report.storage ?? 'unrecorded';
+      modes.set(mode, [...(modes.get(mode) ?? []), `${id}/${bench.system}`]);
+    }
+  }
+  if (modes.size !== 1) {
+    const detail = [...modes].map(([mode, where]) => `${mode}: ${where.join(', ')}`).join('; ');
+    throw new Error(`${group}: reports mix storage modes (${detail})`);
+  }
+  const [mode] = modes.keys();
+  return mode === 'unrecorded' ? null : mode;
+}
+
 /** Version is per report; a group-wide chip is only honest if every system ran the same build. */
 export function targetVersion(target: TargetBenchmarks): string | null {
   const versions = new Set(target.systems.map((bench) => bench.report.version ?? ''));
