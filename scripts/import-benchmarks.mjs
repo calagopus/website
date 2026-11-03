@@ -123,9 +123,14 @@ for (const file of files) {
   reports.push({ kind, target, report });
 }
 
+if (reports.length === 0) {
+  console.error(`${dir}: no reports found`);
+  process.exit(1);
+}
+
 for (const [kind, count] of Object.entries(EXPECTED)) {
   const got = reports.filter((r) => r.kind === kind).length;
-  if (got !== count) {
+  if (got !== 0 && got !== count) {
     console.error(`${dir}: expected ${count} ${kind} reports, found ${got} - refusing a partial import`);
     process.exit(1);
   }
@@ -141,7 +146,7 @@ for (const { kind, target, report } of reports) await writeTarget(kind, target, 
 for (const { kind, target } of reports) await writeIndex(kind, target, known);
 for (const kind of Object.keys(KINDS)) {
   const targets = [...new Set(reports.filter((r) => r.kind === kind).map((r) => r.target))].sort();
-  await writeRoot(kind, targets);
+  if (targets.length > 0) await writeRoot(kind, targets);
 }
 
 await run('npx', ['biome', 'check', '--write', DATA], { maxBuffer: 64 * 1024 * 1024 }).catch((e) => {

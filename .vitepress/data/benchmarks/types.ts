@@ -12,7 +12,18 @@ export type Operation =
   | 'fileContents'
   | 'chmod';
 
-export type TaskOperation = 'compress' | 'decompress' | 'deleteTree' | 'writeFile' | 'listDirectory';
+export type TaskOperation =
+  | 'compress'
+  | 'decompress'
+  | 'deleteTree'
+  | 'writeFile'
+  | 'listDirectory'
+  | 'sftpLogin'
+  | 'sftpList'
+  | 'sftpUpload'
+  | 'sftpDownload'
+  | 'sftpGetTree'
+  | 'sftpPutTree';
 
 export type ScenarioParams = Readonly<Record<string, string | number | undefined>>;
 
@@ -117,6 +128,7 @@ export interface SuiteReport {
   target: string;
   kind: TargetKind;
   version: string | null;
+  storage?: 'tmpfs' | 'disk' | null;
   startedAt: string;
   notes: string[];
   variants: VariantReport[];

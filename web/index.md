@@ -7,7 +7,7 @@ description: Calagopus is a modern, open-source game server management panel bui
 hero:
   name: Calagopus
   text: Modern. Fast. Secure.
-  tagline: An open-source game server management panel built in Rust - with panel API throughput up to 442x that of PHP-based panels.
+  tagline: An open-source game server management panel built in Rust - with panel API throughput up to 447x that of PHP-based panels.
   actions:
     - theme: brand
       text: Get Started

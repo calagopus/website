@@ -2,7 +2,7 @@
   <section class="stats-wrapper" aria-label="Project highlights">
     <div class="stats-grid">
       <div class="stat">
-        <div class="stat-value">442x</div>
+        <div class="stat-value">447x</div>
         <div class="stat-label">Peak API throughput vs PHP-based panels · <a class="stat-link" href="/docs/about/benchmarks">see methodology</a></div>
       </div>
       <div class="stat">

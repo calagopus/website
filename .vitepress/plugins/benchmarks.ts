@@ -2,6 +2,7 @@ import {
   type DaemonId,
   daemonCpuOptions,
   daemonIds,
+  daemonPendingSystems,
   daemons,
   daemonVersions,
   loadScenarios,
@@ -22,6 +23,7 @@ import {
   type TaskResult,
   type VariantReport,
 } from '../data/benchmarks/index.ts';
+import type { SystemInfo } from '../data/benchmarks/systems.ts';
 
 export const BENCHMARKS_PAGE = 'docs/about/benchmarks.md';
 export const DAEMON_BENCHMARKS_PAGE = 'docs/about/daemon-benchmarks.md';
@@ -181,11 +183,11 @@ function cpuSection(cpus: number): string {
   return [heading, throughput, latency, cpuCost, memory].join('\n\n');
 }
 
-function pendingNote(): string {
-  if (pendingSystems.length === 0) return '';
-  return `A re-run of this suite is still in progress for ${pendingSystems
+function pendingNote(pending: SystemInfo[]): string {
+  if (pending.length === 0) return '';
+  return `A re-run of this suite is still in progress for ${pending
     .map((system) => system.name)
-    .join(', ')}; ${pendingSystems.length === 1 ? 'that system is' : 'those systems are'} not included below.`;
+    .join(', ')}; ${pending.length === 1 ? 'that system is' : 'those systems are'} not included below.`;
 }
 
 function panelsMarkdown(): string {
@@ -195,7 +197,7 @@ function panelsMarkdown(): string {
       `from the benchmarking suite's JSON reports checked into this site; the run is dated ${runDate}. Each panel ` +
       `is swept across container CPU quotas of ${cpuOptions.join(', ')} CPUs, and every scenario is run against ` +
       `all ${chartSystems.length} test systems below.`,
-    pendingNote(),
+    pendingNote(pendingSystems),
     '## Test environments',
     environmentsTable(),
     '## Headline results',
@@ -311,12 +313,12 @@ function daemonsMarkdown(): string {
   return [
     '## Daemons compared',
     `${daemonIds.map((id) => withVersion(daemonLabel(id), daemonVersions[id])).join(', ')}. The daemon is the ` +
-      'node agent that runs game servers: it serves the file manager, streams archives, and reports system state. ' +
+      'node agent that runs game servers: it serves the file manager and SFTP, streams archives, and reports system state. ' +
       'Scenarios are a mix of saturating request load and timed one-at-a-time tasks.',
     gaps.length > 0
       ? `Where a daemon cannot perform a scenario the suite skips it rather than recording a zero: ${gaps.join('; ')}.`
       : '',
-    pendingNote(),
+    pendingNote(daemonPendingSystems),
     ...daemonCpuOptions.map(daemonCpuSection),
   ]
     .filter(Boolean)

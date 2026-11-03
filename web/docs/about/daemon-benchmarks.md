@@ -1,6 +1,6 @@
 ---
 title: Daemon Benchmarks
-description: Performance benchmarks comparing the Calagopus daemon with Pterodactyl Wings and Pelican Wings across archive compression, file operations, directory listings, throughput, latency, and CPU cost on identical hardware.
+description: Performance benchmarks comparing the Calagopus daemon with Pterodactyl Wings and Pelican Wings across archive compression, file operations, directory listings, SFTP transfers, throughput, latency, and CPU cost on identical hardware.
 ---
 
 <script setup>
@@ -140,7 +140,7 @@ const gaps = daemonScenarios
 
 # Daemon benchmarks
 
-Performance results for the Calagopus daemon, measured against Pterodactyl Wings and Pelican Wings on identical hardware. The daemon is the node agent that runs game servers: it serves the file manager, streams archives, and reports system state. These numbers measure the daemon's own work, not how the game servers it manages perform; the daemon affects those servers only through the CPU and memory it takes from the same node.
+Performance results for the Calagopus daemon, measured against Pterodactyl Wings and Pelican Wings on identical hardware. The daemon is the node agent that runs game servers: it serves the file manager and SFTP, streams archives, and reports system state. These numbers measure the daemon's own work, not how the game servers it manages perform; the daemon affects those servers only through the CPU and memory it takes from the same node.
 
 For the web panel and its API, see [panel benchmarks](./benchmarks.md).
 
@@ -272,9 +272,13 @@ The daemon competes with your game servers for the same CPU. A game server that 
 ::: info Methodology
 All three daemons run from their official `:latest` Docker images with no configuration beyond initial setup, driven by our open-source [benchmarking suite](https://github.com/calagopus/benchmarking) at CPU limits of 1, 2, 4 and 8 CPUs.
 
-**Request scenarios** hold 384 concurrent connections for 10 seconds after a 1-second warmup and report throughput and latency from a single run. The suite defaults to 32 connections (8 for the 8 MiB download) and this run passed `-c 384`, so its README figures differ from these. **Task scenarios** are timed one at a time, 5 times (10 for directory listings) after a warmup run, and report the median. Run-to-run spread is typically 13% and above 23% for a quarter of the cells, so treat task gaps under about 25% as ties. The warmup leaves the files in page cache, so archive and listing tasks compare codecs and serialisation rather than disk reads; on an HDD, a network volume or a cold cache, storage would dominate and the gaps would shrink.
+**Request scenarios** hold 384 concurrent connections for 10 seconds after a 1-second warmup and report throughput and latency from a single run. The suite defaults to 32 connections (8 for the 8 MiB download) and this run passed `-c 384`, so its README figures differ from these. **Task scenarios** are timed one at a time, 5 times (10 for directory listings and SFTP logins) after a warmup run, and report the median. The gap between a cell's fastest and slowest run is typically 9% of its median and above 17% for a quarter of the cells, so treat task gaps under about 20% as ties.
 
-Memory is `anon + shmem`, excluding page cache and slab. `cpu-ms` is CPU time per request or task run with the idle floor subtracted, and lower is better.
+**Files live on a tmpfs.** Each daemon's data and temp directories are RAM-backed, and fixtures are copied in before each task outside the timed window, so writes never reach a disk and fsync costs nothing. File tasks therefore measure the daemon rather than the drive: archive and listing tasks compare codecs and serialisation, not disk reads. On an HDD, a network volume or a cold cache, storage would dominate and the gaps would shrink.
+
+**SFTP scenarios** use the OpenSSH `sftp` client in batch mode with `aes128-gcm@openssh.com` and an ed25519 key. Transfers and listings share one multiplexed connection, so they exclude the handshake; `sftp login` opens a fresh connection each run, which includes the daemon's key check against the suite's mock panel API.
+
+Memory is anonymous memory (`anon`), excluding page cache and slab. Shared memory is left out because on a tmpfs it is just the file pages the daemon wrote. `cpu-ms` is CPU time per request or task run with the idle floor subtracted, and lower is better.
 :::
 
 ### Daemons tested
