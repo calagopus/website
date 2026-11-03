@@ -72,6 +72,198 @@ Default value:
 token: TOKEN_HERE
 ```
 
+## Runtime
+
+Choose the container runtime Wings uses for game servers. Docker remains the default when both Docker and Proxmox VE are available. See [Proxmox VE LXC Runtime](./installation/proxmox-lxc.md) before selecting `pve_lxc`.
+
+### runtime.backend
+The game-server runtime. `auto` selects a reachable Docker daemon first, then a supported local Proxmox VE installation, and stores the selection in `system.root_directory/runtime-backend` so installing Docker later does not move existing workloads. Use `docker` or `pve_lxc` to require one backend explicitly.
+
+Available options:
+
+`auto`, `docker`, `pve_lxc`
+
+Default value:
+```yaml
+backend: auto
+```
+
+### runtime.pve_lxc.node
+The local Proxmox node name. Leave empty to discover it. Wings cannot manage a remote cluster node because it uses local LXC processes, bind mounts, procfs and cgroups.
+
+Default value:
+```yaml
+node: ""
+```
+
+### runtime.pve_lxc.template_storage
+The Proxmox storage used for cached OCI templates. It must support `vztmpl` content.
+
+Default value:
+```yaml
+template_storage: local
+```
+
+### runtime.pve_lxc.rootfs_storage
+The storage used for LXC root filesystems. `auto` selects the active `rootdir` storage with the most free space that can fit the requested rootfs, falling through to the next eligible storage when needed.
+
+Default value:
+```yaml
+rootfs_storage: auto
+```
+
+### runtime.pve_lxc.bridge
+The Proxmox bridge attached to every game-server and helper LXC.
+
+Default value:
+```yaml
+bridge: vmbr0
+```
+
+### runtime.pve_lxc.vlan_tag
+An optional VLAN tag applied to each LXC veth. Leave unset when the bridge itself is dedicated to the game-server network.
+
+### runtime.pve_lxc.network_prefix
+The IPv4 CIDR prefix of the isolated guest subnet. Required for `pve_lxc`; it must be between `1` and `32`. Wings uses it with `gateway` to identify each DHCP-assigned LXC address and publish panel allocations through host-local nftables rules.
+
+### runtime.pve_lxc.gateway
+The IPv4 gateway of the isolated guest subnet. Required for `pve_lxc`; Wings uses it with `network_prefix` for host-local allocation forwarding.
+
+### runtime.pve_lxc.min_vmid
+The lowest VMID Wings may allocate, from `100` through `999999999`. Wings checks cluster-wide QEMU and LXC IDs and chooses a free ID at or above this value. The default keeps Wings-owned guests away from the range commonly used for manually managed infrastructure containers.
+
+Default value:
+```yaml
+min_vmid: 200
+```
+
+### runtime.pve_lxc.rootfs_size_gib
+The size in GiB of each replaceable LXC root filesystem. Persistent game data stays in `system.data_directory` and does not consume this allocation.
+
+Default value:
+```yaml
+rootfs_size_gib: 8
+```
+
+### runtime.pve_lxc.console_log_max_bytes
+The maximum retained console-log size for each LXC server.
+
+Default value:
+```yaml
+console_log_max_bytes: 5242880
+```
+
+### runtime.pve_lxc.tag_prefix
+The prefix for Proxmox tags used to identify containers owned by this runtime. Do not change it while managed containers exist.
+
+Default value:
+```yaml
+tag_prefix: calagopus
+```
+
+### runtime.pve_lxc.managed_file_directory
+A host-visible staging directory for read-only managed file mounts such as `/etc/hosts`. Its parent directories must be traversable by unprivileged LXC mount setup.
+
+Default value:
+```yaml
+managed_file_directory: /var/lib/lxc/calagopus-wings-managed
+```
+
+### runtime.pve_lxc.unprivileged
+Whether Wings creates unprivileged LXCs. The current runtime requires this because persistent server data uses per-mount UID/GID mapping.
+
+Default value:
+```yaml
+unprivileged: true
+```
+
+### runtime.pve_lxc.pids_limit
+The maximum number of processes in each LXC. Leave unset to use `docker.container_pid_limit` for compatibility; set `0` for no limit.
+
+### runtime.pve_lxc.firewall.backend
+`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off panel firewall enforcement for this runtime. Allocation publishing is separate and always uses host nftables.
+
+Available options:
+
+`auto`, `proxmox`, `nftables`, `iptables`, `disabled`
+
+Default value:
+```yaml
+backend: auto
+```
+
+### runtime.pve_lxc.firewall.source_file_max_entries
+The maximum number of firewall source entries Wings reads from one server file.
+
+Default value:
+```yaml
+source_file_max_entries: 10000
+```
+
+### runtime.pve_lxc.firewall.source_file_max_bytes
+The maximum number of bytes Wings reads from one firewall source file.
+
+Default value:
+```yaml
+source_file_max_bytes: 1048576
+```
+
+### runtime.pve_lxc.pct_path
+The path to the local Proxmox `pct` command.
+
+Default value:
+```yaml
+pct_path: /usr/sbin/pct
+```
+
+### runtime.pve_lxc.pvesh_path
+The path to the local Proxmox `pvesh` command.
+
+Default value:
+```yaml
+pvesh_path: /usr/bin/pvesh
+```
+
+### runtime.pve_lxc.pveversion_path
+The path to the local `pveversion` command.
+
+Default value:
+```yaml
+pveversion_path: /usr/bin/pveversion
+```
+
+### runtime.pve_lxc.pvesm_path
+The path to the local Proxmox `pvesm` command.
+
+Default value:
+```yaml
+pvesm_path: /usr/sbin/pvesm
+```
+
+### runtime.pve_lxc.lxc_attach_path
+The path to the host `lxc-attach` command.
+
+Default value:
+```yaml
+lxc_attach_path: /usr/bin/lxc-attach
+```
+
+### runtime.pve_lxc.lxc_stop_path
+The path to the host `lxc-stop` command.
+
+Default value:
+```yaml
+lxc_stop_path: /usr/bin/lxc-stop
+```
+
+### runtime.pve_lxc.perl_path
+The Perl interpreter used for locked Proxmox configuration updates.
+
+Default value:
+```yaml
+perl_path: /usr/bin/perl
+```
+
 ## API Settings
 
 ### api.host
@@ -2008,6 +2200,33 @@ app_name: Calagopus
 uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
+runtime:
+  backend: auto
+  pve_lxc:
+    node: ""
+    template_storage: local
+    rootfs_storage: auto
+    bridge: vmbr0
+    network_prefix: 24
+    gateway: "10.0.0.1"
+    min_vmid: 200
+    rootfs_size_gib: 8
+    console_log_max_bytes: 5242880
+    tag_prefix: calagopus
+    managed_file_directory: /var/lib/lxc/calagopus-wings-managed
+    unprivileged: true
+    pids_limit: 512
+    firewall:
+      backend: auto
+      source_file_max_entries: 10000
+      source_file_max_bytes: 1048576
+    pct_path: /usr/sbin/pct
+    pvesh_path: /usr/bin/pvesh
+    pveversion_path: /usr/bin/pveversion
+    pvesm_path: /usr/sbin/pvesm
+    lxc_attach_path: /usr/bin/lxc-attach
+    lxc_stop_path: /usr/bin/lxc-stop
+    perl_path: /usr/bin/perl
 api:
   host: "0.0.0.0"
   port: 8080
@@ -2322,6 +2541,33 @@ app_name: Calagopus
 uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
+runtime:
+  backend: auto
+  pve_lxc:
+    node: ""
+    template_storage: local
+    rootfs_storage: auto
+    bridge: vmbr0
+    network_prefix: 24
+    gateway: "10.0.0.1"
+    min_vmid: 200
+    rootfs_size_gib: 8
+    console_log_max_bytes: 5242880
+    tag_prefix: calagopus
+    managed_file_directory: /var/lib/lxc/calagopus-wings-managed
+    unprivileged: true
+    pids_limit: 512
+    firewall:
+      backend: auto
+      source_file_max_entries: 10000
+      source_file_max_bytes: 1048576
+    pct_path: /usr/sbin/pct
+    pvesh_path: /usr/bin/pvesh
+    pveversion_path: /usr/bin/pveversion
+    pvesm_path: /usr/sbin/pvesm
+    lxc_attach_path: /usr/bin/lxc-attach
+    lxc_stop_path: /usr/bin/lxc-stop
+    perl_path: /usr/bin/perl
 api:
   host: "0.0.0.0"
   port: 8080
