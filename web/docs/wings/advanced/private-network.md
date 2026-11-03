@@ -16,10 +16,10 @@ This guide covers the operator side: what has to be true on each node, how to en
 | Component | Where | What it does |
 | --- | --- | --- |
 | **Panel** | Your panel | Decides which nodes are on the network and which server may reach which. Stores each node's host, port and certificate fingerprint. |
-| **Wings** | Every node | Runs the tunnel daemon, in a container it creates and updates itself, and relays the panel's state to it. |
+| **Wings** | Every node | Manages the tunnel daemon and relays the panel's state to it. Docker and Podman use a managed container; Proxmox LXC uses a native process. |
 | **Tunnel daemon** (`tundra`) | Every node; normally container `calagopus-wings-tundra`, or a native child on a Proxmox LXC node | Dials the other nodes, binds the private addresses inside server containers and writes their hostnames into each container's `/etc/hosts`. |
 
-You never configure the daemon separately. Wings installs its binary, writes its configuration, keeps it running and restarts it in place when the binary or configuration changes, so open connections survive an update. Docker and Podman nodes run it in a managed container. A [Proxmox VE LXC node](../installation/proxmox-lxc.md) runs it as a native child because there is no container-engine socket.
+You never configure the daemon separately. Wings installs its binary, writes its configuration, keeps it running and restarts it in place when the binary or configuration changes, so open connections survive an update. Docker and Podman nodes run it in a managed container. A [Proxmox VE LXC node](../installation/proxmox-lxc.md) deliberately runs it as a native child and publishes process-backed LXC references.
 
 The daemon container runs with host networking, host PID and privileges, and mounts the tunnel data directory, the vmounts directory and the container engine's socket. Those are needed to reach into other containers' network namespaces; it is the reason the daemon runs as a separate, managed container rather than inside Wings.
 
@@ -30,19 +30,19 @@ Nodes talk to each other directly on a UDP port, `7100` by default. That port ha
 - **Linux nodes.** Wings on Windows does not include the tunnel daemon. All-in-One nodes (wings built into the panel container) can take part: the daemon is a sibling container on the host, and a fresh All-in-One install has `tundra.enabled` turned on for it. An All-in-One install from before that got the default has it off like any other node, so turn it on the same way.
 - **A supported way to resolve server network namespaces.** Docker and Podman nodes use their container-engine socket. Under rootless Podman the daemon runs in the same user namespace that owns the server containers. Rootless Docker is unsupported because host networking there is RootlessKit's namespace. Proxmox LXC nodes use process-backed references and require a Tundra build that advertises `process_container_refs`.
 - **Direct UDP reachability between every pair of nodes** on their tunnel ports. There is no NAT traversal and no relay, so nodes behind NAT need a port forward.
-- **Image access.** Wings pulls `ghcr.io/calagopus/tundra` for the daemon binary and `debian:trixie-slim` as the container base, unless you point [`tundra.binary`](../configuration.md#tundra-binary) at a binary of your own.
-- **Wings 1.2.0 or newer** with a panel of the same generation.
+- **A daemon binary.** Docker and Podman nodes can extract it from [`tundra.source_image`](../configuration.md#tundra-source-image). Proxmox LXC nodes must set [`tundra.binary`](../configuration.md#tundra-binary) to a compatible `tundra-node` executable because the native backend has no container-engine source from which to extract it.
+- **Wings 1.2.0 or newer** with a panel of the same generation for the general private network. Proxmox LXC additionally requires a Wings build containing the `pve_lxc` backend and a Tundra build that advertises `process_container_refs`.
 
 ## Step 1: Enable the Daemon on Each Node
 
-The daemon is off by default on every node. Turn it on in the node's `config.yml`:
+The daemon is off by default on standard nodes; fresh All-in-One installs may already enable it. Turn it on in the node's `config.yml`:
 
 ```yaml
 tundra:
   enabled: true
 ```
 
-That is the only key you have to set. The others under `tundra` control where its state lives, which image the binary is taken from and the local metrics port; their defaults are right for a standard install and are described in the [configuration reference](../configuration.md#private-network).
+That is the only key a standard Docker or Podman node has to set. A Proxmox LXC node must also set `tundra.binary` to a compatible executable. The other keys control where state lives, which image supplies the binary on container-engine nodes and the local metrics port; they are described in the [configuration reference](../configuration.md#private-network).
 
 Wings only reads `tundra.enabled` at startup, so restart it afterwards. How that looks depends on the install:
 
@@ -79,11 +79,17 @@ Under rootless Podman, keep [`tundra.data_directory`](../configuration.md#tundra
 === Proxmox VE LXC
 Install and configure the [Proxmox VE LXC runtime](../installation/proxmox-lxc.md) first, then restart the native Wings service:
 
+```yaml
+tundra:
+  enabled: true
+  binary: /usr/local/bin/tundra-node
+```
+
 ```bash
 sudo systemctl restart wings
 ```
 
-Wings starts Tundra directly on the PVE host and publishes each running LXC as a process-backed reference. The daemon must advertise `process_container_refs`; Wings fails closed instead of publishing LXC references to an incompatible binary. This capability is only required for the private network. It does not affect LXC lifecycle, public allocations or edge forwarding.
+Wings starts Tundra directly on the PVE host and publishes each running LXC as a process-backed reference. The daemon must advertise `process_container_refs`; Wings fails closed instead of publishing LXC references to an incompatible binary. This capability is only required for the private network. It does not affect LXC lifecycle or host-local allocation forwarding.
 ::::
 
 After the restart Wings prepares the data directory, its local signing key and the token the daemon authenticates with. It does not start the daemon yet; that happens once the panel lists the node on the network.
@@ -119,7 +125,7 @@ Fill in the two fields other nodes need to find this one:
 
 Click **Enable**. Within a minute the following happens on the node without any input from you:
 
-1. Wings pulls the daemon's images, extracts the binary and starts the `calagopus-wings-tundra` container.
+1. Wings prepares the daemon: Docker and Podman nodes extract the configured image and start `calagopus-wings-tundra`; Proxmox LXC nodes copy the configured `tundra.binary` and launch it as a native child.
 2. The daemon generates a key pair and asks Wings for a certificate, which Wings signs and reports to the panel.
 3. The panel publishes the certificate fingerprint, and from then on other nodes accept connections from this one.
 
@@ -142,11 +148,18 @@ Traffic over a private connection does not pass through the destination server's
 
 ## Checking That It Works
 
-On the node, the daemon shows up as a normal container:
+On Docker and Podman nodes, the daemon shows up as a normal container:
 
 ```bash
 docker ps --filter name=calagopus-wings-tundra
 docker logs --tail 50 calagopus-wings-tundra
+```
+
+On a Proxmox LXC node, inspect the native child and the Wings service log instead:
+
+```bash
+pgrep -af tundra-node
+sudo journalctl -u wings -n 100 --no-pager
 ```
 
 Its logs show, in order: a generated key pair, a certificate issued, the control link to Wings coming up and the first state snapshot applied. Once the panel has other nodes on the network, peer connections follow.
@@ -171,11 +184,11 @@ The hosts file has a `# tundra begin` block with a `127.0.x.y <name>.tunnel` lin
 
 ## Day to Day
 
-**Updates.** The daemon version follows [`tundra.source_image`](../configuration.md#tundra-source-image), which is pinned to a release tag. Bump the tag, restart Wings, and it extracts the new binary and restarts the daemon in place; established connections carry over. Restart one node at a time, because two peered nodes handing over at once cannot hold each other's connections open.
+**Updates.** On Docker and Podman nodes, the daemon version follows [`tundra.source_image`](../configuration.md#tundra-source-image). On Proxmox LXC nodes, replace the executable named by [`tundra.binary`](../configuration.md#tundra-binary). Restart Wings after either change; it synchronizes the new binary and restarts the daemon in place so established connections carry over. Restart one node at a time, because two peered nodes handing over at once cannot hold each other's connections open.
 
 **Rotate Identity** on the node's Private Network tab throws away the certificate fingerprint the panel publishes and the token the daemon authenticates to Wings with. Peers drop the node immediately; it enrolls again with a fresh certificate and connections come back on their own, usually within a minute. Use it if you suspect the node's tunnel identity has leaked.
 
-**Taking a node off.** **Disable** on the tab removes the node from the network; every connection to and from its servers is dropped and those servers lose their private addresses. Do that first. To stop running the daemon on the node as well, set `tundra.enabled: false`, restart Wings, and remove the container by hand, because Wings only manages it while the daemon is enabled:
+**Taking a node off.** **Disable** on the tab removes the node from the network; every connection to and from its servers is dropped and those servers lose their private addresses. Do that first. Then set `tundra.enabled: false` and restart Wings. On Docker or Podman, remove the old managed container if it remains:
 
 ```bash
 docker rm -f calagopus-wings-tundra
@@ -188,7 +201,7 @@ docker rm -f calagopus-wings-tundra
 | Symptom | What to check |
 | --- | --- |
 | The tab says the node **cannot run the private network** | `tundra.enabled` is still `false`, or Wings was not restarted after changing it. |
-| The tab says the node **has not reported a certificate** | The daemon never enrolled. Read `docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `ghcr.io/calagopus/tundra` never gets a binary. |
+| The tab says the node **has not reported a certificate** | The daemon never enrolled. On Docker or Podman, read `docker logs calagopus-wings-tundra` and check Wings for image pull errors. On Proxmox LXC, check `journalctl -u wings` and confirm `tundra.binary` names an executable that advertises `process_container_refs`. |
 | `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log | Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself. |
 | **Peers Connected** stays at zero | The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy. |
 | A peer's `.tunnel` hostname does not resolve inside a server | The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on. |

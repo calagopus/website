@@ -93,7 +93,7 @@ The local Proxmox node name. Leave empty to discover it. Wings cannot manage a r
 
 Default value:
 ```yaml
-node: ''
+node: ""
 ```
 
 ### runtime.pve_lxc.template_storage
@@ -124,41 +124,17 @@ bridge: vmbr0
 An optional VLAN tag applied to each LXC veth. Leave unset when the bridge itself is dedicated to the game-server network.
 
 ### runtime.pve_lxc.network_prefix
-The IPv4 CIDR prefix used when panel allocations are assigned directly to LXCs. Required with static allocations when edge forwarding is not configured.
+The IPv4 CIDR prefix of the isolated guest subnet. Required for `pve_lxc`; it must be between `1` and `32`. Wings uses it with `gateway` to identify each DHCP-assigned LXC address and publish panel allocations through host-local nftables rules.
 
 ### runtime.pve_lxc.gateway
-The IPv4 gateway used with direct static LXC allocations. Required with `network_prefix` when edge forwarding is not configured.
+The IPv4 gateway of the isolated guest subnet. Required for `pve_lxc`; Wings uses it with `network_prefix` for host-local allocation forwarding.
 
-### runtime.pve_lxc.edge_wireguard_interface
-The host WireGuard interface used to discover edge-forwarding peers. It has no effect until both edge SSH paths are configured.
-
-Default value:
-```yaml
-edge_wireguard_interface: wg-calagopus
-```
-
-### runtime.pve_lxc.edge_ssh_user
-The SSH account used by the restricted edge port-forwarding key.
+### runtime.pve_lxc.min_vmid
+The lowest VMID Wings may allocate, from `100` through `999999999`. Wings checks cluster-wide QEMU and LXC IDs and chooses a free ID at or above this value. The default keeps Wings-owned guests away from the range commonly used for manually managed infrastructure containers.
 
 Default value:
 ```yaml
-edge_ssh_user: root
-```
-
-### runtime.pve_lxc.edge_ssh_identity_path
-A root-owned SSH private key used to synchronize port forwarding on edge hosts. The file must be inaccessible to group and other users. Leave empty to use direct bridged allocations.
-
-Default value:
-```yaml
-edge_ssh_identity_path: ''
-```
-
-### runtime.pve_lxc.edge_known_hosts_path
-A pinned SSH known-hosts file for edge hosts. Required when `edge_ssh_identity_path` is set.
-
-Default value:
-```yaml
-edge_known_hosts_path: ''
+min_vmid: 200
 ```
 
 ### runtime.pve_lxc.rootfs_size_gib
@@ -205,7 +181,7 @@ unprivileged: true
 The maximum number of processes in each LXC. Leave unset to use `docker.container_pid_limit` for compatibility; set `0` for no limit.
 
 ### runtime.pve_lxc.firewall.backend
-`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off Wings firewall enforcement for this runtime.
+`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off panel firewall enforcement for this runtime. Allocation publishing is separate and always uses host nftables.
 
 Available options:
 
@@ -2227,17 +2203,13 @@ token: TOKEN_HERE
 runtime:
   backend: auto
   pve_lxc:
-    node: ''
+    node: ""
     template_storage: local
     rootfs_storage: auto
     bridge: vmbr0
-    vlan_tag: 30
     network_prefix: 24
-    gateway: 10.70.0.1
-    edge_wireguard_interface: wg-calagopus
-    edge_ssh_user: root
-    edge_ssh_identity_path: ''
-    edge_known_hosts_path: ''
+    gateway: "10.0.0.1"
+    min_vmid: 200
     rootfs_size_gib: 8
     console_log_max_bytes: 5242880
     tag_prefix: calagopus
@@ -2572,17 +2544,13 @@ token: TOKEN_HERE
 runtime:
   backend: auto
   pve_lxc:
-    node: ''
+    node: ""
     template_storage: local
     rootfs_storage: auto
     bridge: vmbr0
-    vlan_tag: 30
     network_prefix: 24
-    gateway: 10.70.0.1
-    edge_wireguard_interface: wg-calagopus
-    edge_ssh_user: root
-    edge_ssh_identity_path: ''
-    edge_known_hosts_path: ''
+    gateway: "10.0.0.1"
+    min_vmid: 200
     rootfs_size_gib: 8
     console_log_max_bytes: 5242880
     tag_prefix: calagopus

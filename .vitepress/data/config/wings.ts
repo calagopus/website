@@ -80,40 +80,25 @@ export const wingsConfigDoc: ConfigDoc = {
           description:
             'An optional VLAN tag applied to each LXC veth. Leave unset when the bridge itself is dedicated to the game-server network.',
           example: 30,
+          inExample: false,
         },
         {
           key: 'runtime.pve_lxc.network_prefix',
           description:
-            'The IPv4 CIDR prefix used when panel allocations are assigned directly to LXCs. Required with static allocations when edge forwarding is not configured.',
+            'The IPv4 CIDR prefix of the isolated guest subnet. Required for `pve_lxc`; it must be between `1` and `32`. Wings uses it with `gateway` to identify each DHCP-assigned LXC address and publish panel allocations through host-local nftables rules.',
           example: 24,
         },
         {
           key: 'runtime.pve_lxc.gateway',
           description:
-            'The IPv4 gateway used with direct static LXC allocations. Required with `network_prefix` when edge forwarding is not configured.',
-          example: '10.70.0.1',
+            'The IPv4 gateway of the isolated guest subnet. Required for `pve_lxc`; Wings uses it with `network_prefix` for host-local allocation forwarding.',
+          example: '10.0.0.1',
         },
         {
-          key: 'runtime.pve_lxc.edge_wireguard_interface',
+          key: 'runtime.pve_lxc.min_vmid',
           description:
-            'The host WireGuard interface used to discover edge-forwarding peers. It has no effect until both edge SSH paths are configured.',
-          default: 'wg-calagopus',
-        },
-        {
-          key: 'runtime.pve_lxc.edge_ssh_user',
-          description: 'The SSH account used by the restricted edge port-forwarding key.',
-          default: 'root',
-        },
-        {
-          key: 'runtime.pve_lxc.edge_ssh_identity_path',
-          description:
-            'A root-owned SSH private key used to synchronize port forwarding on edge hosts. The file must be inaccessible to group and other users. Leave empty to use direct bridged allocations.',
-          default: '',
-        },
-        {
-          key: 'runtime.pve_lxc.edge_known_hosts_path',
-          description: 'A pinned SSH known-hosts file for edge hosts. Required when `edge_ssh_identity_path` is set.',
-          default: '',
+            'The lowest VMID Wings may allocate, from `100` through `999999999`. Wings checks cluster-wide QEMU and LXC IDs and chooses a free ID at or above this value. The default keeps Wings-owned guests away from the range commonly used for manually managed infrastructure containers.',
+          default: 200,
         },
         {
           key: 'runtime.pve_lxc.rootfs_size_gib',
@@ -153,7 +138,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'runtime.pve_lxc.firewall.backend',
           description:
-            '`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off Wings firewall enforcement for this runtime.',
+            '`auto` uses Proxmox guest rules when the datacenter firewall is enabled and otherwise falls back to host nftables or iptables. `proxmox` requires the datacenter firewall. `disabled` turns off panel firewall enforcement for this runtime. Allocation publishing is separate and always uses host nftables.',
           values: ['auto', 'proxmox', 'nftables', 'iptables', 'disabled'],
           default: 'auto',
         },

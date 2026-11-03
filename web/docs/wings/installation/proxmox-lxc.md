@@ -20,7 +20,10 @@ Docker remains the preferred backend when both runtimes are available. On a fres
 - Unprivileged LXC support.
 - A Proxmox storage with `vztmpl` content for cached OCI templates.
 - At least one active storage with `rootdir` content for LXC root filesystems.
-- A bridge that provides connectivity for game-server LXCs.
+- A bridge that provides DHCP and a usable default IPv4 route to game-server and helper LXCs.
+- Guest DHCP addresses inside the subnet identified by `runtime.pve_lxc.gateway` and `runtime.pve_lxc.network_prefix`.
+- IPv4 forwarding enabled on the host and nftables available at `/usr/sbin/nft`.
+- IPv4 panel allocation addresses routed to or otherwise reachable at the Proxmox host.
 
 Wings manages only the local Proxmox node. It uses local `pct`, `pvesh`, LXC processes, bind mounts, cgroups and procfs, so pointing it at another cluster member is unsupported.
 
@@ -39,40 +42,29 @@ The capacity shown to the panel comes from the filesystem containing `system.dat
 
 ## Prepare Networking
 
-Choose one of these models before starting Wings.
+The LXC runtime publishes panel allocations on the Proxmox host in the same way a container engine publishes ports. Each guest receives an address from an isolated DHCP subnet. Wings then manages host-local `nftables` rules that forward every assigned TCP and UDP allocation to that guest on the same port.
 
-### Direct allocations
-
-Use this model when panel allocations are addresses that belong directly to the LXC network. Configure a bridge, optional VLAN, IPv4 prefix and gateway. Wings assigns the server's primary panel allocation through PVE's `net0` property. Additional allocations may use other ports on that address.
+Configure the guest bridge, its IPv4 prefix and its gateway. Add `vlan_tag` only when the bridge expects tagged guest traffic:
 
 ```yaml
 runtime:
   pve_lxc:
     bridge: vmbr0
-    vlan_tag: 30
+    # vlan_tag: 30 # optional
     network_prefix: 24
-    gateway: 10.70.0.1
+    gateway: 10.0.0.1
 ```
 
-The bridge may connect to the rest of your network, or it may carry an isolated game-server subnet routed by the Proxmox host. Keep game LXCs off a trusted management or home-device subnet.
+Enable IPv4 forwarding persistently before starting Wings:
 
-### Edge forwarding
-
-Use edge forwarding when panel allocations are public addresses on one or more VPS edge hosts. The LXCs receive private DHCP addresses on a hidden bridge, and Wings sends their current address and allocated ports to a restricted forwarding controller over SSH.
-
-Wings chooses the edge from the panel allocation: it compares that public IPv4 address with the current endpoints reported by the configured WireGuard interface. The matching peer's IPv4 `/32` in `AllowedIPs` becomes the SSH control address. This also works when the Proxmox site's public address changes.
-
-```yaml
-runtime:
-  pve_lxc:
-    bridge: vmbr-calagopus
-    edge_wireguard_interface: wg-calagopus
-    edge_ssh_user: root
-    edge_ssh_identity_path: /etc/calagopus-wings/edge-forward
-    edge_known_hosts_path: /etc/calagopus-wings/edge-known-hosts
+```bash
+printf 'net.ipv4.ip_forward=1\n' | sudo tee /etc/sysctl.d/99-calagopus-wings.conf
+sudo sysctl --system
 ```
 
-The identity must be a root-owned regular file with mode `0600` or stricter. Restrict the public key on each edge to the forwarding controller, for example with an OpenSSH `command="...",restrict` authorized-key entry. Wings clears the server UUID from every known edge before applying a new mapping, preventing stale forwarding rules when an allocation changes.
+The allocation address must reach the local Proxmox host. Wings creates and reconciles the `ip wings_pve_forward` table with `/usr/sbin/nft` to publish that address and port to the guest.
+
+Wings adds forwarding when an LXC is running, updates it when allocations change and removes it when the guest stops. It also rebuilds its managed table from running-server state after Wings starts without restarting or stopping adopted guests. Keep game LXCs off a trusted management or home-device subnet.
 
 ## Install and Configure Wings
 
@@ -87,7 +79,10 @@ runtime:
     template_storage: local
     rootfs_storage: auto
     bridge: vmbr0
+    network_prefix: 24
+    gateway: 10.0.0.1
     rootfs_size_gib: 8
+    min_vmid: 200
     console_log_max_bytes: 5242880
     tag_prefix: calagopus
     managed_file_directory: /var/lib/lxc/calagopus-wings-managed
@@ -112,12 +107,9 @@ A successful boot reports the detected PVE version, local node and next availabl
 
 ## Allocations
 
-Create allocations in the panel using the address players should connect to:
+Create allocations in the panel using the addresses and ports on the Proxmox host that players should connect to. The allocation address is not assigned to the LXC. Wings resolves the guest's DHCP address in the configured subnet and installs local DNAT, forwarding and masquerade rules for each allocation.
 
-- With direct allocations, use the LXC's address on the bridged game network.
-- With edge forwarding, use the public IPv4 address of the edge VPS.
-
-Each server currently uses one primary IPv4 address. Multiple ports can share that address. Wings publishes both TCP and UDP for each allocation because panel allocations are protocol-neutral.
+Multiple addresses and ports can target one guest. Wings publishes both TCP and UDP because panel allocations are protocol-neutral. One address-and-port pair can belong to only one server; conflicting assignments fail closed instead of stealing another server's rule.
 
 ## Firewall Policy
 
@@ -134,6 +126,8 @@ The Proxmox backend:
 - emits the panel's terminal “deny everything else” rule as an unrestricted final `DROP`.
 
 Select `proxmox` to require the PVE firewall and fail when the datacenter firewall is unavailable. Select `nftables` or `iptables` to force host filtering.
+
+This setting controls the panel's server firewall policy only. Allocation publishing is independent and always uses host nftables, even when panel filtering uses Proxmox or iptables or is disabled.
 
 ## Images, Resources and Files
 
@@ -156,23 +150,27 @@ Wings reads the OCI process UID and GID and maps that identity for `/home/contai
 
 The network-ready wrapper records the game process's real exit code and compares the container's cgroup OOM counter across the process lifetime. This gives the panel the same crash and out-of-memory distinction it receives from a container engine. Wings clears the status marker before every start; a panel-requested hard kill reports exit code `137` without replacing a marker already written by the process wrapper. OOM attribution requires cgroup v2; on a cgroup v1 host Wings still reports the exit code but cannot distinguish an OOM kill.
 
+## Backups and Restores
+
+Wings backup adapters operate on the persistent game-data directory mounted at `/home/container`, just as they do for Docker servers. A backup does not capture the replaceable OCI rootfs or the Proxmox container configuration. Restoring one restores the game data; Wings reconstructs the runtime and rootfs separately from the server configuration and selected image. See [Backup Configurations](../advanced/backup-configurations.md) for the available local and remote adapters.
+
 ## Private Networking
 
-Private networking uses the same panel connection model described in [The Private Network](../advanced/private-network.md). On an LXC node, Tundra runs as a native child process because Docker is unavailable. Wings identifies each running LXC with a process-backed reference so Tundra can enter its network namespace through procfs.
+Private networking uses the same panel connection model described in [The Private Network](../advanced/private-network.md). With the PVE backend active, Wings deliberately runs Tundra as a native child process and identifies each running LXC with a process-backed reference so Tundra can enter its network namespace through procfs.
 
-The Tundra build must advertise the `process_container_refs` capability. Wings refuses to publish LXC references to a daemon that does not advertise it. Core LXC lifecycle, public allocations and edge forwarding do not depend on private networking; leave Tundra disabled when this capability is unavailable.
+The Tundra build must advertise the `process_container_refs` capability. Wings refuses to publish LXC references to a daemon that does not advertise it. Core LXC lifecycle and local allocation forwarding do not depend on private networking; leave Tundra disabled when this capability is unavailable.
 
 ## Current Support Limits
 
 The initial backend has these deliberate limits:
 
 - the PVE 9.2 OCI pull endpoint accepts tagged references and exposes no registry-credential inputs, so digest-only references and authenticated private registries are unavailable through this backend;
-- each server uses one primary IPv4 address; edge forwarding also uses that address to select the WireGuard peer and forwarding controller;
+- allocation publishing currently supports IPv4 addresses and requires the guest subnet to provide DHCP leases that Wings can resolve locally;
 - unlimited memory and swap depend on PVE preserving Wings-managed `lxc.cgroup2.*=max` entries when the container starts; this is live-tested against PVE 9.2 by the included smoke test;
-- the LXC rootfs remains writable because PVE's pre-start and host-managed DHCP hooks update files in the rootfs before and after container start; and
+- the OCI rootfs remains writable because the runtime has no read-only-rootfs mapping; persistent game data remains separate at `/home/container`; and
 - migration or management of a remote PVE cluster node is unsupported.
 
-Unsupported image references and remote-node configurations fail explicitly. The networking and rootfs behavior above is documented so it is not mistaken for Docker parity.
+Unsupported image references and remote-node configurations fail explicitly. Wings manages only the local allocation-to-guest forwarding described above.
 
 ## Verify the Host Contracts
 
