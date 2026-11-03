@@ -84,7 +84,7 @@ Create `/opt/calagopus/docker-compose.yml` with the following content. **Before 
 ```yaml
 services:
   web:
-    image: ghcr.io/calagopus/panel:latest
+    image: calagopus/panel:latest
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
@@ -111,7 +111,7 @@ services:
       - cache
 
   db:
-    image: ghcr.io/calagopus/pgautoupgrade:18-alpine
+    image: calagopus/pgautoupgrade:18-alpine
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
@@ -123,7 +123,7 @@ services:
       - ./postgres:/data
 
   cache:
-    image: ghcr.io/calagopus/valkey:latest
+    image: calagopus/valkey:latest
     restart: unless-stopped
     command: --protected-mode no --save 60 1
     environment:

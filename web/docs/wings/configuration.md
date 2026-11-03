@@ -1852,7 +1852,7 @@ The image the tundra binary is extracted from when `binary` is empty. Pin this t
 
 Default value:
 ```yaml
-source_image: ghcr.io/calagopus/tundra:latest
+source_image: calagopus/tundra:latest
 ```
 
 ### tundra.metrics_port
@@ -2298,7 +2298,7 @@ tundra:
   data_directory: "{root_directory}/tundra"
   binary: ""
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:latest
+  source_image: calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}
@@ -2604,7 +2604,7 @@ tundra:
   data_directory: "{root_directory}\\tundra"
   binary: ""
   image: debian:trixie-slim
-  source_image: ghcr.io/calagopus/tundra:latest
+  source_image: calagopus/tundra:latest
   metrics_port: 7101
 remote: https://panel.example.com
 remote_headers: {}

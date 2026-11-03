@@ -199,7 +199,7 @@ Open the file with `nano compose.yml`. In the `ports:` section under `web`, chan
       - 127.0.0.1:8000:8000
 ```
 
-Keep the indentation and the `2022:2022` line below it. Binding to `127.0.0.1` keeps the Panel port private to this VPS while you create your administrator account, whether or not your provider's firewall is already blocking it. This edit is temporary on the no-domain path: step 6 changes the line back to `8000:8000` once your account exists. With a domain it stays, and Caddy connects through the loopback address. Leave the image as `ghcr.io/calagopus/panel:aio`. Press `Ctrl+O`, `Enter`, then `Ctrl+X` to save and exit.
+Keep the indentation and the `2022:2022` line below it. Binding to `127.0.0.1` keeps the Panel port private to this VPS while you create your administrator account, whether or not your provider's firewall is already blocking it. This edit is temporary on the no-domain path: step 6 changes the line back to `8000:8000` once your account exists. With a domain it stays, and Caddy connects through the loopback address. Leave the image as `calagopus/panel:aio`. Press `Ctrl+O`, `Enter`, then `Ctrl+X` to save and exit.
 
 Validate and start the stack:
 
