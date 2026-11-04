@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/cloudflare';
 import { json, markdown, preflight } from '../http.ts';
 
 const RELEASES_PER_PAGE = 100;
@@ -133,7 +134,8 @@ async function fetchProjectReleases(repo: string, env: Env): Promise<Release[] |
     }
 
     return releases;
-  } catch {
+  } catch (error) {
+    captureException(error);
     return null;
   }
 }

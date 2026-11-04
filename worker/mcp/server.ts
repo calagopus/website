@@ -1,7 +1,9 @@
 import { type ContentBlock, McpServer } from '@modelcontextprotocol/server';
+import { wrapMcpServerWithSentry } from '@sentry/cloudflare';
 import { createMcpHandler, type StatelessMcpHandler } from 'agents/mcp/server';
 import { z } from 'zod';
 import { base64, parseImageRef, readImage, resolveImage } from '../images.ts';
+import { reportMcpHandlerError, reportMcpToolFailure } from '../sentry.ts';
 import { extractSection, loadManifest, type ManifestPage, type PageRef, parsePageRef, readPage } from './pages.ts';
 import { queryPages, WEAK_SCORE } from './search.ts';
 
@@ -52,7 +54,9 @@ function continuation(page: ManifestPage, body: string): string {
 }
 
 function buildServer(env: Env): McpServer {
-  const server = new McpServer({ name: 'calagopus-docs', version: '1.0.0' }, { instructions: INSTRUCTIONS });
+  const server = wrapMcpServerWithSentry(
+    new McpServer({ name: 'calagopus-docs', version: '1.0.0' }, { instructions: INSTRUCTIONS }),
+  );
 
   server.registerTool(
     'list_pages',
@@ -331,6 +335,7 @@ function buildServer(env: Env): McpServer {
           results,
         });
       } catch (error) {
+        reportMcpToolFailure('query_pages', error);
         return {
           ...text(
             `Search is unavailable: ${error instanceof Error ? error.message : String(error)}. ` +
@@ -349,6 +354,10 @@ function buildServer(env: Env): McpServer {
 let handler: StatelessMcpHandler | undefined;
 
 export function mcpHandler(env: Env): StatelessMcpHandler {
-  handler ??= createMcpHandler(() => buildServer(env), { route: '/mcp', allowedOriginHostnames: '*' });
+  handler ??= createMcpHandler(() => buildServer(env), {
+    route: '/mcp',
+    allowedOriginHostnames: '*',
+    onerror: reportMcpHandlerError,
+  });
   return handler;
 }

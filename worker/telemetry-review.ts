@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/cloudflare';
 import { type ClickHouseConfig, insertRows, queryRows } from './clickhouse.ts';
 import {
   classifyObservations,
@@ -164,7 +165,9 @@ export async function reviewTelemetry(config: ClickHouseConfig): Promise<void> {
       identities.slice(offset, offset + 4).map(({ uuid }) => replayIdentity(config, uuid)),
     );
     for (const outcome of outcomes) {
-      if (outcome.status === 'rejected') console.error('telemetry review failed', outcome.reason);
+      if (outcome.status !== 'rejected') continue;
+      console.error('telemetry review failed', outcome.reason);
+      captureException(outcome.reason);
     }
   }
 }

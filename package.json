@@ -34,6 +34,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/vue-fontawesome": "^3.3.3",
     "@modelcontextprotocol/server": "^2.3.1",
+    "@sentry/cloudflare": "^11.10.0",
     "@types/node": "^26.6.4",
     "@unhead/vue": "^3.4.2",
     "agents": "^0.23.0",

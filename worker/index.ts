@@ -1,3 +1,4 @@
+import { withSentry } from '@sentry/cloudflare';
 import { markdownCandidates } from '../.vitepress/lib/markdown-candidates.ts';
 import { API_PREFIX, apiHandler } from './api/index.ts';
 import { refreshReleases } from './api/releases.ts';
@@ -5,10 +6,11 @@ import { refreshTelemetryStats } from './api/telemetry-stats.ts';
 import { wantsMarkdown } from './http.ts';
 import { imageAsset } from './images.ts';
 import { mcpHandler } from './mcp/server.ts';
+import { sentryOptions } from './sentry.ts';
 
 const MCP_ROUTE = '/mcp';
 
-export default {
+export default withSentry(sentryOptions, {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     if (url.pathname === MCP_ROUTE) return mcpHandler(env)(request, env, ctx);
@@ -36,8 +38,10 @@ export default {
 
   async scheduled(_event, env) {
     const results = await Promise.allSettled([refreshReleases(env), refreshTelemetryStats(env)]);
-    for (const result of results) {
-      if (result.status === 'rejected') console.error('scheduled refresh failed', result.reason);
-    }
+    const failures = results.flatMap((result) => (result.status === 'rejected' ? [result.reason] : []));
+    for (const reason of failures) console.error('scheduled refresh failed', reason);
+
+    if (failures.length === 1) throw failures[0];
+    if (failures.length > 1) throw new AggregateError(failures, 'scheduled refresh failed');
   },
-} satisfies ExportedHandler<Env>;
+} satisfies ExportedHandler<Env>);
