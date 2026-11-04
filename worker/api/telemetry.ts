@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/cloudflare';
 import { z } from 'zod';
 import { clickhouseConfig, insertRows } from '../clickhouse.ts';
 import { accepted, noStore, preflight } from '../http.ts';
@@ -183,6 +184,7 @@ export async function handleTelemetry(request: Request, env: Env, ctx: Execution
   ctx.waitUntil(
     insertRows(config, TABLE, [row]).catch((error) => {
       console.error('telemetry insert failed', error);
+      captureException(error);
     }),
   );
 
