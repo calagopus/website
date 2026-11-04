@@ -42,7 +42,7 @@ export const compareFaqs: Record<string, Faq[]> = {
     },
     {
       q: 'Which panel has better performance?',
-      a: 'Calagopus, by a wide margin over PHP-based panels: the Rust backend serves between 108x and 447x the panel API throughput of Pterodactyl on the same hardware and CPU quota, measured on the endpoint every panel answers without rate limiting. Go-based PufferPanel is closer, and faster on some configurations. Small deployments will hardly notice; for hosting providers it means fewer CPU cores for the same load.',
+      a: 'Calagopus, by a wide margin over PHP-based panels: the Rust backend serves between 229x and 1073x the panel API throughput of Pelican on the same hardware and CPU quota, measured on the endpoint every panel answers without rate limiting. Go-based PufferPanel is closer, and faster on some configurations. Small deployments will hardly notice; for hosting providers it means fewer CPU cores for the same load.',
     },
   ],
   'compare/index.md': [

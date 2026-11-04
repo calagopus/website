@@ -10,6 +10,7 @@ import CompareSidebarLinks from '../components/CompareSidebarLinks.vue';
 import FeatureMark from '../components/FeatureMark.vue';
 import FeatureTable from '../components/FeatureTable.vue';
 import ImageViewer from '../components/ImageViewer.vue';
+import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
 import { registerWebMcpTools } from './webmcp.ts';
 
@@ -23,7 +24,7 @@ export default {
   Layout: () => {
     return h(DefaultTheme.Layout, null, {
       // https://vitepress.dev/guide/extending-default-theme#layout-slots
-      'layout-bottom': () => h(ImageViewer),
+      'layout-bottom': () => [h(ImageViewer), h(AnchorHandler)],
       'sidebar-nav-after': () => h(CompareSidebarLinks),
     });
   },

@@ -76,7 +76,7 @@ Go to the directory with your Wings Compose file and keep a copy of it and the c
  services:
    wings:
 -    image: ghcr.io/pterodactyl/wings:latest
-+    image: ghcr.io/calagopus/wings:latest
++    image: calagopus/wings:latest
 +    pid: host
 +    cgroup: host
      volumes:

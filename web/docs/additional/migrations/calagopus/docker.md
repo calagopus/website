@@ -50,6 +50,7 @@ sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/
 KEY=$(sudo grep '^APP_ENCRYPTION_KEY=' /etc/calagopus/.env | cut -d= -f2- | tr -d '"')
 sudo sed -i -e "s/CHANGEME/$KEY/g" compose.yml
 
+sudo install -m 600 -o "$(id -un)" /dev/null panel.backup
 sudo -u postgres pg_dump -F c panel | sudo tee panel.backup > /dev/null
 
 sudo docker compose up -d db cache
@@ -66,11 +67,12 @@ On your **standalone system**, stop the panel, dump the database, and print the 
 
 ```bash
 sudo systemctl disable --now calagopus-panel
-sudo -u postgres pg_dump -F c panel | sudo tee /tmp/panel.backup > /dev/null
+install -m 600 /dev/null ~/panel.backup
+sudo -u postgres pg_dump -F c panel > ~/panel.backup
 sudo grep '^APP_ENCRYPTION_KEY=' /etc/calagopus/.env
 ```
 
-Copy `/tmp/panel.backup` to the target machine, into your home directory for example. Then on the **target machine**, from the directory with `panel.backup`, replace `YOUR_ENCRYPTION_KEY` and run:
+Copy `~/panel.backup` to the target machine, into your home directory for example. Then on the **target machine**, from the directory with `panel.backup`, replace `YOUR_ENCRYPTION_KEY` and run:
 
 ```bash
 KEY=YOUR_ENCRYPTION_KEY
@@ -103,6 +105,8 @@ Once the stack is up, open Calagopus in your browser and check:
 - Your servers are visible and intact
 - No setup wizard (OOBE) appears (if it does, the database import likely did not work; see below)
 - Wings nodes are still connected
+
+Then delete `panel.backup` from both machines, or store it somewhere safe. It holds everything in your database.
 
 ## Troubleshooting
 

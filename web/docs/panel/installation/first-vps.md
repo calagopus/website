@@ -286,8 +286,8 @@ This exports the Panel database:
 
 ```bash
 cd /opt/calagopus-panel
+sudo install -m 600 /dev/null panel.backup
 sudo docker compose exec -T db pg_dump -U panel -d panel -F c | sudo tee panel.backup > /dev/null
-sudo chmod 600 panel.backup
 ```
 
 Copy these to another machine, and treat them as secrets:

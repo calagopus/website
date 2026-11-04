@@ -29,6 +29,7 @@ Run this from the directory with Pterodactyl's compose file. It collects what th
 ```bash
 PTERODACTYL_DIRECTORY=/srv/pterodactyl
 
+install -m 600 /dev/null /tmp/ptero.env
 {
   echo "APP_URL=$(sudo docker compose exec -T panel printenv APP_URL)"
   sudo grep '^APP_KEY=' "$PTERODACTYL_DIRECTORY/var/.env"
@@ -38,7 +39,6 @@ PTERODACTYL_DIRECTORY=/srv/pterodactyl
   echo "DB_USERNAME=pterodactyl"
   echo "DB_PASSWORD=$(sudo docker compose exec -T panel printenv DB_PASSWORD)"
 } > /tmp/ptero.env
-sudo chmod 600 /tmp/ptero.env
 cat /tmp/ptero.env
 ```
 

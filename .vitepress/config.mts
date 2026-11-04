@@ -10,10 +10,12 @@ import { faqs } from './data/faqs.ts';
 import { docsSidebar, sidebar } from './data/sidebar.ts';
 import { acceptMarkdownPlugin } from './plugins/accept-markdown.ts';
 import { aiDocPlugin } from './plugins/ai-doc.ts';
+import { anchorsPlugin } from './plugins/anchors.ts';
 import { writeConfigDocs } from './plugins/config-docs.ts';
 import { generateLlmsArtifacts } from './plugins/llms.ts';
 import { imageAssetsPlugin, imageMime, writeImageManifest } from './plugins/mcp-images.ts';
 import { recordPage, writePageManifest } from './plugins/mcp-manifest.ts';
+import { movedPagesPlugin } from './plugins/moved-pages.ts';
 import { expandReleaseMarkdown } from './plugins/releases.ts';
 import { expandFeaturedSponsorsMarkdown } from './plugins/sponsor-sections.ts';
 import { expandSponsorsMarkdown } from './plugins/sponsors.ts';
@@ -63,6 +65,7 @@ export default withMermaid({
 
   vite: {
     plugins: [
+      movedPagesPlugin(),
       acceptMarkdownPlugin(),
       aiDocPlugin([
         {
@@ -135,6 +138,7 @@ export default withMermaid({
     image: { lazyLoad: true },
     config(md) {
       md.use(tabsMarkdownPlugin);
+      md.use(anchorsPlugin);
 
       md.renderer.rules.table_open = () => '<div class="m-table"><table>\n';
       md.renderer.rules.table_close = () => '</table></div>\n';

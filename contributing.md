@@ -70,7 +70,7 @@ Name a file after its sidebar entry, not its H1, so `link:` paths stay predictab
 | `additional/ssl-certificates.md` | `SSL Certificates` | Generating SSL Certificates |
 | `panel/next-steps/reverse-proxy.md` | `Setting up a Reverse Proxy` | Putting the Panel Behind a Reverse Proxy |
 
-Moved or renamed a page? Old URLs aren't redirected, so update every link to it. `pnpm docs:build` catches links to missing pages, but not broken `#anchors`.
+Moved or renamed a page? Update every link to it and add the old URL to `.vitepress/lib/redirects.ts`. Renamed a section? Add the old anchor to `.vitepress/data/moved-anchors.ts`. `pnpm docs:build` catches links to missing pages, but not broken `#anchors`. After a build, `pnpm run check-redirects` checks that every page on the live site is still a page or a redirect.
 
 ### Frontmatter
 
@@ -164,6 +164,7 @@ pnpm run typecheck
 pnpm run check-frontmatter
 pnpm docs:build
 pnpm run check-worker-routes
+pnpm run check-redirects
 pnpm exec wrangler deploy --dry-run
 ```
 

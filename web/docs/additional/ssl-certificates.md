@@ -359,3 +359,7 @@ mkcert panel.lan 192.168.1.10
 ```
 
 It writes `panel.lan+1.pem` (the certificate, use it as `fullchain.pem`) and `panel.lan+1-key.pem` (the key, use it as `privkey.pem`). Copy them to the Panel host or node and reference them as usual. Every other device that opens the Panel needs the root from `mkcert -CAROOT` imported into its trust store, otherwise it shows a certificate warning. mkcert certificates are valid for about two years; issue a new one before then.
+
+## Using the Certificate with Wings in Docker
+
+The Wings compose file only mounts `/etc/ssl/certs/wings/` from the host, so the container can't see Certbot's `/etc/letsencrypt/live/` directory. [Securing Wings with SSL](../wings/next-steps/ssl.md#enable-ssl-in-wings) shows how to copy the certificate in and keep the copy fresh.

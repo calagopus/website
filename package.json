@@ -18,6 +18,7 @@
     "typecheck": "pnpm run worker:types && tsc --noEmit && tsc --noEmit -p worker/tsconfig.json",
     "check-config-docs": "node scripts/check-config-docs.mjs",
     "check-frontmatter": "node scripts/check-frontmatter.mjs",
+    "check-redirects": "node scripts/check-redirects.mjs",
     "check-worker-routes": "node scripts/check-worker-routes.mjs",
     "apply-clickhouse-schema": "node scripts/apply-clickhouse-schema.mjs",
     "sync-ai-search": "node scripts/sync-ai-search.mjs",

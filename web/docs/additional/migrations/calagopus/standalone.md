@@ -31,6 +31,8 @@ Run this from the directory containing your `compose.yml`. It dumps the database
 ```bash
 sudo docker compose exec db pg_dump -U panel -d panel -F c -f /tmp/panel.backup
 sudo docker compose cp db:/tmp/panel.backup ./panel.backup
+sudo chown "$(id -un)" panel.backup
+sudo chmod 600 panel.backup
 sudo grep APP_ENCRYPTION_KEY compose.yml
 sudo docker compose down
 ```
@@ -71,6 +73,8 @@ Open Calagopus in your browser and check:
 - Your servers are visible and intact
 - No setup wizard (OOBE) appears (if it does, the database import likely did not work, see below)
 - Wings nodes are still connected
+
+Then delete `panel.backup`, or store it somewhere safe. It holds everything in your database.
 
 ## Troubleshooting
 
