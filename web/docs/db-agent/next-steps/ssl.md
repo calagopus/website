@@ -14,7 +14,7 @@ DB Agent has two kinds of listeners, and each can use TLS on its own:
 
 Browsers never connect to DB Agent directly; database consoles and logs go through the Panel. TLS on the management API matters when the Panel reaches the agent over a network you don't trust, such as the internet, because the host token and database data travel over that connection. TLS on the database proxies encrypts users' database connections.
 
-TLS is offered, not enforced: a client that doesn't ask for it still connects in plain text, so existing connections keep working after you turn it on.
+The database proxies still accept plain-text clients with TLS on. The management API doesn't, so [point the Panel at HTTPS](#point-the-panel-at-https).
 
 ## Pick an Approach
 
@@ -168,7 +168,7 @@ On Linux, [`tls.ktls_enabled`](../configuration.md#tls-ktls-enabled) hands encry
 
 ## Point the Panel at HTTPS
 
-Once the management API uses TLS, open **Admin → Database Agent Hosts → (your host) → General** and change **URL** to `https://<agent-domain>:8090`. Then open the host's **Configuration** tab and click **Verify Connection**; the result appears in the **Backend to DB Agent** box.
+Once the management API uses TLS, open **Admin → Database Agent Hosts → (your host) → General** and change **URL** to `https://<agent-domain>:8090`. Then open the host's **Configuration** tab, click **Reveal Configuration**, and click **Verify Connection**; the result appears in the **Backend to DB Agent** box.
 
 ## Connecting to Databases over TLS
 

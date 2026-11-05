@@ -143,7 +143,7 @@ On Linux, [`api.ssl.ktls_enabled`](../configuration.md#api-ssl-ktls-enabled) han
 
 ## Point the Panel at HTTPS
 
-In **Admin → Nodes → (your node) → General**, change **URL** to `https://<node-domain>:8080`, and **Public URL** too if you set one. Then open the node's **Configuration** tab and run **Verify Connection**. Both checks have to pass: **Backend to Wings** proves the Panel reaches the node over HTTPS, and **Frontend to Wings** proves your browser does, which the console, uploads and downloads depend on.
+In **Admin → Nodes → (your node) → General**, change **URL** to `https://<node-domain>:8080`, and **Public URL** too if you set one. Then open the node's **Configuration** tab, click **Reveal Configuration**, and run **Verify Connection**. Both checks have to pass: **Backend to Wings** proves the Panel reaches the node over HTTPS, and **Frontend to Wings** proves your browser does, which the console, uploads and downloads depend on.
 
 ## Troubleshooting
 

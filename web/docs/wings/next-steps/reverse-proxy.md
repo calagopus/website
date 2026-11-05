@@ -29,7 +29,11 @@ A broken proxy configuration makes the node unreachable until it's fixed, so kee
 
 ## Step 1: Prepare Wings
 
-Everything in this step happens on the node. The Panel never pushes `api.host`, `api.port`, `api.ssl` or `api.trusted_proxies`, so they can only be set there. Pick the tab that matches how Wings is installed:
+Everything in this step happens on the node. The Panel never pushes `api.host`, `api.port`, `api.ssl` or `api.trusted_proxies`, so they can only be set there.
+
+Merge the `config.yml` snippets below into the existing `api:` block. Wings won't start if `api:` appears twice.
+
+Pick the tab that matches how Wings is installed:
 
 :::: tabs
 === Docker
@@ -38,7 +42,7 @@ The changes go into `config/config.yml` in the Wings compose directory, plus one
 
 ### Turn Off Wings' Own SSL
 
-The proxy terminates TLS and forwards to Wings over plain HTTP. With [`api.ssl`](./ssl.md) still enabled, Wings answers that with a TLS handshake and every request fails with `502`. In `config/config.yml`:
+The proxy terminates TLS and forwards to Wings over plain HTTP. With [`api.ssl`](./ssl.md) still enabled, Wings rejects plain HTTP and every request fails with `502`. In `config/config.yml`:
 
 ```yaml
 api:
@@ -67,7 +71,7 @@ Keep `api.port` at `8080`. It is the port every configuration in Step 2 forwards
 Connections from the proxy arrive from the gateway of the Wings container's Docker network. Print that address inside the Wings compose directory:
 
 ```bash
-sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(docker compose ps -q wings)
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(sudo docker compose ps -q wings)
 ```
 
 Then set [`api.trusted_proxies`](../configuration.md#api-trusted-proxies) to it in `config/config.yml`:
@@ -90,7 +94,7 @@ Any configuration key can also be set with a `CALAGOPUS_`-prefixed environment v
 ### Apply the Changes
 
 ```bash
-sudo docker compose up -d
+sudo docker compose up -d --force-recreate
 ```
 
 === Standalone
@@ -99,7 +103,7 @@ For Wings installed as a binary or from a package. The changes go into `/etc/cal
 
 ### Turn Off Wings' Own SSL
 
-The proxy terminates TLS and forwards to Wings over plain HTTP. With [`api.ssl`](./ssl.md) still enabled, Wings answers that with a TLS handshake and every request fails with `502`:
+The proxy terminates TLS and forwards to Wings over plain HTTP. With [`api.ssl`](./ssl.md) still enabled, Wings rejects plain HTTP and every request fails with `502`:
 
 ```yaml
 api:
@@ -166,7 +170,7 @@ Then confirm Wings answers on the loopback address, and only there:
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:8080/api/system
 ```
 
-A `401` is the expected answer, since the request carries no token. It proves Wings is listening and the proxy will be able to reach it. From another machine, `http://<node-ip>:8080` should now time out or be refused.
+A `401` is the expected answer, since the request carries no token. It proves Wings is listening and the proxy will be able to reach it. A `000` means Wings isn't running or `api.ssl.enabled` is still `true`. From another machine, `http://<node-ip>:8080` should now time out or be refused.
 
 ## Step 2: Configure the Proxy
 
@@ -189,28 +193,57 @@ Other nodes use this proxy too: a server transfer or file copy to this node is P
 
 Only HTTP goes through the proxy. SFTP (port `2022`), the [private network](../advanced/private-network.md) tunnel and the game server ports all connect to the node directly, which works as long as the node's hostname resolves to its real IP.
 
-::::tabs
+:::::tabs
 === Nginx
+
+:::: tabs key:proxy-os
+==== Debian / Ubuntu
 
 **1. Add the WebSocket map** to `/etc/nginx/nginx.conf`, inside `http { ... }` and outside any `server { ... }` block, if this node doesn't have it yet:
 
 <<< @/snippets/reverse-proxies/nginx-websocket-map.conf{nginx}
 
-This sends `Connection: upgrade` only on requests that actually ask for a WebSocket. Without it Nginx sends the header on every request, and multipart uploads and other ordinary traffic break.
-
-**2. Create the site** as `/etc/nginx/sites-available/calagopus-wings.conf` on Debian and Ubuntu, or `/etc/nginx/conf.d/calagopus-wings.conf` on RHEL-based systems.
+**2. Create the site** as `/etc/nginx/sites-available/calagopus-wings.conf`. With nginx.org packages, use `/etc/nginx/conf.d/calagopus-wings.conf` instead and skip the `ln` line in step 3.
 
 <<< @/snippets/reverse-proxies/wings/nginx.conf{nginx}
 
-The `upstream` block names Wings once, and `keepalive 16` lets each Nginx worker keep up to 16 idle connections to it open for reuse instead of opening a new one for every request. Its name differs from the Panel's, so both sites can share one Nginx.
-
-**3. Enable it and reload.** On Debian and Ubuntu, link the site into `sites-enabled`. On RHEL-based systems the file in `conf.d/` is already active.
+**3. Enable it and reload.** Link the site into `sites-enabled`.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/calagopus-wings.conf /etc/nginx/sites-enabled/calagopus-wings.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+==== RHEL / Fedora / Rocky / Alma
+
+**1. Add the WebSocket map** to `/etc/nginx/nginx.conf`, inside `http { ... }` and outside any `server { ... }` block, if this node doesn't have it yet:
+
+<<< @/snippets/reverse-proxies/nginx-websocket-map.conf{nginx}
+
+**2. Create the site** as `/etc/nginx/conf.d/calagopus-wings.conf`. If `nginx -v` shows a version older than 1.25.1, as RHEL 9's default does, apply the note below the tabs.
+
+<<< @/snippets/reverse-proxies/wings/nginx.conf{nginx}
+
+**3. Let Nginx reach Wings.** SELinux blocks Nginx from connecting to port `8080` by default. Skip this if `getenforce` prints `Disabled`.
+
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+**4. Test it and start Nginx.** The file in `conf.d/` is already active.
+
+```bash
+sudo nginx -t
+sudo systemctl enable --now nginx
+sudo systemctl reload nginx
+```
+
+::::
+
+This sends `Connection: upgrade` only on requests that actually ask for a WebSocket. Without it Nginx sends the header on every request, and multipart uploads and other ordinary traffic break.
+
+The `upstream` block names Wings once, and `keepalive 16` lets each Nginx worker keep up to 16 idle connections to it open for reuse instead of opening a new one for every request. Its name differs from the Panel's, so both sites can share one Nginx.
 
 `nginx -t` checks the configuration before anything is reloaded. If it reports an error, fix the file first; the running Nginx keeps its old configuration until the reload succeeds.
 
@@ -222,15 +255,16 @@ The standalone `http2 on;` directive was added in 1.25.1. On older releases, dro
 
 === Apache
 
+:::: tabs key:proxy-os
+==== Debian / Ubuntu
+
 **1. Enable the modules.**
 
 ```bash
 sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel ssl http2
 ```
 
-On RHEL-based systems the modules are compiled in or loaded already; you can skip this step.
-
-**2. Create the site** as `/etc/apache2/sites-available/calagopus-wings.conf` on Debian and Ubuntu, or `/etc/httpd/conf.d/calagopus-wings.conf` on RHEL-based systems.
+**2. Create the site** as `/etc/apache2/sites-available/calagopus-wings.conf`.
 
 <<< @/snippets/reverse-proxies/wings/apache.conf{apache}
 
@@ -242,7 +276,33 @@ sudo apachectl configtest
 sudo systemctl reload apache2
 ```
 
-On RHEL-based systems the file in `conf.d/` is already active; run `apachectl configtest` and `sudo systemctl reload httpd`.
+==== RHEL / Fedora / Rocky / Alma
+
+**1. Let Apache reach Wings.** SELinux blocks Apache from connecting to port `8080` by default. Skip this if `getenforce` prints `Disabled`.
+
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+**2. Install the TLS module and start Apache.** The first start generates a default certificate that the test in step 4 needs.
+
+```bash
+sudo dnf install mod_ssl
+sudo systemctl enable --now httpd
+```
+
+**3. Create the site** as `/etc/httpd/conf.d/calagopus-wings.conf`.
+
+<<< @/snippets/reverse-proxies/wings/apache-rhel.conf{apache}
+
+**4. Test it and reload.** The file in `conf.d/` is already active.
+
+```bash
+sudo apachectl configtest
+sudo systemctl reload httpd
+```
+
+::::
 
 ::: details Apache older than 2.4.47
 Check with `apache2 -v` (or `httpd -v`). Older releases don't understand the `upgrade=websocket` parameter and reject the configuration. Remove `upgrade=websocket` from the `ProxyPass` line and add these lines above it to route WebSocket requests through `mod_proxy_wstunnel` instead:
@@ -300,13 +360,20 @@ Nginx Proxy Manager runs as a container, so it reaches Wings over a shared Docke
 
 Nginx Proxy Manager sets `X-Forwarded-For`, `X-Real-IP` and `X-Forwarded-Proto` on its own. The block above lifts its 2000 MB body limit, which a server transfer exceeds, raises its `90s` timeouts and turns off its response buffering. Don't add a `location /` there; Nginx Proxy Manager generates its own.
 
-::::
+:::::
 
 ## Step 3: Point the Panel at the Proxied URL
 
 In **Admin → Nodes → (your node) → General**, set **URL** to `https://<node-domain>` **without a port**. The proxy listens on `443`, which is what the URL implies. The form warns that no port was given and offers to add `:8080`; ignore it here, since `:8080` would bypass the proxy. Leave **Public URL** empty unless you want browsers to use a different address than the Panel does.
 
-Then open the node's **Configuration** tab and run **Verify Connection**. Both checks have to pass: **Backend to Wings** proves the Panel reaches the node through the proxy, and **Frontend to Wings** proves your browser does, which the console, uploads and downloads depend on.
+Then open the node's **Configuration** tab, click **Reveal Configuration**, and run **Verify Connection**. Both checks have to pass: **Backend to Wings** proves the Panel reaches the node through the proxy, and **Frontend to Wings** proves your browser does, which the console, uploads and downloads depend on. The tab's port mismatch warning is expected behind a proxy.
+
+::: warning Don't paste the generated configuration over `config.yml`
+It doesn't include `api.host`, `api.ssl` or `api.trusted_proxies`, so pasting it removes them. After **Reset Token**:
+
+- **Standalone:** run the `calagopus-wings configure --join-data` command from that tab with `sudo`, then restart Wings.
+- **Docker:** copy just `token_id` and `token` into `config/config.yml`, then run `sudo docker compose restart wings`.
+:::
 
 Finish with a real transfer: open the console, upload a file of a few hundred MiB so chunked requests go through the proxy, and download a backup. If you move servers between nodes, transfer one to this node too.
 
@@ -323,7 +390,8 @@ Cloudflare is a poor fit for a node hostname either way: its per-plan request si
 
 | Symptom | Fix |
 | --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach Wings. Check that it's running with `sudo systemctl status wings` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl). If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
+| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach Wings. Check that it's running with `sudo systemctl status wings` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl). If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in [Step 2](#step-2-configure-the-proxy). |
+| Wings exits on startup with `duplicate mapping key: api` | `config.yml` contains `api:` more than once. Merge the settings from Step 1 into a single block. |
 | The console stays on "connecting" and live statistics never appear | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**. |
 | Uploads, server transfers or file copies to this node fail with `413 Request Entity Too Large` | The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or Nginx Proxy Manager, `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy. |
 | Uploads fail with `417 Expectation Failed` and a message about the file size | That one is Wings, not the proxy: the file is larger than [`api.upload_limit`](../configuration.md#api-upload-limit). Raise it in `config.yml`, or set it to `0` for no limit, and restart Wings. The proxy's body limit does not need to change with it. |

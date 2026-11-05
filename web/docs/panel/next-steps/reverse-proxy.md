@@ -59,7 +59,7 @@ If your proxy runs as a container (Traefik, Nginx Proxy Manager), it reaches the
 Connections that arrive at the Panel from the proxy come from the gateway of the Panel's Docker network. Run this inside the Panel's compose directory to print that address:
 
 ```bash
-sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(docker compose ps -q web)
+sudo docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(sudo docker compose ps -q web)
 ```
 
 It prints something like `172.18.0.1` (one line per network the container is on; use the one that belongs to the compose network). Set [`APP_TRUSTED_PROXIES`](../environment.md#app-trusted-proxies) to that value on the `web` service:
@@ -148,35 +148,67 @@ Every configuration below does the same things. If you use a proxy that isn't li
 
 Pick the proxy you use:
 
-::::tabs
+:::::tabs
 === Nginx
+
+:::: tabs key:proxy-os
+==== Debian / Ubuntu
 
 **1. Add the WebSocket map.** Open `/etc/nginx/nginx.conf` and add this block inside `http { ... }`, next to the other `include` lines. It must not be inside a `server { ... }` block.
 
 <<< @/snippets/reverse-proxies/nginx-websocket-map.conf{nginx}
 
-This sends `Connection: upgrade` only on requests that actually ask for a WebSocket. Without it Nginx sends the header on every request, and multipart uploads and other ordinary traffic break.
-
-**2. Create the site.** Save the configuration as `/etc/nginx/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/nginx/conf.d/calagopus.conf` on RHEL-based systems.
+**2. Create the site.** Save the configuration as `/etc/nginx/sites-available/calagopus.conf`. With nginx.org packages, use `/etc/nginx/conf.d/calagopus.conf` instead and skip the `ln` line in step 3.
 
 ::: code-group
 <<< @/snippets/reverse-proxies/panel/nginx-ssl.conf{nginx} [With SSL]
 <<< @/snippets/reverse-proxies/panel/nginx.conf{nginx} [Without SSL]
 :::
 
-The `upstream` block names the Panel once, and `keepalive 16` lets each Nginx worker keep up to 16 idle connections to it open for reuse instead of opening a new one for every request. Settings shared by every path sit at the server level; each `location` lists only what differs.
-
-::: details Why is there a "Without SSL" variant at all?
-Only for testing on a network you trust, or when TLS is terminated somewhere in front of Nginx (a load balancer or Cloudflare with "Flexible" mode). Passkeys, secure cookies and the browser's clipboard access all need HTTPS, so do not run a real installation this way.
-:::
-
-**3. Enable it and reload.** On Debian and Ubuntu, link the site into `sites-enabled`. On RHEL-based systems the file in `conf.d/` is already active.
+**3. Enable it and reload.** Link the site into `sites-enabled`.
 
 ```bash
 sudo ln -s /etc/nginx/sites-available/calagopus.conf /etc/nginx/sites-enabled/calagopus.conf
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+==== RHEL / Fedora / Rocky / Alma
+
+**1. Add the WebSocket map.** Open `/etc/nginx/nginx.conf` and add this block inside `http { ... }`, next to the other `include` lines. It must not be inside a `server { ... }` block.
+
+<<< @/snippets/reverse-proxies/nginx-websocket-map.conf{nginx}
+
+**2. Create the site.** Save the configuration as `/etc/nginx/conf.d/calagopus.conf`. If `nginx -v` shows a version older than 1.25.1, as RHEL 9's default does, apply the note below the tabs to the **With SSL** configuration.
+
+::: code-group
+<<< @/snippets/reverse-proxies/panel/nginx-ssl.conf{nginx} [With SSL]
+<<< @/snippets/reverse-proxies/panel/nginx.conf{nginx} [Without SSL]
+:::
+
+**3. Let Nginx reach the Panel.** SELinux blocks Nginx from connecting to port `8000` by default. Skip this if `getenforce` prints `Disabled`.
+
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+**4. Test it and start Nginx.** The file in `conf.d/` is already active.
+
+```bash
+sudo nginx -t
+sudo systemctl enable --now nginx
+sudo systemctl reload nginx
+```
+
+::::
+
+This sends `Connection: upgrade` only on requests that actually ask for a WebSocket. Without it Nginx sends the header on every request, and multipart uploads and other ordinary traffic break.
+
+The `upstream` block names the Panel once, and `keepalive 16` lets each Nginx worker keep up to 16 idle connections to it open for reuse instead of opening a new one for every request. Settings shared by every path sit at the server level; each `location` lists only what differs.
+
+::: details Why is there a "Without SSL" variant at all?
+Only for testing on a network you trust, or when TLS is terminated somewhere in front of Nginx (a load balancer or Cloudflare with "Flexible" mode). Passkeys, secure cookies and the browser's clipboard access all need HTTPS, so do not run a real installation this way.
+:::
 
 `nginx -t` checks the configuration before anything is reloaded. If it reports an error, fix the file first; the running Nginx keeps its old configuration until the reload succeeds.
 
@@ -188,6 +220,9 @@ The standalone `http2 on;` directive was added in 1.25.1. On older releases, dro
 
 === Apache
 
+:::: tabs key:proxy-os
+==== Debian / Ubuntu
+
 **1. Enable the modules and disable the default site.** The default site catches every request that doesn't match another `ServerName`, which gets in the way while testing.
 
 ```bash
@@ -195,19 +230,11 @@ sudo a2enmod rewrite headers proxy proxy_http proxy_wstunnel ssl http2
 sudo a2dissite 000-default.conf
 ```
 
-On RHEL-based systems the modules are compiled in or loaded already; you can skip this step.
-
-**2. Create the site.** Save the configuration as `/etc/apache2/sites-available/calagopus.conf` on Debian and Ubuntu, or `/etc/httpd/conf.d/calagopus.conf` on RHEL-based systems.
+**2. Create the site.** Save the configuration as `/etc/apache2/sites-available/calagopus.conf`.
 
 ::: code-group
 <<< @/snippets/reverse-proxies/panel/apache-ssl.conf{apache} [With SSL]
 <<< @/snippets/reverse-proxies/panel/apache.conf{apache} [Without SSL]
-:::
-
-::: details Apache older than 2.4.47
-Check with `apache2 -v` (or `httpd -v`). Older releases don't understand the `upgrade=websocket` parameter and reject the configuration. Remove `upgrade=websocket` from the `ProxyPass` line and add these lines above it to route WebSocket requests through `mod_proxy_wstunnel` instead:
-
-<<< @/snippets/reverse-proxies/panel/apache-websocket-legacy.conf{apache}
 :::
 
 **3. Enable it and reload.**
@@ -218,7 +245,42 @@ sudo apachectl configtest
 sudo systemctl reload apache2
 ```
 
-On RHEL-based systems the file in `conf.d/` is already active; run `apachectl configtest` and `sudo systemctl reload httpd`.
+==== RHEL / Fedora / Rocky / Alma
+
+**1. Let Apache reach the Panel.** SELinux blocks Apache from connecting to port `8000` by default. Skip this if `getenforce` prints `Disabled`.
+
+```bash
+sudo setsebool -P httpd_can_network_connect 1
+```
+
+**2. Install the TLS module and start Apache.** The first start generates a default certificate that the test in step 4 needs.
+
+```bash
+sudo dnf install mod_ssl
+sudo systemctl enable --now httpd
+```
+
+**3. Create the site.** Save the configuration as `/etc/httpd/conf.d/calagopus.conf`.
+
+::: code-group
+<<< @/snippets/reverse-proxies/panel/apache-ssl-rhel.conf{apache} [With SSL]
+<<< @/snippets/reverse-proxies/panel/apache-rhel.conf{apache} [Without SSL]
+:::
+
+**4. Test it and reload.** The file in `conf.d/` is already active.
+
+```bash
+sudo apachectl configtest
+sudo systemctl reload httpd
+```
+
+::::
+
+::: details Apache older than 2.4.47
+Check with `apache2 -v` (or `httpd -v`). Older releases don't understand the `upgrade=websocket` parameter and reject the configuration. Remove `upgrade=websocket` from the `ProxyPass` line and add these lines above it to route WebSocket requests through `mod_proxy_wstunnel` instead:
+
+<<< @/snippets/reverse-proxies/panel/apache-websocket-legacy.conf{apache}
+:::
 
 === Caddy
 
@@ -272,7 +334,7 @@ Nginx Proxy Manager sets `X-Forwarded-For`, `X-Real-IP` and `X-Forwarded-Proto` 
 
 Use `$http_connection`, not the `$connection_upgrade` map from the Nginx tab: Nginx Proxy Manager never defines that map. The `include` lines reuse the forward host, port and headers from the **Details** tab.
 
-::::
+:::::
 
 ## Step 3: Set the Panel URL
 
@@ -365,7 +427,7 @@ Cloudflare also caps the size of a single request per plan (100 MB on Free), and
 
 | Symptom | Fix |
 | --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach the Panel. Check that it's running with `sudo docker compose ps` or `sudo systemctl status calagopus-panel`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
+| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach the Panel. Check that it's running with `sudo docker compose ps` or `sudo systemctl status calagopus-panel`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in [Step 2](#step-2-configure-the-proxy). |
 | The page loads, but the console stays on "connecting" and statistics never appear | The console WebSocket goes to the node's **Public URL**. If that's the node itself, see the [Wings guide](../../wings/next-steps/reverse-proxy.md#troubleshooting). If it's the Panel (All-in-One or Wings Proxy Mode), WebSocket upgrades aren't getting through: on Nginx, confirm the `map` block exists in `nginx.conf` and the `Upgrade` and `Connection` headers are set; on Apache, check the version note above; on Nginx Proxy Manager, enable **Websockets Support**. |
 | Database instance consoles, or the admin node statistics and log views, stay empty | Those WebSockets are the Panel's own, under `/api`, and go through `location /`. The `Upgrade` and `Connection` headers have to apply there too, which the examples do by setting them at the server level. |
 | Uploads fail with `413 Request Entity Too Large` | Raise the body limit (`client_max_body_size`, `LimitRequestBody`, `max_size`) to at least `100 MiB`. On Caddy, check you wrote `128MiB` and not `100MB`. |

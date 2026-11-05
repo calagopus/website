@@ -57,7 +57,7 @@ A reverse proxy runs on the node (or another machine on your network) and answer
 
 ![Node connection settings with the proxied URL and the no-port warning](./images/exposing-wings-in-a-homelab/reverse-proxy.webp)
 
-**4. Verify.** Open the node's **Configuration** tab and click **Verify Connection**. **Backend to Wings** proves the Panel reaches the node through the proxy; **Frontend to Wings** proves your browser does, which the console and file manager depend on.
+**4. Verify.** Open the node's **Configuration** tab, click **Reveal Configuration**, and click **Verify Connection**. **Backend to Wings** proves the Panel reaches the node through the proxy; **Frontend to Wings** proves your browser does, which the console and file manager depend on.
 
 ![Verify Connection with both checks passing](../../panel/features/admin/images/nodes/verify-connection.webp)
 
@@ -89,7 +89,7 @@ The compose files shipped with the Panel already set this to `true`.
 
 ![Node connection settings with a LAN URL and the Wings proxy Public URL](./images/exposing-wings-in-a-homelab/proxy-mode.webp)
 
-**3. Verify.** On the **Configuration** tab, click **Verify Connection**. **Frontend to Wings** now goes through the Panel, so it passes as long as the Panel can reach the LAN address from step 2.
+**3. Verify.** On the **Configuration** tab, click **Reveal Configuration**, then **Verify Connection**. **Frontend to Wings** now goes through the Panel, so it passes as long as the Panel can reach the LAN address from step 2.
 
 ::: info
 The All-in-One image uses this mode for its built-in Wings automatically, which is why a single reverse proxy in front of the Panel is enough there.
@@ -113,7 +113,7 @@ Forward port `8080` on the router straight to the node and enter your public add
 
 **3. Add a certificate if the Panel uses HTTPS.** Browsers block plain `ws://` and `http://` connections from a page served over `https://`, so an HTTPS Panel cannot open the console on an `http://` node. Give the node a dynamic DNS or domain name, get a certificate for it with the [DNS challenge](../../additional/ssl-certificates.md) (port 80 is not needed), and [enable SSL in Wings](../next-steps/ssl.md). Then use `https://mywings.dyndns.org:8080` as the URL. The DNS challenge needs a name, so a bare IP address will not do for this step.
 
-**4. Verify** on the **Configuration** tab with **Verify Connection**.
+**4. Verify** on the **Configuration** tab: click **Reveal Configuration**, then **Verify Connection**.
 
 ::::
 
