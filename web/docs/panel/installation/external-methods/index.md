@@ -1,5 +1,5 @@
 ---
-description: Install Calagopus on TrueNAS SCALE, Unraid, umbrelOS, Runtipi, ZimaOS, or Hostinger, which bundle the Panel and Wings in a single container.
+description: Install Calagopus on TrueNAS SCALE, Unraid, umbrelOS, Runtipi, ZimaOS, Proxmox VE, or Hostinger, which bundle the Panel and Wings in a single container.
 ---
 
 # External Installation Methods
@@ -27,6 +27,9 @@ See the [Runtipi Installation](./runtipi.md) guide. Install Calagopus from the C
 
 === ZimaOS
 See the [ZimaOS Installation](./zimaos.md) guide. Install Calagopus from the Calagopus ZimaOS App Store, no manual Docker setup required. Includes Wings in the same container.
+
+=== Proxmox VE
+See the [Proxmox VE Installation](./proxmox.md) guide. Create a Debian LXC container with the Proxmox VE Community Scripts helper, which installs the All-in-One binary natively. Includes Wings in the same container, but does not support extensions.
 
 === Hostinger
 See the [Hostinger Installation](./hostinger.md) guide. Deploy Calagopus on a Hostinger VPS as a one-click application, no manual Docker setup required. Includes Wings in the same container.
