@@ -461,6 +461,7 @@ export default withMermaid({
                   { text: 'umbrelOS', link: '/docs/panel/installation/external-methods/umbrelos' },
                   { text: 'Runtipi', link: '/docs/panel/installation/external-methods/runtipi' },
                   { text: 'ZimaOS', link: '/docs/panel/installation/external-methods/zimaos' },
+                  { text: 'Proxmox VE', link: '/docs/panel/installation/external-methods/proxmox' },
                   { text: 'Hostinger', link: '/docs/panel/installation/external-methods/hostinger' },
                 ],
               },
