@@ -1,5 +1,5 @@
 ---
-title: Activity
+title: Dashboard Activity
 description: View the activity log for your Calagopus account.
 ---
 

@@ -5,23 +5,23 @@ description: Listen to panel events from your extension and run code when they f
 
 # Events
 
-You may be writing an extension and wondering, how can I delete all of my systems files when someone renames their account? Or maybe not, but still, you want to be able to listen to an event and run some code when it happens. This is where the Panel's event system comes in.
+The Panel's event system lets your extension run code when something happens to a model, such as a server being reinstalled or a user being created, and in some cases change or cancel the operation.
 
-There are different kinds of events that structs can emit, usually, it's the following:
+Models emit events through these traits:
 
 | Trait | Description |
 | ----- | ----------- |
-| [`EventEmittingModel`](https://cratedocs.calagopus.com/shared/models/trait.EventEmittingModel) | This may sound common but is actually the least used event emitter, it's for very specific events that usually ONLY apply to the model they are on, for example, the `Server` model emits an event when it's reinstalled, which is something that only applies to the `Server` model, and it wouldn't make sense for other models to be able to emit this event. |
-| [`CreatableModel`](https://cratedocs.calagopus.com/shared/models/trait.CreatableModel) | This is a more common event emitter, it emits events when a model is created, this is useful for when you want to run some code when a model is created, for example, you may want to create a default configuration for an extension when a new server is created. |
-| [`UpdatableModel`](https://cratedocs.calagopus.com/shared/models/trait.UpdatableModel) | This is also a common event emitter, it emits events when a model is updated, this is useful for when you want to run some code when a model is updated, for example, you may want to update some configuration for an extension when a server is renamed. |
-| [`DeletableModel`](https://cratedocs.calagopus.com/shared/models/trait.DeletableModel) | This is also a common event emitter, it emits events when a model is deleted, this is useful for when you want to run some code when a model is deleted, for example, you may want to clean up some data for an extension when a server is deleted. |
-| [`DuplicableModel`](https://cratedocs.calagopus.com/shared/models/trait.DuplicableModel) | This emits events when a model is duplicated (such as duplicating a role, location, node, egg, egg variable, egg configuration, mount, announcement, oauth provider, backup configuration, database agent template, command snippet, api key, schedule or schedule step). It works just like the create/update/delete emitters, except the model handed to your handlers is the *source* model being duplicated. This is useful for when you want to copy along your own extension's data for the new copy, or cancel a duplication. |
+| [`EventEmittingModel`](https://cratedocs.calagopus.com/shared/models/trait.EventEmittingModel) | The least used emitter, for events specific to one model. For example, the `Server` model emits an event when it's reinstalled, which doesn't apply to any other model. |
+| [`CreatableModel`](https://cratedocs.calagopus.com/shared/models/trait.CreatableModel) | Emits events when a model is created, for example to create a default configuration for your extension when a new server is created. |
+| [`UpdatableModel`](https://cratedocs.calagopus.com/shared/models/trait.UpdatableModel) | Emits events when a model is updated, for example to update your extension's configuration when a server is renamed. |
+| [`DeletableModel`](https://cratedocs.calagopus.com/shared/models/trait.DeletableModel) | Emits events when a model is deleted, for example to clean up your extension's data when a server is deleted. |
+| [`DuplicableModel`](https://cratedocs.calagopus.com/shared/models/trait.DuplicableModel) | Emits events when a model is duplicated (such as duplicating a role, location, node, egg, egg variable, egg configuration, mount, announcement, oauth provider, backup configuration, database agent template, command snippet, api key, schedule or schedule step). It works just like the create/update/delete emitters, except the model handed to your handlers is the *source* model being duplicated. Use it to copy your extension's own data to the new copy, or to cancel a duplication. |
 
-Listening to these events is pretty straightforward, however it does change slightly between the `EventEmittingModel` trait and the other three, so we will go over them separately.
+Listening works slightly differently for `EventEmittingModel` than for the other traits, so they are covered separately.
 
 ## Listening to `EventEmittingModel` Events
 
-For this example, let's use the [`Server`](https://cratedocs.calagopus.com/shared/models/server/struct.Server) model, which emits an event when it is reinstalled. To listen to this event, we need to use the trait and we can basically already listen.
+This example uses the [`Server`](https://cratedocs.calagopus.com/shared/models/server/struct.Server) model, which emits an event when it is reinstalled. Import the trait and register a handler:
 
 ```rs
 use shared::{
@@ -63,7 +63,7 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-Relatively straightforward, you just call the `register_event_handler` function on the model you want to listen to events from, and then you match on the event that is emitted and run your code accordingly. Note that registering is a plain synchronous call - only the handler closure itself is async. It returns an `EventHandlerHandle`, and calling `.disconnect()` on that handle removes the listener again; the lifecycle registrations in the next section return nothing and cannot be undone.
+Call `register_event_handler` on the model you want to listen to, then match on the emitted event. Registering is a plain synchronous call; only the handler closure itself is async. It returns an `EventHandlerHandle`, and calling `.disconnect()` on that handle removes the listener again; the lifecycle registrations in the next section return nothing and cannot be undone.
 
 To see all models that support this, you can check the implementors [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.EventEmittingModel#implementors).
 
@@ -73,7 +73,7 @@ These are a bit more complex, Rust's type system is working overtime with the im
 
 Each of these traits actually exposes **two** kinds of hooks: a *before* hook and an *after* hook. The before hook runs before the database operation happens, and is the one you've probably been using already; it lets you modify the options, the query builder, or cancel the operation entirely by returning an error. The after hook runs after the database operation has completed, but still inside the same transaction, so you can use it to react to the result of the operation while still being able to fail the whole thing if something goes wrong (returning an error from an after hook will roll back the transaction along with everything the before hooks and the operation itself did).
 
-When to use which? A good rule of thumb: if you want to *influence* how the operation happens, use the before hook. If you want to *react* to the operation having happened (for example, because you need the resulting model's UUID, or because you want your side-effects to only run if the operation actually succeeded), use the after hook.
+To *influence* how the operation happens, use the before hook. To *react* after the operation has happened (for example, because you need the resulting model's UUID, or because you want your side-effects to only run if the operation actually succeeded), use the after hook.
 
 ::::tabs
 === CreatableModel
@@ -121,9 +121,9 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-What's important to note here is the `ListenerPriority`, which is an enum that determines the order in which the listeners are called. Huh? But why was that not needed for the `EventEmittingModel` events? Well, that's because those events are run whenever they see fit, you do not have influence over whether they will be cancelled or similar. By name, it's an Emitter, it emits events, you listen to them, but you don't have influence over them. However, with these events, you do have influence over them, for example, with the `CreatableModel` events, you can cancel the creation of the model by returning an error in the handler, or you can modify the options that are used to create the model. This is where the `ListenerPriority` comes in, it determines the order in which the listeners are called, and if a listener returns an error, the listeners with lower priority will not be called.
+`EventEmittingModel` events only tell you something happened, but these handlers can affect the operation: for example, with the `CreatableModel` events, you can cancel the creation of the model by returning an error in the handler, or you can modify the options that are used to create the model. `ListenerPriority` determines the order in which the listeners are called, and if a listener returns an error, listeners with lower priority are not called.
 
-Here's an overview of the parameters of the before handler function (registered with `register_create_handler`):
+Parameters of the before handler (registered with `register_create_handler`):
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
@@ -137,7 +137,7 @@ And the after handler function (registered with `register_after_create_handler`)
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | `result` | `&mut CreateResult` | The result of the creation, this is the value that will be returned from `create`. You can mutate it if you have a reason to, but more commonly you'll just read from it (for example, to grab a freshly assigned UUID for whatever follow-up work you want to do). |
-| `options` | `&CreateOptions` | The options that were used to create the model. Immutable here, since the creation has already happened - modifying them at this point wouldn't change anything. |
+| `options` | `&CreateOptions` | The options that were used to create the model. Immutable here, since the creation has already happened. |
 | `state` | `&State` | The state of the application, you can use this to access the database or other models. |
 | `transaction` | `&mut Transaction` | The same sqlx transaction the creation was performed in. Returning an error here will roll back the whole thing, including the creation itself. |
 
@@ -189,9 +189,9 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-What's important to note here is the `ListenerPriority`, which is an enum that determines the order in which the listeners are called. Huh? But why was that not needed for the `EventEmittingModel` events? Well, that's because those events are run whenever they see fit, you do not have influence over whether they will be cancelled or similar. By name, it's an Emitter, it emits events, you listen to them, but you don't have influence over them. However, with these events, you do have influence over them, for example, with the `UpdatableModel` events, you can cancel the update of the model by returning an error in the handler, or you can modify the options that are used to update the model. This is where the `ListenerPriority` comes in, it determines the order in which the listeners are called, and if a listener returns an error, the listeners with lower priority will not be called.
+`EventEmittingModel` events only tell you something happened, but these handlers can affect the operation: for example, with the `UpdatableModel` events, you can cancel the update of the model by returning an error in the handler, or you can modify the options that are used to update the model. `ListenerPriority` determines the order in which the listeners are called, and if a listener returns an error, listeners with lower priority are not called.
 
-Here's an overview of the parameters of the before handler function (registered with `register_update_handler`):
+Parameters of the before handler (registered with `register_update_handler`):
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
@@ -209,7 +209,7 @@ And the after handler function (registered with `register_after_update_handler`)
 | `state` | `&State` | The state of the application, you can use this to access the database or other models. |
 | `transaction` | `&mut Transaction` | The same sqlx transaction the update was performed in. Returning an error here will roll back the whole thing, including the update itself. |
 
-Note that there's no `options` parameter in the after hook - by the time it runs, the options have already been consumed by the update, and the post-update model itself is the source of truth for what changed.
+The after hook has no `options` parameter: by the time it runs, the options have been consumed by the update, and the post-update model itself is the source of truth for what changed.
 
 To see all models that support this, you can check the implementors of the `UpdatableModel` trait [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.UpdatableModel#implementors).
 
@@ -255,9 +255,9 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-What's important to note here is the `ListenerPriority`, which is an enum that determines the order in which the listeners are called. Huh? But why was that not needed for the `EventEmittingModel` events? Well, that's because those events are run whenever they see fit, you do not have influence over whether they will be cancelled or similar. By name, it's an Emitter, it emits events, you listen to them, but you don't have influence over them. However, with these events, you do have influence over them, for example, with the `DeletableModel` events, you can cancel the deletion of the model by returning an error in the handler, or you can modify the options that are used to delete the model. This is where the `ListenerPriority` comes in, it determines the order in which the listeners are called, and if a listener returns an error, the listeners with lower priority will not be called.
+`EventEmittingModel` events only tell you something happened, but these handlers can affect the operation: for example, with the `DeletableModel` events, you can cancel the deletion of the model by returning an error in the handler, or you can modify the options that are used to delete the model. `ListenerPriority` determines the order in which the listeners are called, and if a listener returns an error, listeners with lower priority are not called.
 
-Here's an overview of the parameters of the before handler function (registered with `register_delete_handler`):
+Parameters of the before handler (registered with `register_delete_handler`):
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
@@ -273,7 +273,7 @@ And the after handler function (registered with `register_after_delete_handler`)
 | `server` | `&Server` | The model that was just deleted. Still readable in memory of course (Rust doesn't make the value disappear just because the row did), so you can use it to clean up extension data, files on disk, or anything else keyed off this model. |
 | `options` | `&DeleteOptions` | The options that were used to delete the model, in case your cleanup logic needs to know whether the deletion was forceful or not. |
 | `state` | `&State` | The state of the application, you can use this to access the database or other models. |
-| `transaction` | `&mut Transaction` | The same sqlx transaction the deletion was performed in. Returning an error here will roll back the whole thing, including the deletion itself - useful if your cleanup is critical and you'd rather keep the row around than have it gone with no extension data cleaned up. |
+| `transaction` | `&mut Transaction` | The same sqlx transaction the deletion was performed in. Returning an error here rolls back everything, including the deletion itself, which is useful if your cleanup is critical and you'd rather keep the row around than have it gone with no extension data cleaned up. |
 
 To see all models that support this, you can check the implementors of the `DeletableModel` trait [in the cratedocs](https://cratedocs.calagopus.com/shared/models/trait.DeletableModel#implementors).
 
@@ -328,18 +328,18 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-What's important to note here is the `ListenerPriority`, which is an enum that determines the order in which the listeners are called. Huh? But why was that not needed for the `EventEmittingModel` events? Well, that's because those events are run whenever they see fit, you do not have influence over whether they will be cancelled or similar. By name, it's an Emitter, it emits events, you listen to them, but you don't have influence over them. However, with these events, you do have influence over them, for example, with the `DuplicableModel` events, you can cancel the duplication of the model by returning an error in the handler. This is where the `ListenerPriority` comes in, it determines the order in which the listeners are called, and if a listener returns an error, the listeners with lower priority will not be called.
+`EventEmittingModel` events only tell you something happened, but these handlers can affect the operation: for example, with the `DuplicableModel` events, you can cancel the duplication of the model by returning an error in the handler. `ListenerPriority` determines the order in which the listeners are called, and if a listener returns an error, listeners with lower priority are not called.
 
-The big thing to keep in mind with duplication is the source model. The before hook is only handed the **source** model - the one being duplicated from - since the copy doesn't exist yet; unlike the create hooks it gets no query builder, so the new copy is constructed from the source model's fields plus the `options`, and the `options` are your only window into what's actually changing (for example, the new name). The after hook, on the other hand, runs once the copy has been inserted, so it receives *both* the source model **and** the freshly created duplicate (mutably), letting you react to the actual result - for example, to grab its newly assigned UUID.
+With duplication, keep the source model in mind. The before hook only gets the **source** model, the one being duplicated, since the copy doesn't exist yet; unlike the create hooks it gets no query builder, so the new copy is constructed from the source model's fields plus the `options`, and the `options` are your only window into what's actually changing (for example, the new name). The after hook runs once the copy has been inserted, so it receives *both* the source model **and** the new duplicate (mutably), for example to read its newly assigned UUID.
 
-Here's an overview of the parameters of the before handler function (registered with `register_duplicate_handler`):
+Parameters of the before handler (registered with `register_duplicate_handler`):
 
 | Parameter | Type | Description |
 | --------- | ---- | ----------- |
 | `model` | `&Self` | The *source* model that is being duplicated. You can read from it to decide what your handler should do, for example, to copy along your extension's own data that is keyed off the source model onto the new copy. |
-| `options` | `&DuplicateOptions` | The options that are used to duplicate the model, these hold the values that differ from the source (for example, the new name). Note that this is immutable, so you cannot change how the duplicate is created here. |
+| `options` | `&DuplicateOptions` | The options used to duplicate the model, holding the values that differ from the source (for example, the new name). They are immutable, so you cannot change how the duplicate is created here. |
 | `state` | `&State` | The state of the application, you can use this to access the database or other models. |
-| `transaction` | `&mut Transaction` | The sqlx database transaction that the duplication runs in, you can use this to run additional queries that are part of the duplication, for example, copying your extension's data for the new model. |
+| `transaction` | `&mut Transaction` | The sqlx database transaction the duplication runs in. Use it to run additional queries that are part of the duplication, for example, copying your extension's data for the new model. |
 
 And the after handler function (registered with `register_after_duplicate_handler`), which runs *after* the duplicate row has been inserted, still inside the same transaction (so returning an error from it will roll back the whole duplication):
 

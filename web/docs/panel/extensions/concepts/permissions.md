@@ -5,13 +5,13 @@ description: Gate your extension routes and UI behind the Panel permission syste
 
 # Permissions
 
-Every mutating route in your extension should be gated on a permission check - something like `permissions.has_server_permission("settings.egg-changer")?` at the top of the handler. The routing docs already covered *how* to do that check; this page is about the other side, which is **where those permission strings come from** and how you register them so admins can actually grant or revoke them in the UI.
+Every mutating route in your extension should check a permission at the top of the handler, such as `permissions.has_server_permission("settings.egg-changer")?`. The [routing page](./routing.md) covers the check itself. This page covers **where those permission strings come from** and how to register them so admins can grant or revoke them in the UI.
 
-The short version: extensions declare their permissions through the `ExtensionPermissionsBuilder` in their `initialize_permissions` method, exactly like routes are declared through `ExtensionRouteBuilder` in `initialize_router`. The Panel then exposes those permissions in the permission-picker UI, so users assigning subusers to a server or admins configuring roles can toggle each one individually.
+Extensions declare permissions through the `ExtensionPermissionsBuilder` in their `initialize_permissions` method, the same way routes are declared through `ExtensionRouteBuilder` in `initialize_router`. The Panel then lists them in the permission picker, so users assigning subusers and admins configuring roles can toggle each one.
 
 ## The Three Permission Scopes
 
-There are three independent permission surfaces, one per "who's being permissioned":
+There are three independent permission scopes:
 
 | Scope | Who it applies to | Where it's checked |
 | ----- | ----------------- | ------------------ |
@@ -19,7 +19,7 @@ There are three independent permission surfaces, one per "who's being permission
 | **Server permissions** | Subusers on a specific server | Client-server routes |
 | **Admin permissions** | Admin roles | Admin routes |
 
-These map 1:1 to the `has_user_permission(...)`, `has_server_permission(...)`, and `has_admin_permission(...)` methods you've already seen on `GetPermissionManager`. The scope you add a permission under has to match the scope of the route that checks it - an admin permission can't be checked by `has_server_permission` and vice versa.
+These map 1:1 to the `has_user_permission(...)`, `has_server_permission(...)`, and `has_admin_permission(...)` methods you've already seen on `GetPermissionManager`. The scope you add a permission under has to match the scope of the route that checks it: an admin permission can't be checked by `has_server_permission`, and vice versa.
 
 ## The Shape of a Permission
 
@@ -32,12 +32,12 @@ pub struct PermissionGroup {
 }
 ```
 
-A group has a description (what the group is about, shown in the permission picker), and a map of permission names to their descriptions. So a group like `settings` might contain permissions `read`, `update`, and `egg-changer`, each with its own blurb explaining what granting that permission does.
+A group has a description (what the group is about, shown in the permission picker), and a map of permission names to their descriptions. So a group like `settings` might contain permissions `read`, `update`, and `egg-changer`, each with its own description of what granting it allows.
 
-**The dotted strings you see in permission checks are `<group_name>.<permission_name>`.** `settings.egg-changer` means "the `egg-changer` permission inside the `settings` group". This is the full "permission node" - the group name isn't just organizational, it's part of the identifier.
+**The dotted strings you see in permission checks are `<group_name>.<permission_name>`.** `settings.egg-changer` means "the `egg-changer` permission inside the `settings` group". This is the full permission node; the group name is part of the identifier, not just a heading.
 
 ::: info
-Use **kebab-case** for both group names and permission names - `egg-changer`, not `eggChanger` or `egg_changer` or `EggChanger`. This matches the convention the core Panel uses and keeps the permission picker visually consistent.
+Use **kebab-case** for both group names and permission names: `egg-changer`, not `eggChanger` or `egg_changer` or `EggChanger`. This matches the convention the core Panel uses and keeps the permission picker visually consistent.
 :::
 
 ## Registering Permissions
@@ -82,9 +82,9 @@ permissions.has_server_permission("my-feature.update")?;
 
 ## Giving a Group an Icon
 
-New groups you register show up in the permission-picker UI with no icon by default, which looks a bit bare next to the core Panel's groups. Giving your group an icon is optional but recommended - it makes the picker scannable and signals to users at a glance what the group is for.
+New groups show up in the permission picker without an icon. An icon is optional, but it makes the group easier to spot next to the core Panel's groups.
 
-Icons are attached **from the frontend**, not the backend. This is a presentation concern and lives on the extension registry, not the permission builder:
+Icons are attached **from the frontend**, on the extension registry, not in the backend permission builder:
 
 ```tsx
 import { Extension, ExtensionContext } from 'shared';
@@ -112,17 +112,17 @@ The registry exposes one method per scope, matching the three on the backend bui
 - `addAdminPermissionIcon(groupName, icon)`
 - `addServerPermissionIcon(groupName, icon)`
 
-Each takes the **group name** (not a permission node - icons are per-group, not per-permission) and a `ReactNode`. The `ReactNode` is usually a `<FontAwesomeIcon>` to match the rest of the Panel's visual style, but technically any React element works.
+Each takes the **group name** (icons are per group, not per permission) and a `ReactNode`. Use a `<FontAwesomeIcon>` to match the rest of the Panel, though any React element works.
 
 ::: info
-Registering an icon for a group name that doesn't exist is harmless - the icon is simply never rendered. This means you can safely register icons for groups you've only *mutated* rather than created, and it means adding icons before you've finalized the group name won't crash anything. But in the typical case, add the icon for the same group name you registered in `initialize_permissions` on the backend.
+Registering an icon for a group name that doesn't exist is harmless: the icon is never rendered. Normally you add the icon for the same group name you registered in `initialize_permissions` on the backend.
 :::
 
-This also works for core groups you've mutated - if you add a new permission to the existing `settings` group on the backend (see the next section), you usually *don't* want to also replace the core icon, but the capability exists if you really need to.
+It also works for core groups you've mutated. If you add a permission to the existing `settings` group (see the next section), you usually *don't* want to replace its core icon, but you can.
 
 ## Mutating Core Permission Groups
 
-Here's where it gets interesting. Instead of creating a brand-new group for one or two permissions, you can **add your permission to an existing core group**. This is usually the right call when your permission is conceptually part of an existing surface area - for example, a permission that lets a subuser change their server's egg fits cleanly into the existing `settings` group on server permissions, rather than needing its own top-level group.
+Instead of creating a new group for one or two permissions, you can **add your permission to an existing core group**. That is usually the right choice when the permission belongs to an existing area. For example, a permission that lets a subuser change their server's egg fits into the existing `settings` group on server permissions.
 
 The builder exposes `mutate_*_permission_group` methods for this:
 
@@ -138,26 +138,26 @@ async fn initialize_permissions(
 }
 ```
 
-Your check then reads `permissions.has_server_permission("settings.egg-changer")?` - it looks exactly like a core permission to the rest of the codebase, because as far as the permission system is concerned, it is one.
+Your check then reads `permissions.has_server_permission("settings.egg-changer")?`. To the permission system, it is a core permission like any other.
 
 **When to pick which:**
 
-- **Add a new group** when you're introducing a whole area of functionality - a new page, a new resource type, something that would warrant its own section in the permission picker. Users scanning permissions should see "ah, this is all the X extension's stuff" at a glance.
-- **Mutate an existing group** when you're adding one or two permissions that fit naturally into something that already exists. Server operators shouldn't have to learn a new top-level category just because you added one checkbox.
+- **Add a new group** when you introduce a whole area of functionality, such as a new page or resource type, that deserves its own section in the permission picker.
+- **Mutate an existing group** when you add one or two permissions that fit into something that already exists. A single new checkbox doesn't need a new top-level category.
 
-Most extensions end up doing at least some of the second pattern - the `settings` group in particular is a common target, since a lot of extensions add configuration surfaces that conceptually live under "settings".
+The `settings` group is a common target, since many extensions add configuration that belongs there.
 
 ::: warning
 **You can also remove permissions from core groups.** The `ExtensionPermissionsBuilder` fields are `pub`, and `PermissionGroup.permissions` is a mutable `IndexMap`, which means nothing at the API level stops you from calling `.remove(...)` inside a `mutate_*` closure to strip permissions the core Panel defined.
 
-**Don't.** Removing permissions the Panel defined will break core UI that depends on them, silently lock users out of functionality they're supposed to have, and if another extension is registered after yours, its behavior becomes load-order-dependent in ways that are genuinely hard to debug. The capability exists because the API is consistent, not because it's a supported workflow. If you think you need to remove a core permission, what you probably actually want is to *check* a different permission in your own code, or to introduce an admin-level toggle that your extension can gate on itself.
+**Don't.** Removing a permission the Panel defined breaks core UI that depends on it, silently locks users out of features they should have, and makes other extensions' behavior depend on load order. It is possible only because the API is consistent, not because it is supported. If you think you need it, you probably want to *check* a different permission in your own code, or add an admin-level toggle your extension checks itself.
 
-Mutating existing permissions (e.g. changing a description) is a similarly sharp tool - possible, but you're modifying UI that other parts of the Panel and other extensions see. Do it rarely and deliberately.
+Changing existing permissions, such as a description, is possible too, but it changes UI that the rest of the Panel and other extensions see. Do it rarely.
 :::
 
 ## Checking Permissions in Routes
 
-This is covered more fully in the [routing page](./routing.md#writing-a-route-handler), but for completeness: once a permission is registered, you check it at the top of your handler with `GetPermissionManager`:
+The [routing page](./routing.md#writing-a-route-handler) covers this in detail. Once a permission is registered, check it at the top of your handler with `GetPermissionManager`:
 
 ```rs
 pub async fn route(
@@ -171,11 +171,11 @@ pub async fn route(
 }
 ```
 
-The `?` bubbles a `403 Forbidden` with the permission node embedded in the message if the current user doesn't have it. Always put the check before any work that could leak data or side effects - treat it as the first line of the handler body.
+The `?` bubbles a `403 Forbidden` with the permission node embedded in the message if the current user doesn't have it. Put the check before any work that could leak data or cause side effects, as the first line of the handler body.
 
 ## Checking Permissions on the Frontend
 
-Backend checks are the security boundary - they're what actually stops a request from doing something the user shouldn't. But you almost always want the frontend to also know about permissions, so you can hide UI the user can't use rather than letting them click a button that just returns 403. For that, the Panel ships a `Can` component in two flavors:
+Backend checks are the security boundary. The frontend should still know about permissions, so it can hide UI the user can't use instead of showing a button that returns 403. For that, the Panel has a `Can` component in two variants:
 
 ```tsx
 import { ServerCan, AdminCan } from '@/elements/Can.tsx';
@@ -193,7 +193,7 @@ The basic usage is to wrap any UI that requires a permission, passing the permis
 </ServerCan>
 ```
 
-If the user has the permission, the children render. If they don't, nothing renders - the whole block is hidden. This is the "if you can't use it, you don't see it exists" pattern, and it's the right default for most feature-level UI.
+If the user has the permission, the children render. If they don't, the whole block is hidden. That is the right default for most feature-level UI.
 
 ### Props
 
@@ -208,9 +208,9 @@ If the user has the permission, the children render. If they don't, nothing rend
 
 ### Choosing between "hide" and "show disabled"
 
-The default behavior (hide everything) is usually right for **whole features** - if a subuser can't use your egg-changer at all, showing them an empty card that's grayed out is just noise. Hide the card.
+Hiding is usually right for **whole features**: if a subuser can't use your egg changer at all, a grayed-out card is just noise.
 
-But for **inline actions inside a feature they *can* otherwise see**, a disabled button with a tooltip is often better UX. The user sees what they *would* be able to do, gets a clear signal they can't, and can ask their admin for the right permission if they need it. That's what `cantSave` and `cantDelete` are for on `AdminCan` - they render a stock disabled button with a "you don't have permission to save" tooltip:
+For **actions inside a feature the user can otherwise see**, a disabled button with a tooltip is often better. The user sees what exists and can ask an admin for the permission. That is what `cantSave` and `cantDelete` on `AdminCan` do: they render a disabled button with a "you don't have permission to save" tooltip:
 
 ```tsx
 <AdminCan action='extensions.manage' cantSave>
@@ -251,7 +251,7 @@ Add `matchAny` to require just one of them:
 
 ### Imperative checks
 
-If you need to branch on permissions in logic rather than in JSX - e.g. deciding whether to show a column in a table based on one field, or whether to include an action in a dropdown - you can call the hooks directly:
+To branch on permissions in logic instead of JSX, for example to decide whether a table shows a column or a dropdown includes an action, call the hooks directly:
 
 ```tsx
 import { useServerPermissions, useCan } from '@/plugins/usePermissions.ts';
@@ -274,19 +274,17 @@ The same module also exports `useServerCan(action, matchAny?)` and `useAdminCan(
 Prefer the `<Can>` components for rendering decisions and the hooks only for cases where the JSX wrapper is awkward.
 
 ::: warning
-Frontend permission checks are a UX layer, not a security layer. Never skip the backend check just because you wrapped the UI in `<ServerCan>` - a user can trivially hit your API with curl or by editing the frontend bundle. The `<Can>` components decide what's *visible*; `has_server_permission(...)?` on the backend decides what's *allowed*. Both are needed for correct behavior.
+Frontend permission checks are a UX layer, not a security layer. Never skip the backend check because the UI is wrapped in `<ServerCan>`; anyone can call your API with curl. The `<Can>` components decide what's *visible*; `has_server_permission(...)?` on the backend decides what's *allowed*. You need both.
 :::
 
 ## Design Guidelines
 
-A few things to keep in mind when designing your permission surface:
+- **Prefer more granular permissions over fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to *look* at things without also being able to change them.
 
-- **Err on the side of more granular permissions, not fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to *look* at things without also being able to change them.
+- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission *lets someone do*. A name like `post-switch-endpoint` describes the route instead, and stops being accurate once you restructure your routes.
 
-- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission *lets someone do*. A name like `post-switch-endpoint` would be bad because it describes the route, not the capability - if you ever restructure your routes, the permission name becomes a lie.
-
-- **Descriptions are shown to humans configuring permissions.** Write them as a full sentence, starting with "Allows ..." or similar, describing what the permission lets someone do in user-facing terms. Avoid jargon that only makes sense if you've read the code.
+- **Descriptions are shown to humans configuring permissions.** Write them as a full sentence, starting with "Allows ..." or similar, in terms a user understands without reading the code.
 
 - **Don't register permissions you never check.** A permission that doesn't gate anything just confuses operators who turn it on and wonder why nothing changes.
 
-- **Once a permission is live, its name is effectively a public API.** Renaming it breaks every role configuration that referenced it, and existing subusers lose access to the functionality it guarded. If you need to rename one, plan for a migration path (register the new name, keep checking the old for a release or two, deprecate the old in a later version).
+- **Once a permission is live, its name is effectively a public API.** Renaming it breaks every role configuration that referenced it, and existing subusers lose access to the functionality it guarded. To rename one, plan a migration: register the new name, keep checking the old one for a release or two, then remove it.

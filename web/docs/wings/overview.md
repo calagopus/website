@@ -1,6 +1,6 @@
 ---
 title: Wings Overview
-description: Overview of Calagopus Wings, the Rust-based node daemon that manages Docker containers for game servers. Covers minimum requirements, supported CPU architectures, and the technical stack.
+description: "Overview of Calagopus Wings, the Rust node daemon that runs game servers in Docker containers: minimum requirements, supported CPU architectures, and the technical stack."
 ---
 
 # Wings
@@ -26,13 +26,13 @@ Wings uses Docker to run and isolate game server containers. Docker must be inst
 - **Runtime**: [`tokio`](https://crates.io/crates/tokio)
 - **SSH Handling**: [`russh`](https://crates.io/crates/russh)
 
-Only Linux and macOS are officially supported, due to reliance on Unix-specific features. Most functionality is implemented from scratch or via small, focused crates to keep the dependency tree lean.
+Official builds are published for Linux only, due to reliance on Unix-specific features. Most functionality is implemented from scratch or via small, focused crates to keep the dependency tree lean.
 
 ## Volumes
 
 Wings uses several directories on the host. Knowing where each one is matters for troubleshooting, backups, and disk management.
 
-Most of these live under `root_directory` by default (see [path placeholders](configuration.md#system-configuration) for how that works), so the paths below are shown already resolved.
+Most of these live under `root_directory` by default (see [path placeholders](./configuration.md#system-configuration) for how that works), so the paths below are shown already resolved.
 
 | Volume | Description | Default Paths |
 | :--- | :--- | :--- |
@@ -46,5 +46,5 @@ Most of these live under `root_directory` by default (see [path placeholders](co
 | `tmp_directory` | Temporary files | **Unix:** `/var/lib/calagopus-wings/tmp`<br>**Win:** `C:\ProgramData\Calagopus-Wings\tmp` |
 
 ::: info
-The default paths intentionally match Pterodactyl's defaults, so migrating from Pterodactyl to Calagopus doesn't require moving any server data, Wings will find everything where it already is. These defaults are not planned to change.
+A node migrated from Pterodactyl or Pelican keeps the paths in its existing config, so no server data has to move. See [Migrating Wings Nodes](../additional/migrations/wings.md).
 :::

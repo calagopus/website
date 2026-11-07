@@ -1,6 +1,6 @@
 ---
 title: File Manager
-description: Extend the Panel's file manager - component slots, context menu interceptors, file icons, custom open behaviour and custom editors.
+description: Extend the Panel's file manager with component slots, context menu interceptors, file icons, custom open behaviour and custom editors.
 ---
 
 # File Manager
@@ -59,15 +59,15 @@ The full list:
 | `fileEditorSettings` | `enterFileEditorSettings` | The gear popover beside the file name in the editor | `edit` and `new` only |
 | `fileImageViewerSettings` | `enterFileImageViewerSettings` | The same popover for the image viewer | `image` only |
 
-The three settings slots all land inside a popover dropdown laid out as a narrow vertical stack, so put compact controls there - a switch, a select, a short number input. A card will look wrong.
+The three settings slots all land inside a popover dropdown laid out as a narrow vertical stack, so put compact controls there, such as a switch, a select or a short number input. A card will look wrong.
 
 ::: warning
-**`container` components sit outside the file manager's provider.** The `/files` page renders `FileManagerProvider` as a *child* of the container, and the container's slots render outside that child, so a component slotted into `container` cannot call `useFileManager` or `useFileManagerApi` - the hook throws. Use `container` for chrome that does not need file state, and `fileToolbar` or `fileSettings` for anything that does.
+**`container` components sit outside the file manager's provider.** The `/files` page renders `FileManagerProvider` as a *child* of the container, and the container's slots render outside that child, so a component slotted into `container` cannot call `useFileManager` or `useFileManagerApi`; the hook throws. Use `container` for chrome that does not need file state, and `fileToolbar` or `fileSettings` for anything that does.
 
 `editorContainer` is the other way round: it renders inside the provider, so it can read file state.
 :::
 
-`container` and `editorContainer` are `ContainerRegistry` instances rather than plain lists, which gives them three insertion points instead of two - `prependComponent` (above everything), `prependContentComponent` (below the header, above the content) and `appendContentComponent` (below the content).
+`container` and `editorContainer` are `ContainerRegistry` instances rather than plain lists, which gives them three insertion points instead of two: `prependComponent` (above everything), `prependContentComponent` (below the header, above the content) and `appendContentComponent` (below the content).
 
 ## Context Menus
 
@@ -112,13 +112,13 @@ ctx.extensionRegistry.pages.server.files.enterFileContextMenu((menu) =>
 
 Every context menu registry takes two kinds:
 
-- **`addItemInterceptor(fn)`** - a plain function, `(items, props) => void`. Cannot use hooks.
-- **`addComponentItemInterceptor(Component)`** - a React component rendered with `{ items, ...props }`. Mutates `items` during its own render, and can use hooks to get there.
+- **`addItemInterceptor(fn)`**: a plain function, `(items, props) => void`. Cannot use hooks.
+- **`addComponentItemInterceptor(Component)`**: a React component rendered with `{ items, ...props }`. Mutates `items` during its own render, and can use hooks to get there.
 
 For the mass context menu the component form is not a preference, it is the only thing that works: that menu passes **no props at all**, so a plain function has no way to learn which files are selected. A component interceptor can call `useFileManager` and read `selectedFiles` itself.
 
 ::: warning
-Push your items **during render, on every render**. The item array is rebuilt from scratch each time the menu's props change, so an interceptor that adds its entries once - from a `useEffect`, or behind a "have I run yet" flag - loses them on the next rebuild.
+Push your items **during render, on every render**. The item array is rebuilt from scratch each time the menu's props change, so an interceptor that adds its entries once (from a `useEffect`, or behind a "have I run yet" flag) loses them on the next rebuild.
 :::
 
 Two more things about the items themselves: submenus are exactly one level deep, so an item's `items` array cannot hold further nested items, and menu items only fire on real user clicks, which is worth knowing if you drive the Panel from a test script.
@@ -249,7 +249,7 @@ ctx.extensionRegistry.pages.server.files
   );
 ```
 
-**Icon handlers run first, before every built-in check.** Return `undefined` to pass and let the next handler or the stock icon logic decide. Return an icon and it is used - including for directories, which is almost never what you want, so check `file.directory` before you return anything.
+**Icon handlers run first, before every built-in check.** Return `undefined` to pass and let the next handler or the stock icon logic decide. Return an icon and it is used, including for directories, which is almost never what you want, so check `file.directory` before you return anything.
 
 **Openable handlers run in the middle.** Directories and browsable archives are resolved before your handler is called, and the sqlite, image, audio and text-editor checks happen after it. So:
 
@@ -258,7 +258,7 @@ ctx.extensionRegistry.pages.server.files
 - **There is no veto.** The loop takes the first handler that returns `openable: true` and ignores every `{ openable: false }` along the way. You cannot use a handler to make something *stop* being openable, and the `reason: 'tooLarge'` field is only ever set by core.
 
 ::: warning
-Claiming an oversized file only gets you past the *frontend* check. The same limit is enforced by the backend: the file contents endpoint passes `max_file_manager_view_size` to Wings and returns `413` above it, and writes are capped the same way. A custom editor for very large files has to fetch its content from your own extension route - the Panel's content endpoint will refuse.
+Claiming an oversized file only gets you past the *frontend* check. The same limit is enforced by the backend: the file contents endpoint passes `max_file_manager_view_size` to Wings and returns `413` above it, and writes are capped the same way. A custom editor for very large files has to fetch its content from your own extension route, because the Panel's content endpoint will refuse.
 :::
 
 ## The Open Handler Contract
@@ -277,7 +277,7 @@ Which gives one rule:
 
 `handleFileOpen(file, action, params)` takes the entry's name, the action name that selects the editor, and extra query parameters. Two details worth having:
 
-- The first argument does not have to be the file that was clicked - pass a different name to open a sibling.
+- The first argument does not have to be the file that was clicked; pass a different name to open a sibling.
 - `params` is part of a workspace tab's identity, so opening the same file twice with different `params` gives the user two tabs rather than reusing one.
 
 The whole path is gated on `files.read-content`. If the user lacks it, nothing opens and your handler is never called.
@@ -322,20 +322,20 @@ Prefix your action names the way you prefix everything else.
 
 ### String Or Blob
 
-`contentType` decides what your component is handed, and the Panel always fetches the file first either way - there is no opt-out, so a custom editor costs one full download even if it never reads the result.
+`contentType` decides what your component is handed, and the Panel always fetches the file first either way. There is no opt-out, so a custom editor costs one full download even if it never reads the result.
 
 | `contentType` | Your `content` receives | Stock **Save** button |
 | ------------- | ----------------------- | --------------------- |
 | `'string'` | The decoded text, plus `setContent` | Works inside a tree pane, does nothing on the editor page |
 | `'blob'` | The raw `Blob`, plus `setContent` | Never works. Persistence is yours |
 
-The Save column needs spelling out. On the **editor page** the stock Save button writes whatever your component last passed to `setContent`: the string as `text/plain`, or the blob as raw bytes, to the file the page was opened for. Panels before 1.2.3 rendered the button but silently did nothing for custom actions, and showed Create instead of Save for them. Supplying `header.rightSection` with your own save control removes the stock button, since on that surface `rightSection` *replaces* the entire stock button group.
+On the **editor page** the stock Save button writes whatever your component last passed to `setContent`: the string as `text/plain`, or the blob as raw bytes, to the file the page was opened for. Panels before 1.2.3 rendered the button but silently did nothing for custom actions, and showed Create instead of Save for them. Supplying `header.rightSection` with your own save control removes the stock button, since on that surface `rightSection` *replaces* the entire stock button group.
 
 ### The Header, And How It Differs Per Surface
 
 `header` has two optional components, and they do not behave the same way:
 
-- **`header.settings`** replaces the gear popover next to the title, on both surfaces. Because it replaces it, a custom action also suppresses the `fileEditorSettings` and `fileImageViewerSettings` slots - those live inside the stock popovers, which no longer render.
+- **`header.settings`** replaces the gear popover next to the title, on both surfaces. Because it replaces it, a custom action also suppresses the `fileEditorSettings` and `fileImageViewerSettings` slots, which live inside the stock popovers that no longer render.
 - **`header.rightSection`** replaces the whole right-hand group on the **editor page**, but is rendered *alongside* the stock revert, history, save and close controls inside a **tree pane**. Design it so it reads correctly next to those, not only instead of them.
 
 `title(file)` is your page title, and it wins over every built-in title rule. A tree pane falls back to the bare file name if no action matched.
@@ -390,7 +390,7 @@ The fields extensions usually want:
 Gate destructive menu items on `browsingWritableDirectory`, not on permissions alone. A user with `files.delete` still cannot delete anything while browsing a backup.
 
 ::: tip
-Entries can be **virtual** - `file.virtual` is set for things that are not files on disk, such as entries inside a browsed archive or backup. Your icon and openable handlers are called for them exactly as for real files, so check the flag before you offer an operation that assumes a real path.
+Entries can be **virtual**: `file.virtual` is set for things that are not files on disk, such as entries inside a browsed archive or backup. Your icon and openable handlers are called for them exactly as for real files, so check the flag before you offer an operation that assumes a real path.
 :::
 
 ## Monaco And Pierre
@@ -411,7 +411,7 @@ ctx.extensionRegistry.elements
   );
 ```
 
-The catch is local to this page. The file manager is the only place in the Panel that offers a second editor engine: users pick Monaco or **Pierre** in the editor settings, and only the handlers for the engine they picked run. Every other editor in the Panel - the YAML editors, the email template editor, the database query console, the node log viewer, the egg installation script editor - is unconditionally Monaco. A feature that only hooks Monaco therefore goes missing for Pierre users on this one screen without any error, so hook both engines.
+The file manager is the only place in the Panel that offers a second editor engine: users pick Monaco or **Pierre** in the editor settings, and only the handlers for the engine they picked run. Every other editor in the Panel (the YAML editors, the email template editor, the database query console, the node log viewer and the egg installation script editor) always uses Monaco. A feature that only hooks Monaco therefore goes missing for Pierre users on this one screen without any error, so hook both engines.
 
 The Pierre handler receives the Panel's `PierreEditorHandle` (`getValue`, `setValue`, `applyEdits`, `setCarets`, `focus`) and the raw `@pierre/diffs` `Editor` instance behind it, which is where `setMarkers`, `setSelections`, `undo` and `getViewState` live. Both registries also take `addDiffOnMountHandler` for the diff views, meaning the revision comparison and the save-conflict modal. The Pierre diff view is read-only and hands its handler only the handle.
 
@@ -427,7 +427,7 @@ One file-manager-specific difference: context menu items take a `canAccess` bool
 
 ## What Has No Extension Hook
 
-These parts of the file manager expose nothing at all, which is worth knowing before you go looking for a registry that is not there:
+These parts of the file manager have no extension points:
 
 - Drag and drop, including the tab drags that split editor panes
 - Uploads, the upload manager and the incomplete-uploads banner
@@ -435,7 +435,7 @@ These parts of the file manager expose nothing at all, which is worth knowing be
 - File revisions, the history drawer and the diff view
 - Collaborative editing
 - The editor **tab** context menu, which builds its items directly rather than through a registry
-- Every modal - rename, permissions, extract, pull, mass rename and the rest
+- Every modal: rename, permissions, extract, pull, mass rename and the rest
 
 The only escape hatch is a route interceptor that replaces the whole page, described in [Mounting UI](./mounting-ui.md#interceptors). Replacing the file manager means you own keeping it working as the Panel evolves, so weigh that against the feature you wanted.
 

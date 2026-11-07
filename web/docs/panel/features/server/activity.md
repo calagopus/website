@@ -1,5 +1,5 @@
 ---
-title: Activity
+title: Server Activity
 description: The audit log for a single Calagopus server, covering who did what, from which IP, and when.
 ---
 

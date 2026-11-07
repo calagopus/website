@@ -1,16 +1,17 @@
 ---
 title: SSL Certificates
-description: Get a free Let's Encrypt certificate for your Calagopus Panel and Wings nodes with certbot or acme.sh, keep it renewing automatically, and wire it into Wings on bare metal or in Docker.
+description: Get a free Let's Encrypt certificate for the Calagopus Panel and Wings with certbot, acme.sh or lego, keep it renewing, or use a certificate from another source.
 ---
 
 # Generating SSL Certificates
 
-Passkeys, secure session cookies and several browser features only work over HTTPS. The browser connects to the Panel and, unless a node uses Wings Proxy Mode, to each Wings node directly, so each of them needs a certificate that is valid for its hostname. This guide walks you through getting one from [Let's Encrypt](https://letsencrypt.org), which issues certificates for free, using whichever ACME client you prefer. Certificates from [other sources](#other-sources-of-certificates) are covered at the end.
+Passkeys, secure session cookies and several browser features only work over HTTPS. The browser connects to the Panel and, unless a node uses Wings Proxy Mode, to each Wings node directly, so each of them needs a certificate that is valid for its hostname. This guide gets one from [Let's Encrypt](https://letsencrypt.org), which issues certificates for free, with the ACME client of your choice. Certificates from [other sources](#other-sources-of-certificates) are covered at the end.
 
 You need this before you:
 
-- Put a [reverse proxy](reverse-proxies/) in front of the Panel or a node, unless the proxy is Caddy, which fetches its own certificate.
-- [Enable SSL directly in Wings](../wings/configuration.md#ssl-configuration) on a node without a proxy.
+- Put a [reverse proxy](./reverse-proxies.md) in front of the Panel or a node, unless the proxy is Caddy, Traefik or Nginx Proxy Manager, which issue their own certificate.
+- [Enable SSL directly in Wings](../wings/next-steps/ssl.md) on a node without a proxy.
+- [Enable TLS in DB Agent](../db-agent/next-steps/ssl.md) for its management API or database proxies.
 
 ## What You End Up With
 
@@ -77,7 +78,7 @@ Certbot's `live` directory contains symlinks into `/etc/letsencrypt/archive/`; t
 
 Certbot installs a systemd timer (or cron job) that checks twice a day and renews any certificate within 30 days of expiry. If you used the `--nginx` or `--apache` plugin, that's all you need: the plugin reloads your webserver as part of the renewal.
 
-Wings re-reads its certificate files from disk once a day, so a renewed certificate is picked up on its own within 24 hours. If you would rather have Wings switch immediately, or you used `--standalone` and want a webserver reloaded, add a deploy hook:
+Anything else that reads the certificate has to be told about the new one. Certbot runs every executable script in `/etc/letsencrypt/renewal-hooks/deploy/` after a successful renewal, so put the reload there. For example, for a webserver that certbot's plugins don't manage:
 
 ```bash
 sudo nano /etc/letsencrypt/renewal-hooks/deploy/reload-services.sh
@@ -85,14 +86,16 @@ sudo nano /etc/letsencrypt/renewal-hooks/deploy/reload-services.sh
 
 ```bash
 #!/bin/bash
-systemctl restart wings 2>/dev/null
+systemctl reload nginx
 ```
 
 ```bash
 sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/reload-services.sh
 ```
 
-Certbot runs every script in `renewal-hooks/deploy/` after a successful renewal. Test the whole flow without waiting for the real expiry:
+On a Wings node, see [Securing Wings with SSL](../wings/next-steps/ssl.md#enable-ssl-in-wings) for the hook Wings can use instead.
+
+Test the whole flow without waiting for the real expiry:
 
 ```bash
 sudo certbot renew --dry-run
@@ -101,7 +104,7 @@ sudo certbot renew --dry-run
 If the dry run passes, renewal is working. Check the timer is enabled as well:
 
 ```bash
-systemctl list-timers certbot.timer
+sudo systemctl list-timers certbot.timer
 ```
 
 ### Troubleshooting
@@ -109,7 +112,6 @@ systemctl list-timers certbot.timer
 | Symptom | Fix |
 | --- | --- |
 | Browser shows "Insecure Connection" or another SSL/TLS error | Almost always means the certificate has expired. If `certbot renew` fails with something like `Error: Attempting to renew cert (domain) from /etc/letsencrypt/renew/domain.conf produced an unexpected error`, it's usually because port 80 is already in use; using the `--nginx` / `--apache` plugin flags (as above) avoids this. Otherwise, stop the webserver, renew, then start it again: `sudo systemctl stop nginx`, `sudo certbot renew`, `sudo systemctl start nginx`. |
-| Wings doesn't pick up the renewed certificate within a day | Restart it manually: `sudo systemctl restart wings`. |
 
 === Method 2: Certbot (DNS Challenge)
 
@@ -171,7 +173,7 @@ sudo certbot certonly \
   -d example.com
 ```
 
-The files end up in `/etc/letsencrypt/live/example.com/`, and certbot's systemd timer handles renewal automatically from here. Wings re-reads its certificate files daily, so no deploy hook is required for a native Wings install; add one as shown in the HTTP challenge tab if you want a webserver reloaded or Wings restarted straight away. Confirm renewal works with:
+The files end up in `/etc/letsencrypt/live/example.com/`, and certbot's systemd timer handles renewal automatically from here. No webserver plugin is involved, so if Nginx or Apache uses the certificate, add a deploy hook that reloads it, as described in the HTTP challenge tab. Confirm renewal works with:
 
 ```bash
 sudo certbot renew --dry-run
@@ -194,6 +196,8 @@ This manual flow **does not auto-renew**. You'd need to repeat the process and u
 === Method 3: acme.sh
 
 `acme.sh` is a lightweight, dependency-free alternative to certbot. It's useful if you'd rather avoid a Python toolchain. It defaults to ZeroSSL as the certificate authority; the commands below pass `--server letsencrypt` to stay on Let's Encrypt. This example uses Cloudflare's DNS API; see [acme.sh's DNS API docs](https://github.com/acmesh-official/acme.sh/wiki/dnsapi) for other providers.
+
+acme.sh installs into the home directory of whoever runs it, and step 4 writes to `/etc/ssl`, so run this whole method in a root shell. Start one with `sudo -i`.
 
 ### 1. Install acme.sh
 ```bash
@@ -230,10 +234,10 @@ acme.sh --issue --server letsencrypt --standalone -d example.com
 acme.sh --install-cert -d example.com \
   --key-file       /etc/ssl/private/example.com.key \
   --fullchain-file /etc/ssl/certs/example.com.crt \
-  --reloadcmd      "systemctl restart wings"
+  --reloadcmd      "systemctl reload nginx"
 ```
 
-Use these two paths wherever a configuration asks for the certificate and key, in place of the `/etc/letsencrypt/live/...` paths shown elsewhere in the docs. For Wings in Docker, install into `/etc/ssl/certs/wings/` instead, as described [below](#using-the-certificate-with-wings-in-docker).
+Set `--reloadcmd` to whatever reloads the service that uses the certificate; on a Wings node that is `systemctl restart wings`. Use these two paths wherever a configuration asks for the certificate and key, in place of the `/etc/letsencrypt/live/...` paths shown elsewhere in the docs. For Wings in Docker, install into `/etc/ssl/certs/wings/` instead, as described in the Docker tab of [Securing Wings with SSL](../wings/next-steps/ssl.md#enable-ssl-in-wings).
 
 ### 5. Renewal
 
@@ -286,10 +290,10 @@ sudo crontab -e
 ```
 
 ```text
-15 3 * * * CLOUDFLARE_DNS_API_TOKEN="your_cloudflare_api_token" /usr/bin/lego --path /etc/lego --email you@example.com --accept-tos --dns cloudflare -d example.com renew --days 30 --renew-hook "systemctl restart wings"
+15 3 * * * CLOUDFLARE_DNS_API_TOKEN="your_cloudflare_api_token" /usr/bin/lego --path /etc/lego --email you@example.com --accept-tos --dns cloudflare -d example.com renew --days 30 --renew-hook "systemctl reload nginx"
 ```
 
-Drop the token and swap `--dns cloudflare` for `--http` if you issued with the HTTP challenge. Test that the command works by running it once by hand; with a fresh certificate it prints that no renewal is needed and exits.
+Set `--renew-hook` to whatever reloads the service that uses the certificate; on a Wings node that is `systemctl restart wings`. Drop the token and swap `--dns cloudflare` for `--http` if you issued with the HTTP challenge. Test that the command works by running it once by hand; with a fresh certificate it prints that no renewal is needed and exits.
 
 ::::
 
@@ -312,9 +316,9 @@ Let's Encrypt is the default because it is free and renews itself, but any certi
 
 ### Certificates Issued by the Reverse Proxy
 
-Caddy, Traefik and Nginx Proxy Manager all talk to Let's Encrypt on their own for every hostname they serve. If the Panel and Wings both sit behind such a proxy, you never touch a certificate file: point the proxy at the hostname and it issues, installs and renews the certificate itself. The [reverse proxy guide](reverse-proxies/) covers the configuration for each.
+Caddy, Traefik and Nginx Proxy Manager all talk to Let's Encrypt on their own for every hostname they serve. If the Panel and Wings both sit behind such a proxy, you never touch a certificate file: point the proxy at the hostname and it issues, installs and renews the certificate itself. The [Panel](../panel/next-steps/reverse-proxy.md) and [Wings](../wings/next-steps/reverse-proxy.md) reverse proxy guides cover the configuration for each.
 
-The catch is that these proxies keep the certificate in their own storage, in a layout that changes between versions, so reusing it for Wings' [built-in SSL](../wings/configuration.md#ssl-configuration) is fragile. Put Wings behind the proxy as well, or issue a separate certificate for the node with one of the methods above.
+The catch is that these proxies keep the certificate in their own storage, in a layout that changes between versions, so reusing it for Wings' [built-in SSL](../wings/next-steps/ssl.md) is fragile. Put Wings behind the proxy as well, or issue a separate certificate for the node with one of the methods above.
 
 ### Cloudflare Origin CA
 
@@ -329,9 +333,9 @@ This only works for hostnames whose traffic actually passes through Cloudflare. 
 A certificate from a commercial CA arrives as a certificate file, one or more intermediate certificates, and the private key you generated with the request. Combine the certificate and the intermediates, in that order, into the full chain:
 
 ```bash
-cat your-domain.crt intermediate.crt > /etc/ssl/certs/example.com/fullchain.pem
-cp your-domain.key /etc/ssl/certs/example.com/privkey.pem
-chmod 600 /etc/ssl/certs/example.com/privkey.pem
+cat your-domain.crt intermediate.crt | sudo tee /etc/ssl/certs/example.com/fullchain.pem > /dev/null
+sudo cp your-domain.key /etc/ssl/certs/example.com/privkey.pem
+sudo chmod 600 /etc/ssl/certs/example.com/privkey.pem
 ```
 
 If you were given a single `.pfx` or `.p12` bundle instead, split it with OpenSSL:
@@ -358,41 +362,4 @@ It writes `panel.lan+1.pem` (the certificate, use it as `fullchain.pem`) and `pa
 
 ## Using the Certificate with Wings in Docker
 
-The Wings compose file mounts `/etc/ssl/certs/wings/` from the host into the container, and no other certificate directory. Certbot's `/etc/letsencrypt/live/` directory is not visible inside the container, and mounting only `live/` does not work either, because the files in it are symlinks into `archive/`.
-
-Copy the certificate into the mounted directory instead, and let a deploy hook keep the copy fresh:
-
-```bash
-sudo mkdir -p /etc/ssl/certs/wings
-sudo nano /etc/letsencrypt/renewal-hooks/deploy/wings-certs.sh
-```
-
-```bash
-#!/bin/bash
-cp -L /etc/letsencrypt/live/example.com/fullchain.pem /etc/ssl/certs/wings/fullchain.pem
-cp -L /etc/letsencrypt/live/example.com/privkey.pem   /etc/ssl/certs/wings/privkey.pem
-chmod 600 /etc/ssl/certs/wings/privkey.pem
-```
-
-```bash
-sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/wings-certs.sh
-sudo /etc/letsencrypt/renewal-hooks/deploy/wings-certs.sh
-```
-
-The last line runs the hook once by hand so the files exist right away; certbot runs it after every renewal from then on. Point Wings at the copies in `config/config.yml`:
-
-```yaml
-api:
-  ssl:
-    enabled: true
-    cert: /etc/ssl/certs/wings/fullchain.pem
-    key: /etc/ssl/certs/wings/privkey.pem
-```
-
-Then restart the container from the Wings compose directory:
-
-```bash
-docker compose restart wings
-```
-
-Wings re-reads the files daily, so renewed certificates are picked up without another restart.
+The Wings compose file only mounts `/etc/ssl/certs/wings/` from the host, so the container can't see Certbot's `/etc/letsencrypt/live/` directory. [Securing Wings with SSL](../wings/next-steps/ssl.md#enable-ssl-in-wings) shows how to copy the certificate in and keep the copy fresh.

@@ -1,5 +1,5 @@
 ---
-title: Devices
+title: Server Devices
 description: Attach and detach host devices made available by your administrator.
 ---
 
@@ -23,4 +23,4 @@ Restart the server to apply changed device mappings. An attachment shown in the 
 
 Administrators define the paths and access permissions under [Devices](../admin/devices.md). Devices must be assigned to both your node and egg, and marked **User Attachable**, for you to manage them here.
 
-Viewing needs `devices.read`; attaching and detaching need `devices.attach` and `devices.detach`. These are separate from the permissions for directory mounts. See the [Permissions Reference](../dashboard/permissions.md#devices).
+Viewing needs `devices.read`; attaching and detaching need `devices.attach` and `devices.detach`. These are separate from the permissions for directory mounts. See **Devices** in the [Permissions Reference](../dashboard/permissions.md#server-permissions).

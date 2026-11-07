@@ -6,12 +6,6 @@ import { compareFaqs } from '../data/compare-faqs.ts';
 const { page } = useData();
 
 const faqs = computed(() => compareFaqs[page.value.relativePath] ?? []);
-
-const slugify = (s: string) =>
-  s
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 </script>
 
 <template>
@@ -20,13 +14,10 @@ const slugify = (s: string) =>
       Frequently Asked Questions
       <a class="header-anchor" href="#frequently-asked-questions" aria-label="Permalink to &quot;Frequently Asked Questions&quot;">&#8203;</a>
     </h2>
-    <template v-for="f in faqs" :key="f.q">
-      <h3 :id="slugify(f.q)" tabindex="-1">
-        {{ f.q }}
-        <a class="header-anchor" :href="`#${slugify(f.q)}`" :aria-label="`Permalink to &quot;${f.q}&quot;`">&#8203;</a>
-      </h3>
+    <details v-for="f in faqs" :key="f.q" class="details custom-block">
+      <summary>{{ f.q }}</summary>
       <!-- biome-ignore lint: answers are trusted site-authored HTML -->
       <p v-html="f.a"></p>
-    </template>
+    </details>
   </template>
 </template>

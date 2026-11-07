@@ -45,7 +45,7 @@ Each code works exactly once at the [login checkpoint](../auth/login.md#two-fact
 
 <img src="./images/account/2fa-recovery-codes.webp" width="220" alt="Recovery Codes dialog listing the generated one-time recovery codes" />
 
-Once you have a second factor set up, the card lists each enrolled method as a green badge - **Authenticator App**, **Security Key**, or **Email** - plus a line showing when your authenticator app was last used. With nothing set up it reads "No second factor is set up on your account yet." instead.
+Once you have a second factor set up, the card lists each enrolled method as a green badge (**Authenticator App**, **Security Key** or **Email**), plus a line showing when your authenticator app was last used. With nothing set up it reads "No second factor is set up on your account yet." instead.
 
 Up to three buttons sit at the bottom of the card: **Setup Two-Factor** or **Disable Two-Factor** for the authenticator app, **Enable Email** or **Disable Email** when the administrator has turned on email two-factor, and **Security Keys**, which takes you to the [Security Keys](./security-keys.md) page. Disabling asks for a valid authentication code and your password again.
 
@@ -59,7 +59,7 @@ If your role or the panel requires 2FA, the card also tells you whether your acc
 
 This card only appears if your account has a password, and only while password login is switched on panel-wide. It reads either "You can sign in with your password." or "Password login is turned off. Only your security keys can sign you in.", with a button to flip it. Both directions ask for your password to confirm.
 
-You cannot turn password login off until you have at least one [security key](./security-keys.md) - the button stays disabled with the tooltip "Add a security key before turning off password login." until then, and the panel refuses it server-side as well.
+You cannot turn password login off until you have at least one [security key](./security-keys.md); the button stays disabled with the tooltip "Add a security key before turning off password login." until then, and the panel refuses it server-side as well.
 
 Turning it off is broader than it sounds: your password stops working **everywhere**, including SFTP password authentication. SSH keys keep working, and so do your security keys. Attempting a password login afterwards fails with "password login is disabled for this account". On nodes running Wings 1.2.6 or newer, turning it off also closes your open SFTP and SSH sessions and server consoles. While it's off you also can't delete your last remaining security key, which would otherwise lock you out entirely.
 

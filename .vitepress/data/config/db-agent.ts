@@ -64,7 +64,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'tcp_congestion_control',
           description:
-            'The TCP congestion control algorithm applied to the listeners DB Agent owns: the management API and every enabled database proxy. Linux only, and the algorithm has to be available to the kernel - DB Agent looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
+            'The TCP congestion control algorithm applied to the listeners DB Agent owns: the management API and every enabled database proxy. Linux only, and the algorithm has to be available to the kernel: DB Agent looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
           default: 'bbr',
         },
       ],
@@ -164,7 +164,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'docker.registries',
           description:
-            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname.',
+            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.',
           default: {},
         },
         {
@@ -290,8 +290,9 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'api.token',
           description:
-            'The API token clients must present to authenticate against the management API. Must be kept secret. Set it with `calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.',
-          default: '',
+            'The API token clients must present to authenticate against the management API. While it is empty, the API rejects every request. Must be kept secret. Set it with `sudo calagopus-db-agent configure --token <TOKEN>` rather than editing this by hand.',
+          required: true,
+          example: '',
         },
         {
           key: 'api.disable_openapi_docs',
@@ -301,7 +302,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'api.request_log_limit',
           description:
-            'The number of HTTP requests the agent writes a log line for each second, which keeps a busy agent from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through - if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.',
+            'The number of HTTP requests the agent writes a log line for each second, which keeps a busy agent from drowning its own log. Once the budget for a second is spent the remaining requests are counted rather than logged, and the count is reported as a `suppressed N http request log lines (api.request_log_limit = 250)` line the next time a request gets through; if traffic stops, the summary waits until it resumes. The budget covers the whole process, not each route or client. Set to `0` to log every request.',
           default: 250,
         },
         {
@@ -369,7 +370,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
     },
     {
       title: 'TLS Configuration',
-      body: "::: info\nThis section assumes you've already generated a certificate. See [Generating SSL Certificates](../additional/ssl-certificates.md) if you haven't.\n:::\n\nEvery proxy (`postgres`, `mariadb`, `mongodb`, `redis`) as well as the management API (`api`) has its own independent `tls` block with the same four options:",
+      body: '::: info\nThis section is a quick reference. [Securing DB Agent with SSL](./next-steps/ssl.md) covers the full setup, including getting a certificate, Docker installs, pointing the Panel at the agent and renewal.\n:::\n\nEvery proxy (`postgres`, `mariadb`, `mongodb`, `redis`) as well as the management API (`api`) has its own independent `tls` block with the same four options:',
       inExample: false,
       options: [
         {

@@ -1,5 +1,5 @@
 ---
-title: Mounts
+title: Server Mounts
 description: Attach and detach admin-defined host directories into your server's container.
 ---
 
@@ -7,7 +7,7 @@ description: Attach and detach admin-defined host directories into your server's
 
 The **Mounts** section has separate tabs for directory mounts and [Devices](./devices.md). Device access uses its own permissions and host allowlist.
 
-Mounts make a directory from the host machine available inside your server's container at a fixed target path, useful for things like shared plugin folders or common asset directories.
+Mounts make a directory from the host machine available inside your server's container at a fixed target path, for things like shared plugin folders or common asset directories.
 
 ![Mounts table](./images/mounts/list.webp)
 

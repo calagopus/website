@@ -17,16 +17,18 @@ The panel drops databases with `DROP DATABASE ... WITH (FORCE)`, which PostgreSQ
 
 ## Installation
 
-::::tabs
+Pick how you want to run it:
+
+::::tabs key:dbhost
 === Docker Compose
 
 Create a directory for the service and enter it:
 
 ```bash
-mkdir postgres && cd postgres
+sudo mkdir postgres && cd postgres
 ```
 
-Create a `compose.yaml` with the following content:
+Create a `compose.yaml` with `sudo nano compose.yaml` and the following content:
 
 ```yaml
 services:
@@ -41,16 +43,11 @@ services:
       - "0.0.0.0:5432:5432"
 ```
 
-Start the service:
+Start the service, then open a `psql` shell inside the container to continue with user setup. The `ports` entry already exposes the port.
 
 ```bash
-docker compose up -d
-```
-
-Then open a `psql` shell inside the container to continue with user setup:
-
-```bash
-docker compose exec postgres psql -U postgres
+sudo docker compose up -d
+sudo docker compose exec postgres psql -U postgres
 ```
 
 === APT (Debian / Ubuntu)
@@ -61,40 +58,7 @@ sudo apt install -y postgresql
 sudo systemctl enable --now postgresql
 ```
 
-Connect as the default `postgres` superuser:
-
-```bash
-sudo -u postgres psql
-```
-
-=== RPM (RHEL / Fedora / Rocky / Alma)
-
-```bash
-sudo dnf install -y postgresql-server postgresql-contrib
-sudo postgresql-setup --initdb
-sudo systemctl enable --now postgresql
-```
-
-Connect as the default `postgres` superuser:
-
-```bash
-sudo -u postgres psql
-```
-
-::::
-
-## Configuring Remote Access
-
-By default, PostgreSQL only listens on `127.0.0.1` and uses `ident` authentication for local connections. You need to update both the listen address and the client authentication rules.
-
-::: info
-If you used Docker Compose, the `ports` entry already exposes the port - you still need to update `pg_hba.conf` for non-Docker installs if you want password auth.
-:::
-
-::::tabs
-=== APT (Debian / Ubuntu)
-
-Find the PostgreSQL config directory (typically `/etc/postgresql/<version>/main/`):
+By default, PostgreSQL only listens on `127.0.0.1` and uses `ident` authentication for local connections, so update both. The config directory is typically `/etc/postgresql/<version>/main/`.
 
 Edit `postgresql.conf`:
 
@@ -108,15 +72,22 @@ Edit `pg_hba.conf` and add the following line to allow password authentication f
 host    all             all             0.0.0.0/0               scram-sha-256
 ```
 
-Restart PostgreSQL:
+Restart PostgreSQL and connect as the default `postgres` superuser:
 
 ```bash
 sudo systemctl restart postgresql
+sudo -u postgres psql
 ```
 
 === RPM (RHEL / Fedora / Rocky / Alma)
 
-Find the PostgreSQL data directory (typically `/var/lib/pgsql/data/`):
+```bash
+sudo dnf install -y postgresql-server postgresql-contrib
+sudo postgresql-setup --initdb
+sudo systemctl enable --now postgresql
+```
+
+By default, PostgreSQL only listens on `127.0.0.1` and uses `ident` authentication for local connections, so update both. The data directory is typically `/var/lib/pgsql/data/`.
 
 Edit `postgresql.conf`:
 
@@ -130,20 +101,21 @@ Edit `pg_hba.conf` and add:
 host    all             all             0.0.0.0/0               scram-sha-256
 ```
 
-Restart PostgreSQL:
+Restart PostgreSQL and connect as the default `postgres` superuser:
 
 ```bash
 sudo systemctl restart postgresql
+sudo -u postgres psql
 ```
 
 ::::
 
 ## Creating the Panel User
 
-Inside the `psql` shell, create a dedicated role that the panel uses to provision user databases:
+Inside the `psql` shell you just opened, create a dedicated role that the panel uses to provision user databases:
 
 ::: danger
-The role below can connect from **any IP address**. Use a long, randomly generated password - a weak password on an exposed port is a critical security risk.
+The role below can connect from **any IP address**. Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
 :::
 
 ```sql

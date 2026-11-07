@@ -1,8 +1,7 @@
 ---
-prev: true
 next: false
 title: FOSSBilling
-description: The Calagopus FOSSBilling module adds a Calagopus product type that provisions, suspends, syncs and deletes servers from your FOSSBilling orders, with a live server card in the client area.
+description: The Calagopus FOSSBilling module provisions, suspends, syncs and deletes servers from your FOSSBilling orders, with a live server card in the client area.
 ---
 
 # FOSSBilling
@@ -10,7 +9,7 @@ description: The Calagopus FOSSBilling module adds a Calagopus product type that
 The **Calagopus FOSSBilling module** adds a **Calagopus** product type to [FOSSBilling](https://fossbilling.org). Orders for a Calagopus product create, suspend, unsuspend and delete servers on your panel automatically, and clients see a live summary of their server on the order page.
 
 ::: danger
-This module authenticates with an **admin API key**, which grants full administrative access to your panel - creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
+This module authenticates with an **admin API key**, which grants full administrative access to your panel: creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
 :::
 
 ## What it does

@@ -13,7 +13,7 @@ The form asks for **Username**, **Email**, **Password** (with a visibility toggl
 
 Registering logs you in immediately: your session starts the moment the account is created. If the username or email is already taken, you get an error instead. The first account ever registered on a fresh panel automatically becomes a root admin, and is marked verified straight away.
 
-If the administrator has turned on **Require Email Verification**, a verification link is mailed to you and the rest of the panel stays locked until you open it. You can still reach your account page, change your email, and request a new link, but nothing else - including SFTP and SSH - works until the address is verified. See [Account](../dashboard/account.md) for the verification banner and the resend button.
+If the administrator has turned on **Require Email Verification**, a verification link is mailed to you and the rest of the panel stays locked until you open it. You can still reach your account page, change your email, and request a new link, but nothing else, including SFTP and SSH, works until the address is verified. See [Account](../dashboard/account.md) for the verification banner and the resend button.
 
 When a captcha is configured, it renders below the card and **Register** stays disabled until it's solved.
 
@@ -22,7 +22,7 @@ The account is created in the language the page is shown in. That is the one pic
 ::: info
 For admins: the **Enable Registration** toggle lives in [Settings > Application](../admin/settings.md#application), and turning it on without a [captcha](../admin/settings.md#captcha) configured is asking for bot signups. The `auth/register` endpoint is [rate limited](../admin/settings.md#ratelimits) per IP.
 
-Note that [OAuth login](../admin/oauth-providers.md) also creates accounts from the provider's profile, regardless of this toggle, unless the provider is set to **Only allow Login**.
+[OAuth login](../admin/oauth-providers.md) also creates accounts from the provider's profile, regardless of this toggle, unless the provider is set to **Only allow Login**.
 
 The page itself is only routed while registration is on, so `/auth/register` is a not-found card otherwise. Turning off **Enable Password Login** takes it away the same way, since the account it would create could never sign in. OAuth signup carries on as normal.
 :::

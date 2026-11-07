@@ -1,6 +1,4 @@
 ---
-prev: true
-next: false
 description: Set up any OIDC-compatible OAuth provider such as Authentik or Pocket-ID as a Calagopus login method, including how to find the required endpoints.
 ---
 

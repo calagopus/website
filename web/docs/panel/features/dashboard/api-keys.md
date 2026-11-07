@@ -24,7 +24,7 @@ Below that are the permission categories: **User**, **Server**, and **Admin** (t
 
 Everything you've selected shows up on the right under **Selected Permissions**, where **Select All** and **Deselect All** toggle everything and a clipboard menu offers **Copy Permissions** and **Paste Permissions**. See the [Permissions Reference](./permissions.md) for what every permission does.
 
-Once you're happy with the selection, scroll down and hit **Save**, or **Close** to back out without creating anything. The full key value is shown exactly once, in an **API Key Created** modal: "Make sure to copy it now, as it will not be shown again."
+When the selection is ready, scroll down and hit **Save**, or **Close** to back out without creating anything. The full key value is shown exactly once, in an **API Key Created** modal: "Make sure to copy it now, as it will not be shown again."
 
 ## Editing, Duplicating, Recreating, and Removing
 

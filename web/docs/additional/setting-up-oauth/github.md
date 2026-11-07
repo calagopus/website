@@ -47,7 +47,7 @@ With the required fields filled out, it should look something similar to this:
 Once done, you can click on the `Register Application` button, add a logo if you want, and proceed to the next step.
 
 ### Generate a client secret
-Click `Generate a new client secret`, confirm your identity, then copy both your Client ID and Client Secret - you will need them in the next step.
+Click `Generate a new client secret`, confirm your identity, then copy both your Client ID and Client Secret for the next step.
 
 ### Configuring the OAuth Provider
 Back in the panel, enter the Client ID and Client Secret you copied from GitHub.

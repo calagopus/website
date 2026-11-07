@@ -3,7 +3,7 @@ description: Add commands to the Calagopus quick actions palette (Mod+Space) fro
 ---
 # Quick Actions
 
-The quick actions palette is the Panel's command bar: the modal that opens on `Mod+Space` (or from the button above the sidebar) and lets a user type "restart", hit Enter, and be done. It aggregates everything the user can do from where they currently stand - power actions, navigation, page-specific operations, a server search - into one searchable list, and your extension can put its own entries in there.
+The quick actions palette is the Panel's command bar: the modal that opens on `Mod+Space` (or from the button above the sidebar) and lets a user type "restart" and press Enter. It collects everything the user can do from the current page, such as power actions, navigation, page-specific operations and a server search, into one searchable list, and your extension can put its own entries in there.
 
 There are three surfaces, and which one you want depends on how long your action should live:
 
@@ -14,7 +14,7 @@ There are three surfaces, and which one you want depends on how long your action
 | **Modes** | The `useQuickActionModes` hook, or `enterQuickActions` for static ones | Activated by a prefix the user types |
 
 ::: tip
-Nothing is injected into an action - `perform` and `isVisible` take no arguments and close over whatever they need. A global action registered in `initialize()` therefore has no React state available to it, so anything that depends on the current page, server or user belongs in a component and the `useQuickActions` hook.
+Nothing is injected into an action: `perform` and `isVisible` take no arguments and close over whatever they need. A global action registered in `initialize()` therefore has no React state available to it, so anything that depends on the current page, server or user belongs in a component and the `useQuickActions` hook.
 :::
 
 ::: info
@@ -55,30 +55,30 @@ class MyExtension extends Extension {
 
 | Field | Type | What it does |
 | ----- | ---- | ------------ |
-| `id` | `string` | Identity of the action. Used as the palette's list key, so it must be unique - prefix it with your package identifier. |
+| `id` | `string` | Identity of the action. Used as the palette's list key, so it must be unique; prefix it with your package identifier. |
 | `category` | `string` | The id of the category this action groups under. A core id (see below) or one you registered. |
 | `label` | `string \| (() => string)` | What the user reads. Pass a function for translated labels so it re-resolves when the language changes. |
 | `description?` | `string \| (() => string)` | Secondary text, rendered dimmed and right-aligned on the row. Good for a value, a shortcut hint, or a target path. |
-| `content?` | `ReactNode` | Rendered under the label, for what a string can't express - an avatar, a badge, a status dot. Core's server and user modes put an avatar and name here. |
+| `content?` | `ReactNode` | Rendered under the label, for what a string can't express, such as an avatar, a badge or a status dot. Core's server and user modes put an avatar and name here. |
 | `path?` | `string` | The URL the action navigates to, for actions that are really links. Only the `/` mode reads it, showing it as the row's description and matching the typed term against it. |
 | `keywords?` | `string[]` | Extra search terms. Matched with the same substring rule as the label, so `['mkdir']` makes "New Directory" findable by typing `mkdir`. |
 | `icon?` | `ReactNode` | Any node, so `<FontAwesomeIcon icon={faBroom} />` for a FontAwesome glyph or an `<img>` for something custom. |
 | `scopes?` | `('dashboard' \| 'server' \| 'admin')[]` | Where the action shows up. Omitted means all three. |
 | `permission?` | `string \| string[]` | Server permission node(s) required. An array passes if *any* of them match. |
 | `adminPermission?` | `string \| true` | `true` passes for an admin account or any role that holds at least one admin permission; a string requires that exact admin permission node, with no wildcard expansion. |
-| `danger?` | `boolean` | Renders the row in red and highlights it red when selected. For destructive things - the core "Kill" and "Logout" actions use it. |
+| `danger?` | `boolean` | Renders the row in red and highlights it red when selected. Use it for destructive actions, as the core "Kill" and "Logout" actions do. |
 | `isVisible?` | `() => boolean` | Last-word visibility check, run on every palette render. Use it for state, not permissions. |
 | `perform` | `() => void` | Runs when the user picks the action. |
 
 The scope of an action is derived from the current URL, not from where you registered it: `/server/<id>/...` is `server`, `/admin/...` is `admin`, everything else is `dashboard`.
 
 ::: warning
-`permission` is checked against the *current server's* permissions, and outside server scope there are none - so an action with `permission` set is silently hidden on dashboard and admin pages. If you want a permission-gated action that also appears outside a server, pair `permission` with `scopes: ['server']` and register a separate unpermissioned action for the other scopes.
+`permission` is checked against the *current server's* permissions, and outside server scope there are none, so an action with `permission` set is silently hidden on dashboard and admin pages. If you want a permission-gated action that also appears outside a server, pair `permission` with `scopes: ['server']` and register a separate unpermissioned action for the other scopes.
 :::
 
 ### Reaching Page State
 
-There is no context object. `isVisible` and `perform` are plain closures, which means a global action registered in `initialize()` can only reach module-level things - your own helpers, an API call, `getQuickActionsStore()`. Everything React-shaped (the current server, the websocket, `navigate`, the logged-in user) comes from hooks, so an action that needs any of it has to be registered from a mounted component with `useQuickActions`.
+There is no context object. `isVisible` and `perform` are plain closures, which means a global action registered in `initialize()` can only reach module-level things: your own helpers, an API call, `getQuickActionsStore()`. Everything React-shaped (the current server, the websocket, `navigate`, the logged-in user) comes from hooks, so an action that needs any of it has to be registered from a mounted component with `useQuickActions`.
 
 Core works the same way, and where it registers an action tells you its lifetime: the power actions come from a component the *server router* mounts, so they exist exactly as long as a server is open and never need a scope check, while navigation and logout are built by the palette itself. Prefer that over a globally-registered action with an `isVisible` that inspects the URL:
 
@@ -107,7 +107,7 @@ export default function MyServerWidget() {
 }
 ```
 
-The palette closes itself *before* calling `perform`, so you never need to close it from an action - only mode items, which own their `onSelect` outright, have to do that themselves.
+The palette closes itself *before* calling `perform`, so you never need to close it from an action. Only mode items, which own their `onSelect` outright, have to do that themselves.
 
 `isVisible` runs during the palette's render, on every keystroke. Keep it to synchronous reads of values your component already has, or a Zustand `.getState()`, and never call hooks or fire requests from it.
 
@@ -130,7 +130,7 @@ Every item belongs to a category, which is the labelled group it renders under. 
 | `navigation` | Navigation | 50 | Sidebar routes for the current scope |
 | `account` | Account | 60 | Logout |
 
-Reuse one of those ids when your action fits the group - a power-adjacent action belongs under Power, not under a category of its own. When it doesn't fit, register your own:
+Reuse one of those ids when your action fits the group: a power-related action belongs under Power, not under a category of its own. When it doesn't fit, register your own:
 
 ```ts
 import { faDragon } from '@fortawesome/free-solid-svg-icons';
@@ -148,7 +148,7 @@ ctx.extensionRegistry.enterQuickActions((quickActions) =>
 
 `label` takes a plain string or a getter, same as on an action. `icon` is a `ReactNode` here too, though it's rendered as a group heading rather than a row.
 
-Groups render by `order`, lowest first, with ties broken alphabetically on the resolved label. A group whose heading repeats the one directly above it drops the text and keeps only the icon, which is how a page's stacked tab bars read as one section - so two categories sharing a label render as one headed group followed by unnamed ones. Core categories hold the numbers in the table above, and a category without an `order` falls back to 100, which puts it after core and sorted by label among the other extension categories. The `order: 25` in the example above lands the group between Page and Power, so pick a number when you care where your actions sit relative to core's.
+Groups render by `order`, lowest first, with ties broken alphabetically on the resolved label. A group whose heading repeats the one directly above it drops the text and keeps only the icon, which is how a page's stacked tab bars read as one section. Two categories sharing a label therefore render as one headed group followed by unnamed ones. Core categories hold the numbers in the table above, and a category without an `order` falls back to 100, which puts it after core and sorted by label among the other extension categories. The `order: 25` in the example above lands the group between Page and Power, so pick a number when you care where your actions sit relative to core's.
 
 Extension categories are merged last, so registering one with a core id such as `page` or `power` overrides that group's label, icon and order for the whole palette. That's occasionally useful and more often a mistake.
 
@@ -197,11 +197,11 @@ Actions registered this way disappear when the component unmounts, and they go t
 The array is re-read on every palette render rather than captured at mount, so closures over component state stay current: `selected` in the example above is always the live value, and you never have to re-register. The tradeoff is that `label`, `isVisible` and `perform` are called from the palette's render rather than yours, so they cannot contain hooks.
 
 ::: tip
-Tabs are handled for you. Every `SubNavigation` puts its visible tabs into the palette under `pageNavigation`, so items you add through a page's `subNavigation` registry (see [Mounting UI](./mounting-ui.md)) are reachable from the palette without registering anything. Where two tab bars stack - a nest and one of its eggs - each bar gets its own group, innermost first, so the two "General" tabs stay apart. Only the first of those groups is named; the rest repeat its icon without the heading.
+Tabs are handled for you. Every `SubNavigation` puts its visible tabs into the palette under `pageNavigation`, so items you add through a page's `subNavigation` registry (see [Mounting UI](./mounting-ui.md)) are reachable from the palette without registering anything. Where two tab bars stack, such as a nest and one of its eggs, each bar gets its own group, innermost first, so the two "General" tabs stay apart. Only the first of those groups is named; the rest repeat its icon without the heading.
 :::
 
 ::: info
-Something has to render the component for the hook to fire. A page you registered with `addServerRoute` works, and so does a component you slotted into a core page - see [Mounting UI](./mounting-ui.md). If you want actions present on a page you don't own, register them globally with an `isVisible` check instead.
+Something has to render the component for the hook to fire. A page you registered with `addServerRoute` works, and so does a component you slotted into a core page (see [Mounting UI](./mounting-ui.md)). If you want actions present on a page you don't own, register them globally with an `isVisible` check instead.
 :::
 
 ## Modes
@@ -213,9 +213,9 @@ Modes turn the palette into something other than a list filter when the query st
 | `=` | Evaluates a math expression and offers to copy the result | Everywhere |
 | `#` | Searches servers and jumps to one, keeping the page you are on | Everywhere |
 | `@` | Searches users and jumps to one | Admin scope, with `users.*` |
-| `/` | Path-based navigation search over the sidebar routes and the current page's tabs, showing each URL alongside its name - a tab shows its path relative to its own tab bar, since the page's own URL is mostly uuids | Everywhere |
+| `/` | Path-based navigation search over the sidebar routes and the current page's tabs, showing each URL alongside its name. A tab shows its path relative to its own tab bar, since the page's own URL is mostly UUIDs | Everywhere |
 
-Two of those show what modes can do beyond a flat list. `#` **changes shape by scope**: outside admin it lists the servers you can access and jumps to the client area - from inside a server it keeps the page you are on, the way the sidebar's switcher does, and picking the server you are already on returns to its console - while in admin (with `servers.*`) it searches *every* server, renders each owner's avatar and username via `content`, and jumps to the admin view instead. `@` is **conditional**: it isn't registered at all outside admin, so its footer hint disappears and `@` falls through to ordinary label matching. A mode is just an entry in the array you return, so omitting it is all "conditional" means:
+Two of those show what modes can do beyond a flat list. `#` **changes shape by scope**: outside admin it lists the servers you can access and jumps to the client area (from inside a server it keeps the page you are on, the way the sidebar's switcher does, and picking the server you are already on returns to its console), while in admin (with `servers.*`) it searches *every* server, renders each owner's avatar and username via `content`, and jumps to the admin view instead. `@` is **conditional**: it isn't registered at all outside admin, so its footer hint disappears and `@` falls through to ordinary label matching. A mode is just an entry in the array you return, so omitting it is all "conditional" means:
 
 ```ts
 useQuickActionModes([
@@ -264,7 +264,7 @@ export default function PlayerMode() {
 }
 ```
 
-`useQuickActionTerm(prefix)` gives you the query with your prefix stripped and trimmed, or `null` while the query doesn't start with it - so `null` means "my mode isn't active" and `''` means "active, nothing typed yet". Gate your fetching on it, the way core's `#` mode only requests servers while `term !== null`.
+`useQuickActionTerm(prefix)` gives you the query with your prefix stripped and trimmed, or `null` while the query doesn't start with it. So `null` means "my mode isn't active" and `''` means "active, nothing typed yet". Gate your fetching on it, the way core's `#` mode only requests servers while `term !== null`.
 
 | Field | Type | What it does |
 | ----- | ---- | ------------ |
@@ -277,10 +277,10 @@ export default function PlayerMode() {
 
 A few behaviours shape how you write one:
 
-- The palette picks the first mode whose prefix the query starts with. Core modes come first, then modes from `useQuickActionModes`, then static `addMode` registrations, so `=`, `#` and `/` are unavailable to you - as is `@` in admin scope - and a hook-registered mode shadows a static one with the same prefix. Prefixes core does not use include `%`, `~`, `&`, `:` and `!`.
+- The palette picks the first mode whose prefix the query starts with. Core modes come first, then modes from `useQuickActionModes`, then static `addMode` registrations, so `=`, `#` and `/` are unavailable to you, as is `@` in admin scope, and a hook-registered mode shadows a static one with the same prefix. Prefixes core does not use include `%`, `~`, `&`, `:` and `!`.
 - While a mode is active the label and keyword matching is bypassed, and whatever `items` holds is shown as-is. Filtering on the term is your job, which is what makes modes useful for computed and fetched results that no substring match would find.
 - Actions and navigation entries survive only if your `map` returns them, so a mode with just `items` gives the user a single-purpose list. Implement `map` when you want to *narrow* the existing list instead of replacing it, the way core's `/` mode keeps only the two navigation categories and hangs each route's path off `description`.
-- Build `items` for the active term only. The array is read on every palette render, so keep it cheap - do the fetching in a hook and map its results, don't compute anything heavy inline.
+- Build `items` for the active term only. The array is read on every palette render, so keep it cheap: fetch in a hook and map its results instead of computing anything heavy inline.
 
 Items you build yourself use `QuickActionItem` rather than a definition, which is a slightly different shape: `key` (unique across the whole list), `category`, `label` and `description` as already-resolved strings rather than getters, plus optional `content`, `path`, `keywords`, `icon`, `danger`, and a required `onSelect`. The palette filters none of these for you, checking neither scope nor permissions, so verify whatever matters before you offer an item. It also doesn't close itself for mode items the way it does for actions, so call `setOpen(false)` from `onSelect` when the item should dismiss the palette.
 
@@ -289,12 +289,12 @@ Items you build yourself use `QuickActionItem` rather than a definition, which i
 `quickActions.addMode(...)` from `initialize()` still works and takes the same shape, but a mode registered there has no way to read the query, so its `items` can only ever be a fixed list. Reach for it for a small constant menu behind a prefix, and use the hook for anything that reacts to what the user types.
 
 ::: info
-Something has to render the component for `useQuickActionModes` to fire, exactly as with page actions - and a mode registered from a page-scoped component only exists while that page is open. For a mode that should work everywhere, mount the component through a global slot; see [Mounting UI](./mounting-ui.md).
+Something has to render the component for `useQuickActionModes` to fire, exactly as with page actions, and a mode registered from a page-scoped component only exists while that page is open. For a mode that should work everywhere, mount the component through a global slot; see [Mounting UI](./mounting-ui.md).
 :::
 
 ## Opening the Palette Yourself
 
-The palette's open state is a Zustand store, so you can drive it from your own UI - a button in a card, a step in an onboarding flow:
+The palette's open state is a Zustand store, so you can drive it from your own UI, such as a button in a card or a step in an onboarding flow:
 
 ```tsx
 import { useQuickActionsStore } from '@/stores/quickActions.ts';
@@ -306,12 +306,13 @@ export default function MyCard() {
 }
 ```
 
-The store also holds `query`, which is what the user has typed - that's the value `useQuickActionTerm` reads. Outside React, `getQuickActionsStore()` from the same module gives you a synchronous snapshot with the same `setOpen`, `toggle` and `setQuery`. The built-in `Mod+Space` shortcut and the sidebar trigger go through that same store. If you want your own key binding for something, the adjacent `enterShortcuts` registry lets you register a shortcut with a default binding that users can rebind from their account settings.
+The store also holds `query`, which is what the user has typed; that's the value `useQuickActionTerm` reads. Outside React, `getQuickActionsStore()` from the same module gives you a synchronous snapshot with the same `setOpen`, `toggle` and `setQuery`. The built-in `Mod+Space` shortcut and the sidebar trigger go through that same store. If you want your own key binding for something, the adjacent `enterShortcuts` registry lets you register a shortcut with a default binding that users can rebind from their account settings.
 
 ## A Worked Example
 
-Putting the pieces together - an extension that registers its own category, one server-scoped action gated on a permission, and one destructive dashboard action. Both are stateless, so they can live in `initialize()`; anything that needed the current server's state would move into a component with `useQuickActions`:
+A complete example: an extension that registers its own category, one server-scoped action gated on a permission, and one destructive dashboard action. Both are stateless, so they can live in `initialize()`; anything that needed the current server's state would move into a component with `useQuickActions`:
 
+::: details Full example: a category and two actions
 ```ts
 import { faBroom, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -355,6 +356,7 @@ class CleanupExtension extends Extension {
 
 export default new CleanupExtension();
 ```
+:::
 
 ## Guidelines
 

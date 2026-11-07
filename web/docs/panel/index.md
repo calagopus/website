@@ -1,7 +1,6 @@
 ---
 description: "Install, configure, and operate the Calagopus panel: installation methods, environment variables, updating, and the extension system."
 prev: false
-next: true
 ---
 
 # Panel
@@ -15,5 +14,5 @@ The Panel is the web interface and API that ties everything together: managing u
 | [Installation](./installation/index.md) | Get the panel running via Docker, package manager, or binary |
 | [Environment](./environment.md) | Reference for every environment variable the panel reads |
 | [Updating the Panel](./updating.md) | Keep the panel up to date for your installation method |
-| [Next Steps](./next-steps/index.md) | Add a node and egg repositories once the panel is running |
+| [Next Steps](./next-steps/index.md) | Add a node and egg repositories, and serve the panel over HTTPS behind a reverse proxy |
 | [Extensions](./extensions/index.md) | Extend the panel with custom backend logic, UI, and integrations |

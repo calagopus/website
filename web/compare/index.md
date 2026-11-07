@@ -5,8 +5,8 @@ head:
   - - meta
     - name: robots
       content: index, follow
-sidebar: false
-aside: false
+prev: false
+pageClass: compare-page
 ---
 
 # Pterodactyl Alternatives Compared (2026)
@@ -100,9 +100,8 @@ The Calagopus importer is documented step by step for [Pterodactyl](/docs/additi
 
 ## Next Steps
 
-- [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl)
-- [Calagopus vs Pelican](/compare/calagopus-vs-pelican)
-- [Calagopus vs AMP](/compare/calagopus-vs-amp)
-- [Pterodactyl vs Pelican](/compare/pterodactyl-vs-pelican)
 - [Benchmarks and methodology](/docs/about/benchmarks)
+- [Full feature reference](/docs/about/features)
 - [Install Calagopus](/docs/panel/installation/)
+
+<CompareFaq />

@@ -67,7 +67,7 @@ When the administrator has enabled email two-factor and you've turned it on for 
 Nothing is sent until you press **Send Code**. The code is six digits, lands in the six boxes like a TOTP code, stays valid for 10 minutes, and allows 5 attempts before it's burned. **Resend Code** counts down 60 seconds between sends.
 
 ::: info
-A security key is **not** a checkpoint factor. It replaces the password rather than following it, so if a security key is your only second factor, a successful password login finishes without a checkpoint step - while still counting towards an administrator's two-factor requirement.
+A security key is **not** a checkpoint factor. It replaces the password rather than following it, so if a security key is your only second factor, a successful password login finishes without a checkpoint step, while still counting towards an administrator's two-factor requirement.
 :::
 
 ::: info

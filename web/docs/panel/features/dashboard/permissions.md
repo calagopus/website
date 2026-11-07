@@ -9,8 +9,7 @@ Every permission available when creating or editing an [API Key](./api-keys.md),
 
 ## User Permissions
 
-### Account
-
+::: details Account
 Permissions that control the ability to change account settings.
 
 | Permission | Description |
@@ -21,9 +20,9 @@ Permissions that control the ability to change account settings.
 | `account.password-login` | Allows enabling and disabling password login for the account. |
 | `account.two-factor` | Allows adding and removing two-factor authentication. |
 | `account.avatar` | Allows updating and removing the account's avatar. |
+:::
 
-### Servers
-
+::: details Servers
 Permissions that control the ability to list servers and manage server groups.
 
 | Permission | Description |
@@ -32,9 +31,9 @@ Permissions that control the ability to list servers and manage server groups.
 | `servers.read` | Allows viewing servers and server groups. |
 | `servers.update` | Allows modifying server groups. |
 | `servers.delete` | Allows deleting server groups. |
+:::
 
-### API Keys
-
+::: details API Keys
 Permissions that control the ability to manage API keys on an account. API keys can never edit themselves or assign permissions they do not have.
 
 | Permission | Description |
@@ -44,9 +43,9 @@ Permissions that control the ability to manage API keys on an account. API keys 
 | `api-keys.update` | Allows modifying other API keys. |
 | `api-keys.delete` | Allows deleting API keys. |
 | `api-keys.recreate` | Allows recreating API keys. |
+:::
 
-### Security Keys
-
+::: details Security Keys
 Permissions that control the ability to manage security keys on an account.
 
 | Permission | Description |
@@ -55,9 +54,9 @@ Permissions that control the ability to manage security keys on an account.
 | `security-keys.read` | Allows viewing security keys. |
 | `security-keys.update` | Allows modifying security keys. |
 | `security-keys.delete` | Allows deleting security keys. |
+:::
 
-### SSH Keys
-
+::: details SSH Keys
 Permissions that control the ability to manage SSH keys on an account.
 
 | Permission | Description |
@@ -66,9 +65,9 @@ Permissions that control the ability to manage SSH keys on an account.
 | `ssh-keys.read` | Allows viewing SSH keys. |
 | `ssh-keys.update` | Allows modifying other SSH keys. |
 | `ssh-keys.delete` | Allows deleting SSH keys. |
+:::
 
-### OAuth Links
-
+::: details OAuth Links
 Permissions that control the ability to manage OAuth links on an account.
 
 | Permission | Description |
@@ -76,9 +75,9 @@ Permissions that control the ability to manage OAuth links on an account.
 | `oauth-links.create` | Allows creating new OAuth links. |
 | `oauth-links.read` | Allows viewing OAuth links. |
 | `oauth-links.delete` | Allows deleting OAuth links. |
+:::
 
-### Command Snippets
-
+::: details Command Snippets
 Permissions that control the ability to manage command snippets on an account.
 
 | Permission | Description |
@@ -87,37 +86,37 @@ Permissions that control the ability to manage command snippets on an account.
 | `command-snippets.read` | Allows viewing command snippets. |
 | `command-snippets.update` | Allows modifying command snippets. |
 | `command-snippets.delete` | Allows deleting command snippets. |
+:::
 
-### Sessions
-
+::: details Sessions
 Permissions that control the ability to manage sessions on an account.
 
 | Permission | Description |
 | --- | --- |
 | `sessions.read` | Allows viewing sessions and their IP addresses. |
 | `sessions.delete` | Allows deleting sessions. |
+:::
 
-### Settings
-
+::: details Settings
 Permissions that control the ability to manage synced user settings on an account.
 
 | Permission | Description |
 | --- | --- |
 | `settings.read` | Allows viewing the account's synced user settings. |
 | `settings.update` | Allows modifying the account's synced user settings. |
+:::
 
-### Activity
-
+::: details Activity
 Permissions that control the ability to view the activity log on an account.
 
 | Permission | Description |
 | --- | --- |
 | `activity.read` | Allows viewing the account's activity logs. |
+:::
 
 ## Server Permissions
 
-### Control
-
+::: details Control
 Permissions that control the ability to control the power state of a server, read the console, or send commands.
 
 | Permission | Description |
@@ -127,9 +126,9 @@ Permissions that control the ability to control the power state of a server, rea
 | `control.start` | Allows starting the server if it is stopped. |
 | `control.stop` | Allows stopping the server if it is running. |
 | `control.restart` | Allows restarting the server. Permits starting it if offline, but not placing it in a fully stopped state. |
+:::
 
-### Subusers
-
+::: details Subusers
 Permissions that control the ability to manage subusers of a server. Users can never edit their own account or assign permissions they do not have.
 
 | Permission | Description |
@@ -138,9 +137,9 @@ Permissions that control the ability to manage subusers of a server. Users can n
 | `subusers.read` | Allows viewing subusers and their permissions. |
 | `subusers.update` | Allows modifying other subusers. |
 | `subusers.delete` | Allows deleting subusers from the server. |
+:::
 
-### Files
-
+::: details Files
 Permissions that control the ability to modify the filesystem for this server.
 
 | Permission | Description |
@@ -153,9 +152,9 @@ Permissions that control the ability to modify the filesystem for this server.
 | `files.archive` | Allows archiving the contents of a directory and decompressing files. |
 | `files.sftp` | Allows connecting via SFTP to manage files. |
 | `files.query-raw` | Allows running arbitrary SQL against a SQLite database file on this server. This grants full read and write access to that file's contents, equivalent to reading and updating it directly. |
+:::
 
-### Backups
-
+::: details Backups
 Permissions that control the ability to manage server backups.
 
 | Permission | Description |
@@ -166,9 +165,9 @@ Permissions that control the ability to manage server backups.
 | `backups.restore` | Allows restoring backups. |
 | `backups.update` | Allows updating existing backups. |
 | `backups.delete` | Allows deleting backups. |
+:::
 
-### Backup Groups
-
+::: details Backup Groups
 Permissions that control the ability to manage server backup groups (retention policies).
 
 | Permission | Description |
@@ -177,9 +176,9 @@ Permissions that control the ability to manage server backup groups (retention p
 | `backup-groups.read` | Allows viewing existing backup groups. |
 | `backup-groups.update` | Allows updating existing backup groups. |
 | `backup-groups.delete` | Allows deleting backup groups. |
+:::
 
-### Schedules
-
+::: details Schedules
 Permissions that control the ability to manage server schedules.
 
 | Permission | Description |
@@ -188,9 +187,9 @@ Permissions that control the ability to manage server schedules.
 | `schedules.read` | Allows viewing existing schedules. |
 | `schedules.update` | Allows updating existing schedules. |
 | `schedules.delete` | Allows deleting schedules. |
+:::
 
-### Allocations
-
+::: details Allocations
 Permissions that control the ability to modify the port allocations for this server.
 
 | Permission | Description |
@@ -199,18 +198,18 @@ Permissions that control the ability to modify the port allocations for this ser
 | `allocations.create` | Allows assigning additional allocations to the server. |
 | `allocations.update` | Allows changing the primary server allocation and attaching notes to allocations. |
 | `allocations.delete` | Allows deleting allocations from the server. |
+:::
 
-### Firewall
-
+::: details Firewall
 Permissions that control the ability to restrict which sources may reach this server's allocations.
 
 | Permission | Description |
 | --- | --- |
 | `firewall.read` | Allows viewing the firewall rules of the server. |
 | `firewall.update` | Allows adding, reordering, modifying and removing firewall rules. |
+:::
 
-### Connections
-
+::: details Connections
 Permissions that control the ability to connect this server privately to other servers, bypassing the public network.
 
 | Permission | Description |
@@ -219,9 +218,9 @@ Permissions that control the ability to connect this server privately to other s
 | `connections.read` | Allows viewing the server's private network membership, its connections and the ports it offers them. |
 | `connections.update` | Allows changing the server's hostname and which ports it offers to the servers connected to it. |
 | `connections.delete` | Allows removing one of the server's connections, and taking the server off the private network. |
+:::
 
-### Startup
-
+::: details Startup
 Permissions that control the ability to view and modify this server's startup parameters.
 
 | Permission | Description |
@@ -230,9 +229,9 @@ Permissions that control the ability to view and modify this server's startup pa
 | `startup.update` | Allows modifying the startup variables. |
 | `startup.command` | Allows modifying the command used to start the server. |
 | `startup.docker-image` | Allows modifying the Docker image used when running the server. |
+:::
 
-### Databases
-
+::: details Databases
 Permissions that control the ability to manage databases on this server.
 
 | Permission | Description |
@@ -248,9 +247,9 @@ Permissions that control the ability to manage databases on this server.
 | `databases.edit-rows` | Allows inserting, updating and deleting individual table rows through the panel. Statements are built by the panel, so this cannot alter a database's structure. |
 | `databases.edit-structure` | Allows creating and renaming tables and columns through the panel. Statements are built by the panel from validated names and types, so this cannot read or destroy stored data. |
 | `databases.delete-structure` | Allows deleting tables and columns through the panel, permanently destroying any data they contain. |
+:::
 
-### Database Instances
-
+::: details Database Instances
 Permissions that control the ability to manage agent-managed database instances on this server.
 
 | Permission | Description |
@@ -272,9 +271,9 @@ Permissions that control the ability to manage agent-managed database instances 
 | `database-instances.delete-structure` | Allows deleting tables and columns through the panel, permanently destroying any data they contain. |
 | `database-instances.import` | Allows importing data into database instances. |
 | `database-instances.export` | Allows exporting data from database instances. |
+:::
 
-### Mounts
-
+::: details Mounts
 Permissions that control the ability to manage server mounts.
 
 | Permission | Description |
@@ -282,9 +281,9 @@ Permissions that control the ability to manage server mounts.
 | `mounts.attach` | Allows attaching new mounts to the server. |
 | `mounts.read` | Allows viewing existing mounts. |
 | `mounts.detach` | Allows detaching mounts from the server. |
+:::
 
-### Devices
-
+::: details Devices
 Permissions that control server device attachments.
 
 | Permission | Description |
@@ -292,9 +291,9 @@ Permissions that control server device attachments.
 | `devices.attach` | Allows attaching new devices to the server. |
 | `devices.read` | Allows viewing existing devices. |
 | `devices.detach` | Allows detaching devices from the server. |
+:::
 
-### Settings
-
+::: details Settings
 Permissions that control the ability to manage settings on this server.
 
 | Permission | Description |
@@ -306,64 +305,64 @@ Permissions that control the ability to manage settings on this server.
 | `settings.trash` | Allows changing the server's trash settings. |
 | `settings.install` | Allows triggering a reinstall of the server. |
 | `settings.cancel-install` | Allows canceling the server's installation process. |
+:::
 
-### Activity
-
+::: details Activity
 Permissions that control the ability to view the activity log on this server.
 
 | Permission | Description |
 | --- | --- |
 | `activity.read` | Allows viewing the server's activity logs. |
 | `activity.read-ip` | Allows viewing IP addresses associated with activity logs. |
+:::
 
 ## Admin Permissions
 
-### Stats
-
+::: details Stats
 | Permission | Description |
 | --- | --- |
 | `stats.read` | Allows viewing panel statistics. |
+:::
 
-### Settings
-
+::: details Settings
 | Permission | Description |
 | --- | --- |
 | `settings.read` | Allows viewing panel settings and secrets. |
 | `settings.update` | Allows modifying panel settings and secrets. |
+:::
 
-### Email Templates
-
+::: details Email Templates
 | Permission | Description |
 | --- | --- |
 | `email-templates.read` | Allows viewing email templates. |
 | `email-templates.update` | Allows modifying email templates. |
+:::
 
-### Extensions
-
+::: details Extensions
 | Permission | Description |
 | --- | --- |
 | `extensions.read` | Allows viewing panel extensions. |
 | `extensions.manage` | Allows installing, updating, and removing panel extensions; usually also manages extension settings. |
+:::
 
-### Announcements
-
+::: details Announcements
 | Permission | Description |
 | --- | --- |
 | `announcements.create` | Allows creating new announcements. |
 | `announcements.read` | Allows viewing announcements. |
 | `announcements.update` | Allows modifying announcements. |
 | `announcements.delete` | Allows deleting announcements. |
+:::
 
-### Assets
-
+::: details Assets
 | Permission | Description |
 | --- | --- |
 | `assets.read` | Allows viewing panel assets. |
 | `assets.upload` | Allows creating and modifying assets. |
 | `assets.delete` | Allows deleting panel assets. |
+:::
 
-### Users
-
+::: details Users
 | Permission | Description |
 | --- | --- |
 | `users.create` | Allows creating new users. |
@@ -375,18 +374,18 @@ Permissions that control the ability to view the activity log on this server.
 | `users.activity` | Allows viewing a user's activity log. |
 | `users.oauth-links` | Allows viewing and managing a user's OAuth links. |
 | `users.impersonate` | Allows impersonating other users. |
+:::
 
-### Roles
-
+::: details Roles
 | Permission | Description |
 | --- | --- |
 | `roles.create` | Allows creating new roles. |
 | `roles.read` | Allows viewing roles. |
 | `roles.update` | Allows modifying roles. |
 | `roles.delete` | Allows deleting roles. |
+:::
 
-### Locations
-
+::: details Locations
 | Permission | Description |
 | --- | --- |
 | `locations.create` | Allows creating new locations. |
@@ -395,9 +394,9 @@ Permissions that control the ability to view the activity log on this server.
 | `locations.delete` | Allows deleting locations. |
 | `locations.database-hosts` | Allows viewing and managing a location's database hosts. |
 | `locations.database-agent-hosts` | Allows viewing and managing a location's database agent hosts. |
+:::
 
-### Backup Configurations
-
+::: details Backup Configurations
 | Permission | Description |
 | --- | --- |
 | `backup-configurations.create` | Allows creating new backup configurations. |
@@ -405,9 +404,9 @@ Permissions that control the ability to view the activity log on this server.
 | `backup-configurations.update` | Allows modifying backup configurations and their passwords. |
 | `backup-configurations.delete` | Allows deleting backup configurations. |
 | `backup-configurations.backups` | Allows viewing backups associated with a backup configuration. |
+:::
 
-### System Backup Policies
-
+::: details System Backup Policies
 Permissions that control the ability to manage [system backup policies](../admin/system-backup-policies.md) for the panel.
 
 | Permission | Description |
@@ -417,9 +416,9 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `system-backup-policies.update` | Allows modifying system backup policies and their attached nodes, locations and servers. |
 | `system-backup-policies.delete` | Allows deleting system backup policies. |
 | `system-backup-policies.backups` | Allows viewing backups associated with a system backup policy. |
+:::
 
-### Nodes
-
+::: details Nodes
 | Permission | Description |
 | --- | --- |
 | `nodes.create` | Allows creating new nodes. |
@@ -428,7 +427,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `nodes.delete` | Allows deleting nodes. |
 | `nodes.read-token` | Allows viewing a node's token. |
 | `nodes.reset-token` | Allows resetting a node's token. |
-| `nodes.upgrade` | Allows upgrading a node's wings to a newer release. |
+| `nodes.upgrade` | Allows upgrading a node's Wings to a newer release. |
 | `nodes.allocations` | Allows viewing and managing a node's allocations. |
 | `nodes.mounts` | Allows viewing and managing a node's mounts. |
 | `nodes.devices` | Allows viewing and managing a node's devices. |
@@ -438,9 +437,9 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `nodes.tunnel` | Allows viewing and managing a node's private network membership. |
 | `nodes.power` | Allows executing mass-power actions on nodes. |
 | `nodes.transfers` | Allows viewing and managing mass-server transfers between nodes. |
+:::
 
-### Servers
-
+::: details Servers
 | Permission | Description |
 | --- | --- |
 | `servers.create` | Allows creating new servers. |
@@ -452,18 +451,18 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `servers.variables` | Allows viewing and managing a server's variables. |
 | `servers.mounts` | Allows viewing and managing a server's mounts. |
 | `servers.devices` | Allows viewing and managing a server's devices. |
+:::
 
-### Nests
-
+::: details Nests
 | Permission | Description |
 | --- | --- |
 | `nests.create` | Allows creating new nests. |
 | `nests.read` | Allows viewing nests. |
 | `nests.update` | Allows modifying nests. |
 | `nests.delete` | Allows deleting nests. |
+:::
 
-### Eggs
-
+::: details Eggs
 | Permission | Description |
 | --- | --- |
 | `eggs.create` | Allows creating and importing new eggs. |
@@ -472,18 +471,18 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `eggs.delete` | Allows deleting eggs. |
 | `eggs.mounts` | Allows viewing and managing an egg's mounts. |
 | `eggs.devices` | Allows viewing and managing an egg's devices. |
+:::
 
-### Egg Configurations
-
+::: details Egg Configurations
 | Permission | Description |
 | --- | --- |
 | `egg-configurations.create` | Allows creating new egg configurations. |
 | `egg-configurations.read` | Allows viewing egg configurations. |
 | `egg-configurations.update` | Allows modifying egg configurations. |
 | `egg-configurations.delete` | Allows deleting egg configurations. |
+:::
 
-### Egg Repositories
-
+::: details Egg Repositories
 | Permission | Description |
 | --- | --- |
 | `egg-repositories.create` | Allows creating new egg repositories. |
@@ -491,9 +490,9 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `egg-repositories.update` | Allows modifying egg repositories. |
 | `egg-repositories.delete` | Allows deleting egg repositories. |
 | `egg-repositories.sync` | Allows synchronizing egg repositories with their remote sources. |
+:::
 
-### Database Hosts
-
+::: details Database Hosts
 | Permission | Description |
 | --- | --- |
 | `database-hosts.create` | Allows creating new database hosts. |
@@ -501,9 +500,9 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `database-hosts.update` | Allows modifying database hosts. |
 | `database-hosts.delete` | Allows deleting database hosts. |
 | `database-hosts.test` | Allows testing database host connections. |
+:::
 
-### Database Agent Hosts
-
+::: details Database Agent Hosts
 | Permission | Description |
 | --- | --- |
 | `database-agent-hosts.create` | Allows creating new database agent hosts. |
@@ -515,45 +514,46 @@ Permissions that control the ability to manage [system backup policies](../admin
 | `database-agent-hosts.upgrade` | Allows upgrading a database agent host to a newer release. |
 | `database-agent-hosts.test` | Allows testing database agent host connections. |
 | `database-agent-hosts.backups` | Allows viewing and managing a database agent host's backups. |
+:::
 
-### Database Agent Templates
-
+::: details Database Agent Templates
 | Permission | Description |
 | --- | --- |
 | `database-agent-templates.create` | Allows creating new database agent templates. |
 | `database-agent-templates.read` | Allows viewing database agent templates. |
 | `database-agent-templates.update` | Allows modifying database agent templates. |
 | `database-agent-templates.delete` | Allows deleting database agent templates. |
+:::
 
-### OAuth Providers
-
+::: details OAuth Providers
 | Permission | Description |
 | --- | --- |
 | `oauth-providers.create` | Allows creating new OAuth providers. |
 | `oauth-providers.read` | Allows viewing OAuth providers. |
 | `oauth-providers.update` | Allows modifying OAuth providers. |
 | `oauth-providers.delete` | Allows deleting OAuth providers. |
+:::
 
-### Mounts
-
+::: details Mounts
 | Permission | Description |
 | --- | --- |
 | `mounts.create` | Allows creating new mounts. |
 | `mounts.read` | Allows viewing mounts. |
 | `mounts.update` | Allows modifying mounts. |
 | `mounts.delete` | Allows deleting mounts. |
+:::
 
-### Devices
-
+::: details Devices
 | Permission | Description |
 | --- | --- |
 | `devices.create` | Allows creating new devices. |
 | `devices.read` | Allows viewing devices. |
 | `devices.update` | Allows modifying devices. |
 | `devices.delete` | Allows deleting devices. |
+:::
 
-### Activity
-
+::: details Activity
 | Permission | Description |
 | --- | --- |
 | `activity.read` | Allows viewing the activity logs for all admin operations. |
+:::

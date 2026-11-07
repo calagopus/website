@@ -1,6 +1,5 @@
 ---
 title: Running DB Agent Rootless
-prev: true
 next: false
 description: Run Calagopus DB Agent as an unprivileged user under rootless Podman, with a systemd user service and the configuration changes it needs.
 ---
@@ -17,7 +16,7 @@ Rootless mode relies on Podman's `keep-id` user namespace mapping. Rootless Dock
 
 ## Before You Start
 
-Install Podman through your distribution's package manager (`apt install podman`, `dnf install podman`), then enable the Podman socket as the user DB Agent will run as:
+Install Podman through your distribution's package manager (`sudo apt install podman`, `sudo dnf install podman`), then enable the Podman socket as the user DB Agent will run as:
 
 ```bash
 systemctl --user enable --now podman.socket

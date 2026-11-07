@@ -62,7 +62,7 @@ While **Enable Password Login** is off in [Settings](./settings.md#application),
 
 Some providers keep useful data behind endpoints other than the user-info one, Discord's guild membership being the usual example. **Additional Info URLs** lets you list up to 8 of them as key and URL pairs. Keys are 1 to 64 characters of letters, digits, `_`, or `-`, and each URL must be an `http` or `https` URL of at most 2048 characters.
 
-The Panel fetches all of them in parallel with the Info URL on every login, using the same access token, timeout, and size limit. A URL that answers 404 counts as absent, so a matcher reading it simply does not match. Any other error fails the login with "failed to fetch additional oauth user info (key)", rather than letting a temporary outage revoke mappings the user should keep.
+The Panel fetches all of them in parallel with the Info URL on every login, using the same access token, timeout, and size limit. A URL that answers 404 counts as absent, so a matcher reading it does not match. Any other error fails the login with "failed to fetch additional oauth user info (key)", rather than letting a temporary outage revoke mappings the user should keep.
 
 The responses are only used by [mapping matchers](#matchers), through their **Source** field. Identifier, profile paths, and the avatar template still read the main Info URL.
 
@@ -119,7 +119,7 @@ The **Mappings** tab automates access: whenever a user logs in through this prov
 - **Mapping Type** decides what is granted:
   - **Role** assigns a panel [role](./roles.md); pick the **Role**.
   - **Server Subuser** adds the user as a [subuser](../server/subusers.md); pick the **Server**, the subuser **Permissions**, and optionally **Ignored Files**.
-- **Revoke when not matched**: "Removes the assigned role or server subuser again when the matcher no longer matches on a later login", handy for mirroring, say, a Discord role into a panel role.
+- **Revoke when not matched**: "Removes the assigned role or server subuser again when the matcher no longer matches on a later login". Use it to mirror a Discord role into a panel role, for example.
 
 ::: info
 You cannot create a mapping that grants more than you hold yourself. A mapping whose role or subuser permissions exceed your own is rejected with `permissions: more permissions than self`. The same guard applies when editing a role that already grants permissions you lack. Through an API key, "what you hold" is also limited to the key's own permissions.

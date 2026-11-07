@@ -44,7 +44,7 @@ Copy the Redirect URL provided by the panel and proceed to the next step.
 ### Setting up Google OAuth
 
 #### Select or create a Google Cloud project
-Go to [Google Cloud console](http://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
+Go to [Google Cloud console](https://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
 ![Google Cloud landing page with the Console link highlighted in the top navigation](./files/images/google/image-1.webp)
 
 Once there, select a project that you want to use for the Google OAuth app.

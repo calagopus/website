@@ -1,6 +1,8 @@
 ---
 title: Documentation
-description: Official Calagopus documentation. Learn how to install the panel, deploy Wings on game server nodes, and build custom extensions.
+description: "Official Calagopus documentation: install the panel, deploy Wings on game server nodes, and build custom extensions."
+prev: false
+next: false
 ---
 
 ![Calagopus Logo](/fulllogo.svg)

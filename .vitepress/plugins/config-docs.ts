@@ -177,43 +177,73 @@ function exampleTree(doc: ConfigDoc, platform: string): Record<string, YamlValue
 const renderNotes = (notes: ConfigNote[] | undefined): string[] =>
   (notes ?? []).map((note) => `::: ${note.type}${note.title ? ` ${note.title}` : ''}\n${note.body}\n:::`);
 
-function renderOption(option: ConfigOption): string[] {
-  const lead = [...renderNotes(option.notesBefore), option.description];
-  // The heading sits directly on top of whatever follows it, matching the rest of the docs.
-  const blocks = [`### ${option.key}\n${lead[0]}`, ...lead.slice(1)];
+const badge = (type: string, text: string): string => `<Badge type="${type}" text="${text}" />`;
+
+const platformLabel = (doc: ConfigDoc, id: string): string =>
+  doc.example.platforms.find((platform) => platform.id === id)?.label ?? id;
+
+function renderHeading(option: ConfigOption, doc: ConfigDoc): string {
+  const required = typeof option.required === 'string' ? `Required for ${option.required}` : 'Required';
+  const badges = [option.required ? badge('tip', required) : badge('info', 'Optional')];
+  if (option.platforms) {
+    badges.push(badge('info', `${option.platforms.map((id) => platformLabel(doc, id)).join(', ')} only`));
+  }
+  return `### ${option.key} ${badges.join(' ')}`;
+}
+
+function inlineValue(value: YamlValue): string | null {
+  if (isScalar(value)) return `\`${scalar(value)}\``;
+  if (Array.isArray(value)) return value.length === 0 ? '`[]`' : null;
+  return Object.keys(value).length === 0 ? '`{}`' : null;
+}
+
+/** Short values sit on one line, the way the Panel's environment page shows them. Only collections get a block. */
+function renderDefault(option: ConfigOption, doc: ConfigDoc): string[] {
+  if (option.default === undefined) return [];
+
+  const inline = inlineValue(option.default);
+  if (inline === null) {
+    const leaf = option.key.split('.').pop() as string;
+    return [`Default:\n\n\`\`\`yaml\n${yamlBlock({ [leaf]: option.default })}\`\`\``];
+  }
+
+  const others = Object.entries(option.platformDefaults ?? {}).map(
+    ([id, value]) => ` (${platformLabel(doc, id)}: ${inlineValue(value)})`,
+  );
+  return [`Default: ${inline}${others.join('')}`];
+}
+
+function renderOption(option: ConfigOption, doc: ConfigDoc): string[] {
+  const blocks = [renderHeading(option, doc), ...renderNotes(option.notesBefore), option.description];
 
   if (option.values) {
-    blocks.push('Available options:', option.values.map((value) => `\`${value}\``).join(', '));
+    blocks.push(`Options: ${option.values.map((value) => `\`${value}\``).join(', ')}`);
   }
 
-  if (option.default !== undefined) {
-    const leaf = option.key.split('.').pop() as string;
-    blocks.push(`Default value:\n\`\`\`yaml\n${yamlBlock({ [leaf]: option.default })}\`\`\``);
-  }
-
-  blocks.push(...renderNotes(option.notesAfter));
+  blocks.push(...renderDefault(option, doc), ...renderNotes(option.notesAfter));
   return blocks;
 }
 
-function renderSection(section: ConfigSection): string[] {
+function renderSection(section: ConfigSection, doc: ConfigDoc): string[] {
   const blocks = [`## ${section.title}`];
   if (section.body) blocks.push(section.body);
   blocks.push(...renderNotes(section.notes));
-  for (const option of section.options ?? []) blocks.push(...renderOption(option));
+  for (const option of section.options ?? []) blocks.push(...renderOption(option, doc));
   return blocks;
 }
 
 function renderExample(doc: ConfigDoc): string[] {
   const blocks = [`## ${doc.example.title}`, doc.example.body];
+  const summary = 'Show the example config';
   const block = (platform: string) => `\`\`\`yaml\n${yamlBlock(exampleTree(doc, platform))}\`\`\``;
 
   if (doc.example.platforms.length === 1) {
-    blocks.push(block(doc.example.platforms[0].id));
+    blocks.push(`::: details ${summary}\n${block(doc.example.platforms[0].id)}\n:::`);
     return blocks;
   }
 
   const tabs = doc.example.platforms.map((platform) => `=== ${platform.label}\n\n${block(platform.id)}`);
-  blocks.push(`::::tabs\n${tabs.join('\n\n')}\n\n::::`);
+  blocks.push(`::::: details ${summary}\n\n::::tabs\n${tabs.join('\n\n')}\n\n::::\n\n:::::`);
   return blocks;
 }
 
@@ -223,7 +253,7 @@ export function renderConfigDoc(doc: ConfigDoc): string {
     `<!-- Generated from ${doc.sourceFile} by .vitepress/plugins/config-docs.ts - do not edit by hand. -->`,
     `# ${doc.title}`,
     doc.intro,
-    ...doc.sections.flatMap(renderSection),
+    ...doc.sections.flatMap((section) => renderSection(section, doc)),
     ...renderExample(doc),
   ];
 

@@ -1,0 +1,10 @@
+# Replace <agent-domain> with the agent's domain.
+# Change 127.0.0.1:8090 below if DB Agent listens elsewhere.
+<agent-domain> {
+    header {
+        X-Content-Type-Options "nosniff"
+        Referrer-Policy        "same-origin"
+    }
+
+    reverse_proxy 127.0.0.1:8090
+}

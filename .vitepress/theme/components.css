@@ -320,6 +320,101 @@
   padding: var(--mantine-spacing-md) 0 0;
 }
 
+/* Tabs as a Mantine SegmentedControl. */
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list {
+  display: inline-flex;
+  max-width: 100%;
+  padding: 4px;
+  border-radius: var(--mantine-radius-default);
+  background-color: var(--mantine-color-gray-1);
+}
+
+.dark .vp-doc .plugin-tabs .plugin-tabs--tab-list {
+  background-color: var(--mantine-color-dark-8);
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list::after,
+.vp-doc .plugin-tabs .plugin-tabs--tab::after {
+  display: none;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab {
+  --separator-color: var(--mantine-color-gray-3);
+
+  flex: 1 1 auto;
+  padding: 3px 10px;
+  border-radius: calc(var(--mantine-radius-default) - 4px);
+  font-weight: var(--mantine-font-weight-medium);
+  line-height: var(--mantine-line-height);
+  color: var(--mantine-color-gray-7);
+  transition:
+    color 200ms ease,
+    background-color 200ms ease;
+}
+
+.dark .vp-doc .plugin-tabs .plugin-tabs--tab {
+  --separator-color: var(--mantine-color-dark-4);
+
+  color: var(--mantine-color-dark-1);
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 1px;
+  background-color: var(--separator-color);
+  transition: background-color 200ms ease;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab:first-child::before,
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"]::before,
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"] + .plugin-tabs--tab::before {
+  background-color: transparent;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"] {
+  background-color: var(--mantine-color-white);
+  box-shadow: var(--mantine-shadow-xs);
+  color: var(--mantine-color-black);
+}
+
+.dark .vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"] {
+  background-color: var(--mantine-color-dark-5);
+  box-shadow: none;
+  color: var(--mantine-color-white);
+}
+
+@media (hover: hover) {
+  .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected="true"]):hover {
+    background-color: transparent;
+    color: var(--mantine-color-black);
+  }
+
+  .dark .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected="true"]):hover {
+    background-color: transparent;
+    color: var(--mantine-color-white);
+  }
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: -2px;
+}
+
+@media (max-width: 640px) {
+  .vp-doc .plugin-tabs .plugin-tabs--tab {
+    white-space: normal;
+  }
+
+  .vp-doc .plugin-tabs .plugin-tabs--tab::before {
+    display: none;
+  }
+}
+
 .vp-doc .vp-code-group .tabs {
   padding: 0;
   box-shadow: inset 0 -2px var(--tab-border-color);
@@ -401,4 +496,76 @@
 .VPBadge.important {
   background-color: var(--mantine-color-violet-light);
   color: var(--mantine-color-violet-light-color);
+}
+
+/* Internal doc links get a chevron, built like the default theme's external link icon so it
+   never wraps onto a line of its own. */
+.VPDoc .vp-doc a:not([class], [download], [href*="://"], [target="_blank"], svg a, :has(img, svg))::after {
+  content: var(--vp-direction-mark) "\2060";
+  display: inline;
+  margin-inline-start: 0.125rem;
+  padding-inline-start: 0.6875rem;
+  background: currentColor;
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m9 6 6 6-6 6'/%3E%3C/svg%3E");
+  -webkit-mask: var(--icon) center / 100% 100% no-repeat;
+  mask: var(--icon) center / 100% 100% no-repeat;
+}
+
+/* Compare section: the sidebar, set via pageClass in each page's frontmatter. */
+
+.compare-page .VPSidebarItem.level-0 > .item > .text,
+.compare-page .VPSidebarItem.level-0.has-active > .item > .text {
+  margin-bottom: 2px;
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.is-link > .item > .link > .text {
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.level-1 > .item > .text,
+.compare-page .VPSidebarItem.level-1.has-active > .item > .text {
+  margin-top: 8px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.level-1:not(.is-link) + .VPSidebarItem.level-1.is-link {
+  margin-top: 8px;
+}
+
+.compare-page .VPSidebarItem.is-link > .item {
+  width: calc(100% + 20px);
+  margin-inline: -10px;
+  padding-inline: 10px;
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.15s;
+}
+
+.compare-page .VPSidebarItem.is-link > .item:hover {
+  background-color: var(--mantine-color-default-hover);
+}
+
+.compare-page .VPSidebarItem.is-active > .item,
+.compare-page .VPSidebarItem.is-active > .item:hover {
+  background-color: var(--vp-c-brand-soft);
+}
+
+.compare-page .VPSidebarItem .indicator {
+  display: none;
+}
+
+.compare-page .VPSidebarItem.level-1 > .items {
+  padding-inline-start: 10px;
+  border-inline-start: none;
+}
+
+/* Compare section: two-sided tables keep their columns lined up from one table to the next. */
+
+.compare-versus .vp-doc .m-table table {
+  table-layout: fixed;
+}
+
+.compare-versus .vp-doc .m-table th:first-child {
+  width: 46%;
 }

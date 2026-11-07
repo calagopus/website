@@ -1,7 +1,8 @@
 ---
 title: Calagopus 1.2.0 released
-description: Calagopus Panel 1.2.0 brings private networking between nodes, per-server firewalls, a keyboard-driven Quick Actions palette, a tree-style file editor, and DB Agent access control and backups.
+description: Calagopus 1.2.0 adds private networking between nodes, per-server firewalls, a Quick Actions palette, a tree-style file editor, and DB Agent access control and backups.
 date: 2026-09-06
+next: false
 ---
 
 # Calagopus 1.2.0 released

@@ -40,7 +40,7 @@ Go to [Discord's Developer Portal](https://discord.com/developers/applications),
 In the popup, type the name of your application, which will be shown on the Discord login page. Select a team if you have one and then click on `Create`.
 ![Discord Create a new app dialog with the name Calagopus, a team selector, and Create button](./files/images/discord/image-2.webp)
 
-On the General Information page, you can optionally set an icon and description - this is not required and is not covered further here.
+On the General Information page, you can optionally set an icon and description. This is not required and not covered here.
 
 #### Add your Redirect URL to Discord OAuth
 On the left sidebar, click on `OAuth2`.

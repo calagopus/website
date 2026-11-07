@@ -52,7 +52,7 @@ What it offers follows where you are:
 - Inside a server: the server's pages plus **Power** actions matching its state and your permissions (**Start** while offline, **Stop** and **Restart** while running, **Kill** while stopping).
 - In the admin area: **Back**, **Home**, and every admin page.
 
-Whatever page you are on, its own tabs are listed too, under **Page Navigation** - the tabs of a node, an egg or your backups, without reaching for them.
+Whatever page you are on, its own tabs are listed too, under **Page Navigation**, such as the tabs of a node, an egg or your backups.
 
 ![Quick actions dialog with a search box and Navigation entries such as Home, Nodes, and Servers](./images/index/quick-actions-modal.webp)
 
