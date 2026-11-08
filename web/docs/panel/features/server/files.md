@@ -245,15 +245,33 @@ Each row's menu, and the action bar that appears once you select rows, offer:
 
 | Action | What it does |
 | --- | --- |
+| **Open** | Since Panel 1.2.9, menu only. Opens the entry in the file manager, see [Browsing the Trash](#browsing-the-trash). Clicking the row does the same. |
+| **Download** | Since Panel 1.2.9, menu only, and only for a deleted file. Downloads it without restoring it first. Needs `files.read-content`. |
 | **Restore** | Puts the entry back where it was deleted from, recreating missing parent folders. |
 | **Restore to...** | Opens **Restore to Directory**: pick a **Destination Directory** and, per entry, the name it should get. |
 | **Delete Permanently** | Removes the entry for good, after confirmation. |
 
-**Empty Trash** in the header deletes every entry at once. All of these need the `files.delete` permission; opening the page only needs `files.read`.
+**Empty Trash** in the header deletes every entry at once. **Restore**, **Restore to...**, **Delete Permanently** and **Empty Trash** need the `files.delete` permission. **Open**, like the page itself, only needs `files.read`, and **Download** needs `files.read-content`.
 
 If something already exists where an entry would be restored, **Resolve Restore Conflicts** lists each clash with both sides' size and date. Choose **Skip**, **Overwrite**, or **Rename** per entry, or **Skip all** / **Overwrite all**. **Overwrite** deletes the existing file or folder permanently; it doesn't go to the trash. A restore can be undone from its toast, which moves the entries back into the trash, unless you overwrote something to make it. If any entry in the conflict dialog overwrote something, that toast has no **Undo** at all, not even for the entries you renamed.
 
 A subuser only sees entries whose original path their [ignored files](./subusers.md#ignored-files) don't hide, and **Empty Trash** leaves the hidden ones alone.
+
+### Browsing the Trash
+
+Since Panel 1.2.9, a trash entry can be opened in the file manager, read-only the same way as a [backup](#browsing-backups). The breadcrumb root switches to `trash / <entry name>` and a **Back to Trash** button returns to the trash page. A deleted folder opens at its contents, so you can look through it, open files, and download them before deciding what to restore. A deleted file opens as a folder holding just that file.
+
+Inside a deleted folder, the row menu and the action bar gain **Restore** and **Restore to...** (both need `files.delete`), which take individual files or subfolders out of the entry instead of the whole thing. **Restore** puts each item back at its original path inside the deleted folder, recreating the missing parents. **Restore to...** opens **Restore to Directory**, where you pick a **Destination Directory** and, per item, the name it should get, in a field labelled **File Name** when there is only one item. When something already exists at the target, the same **Resolve Restore Conflicts** dialog appears with **Skip**, **Overwrite**, and **Rename**. Here, overwriting only takes away **Undo** for the items that overwrote something; renamed items keep theirs.
+
+![Deleted world_backup folder opened from the trash, with the trash / world_backup breadcrumb, Back to Trash, level.dat selected, and the action bar led by Restore and Restore to...](./images/files/trash-browse.webp)
+
+Undoing an item restore moves the items back into the entry. That fails for an item that has since been replaced or moved, or whose old place in the entry is taken again. The entry's size shrinks as items leave it. Once every item of a deleted folder has been restored and an hour has passed since the last restore, Wings removes the empty entry.
+
+A subuser's [ignored files](./subusers.md#ignored-files) apply inside an entry by each item's original path, so hidden files don't show up while browsing and can't be restored. Item restores are logged as `server:file.trash.restore`, and undoing them as `server:file.trash.return`.
+
+::: warning
+Browsing the trash and restoring single items need Wings 1.2.9 or newer on the server's node.
+:::
 
 ### What Goes to the Trash
 

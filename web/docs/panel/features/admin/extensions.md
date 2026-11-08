@@ -21,6 +21,8 @@ Each installed extension gets a card with its name, package name, **Version**, *
 
 ![Extensions page](./images/extensions/list.webp)
 
+Since Panel 1.2.9, a search box in the header filters the cards once at least one extension is installed. It matches the package name and, for extensions with a backend, the name, description, and authors shown on the card, ignoring case. When nothing matches, the grid shows an empty state instead.
+
 **Configure** on a card opens the extension's own settings page at `/admin/extensions/<packageName>`. It's disabled, with a tooltip saying why, when the extension has no backend, ships no configuration page, or is currently disabled.
 
 The switch next to it turns an extension **off without uninstalling it**: its entrypoints are skipped at boot, so its routes and background tasks stop existing, while its files, database tables and permission grants all stay put. Toggling shows a **Pending restart** badge until the panel restarts, and a **Disabled** badge afterwards.

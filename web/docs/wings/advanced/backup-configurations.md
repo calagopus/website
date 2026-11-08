@@ -82,7 +82,7 @@ The create and edit forms have a **Test** button. Pick a node and click **Run Te
 
 The test runs on one node. If the configuration is assigned to a location, test a node from each network your backups will come from. For Btrfs and ZFS it only checks the tools and the filesystem; whether each server sits on its own subvolume or dataset is checked when a backup runs. If the node has its own restic password file in its Wings config, backups use the node's repository instead of the configured one, and so does the test.
 
-Testing needs the `backup-configurations.create` or `backup-configurations.update` admin permission. Nodes running a Wings version without the test endpoint answer with "node's wings version does not support backup tests".
+Testing needs the `backup-configurations.create` or `backup-configurations.update` admin permission. Nodes running a Wings version without the test endpoint answer with "this node does not support backup tests" (before Panel 1.2.9: "node's wings version does not support backup tests").
 
 ## Removing Saved Provider Settings
 
@@ -191,7 +191,9 @@ You can read the fingerprint from the PBS web UI dashboard (**Show Fingerprint**
 
 Use the **Kopia** disk to store backups in a [Kopia](https://kopia.io) repository. Wings does not connect to the underlying storage directly; instead it talks to a running [Kopia repository server](https://kopia.io/docs/repository-server/) (`kopia server start`), which fronts the actual repository (S3, B2, filesystem, etc.). This means the `kopia` binary must be installed on each Wings node that uses this configuration; Wings shells out to it and keeps its per-repository state (config and cache) under the `.kopia` subdirectory of [`system.backup_directory`](../configuration.md#system-backup-directory).
 
-Backups are created as Kopia snapshots tagged with the backup UUID, deduplicated against the repository.
+Backups are created as Kopia snapshots tagged with the backup UUID, deduplicated against the repository. The server's ignored files are kept as an ignore policy on its directory in the repository. Since Wings 1.2.9, Wings reads that policy back first and only rewrites it when the list has changed, because each `policy set` replaces the policy manifest while other snapshots on the repository may be running.
+
+Kopia errors containing `policy not found` or `connection refused` are treated as transient since Wings 1.2.9: Wings retries the snapshot or policy change up to [`system.backups.kopia.retry_limit`](../configuration.md#system-backups-kopia-retry-limit) times, waiting 1, 4, then 9 seconds (plus some jitter) with the default limit of 3. If the ignore policy still can't be updated, Wings only logs a warning and the backup goes ahead. How many files Kopia uploads and restores in parallel is set per node with [`system.backups.kopia.create_threads`](../configuration.md#system-backups-kopia-create-threads) and [`restore_threads`](../configuration.md#system-backups-kopia-restore-threads).
 
 | Field | Value |
 | --- | --- |

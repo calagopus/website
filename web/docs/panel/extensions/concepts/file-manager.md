@@ -163,7 +163,9 @@ ctx.extensionRegistry.pages.server.files.trash;
 | `actionBar` | `enterActionBar` | Either side of the **Restore**, **Restore to...** and **Delete Permanently** buttons | While entries are selected |
 | `entryContextMenu` | `enterEntryContextMenu` | The row menu, interceptors receive `{ entry }` | Always |
 
-The trash page is its own route and does not render `FileManagerProvider`, so nothing slotted here can call `useFileManager`. An `entry` carries `uuid`, `name`, `path` (where it was deleted from, relative to the server root), `directory`, `size` and `deletedAt`.
+The trash page is its own route and does not render `FileManagerProvider`, so nothing slotted here can call `useFileManager`. An `entry` carries `uuid`, `name`, `path` (where it was deleted from, relative to the server root), `directory`, `file`, `size` and `deleted`. Before Panel 1.2.9 the deletion time was called `deletedAt` and there was no `file` flag, so update interceptors that read it.
+
+Since Panel 1.2.9, opening an entry browses it inside the normal file manager, which does render `FileManagerProvider`. A deleted folder opens at `/.trash/<uuid>/<name>`, a deleted file at `/.trash/<uuid>`, where it is the only item. The file manager's own slots, such as `fileContextMenu` and `fileActionBar`, apply there too, alongside the built-in **Restore** and **Restore to...** items for files inside a deleted folder.
 
 ```ts
 import { faCopy } from '@fortawesome/free-solid-svg-icons';
@@ -421,7 +423,7 @@ The Pierre handler receives the Panel's `PierreEditorHandle` (`getValue`, `setVa
 
 ## Permissions
 
-The file manager surfaces read `files.read-content`, `files.create`, `files.update`, `files.archive`, `files.delete`, and `files.query-raw` for the SQLite query page. The trash page needs `files.read` to open, and `files.delete` covers everything you can do to an entry there: restoring it, deleting it permanently and emptying the trash. Gate your own UI with `ServerCan` as described in [Permissions](./permissions.md).
+The file manager surfaces read `files.read-content`, `files.create`, `files.update`, `files.archive`, `files.delete`, and `files.query-raw` for the SQLite query page. The trash page needs `files.read` to open, and so does an entry's **Open** item. **Download** needs `files.read-content`. **Restore**, **Restore to...**, **Delete Permanently** and **Empty Trash** need `files.delete`. Gate your own UI with `ServerCan` as described in [Permissions](./permissions.md).
 
 One file-manager-specific difference: context menu items take a `canAccess` boolean rather than being wrapped, and an item with `canAccess: false` is removed from the menu entirely. If every item ends up removed the row's whole menu affordance disappears, so a permission-gated item should set `canAccess`, not render an empty menu.
 

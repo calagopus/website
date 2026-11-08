@@ -74,7 +74,7 @@ The Panel shows a small loading spinner while the page loads, before any extensi
 
 Only one installed extension can provide `boot.html`, the build fails if several do. While the extension is disabled, the default spinner is shown instead. The fragment cannot contain scripts that run, as the Panel's content security policy blocks inline scripts.
 
-The fragment is rendered as a MiniJinja template that can use your extension's [index HTML variables](./concepts/index-html-variables.md#using-variables-in-the-boot-screen), for example <code v-pre>{{ variables.accent_color }}</code>. If it fails to render, the default spinner is shown.
+The fragment is rendered as a MiniJinja template that can use your extension's [index HTML variables](./concepts/index-html-variables.md#using-variables-in-the-boot-screen), for example <code v-pre>{{ variables.accent_color }}</code>. If it fails to render, or renders to nothing, the default spinner is shown. The file must not contain the text `endraw` anywhere, even in a comment, or the build fails, because the build wraps the markup in a raw block before the Panel renders it.
 
 ### src/index.ts
 

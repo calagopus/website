@@ -242,6 +242,10 @@ Requires `servers.delete`. The modal has a force switch ("Do you want to execute
 Deleting a server removes it and all of its data, and cannot be undone. "Force deletion skips the normal shutdown sequence. The server files on the node may not be fully cleaned up, leaving orphaned data behind.", so only force it when a normal delete fails (for example, the node is unreachable).
 :::
 
+::: info
+On Wings 1.2.8 and older, deleting a running server could stop halfway when Docker answered `removal of container ... is already in progress`, most often when several running servers were deleted at once. The server disappeared from the Panel and from Wings, but its container, its files, or both stayed on the node. Wings 1.2.9 waits for that removal to finish and then deletes the files. To clean up after an older node, check `docker ps -a` for the leftover container and remove it with `docker rm -f`, then delete the directory named after the server's UUID under [`system.data`](../../../wings/configuration.md#system-data).
+:::
+
 ### View in Client Area
 
 The last sidebar item jumps to the server's regular [client view](../server/index.md), the same one the owner uses. The client view links back here with **View in Admin Area**, so you can hop between the two.

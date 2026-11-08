@@ -290,15 +290,27 @@ Panel to refetch, it drops the permissions it held rather than keep them. In the
 browser, a closed console takes the user back to the server list with
 "Connection closed: your access to this server has been revoked."
 
-The Panel sends these notices in the background and only logs a failure, so a node
-that is offline or unreachable at that moment keeps what it had until those
-sessions end or their tokens expire. Nodes running Wings older than 1.2.6 do not
-know the invalidation call. The Panel then deauthorizes each affected user with
-no server list, which on those versions ends the user's sessions on every server
-of that node, not just the one that changed. API key changes and saved admin
-settings do not reach these nodes at all.
+The Panel sends these notices in the background. Before Panel 1.2.9 it only logged
+a failure, so a node that was offline or unreachable at that moment kept what it
+had until those sessions ended or their tokens expired.
 
-Sources: [Panel invalidation](https://github.com/calagopus/panel/blob/4f33b77b819c08d281e1173d2aa270bb47f28dba/shared/src/models/node/mod.rs#L816-L941), [Wings invalidation route](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/routes/api/permissions/invalidate.rs), [token revocation](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/remote/jwt.rs), [held permissions](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/server/permissions.rs).
+Since Panel 1.2.9, a notice that does not get through is queued in the database
+instead. The Panel first retries a connection error, timeout, 5xx or 429 response
+after 1, 2 and 4 seconds. Whatever is still undelivered then goes into the queue,
+which is checked every 10 seconds and retried with a backoff that starts at 10
+seconds and doubles up to 5 minutes. A node flushes its queue straight away when
+Wings starts and reports in, and a node's queue is removed when the node is
+deleted. Queued refetches for the same node merge into one call. A queued
+revocation that is more than 15 minutes old by the time it goes out is sent as a
+plain refetch, because the console, upload and download tokens it was meant to
+cut off have expired by then.
+
+Nodes running Wings older than 1.2.6 do not know the invalidation call. The Panel
+then deauthorizes each affected user with no server list, which on those versions
+ends the user's sessions on every server of that node, not just the one that
+changed. API key changes and saved admin settings do not reach these nodes at all.
+
+Sources: [Panel invalidation](https://github.com/calagopus/panel/blob/4f33b77b819c08d281e1173d2aa270bb47f28dba/shared/src/models/node/mod.rs#L816-L941), [invalidation queue](https://github.com/calagopus/panel/blob/b59944fd12b59299889789f9e397e8a6a682eb0a/shared/src/models/node/permissions_invalidation.rs), [Wings invalidation route](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/routes/api/permissions/invalidate.rs), [token revocation](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/remote/jwt.rs), [held permissions](https://github.com/calagopus/wings/blob/bdad2bfea0a3aa1cc538db5b12c79d6c3142a283/application/src/server/permissions.rs).
 
 ### Settings the Panel cannot change
 
@@ -555,6 +567,10 @@ client IP, so configure trusted proxies and the real client address correctly
 
 Redis/Valkey coordinates limits across Panel instances. When Redis is unavailable or returns an error, the local fallback keeps
 counters in one process; it cannot provide a shared budget across replicas.
+Since Panel 1.2.9, once a client is over a limit, each Panel instance remembers
+the block in memory until the window ends and turns further requests away without
+a Redis round trip, so those requests are no longer counted. The window never
+extends, so the client is let back in at the same time either way.
 Fixed windows also allow a burst around a window boundary, so these limits are
 abuse controls rather than exact traffic shaping.
 
@@ -689,6 +705,10 @@ The Panel and Wings CI image workflows configure:
 
 - **CycloneDX SBOMs** generated from source per build.
 - **Signed container images** using cosign / sigstore (GHCR and Docker Hub).
+  Signing is recursive, so besides the multi-arch index each per-platform image
+  carries its own signature, and a digest pulled for one architecture verifies on
+  its own. Panel and Wings images are both signed this way since their 1.2.9
+  build pipelines.
 - **Build provenance** and **SBOM attestations** attached to the images, so a
   consumer can verify what was built and from what.
 - **Actions pinned to commit SHAs.** Every third-party action in the build and
@@ -705,7 +725,7 @@ receive application state, including database, cache, and environment access.
 Installing one extends the trusted codebase; the tenant permission model does not
 sandbox it.
 
-Sources: [Panel image workflow](https://github.com/calagopus/panel/blob/28e9fcb8fe2c8a53611a6247de31145da7bae57c/.github/workflows/build-and-publish.yml), [Wings image workflow](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/.github/workflows/build.yml#L81-L171), [pinned Wings actions](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/.github/workflows/build.yml), [pinned Panel actions](https://github.com/calagopus/panel/blob/28e9fcb8fe2c8a53611a6247de31145da7bae57c/.github/workflows/build-and-publish.yml), [extension entrypoints](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/extensions/mod.rs#L294-L331), [application state](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/lib.rs#L155-L166).
+Sources: [Panel image workflow](https://github.com/calagopus/panel/blob/28e9fcb8fe2c8a53611a6247de31145da7bae57c/.github/workflows/build-and-publish.yml), [Wings image workflow](https://github.com/calagopus/wings/blob/11994e3a4879f2963cf85479fe2875ed22ba891d/.github/workflows/build-and-publish.yml), [pinned Wings actions](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/.github/workflows/build.yml), [pinned Panel actions](https://github.com/calagopus/panel/blob/28e9fcb8fe2c8a53611a6247de31145da7bae57c/.github/workflows/build-and-publish.yml), [extension entrypoints](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/extensions/mod.rs#L294-L331), [application state](https://github.com/calagopus/panel/blob/7e5c1b2ec4b050c9b078548f7557abee9843ce74/shared/src/lib.rs#L155-L166).
 
 ## Known residual risks
 

@@ -413,7 +413,7 @@ Permissions that control the ability to manage [system backup policies](../admin
 | --- | --- |
 | `system-backup-policies.create` | Allows creating new system backup policies. |
 | `system-backup-policies.read` | Allows viewing system backup policies. |
-| `system-backup-policies.update` | Allows modifying system backup policies and their attached nodes, locations and servers. |
+| `system-backup-policies.update` | Allows modifying system backup policies and their attached nodes, database agent hosts, locations and servers. |
 | `system-backup-policies.delete` | Allows deleting system backup policies. |
 | `system-backup-policies.backups` | Allows viewing backups associated with a system backup policy. |
 :::

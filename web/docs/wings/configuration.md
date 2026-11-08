@@ -658,6 +658,46 @@ The interval (in seconds) between background maintenance runs that clean up stal
 
 Default: `3600`
 
+## Resource History Configuration
+
+### system.resource_history.enabled <Badge type="info" text="Optional" />
+
+::: info
+Added in Wings 1.2.9.
+:::
+
+Enables or disables resource history. When enabled, Wings samples every server's power state, CPU, memory, disk and network usage once a second and stores the aggregated values in `resource_history.db` inside `system.root_directory`, so the Panel can chart a server's usage over time. When disabled, nothing is recorded and history requests for the node's servers are refused. Data already stored stays in the database file.
+
+Default: `true`
+
+### system.resource_history.flush_interval <Badge type="info" text="Optional" />
+
+How often (in seconds) Wings writes the samples it has collected in memory to the history database. A lower value loses less history if Wings stops unexpectedly, at the cost of more frequent disk writes.
+
+Default: `10`
+
+### system.resource_history.tiers <Badge type="info" text="Optional" />
+
+The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range.
+
+At most 8 tiers are allowed, every `step` must be at least `1` and unique, and `retention` must be `0` or at least the tier's `step`, otherwise Wings refuses to load the configuration. An empty list stops recording, but unlike `enabled: false`, history requests are still answered, with no data, and the Panel shows **No data recorded in this range**.
+
+A tier added later is filled from the existing finer tiers whose `step` divides its own. A removed tier stops being written, but its data is kept and pruned under its last `retention` until it runs empty.
+
+Default:
+
+```yaml
+tiers:
+- step: 1
+  retention: 3600
+- step: 10
+  retention: 604800
+- step: 60
+  retention: 31536000
+- step: 600
+  retention: 0
+```
+
 ## File Collaboration Configuration
 
 ### system.file_collaboration.enabled <Badge type="info" text="Optional" />
@@ -816,6 +856,10 @@ The maximum time (in seconds) to wait for a single part of a multipart upload.
 
 Default: `7200`
 
+::: info
+Before Wings 1.2.9 this was also the total time limit for downloading an S3 backup to restore a server backup or a database backup, so a restore that took longer than this failed. Downloads now have a 30-second connect timeout and no total limit.
+:::
+
 ### system.backups.s3.retry_limit <Badge type="info" text="Optional" />
 
 The number of retry attempts for each failed upload part.
@@ -869,6 +913,28 @@ Default: `60`
 The environment variables passed to the restic process for authentication and configuration. Every variable except `PATH` is passed through. Panel configuration patches cannot change this key.
 
 Default: `{}`
+
+### system.backups.kopia.create_threads <Badge type="info" text="Optional" />
+
+::: info
+The `system.backups.kopia` options were added in Wings 1.2.9.
+:::
+
+The number of files Kopia uploads in parallel when creating a server backup, passed to `kopia snapshot create` as `--parallel`. `0` leaves the flag off and uses Kopia's own default.
+
+Default: `0`
+
+### system.backups.kopia.restore_threads <Badge type="info" text="Optional" />
+
+The number of files Kopia restores in parallel when a backup is restored onto a server, passed to `kopia restore` as `--parallel`.
+
+Default: `8`
+
+### system.backups.kopia.retry_limit <Badge type="info" text="Optional" />
+
+How many times Wings retries a Kopia snapshot or ignore-policy change that failed with a transient error (`policy not found` or `connection refused`). The wait before retry `n` is `n²` seconds plus up to 30% jitter. Set to `0` to fail on the first error.
+
+Default: `3`
 
 ### system.backups.btrfs.restore_threads <Badge type="info" text="Optional" />
 
@@ -1708,6 +1774,18 @@ system:
     per_file_disk_budget: 5242880
     per_server_disk_budget: 209715200
     maintenance_interval: 3600
+  resource_history:
+    enabled: true
+    flush_interval: 10
+    tiers:
+    - step: 1
+      retention: 3600
+    - step: 10
+      retention: 604800
+    - step: 60
+      retention: 31536000
+    - step: 600
+      retention: 0
   file_collaboration:
     enabled: true
     file_size_cap: 1048576
@@ -1748,6 +1826,10 @@ system:
       password_file: "{root_directory}/backups/restic_password"
       retry_lock_seconds: 60
       environment: {}
+    kopia:
+      create_threads: 0
+      restore_threads: 8
+      retry_limit: 3
     btrfs:
       restore_threads: 4
       create_read_only: true
@@ -2017,6 +2099,18 @@ system:
     per_file_disk_budget: 5242880
     per_server_disk_budget: 209715200
     maintenance_interval: 3600
+  resource_history:
+    enabled: true
+    flush_interval: 10
+    tiers:
+    - step: 1
+      retention: 3600
+    - step: 10
+      retention: 604800
+    - step: 60
+      retention: 31536000
+    - step: 600
+      retention: 0
   file_collaboration:
     enabled: true
     file_size_cap: 1048576
@@ -2057,6 +2151,10 @@ system:
       password_file: "{root_directory}\\backups\\restic_password"
       retry_lock_seconds: 60
       environment: {}
+    kopia:
+      create_threads: 0
+      restore_threads: 8
+      retry_limit: 3
     btrfs:
       restore_threads: 4
       create_read_only: true

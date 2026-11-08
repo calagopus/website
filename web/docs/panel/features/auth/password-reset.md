@@ -27,6 +27,8 @@ The emailed link opens `/auth/reset-password` with your reset token attached ("P
 
 Reset tokens expire after 20 minutes and work exactly once; if yours is rejected as invalid or expired, request a new email.
 
+The email a new account gets when it is created for you (for example when someone adds your address as a [subuser](../server/subusers.md) and no account exists yet) also links here to set your first password. Since Panel 1.2.8 that link lasts an hour. It doesn't count as a recent request, so if it expired or never arrived you can request a normal reset straight away, and doing so replaces the original link.
+
 Completing a reset also marks your email address as verified, since receiving the link proves you own the mailbox. That makes this the way out if your account is stuck behind [email verification](../dashboard/account.md#email-verification) and the verification mail never arrives.
 
 A successful reset ends every [session](../dashboard/sessions.md) on the account, so anyone still logged in on another device is signed out and you have to log in again yourself. Nothing is left signed in if someone else got hold of the account.

@@ -464,15 +464,16 @@ Write that pattern by hand only when you're calling the API directly. The Panel'
 | `useResource` | Fetch errors, as `httpErrorToHuman(error)` |
 | `usePollingResource` | Fetch errors, same as above |
 | `useSearchableResource` | Fetch errors |
+| `useInfiniteSearchableResource` | Fetch errors |
 | `useSearchablePaginatedTable` | Fetch errors |
 | `useResourceForm` | Create / update / delete success, **and** errors on all three |
 | `useModalForm` | Submit errors |
 
-The opt-outs differ, and two of the hooks don't have one:
+The opt-outs differ, and four of the hooks don't have one:
 
 - **`useResource` and `usePollingResource`** take `silent: true`, which suppresses the error toast while still returning `error`. Reach for it when you want to render the failure inline instead.
 - **`useModalForm`** takes an `onError` callback that *replaces* the built-in toast entirely. Pass it and you own the error path; omit it and you get `httpErrorToHuman` in an error toast.
-- **`useSearchableResource` and `useSearchablePaginatedTable`** always toast fetch errors, with no way to opt out.
+- **`useSearchableResource`, `useInfiniteSearchableResource` and `useSearchablePaginatedTable`** always toast fetch errors, with no way to opt out.
 - **`useResourceForm`** always toasts too, and its success messages are the Panel's translated "{resource} created." / "updated." / "deleted." strings with the `resourceName` you pass filled in. If you want different wording, that argument is the lever, not a second toast.
 
 ::: warning

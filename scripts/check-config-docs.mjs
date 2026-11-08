@@ -10,12 +10,13 @@ function yamlPaths(source) {
   const stack = [];
 
   for (const line of source.split('\n')) {
-    const match = line.match(/^(\s*)([\w\-.]+):(.*)$/);
+    // `- key:` opens a map inside a sequence, which sits at its parent key's indentation
+    const match = line.match(/^(\s*)(- )?([\w\-.]+):(?:\s|$)/);
     if (!match) continue;
 
-    const depth = match[1].length / 2;
+    const depth = (match[1].length + (match[2] ? 2 : 0)) / 2;
     stack.length = depth;
-    stack.push(match[2]);
+    stack.push(match[3]);
     paths.add(stack.join('.'));
   }
 

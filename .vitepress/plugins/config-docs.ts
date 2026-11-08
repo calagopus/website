@@ -128,13 +128,22 @@ const isScalar = (value: YamlValue): value is string | number | boolean | YamlFl
 /**
  * Serializes a value the way `serde_saphyr` writes it: two-space indented maps,
  * sequences kept at their parent key's indentation, empty collections inlined.
+ * A map inside a sequence starts on the dash line, its other keys line up below the first.
  */
 function toYaml(value: YamlValue, indent: string): string {
   if (isScalar(value)) return ` ${scalar(value)}\n`;
 
   if (Array.isArray(value)) {
     if (value.length === 0) return ' []\n';
-    return `\n${value.map((entry) => `${indent}- ${scalar(entry as string | number | boolean)}\n`).join('')}`;
+    return `\n${value
+      .map((entry) => {
+        if (isScalar(entry)) return `${indent}- ${scalar(entry)}\n`;
+        if (Array.isArray(entry) || Object.keys(entry).length === 0) {
+          throw new Error('config-docs: nested or empty collections inside a sequence are not supported');
+        }
+        return `${indent}- ${yamlBlock(entry, `${indent}  `).slice(indent.length + 2)}`;
+      })
+      .join('')}`;
   }
 
   if (Object.keys(value).length === 0) return ' {}\n';
@@ -264,7 +273,11 @@ export function renderConfigDoc(doc: ConfigDoc): string {
 export function configDocPaths(doc: ConfigDoc): Set<string> {
   const paths = new Set<string>();
   const walk = (value: YamlValue, prefix: string) => {
-    if (isScalar(value) || Array.isArray(value)) return;
+    if (isScalar(value)) return;
+    if (Array.isArray(value)) {
+      for (const entry of value) walk(entry, prefix);
+      return;
+    }
     for (const [key, entry] of Object.entries(value)) {
       const path = prefix ? `${prefix}.${key}` : key;
       paths.add(path);
