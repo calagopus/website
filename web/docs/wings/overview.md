@@ -36,7 +36,7 @@ Most of these live under `root_directory` by default (see [path placeholders](co
 
 | Volume | Description | Default Paths |
 | :--- | :--- | :--- |
-| `root_directory` | Wings persistent state (server state for restart recovery) | **Unix:** `/var/lib/calagopus-wings`<br>**Win:** `C:\ProgramData\Calagopus-Wings` |
+| `root_directory` | Wings persistent state (server state for restart recovery, and since Wings 1.2.9 the `resource_history.db` behind [Resource History](../panel/features/server/console.md#resource-history)) | **Unix:** `/var/lib/calagopus-wings`<br>**Win:** `C:\ProgramData\Calagopus-Wings` |
 | `log_directory` | Wings log files | **Unix:** `/var/log/calagopus-wings`<br>**Win:** `C:\ProgramData\Calagopus-Wings\logs` |
 | `data` | Server data, bind-mounted into each server container | **Unix:** `/var/lib/calagopus-wings/volumes`<br>**Win:** `C:\ProgramData\Calagopus-Wings\volumes` |
 | `diffs_directory` | Per-server file history/diff databases | **Unix:** `/var/lib/calagopus-wings/diffs`<br>**Win:** `C:\ProgramData\Calagopus-Wings\diffs` |

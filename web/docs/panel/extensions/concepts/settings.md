@@ -209,9 +209,11 @@ Two calls. `state.settings.get().await?` gives you a snapshot of the current set
 The type parameter on `find_extension_settings` is usually inferred from the annotation on the left-hand side (`let ext_settings: &ExtensionSettingsData = ...`), but you can also call it as `.find_extension_settings::<ExtensionSettingsData>()?` if the surrounding code doesn't disambiguate.
 
 ::: info
-**How the settings store works.** `state.settings` keeps two `RwLock` buffers and an active index. Reads use the active buffer. `get_mut` loads a fresh database copy into the inactive buffer; `save()` persists it, releases its write guard, and then publishes that buffer as active.
+**How the settings store works.** Since Panel 1.2.9, `state.settings` holds one immutable snapshot behind an atomic pointer. `get()` hands out a reference-counted handle to the current snapshot without taking a lock, so holding a `SettingsReadGuard` for a long time only keeps that old snapshot alive and never blocks a writer. `get_mut` loads a fresh copy from the database, and `save()` persists it and then swaps in a new snapshot built from it. Readers that already hold a guard keep seeing the old values until they call `get()` again.
 
-Writers are serialized. Readers normally continue using the active snapshot during a write. When the cache expires after 60 seconds, a refresh also loads the inactive buffer before publishing it; invalidation switches to an expired inactive buffer so the next read refreshes it. Reads can still wait during refresh or lock contention, so do not assume they are always nonblocking.
+Writers (`get_mut` until `save()` or drop, cache refreshes, and `invalidate_cache`) are serialized. A snapshot is used for 60 seconds, or until `invalidate_cache` marks it stale. The first read after that reloads the settings from the database while holding the writer slot, so that read waits for the reload, and for any writer still holding the slot. Do not assume reads are always nonblocking.
+
+Before 1.2.9 the store kept two `RwLock` buffers and flipped between them, and reads could wait on those locks.
 :::
 
 ## Writing Settings

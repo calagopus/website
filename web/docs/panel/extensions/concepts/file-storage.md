@@ -120,7 +120,7 @@ The format depends on the configured driver: filesystem-backed installs serve th
 
 For paths under `privatedata/`, `get_url(...)` will still return *a* URL. On the filesystem driver hitting it is a 404; on S3 it is whatever the bucket policy says. Treat the returned value as a path identifier for your own routes' use, not as something to expose to clients.
 
-The retriever holds a read guard on the settings for as long as it lives. That is fine for the lifetime of a request handler, but don't park one in a long-running task, where it would block the next settings write.
+The retriever holds a read guard on the settings for as long as it lives. Since Panel 1.2.9 that guard is a snapshot: holding one no longer blocks settings writes, and the retriever keeps using the settings it started with, missing later storage changes. Before 1.2.9 the guard blocked the next settings write. Either way, it is fine for the lifetime of a request handler, but don't park one in a long-running task.
 
 ## Cache Headers
 

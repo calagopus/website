@@ -194,14 +194,15 @@ That said, arrays of objects are still usually the better shape - they preserve 
 
 ## Data-Fetching Hooks
 
-Writing raw `useEffect` + `useState` fetches is tedious and error-prone. The Panel ships five hooks that cover the common patterns; they handle loading state, error toasts, and TanStack Query wiring for you. Because they toast internally, adding your own toast around one of them double-reports the same event - see [Toasts the data hooks already raise](./toasts.md#toasts-the-data-hooks-already-raise) for what each one covers and how to opt out.
+Writing raw `useEffect` + `useState` fetches is tedious and error-prone. The Panel ships six hooks that cover the common patterns; they handle loading state, error toasts, and TanStack Query wiring for you. Because they toast internally, adding your own toast around one of them double-reports the same event - see [Toasts the data hooks already raise](./toasts.md#toasts-the-data-hooks-already-raise) for what each one covers and how to opt out.
 
-All five are in `@/plugins/resource/`:
+All six are in `@/plugins/resource/`:
 
 ```ts
 import { useResource } from '@/plugins/resource/useResource.ts';
 import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
+import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
 import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 ```
@@ -357,6 +358,8 @@ export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
 }
 ```
 
+`loading` is true while a request is in flight. Since Panel 1.2.9 it is also true while the typed search is still waiting out the debounce, so a select bound to it shows a spinner (in place of "No Results found.") from the first keystroke until the matching results arrive.
+
 The hook builds the final query key as `[...queryKey, ...deps, { search: debouncedSearch }]`. Each distinct debounced search term gets its own cache entry, so typing the same string twice in a row hits the cache on the second pass without firing a network request. The default debounce is 150ms; pass `debounceMs` to override it.
 
 The hook also returns `refetch` and **`invalidate`**. `invalidate` calls `queryClient.invalidateQueries` with `[...queryKey, ...deps]`, so it marks every cached search term stale at once, not just the current one. Call it after creating or renaming an item so the dropdown doesn't keep serving the old list from cache.
@@ -382,6 +385,41 @@ const items = useSearchableResource<Item>({
   defaultSearchValue: existing?.name,
 });
 ```
+
+### `useInfiniteSearchableResource` - dropdowns that load more on scroll
+
+Since Panel 1.2.9. `useSearchableResource` only ever shows the first page the endpoint returns. When the list can be longer than one page, use `useInfiniteSearchableResource` instead: it loads the next page when the user scrolls to the end of the dropdown. Most of the Panel's own pickers (servers, users, nodes, eggs, locations and more) use it.
+
+It takes the same options, except that the fetcher also receives the page number, `(page: number, search: string) => Promise<Pagination<T>>`. Pages start at 1. Another page is requested only while the pages loaded so far hold fewer items than `total` and the last page was not empty. It returns the same `items` (every loaded page, flattened), `loading`, `search`, `setSearch`, `refetch` and `invalidate`, plus an `infiniteScroll` object you hand to the Panel's `Select` or `MultiSelect`:
+
+```tsx
+import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
+import getItems from '@/api/getItems.ts';
+import Select from '@/elements/input/Select.tsx';
+
+export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
+  const items = useInfiniteSearchableResource<Item>({
+    queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid],
+    fetcher: (page, search) => getItems(serverUuid, page, search),
+  });
+
+  return (
+    <Select
+      label='Item'
+      data={items.items.map((item) => ({ label: item.name, value: item.uuid }))}
+      searchable
+      searchValue={items.search}
+      onSearchChange={items.setSearch}
+      loading={items.loading}
+      infiniteScroll={items.infiniteScroll}
+    />
+  );
+}
+```
+
+With `infiniteScroll` set, the dropdown ends in a spinner row while more pages are available, and scrolling it into view loads the next page. Options with the same `value` are dropped after the first, so a row that shifts between pages while you scroll does not show up twice. `loading` stays false while a further page loads, since the spinner row covers that.
+
+The query key gets an extra `'infinite'` segment, `[...queryKey, ...deps, 'infinite', { search: debouncedSearch }]`, so it never collides with a `useSearchableResource` cache under the same prefix, and `invalidate` still clears both. The `infiniteScroll` prop is also accepted in the `props` of the form engine's `select` and `multiselect` fields, which take the Panel's wrapped `SelectProps` and `MultiSelectProps` since 1.2.9.
 
 ### `useSearchablePaginatedTable` - paginated tables
 
@@ -539,6 +577,7 @@ useResourceForm({
 | Simple one-off data fetch | `useResource` |
 | Data that must re-fetch on an interval | `usePollingResource` |
 | Searchable `<Select>` or `<MultiSelect>` options | `useSearchableResource` |
+| Searchable `<Select>` or `<MultiSelect>` options that can run past one page | `useInfiniteSearchableResource` |
 | Full paginated table with search | `useSearchablePaginatedTable` |
 | Create / update / delete form | `useResourceForm` |
 

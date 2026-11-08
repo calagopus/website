@@ -45,6 +45,8 @@ A schedule runs whenever any one of its triggers fires.
 | **Console Line** | When the console prints a line matching **Line Contains** (optionally **Case Insensitive**), with the line optionally stored into a variable via **Output into** |
 | **Crash** | When the server crashes |
 
+The **Resource Usage** trigger takes its value the same way as the [Resource Usage condition](#resource-usage-values), including **% of limit**.
+
 Since Panel 1.2.7, adding a **Console Line** trigger needs the `control.read-console` permission. Without it, saving fails with "unable to create schedule trigger that requires permission: control.read-console" (or "unable to update ..." when editing).
 
 ### Cron Triggers
@@ -204,7 +206,7 @@ For admins: HTTP Request steps are sent from the node, and Wings enforces node-l
 
 The **Schedule Pre-Conditions** tab defines a condition checked before the schedule runs (unless triggered with **Run now (ignore conditions)**). Build it with the **Condition Type** select; the combinators **AND (All must be true)**, **OR (Any must be true)**, and **NOT (Must not be true)** nest further conditions via **Add Condition**, up to three levels deep.
 
-![Schedule Conditions tab with a Resource Usage pre-condition for disk usage at or above 40 GiB](./images/schedules/conditions.webp)
+![Schedule Conditions tab with a Resource Usage pre-condition for memory usage at or above 80% of limit](./images/schedules/conditions.webp)
 
 | Condition | Checks |
 | --- | --- |
@@ -214,11 +216,21 @@ The **Schedule Pre-Conditions** tab defines a condition checked before the sched
 | **NOT (Must not be true)** | Inverts its nested condition |
 | **Server State** | The server's current power state |
 | **Uptime** | Server uptime against a **Comparator** and **Value (seconds)** |
-| **Resource Usage** | A **Metric** (**CPU Usage** in percent, **Memory Usage** or **Disk Usage** as a size) against a **Comparator** and value |
+| **Resource Usage** | A **Metric** (**CPU Usage** in percent, **Memory Usage** or **Disk Usage** as a size, or any of them as **% of limit**) against a **Comparator** and value; see [Resource Usage Values](#resource-usage-values) |
 | **File Exists** | Whether a **File Path** exists |
 | **Variable Exists** / **Variable Equals** / **Variable Contains** / **Variable Starts With** / **Variable Ends With** | A schedule variable against a value |
 
 Comparators are **Smaller than**, **Smaller than or equal to**, **Equal to**, **Greater than or equal to**, and **Greater than**. The same builder appears inside **Ensure**, **If**, and **Else If** steps.
+
+#### Resource Usage Values
+
+The unit select on the right of the **Value** field decides what the number means. For **CPU Usage**, **%** is absolute: 100% is one full CPU core, whatever the server's limit. For **Memory Usage** and **Disk Usage** you pick a size unit.
+
+Since Panel 1.2.9, every metric also offers **% of limit**, which compares against a share of the server's own limit (0 to 100). Wings works the percentage out from the limit in effect at the time, so the condition keeps matching the same share when an admin changes the limit later. For CPU on a server without a CPU limit, the percentage is taken against all of the host's cores. Memory and disk without a limit have nothing to compare against, so **% of limit** is disabled there, and a saved one never matches ("This server has no limit for this resource, so a percentage will never match"). Switching between **% of limit** and an absolute unit converts the number using the current limit. Cards show the value as, for example, `80% of limit`.
+
+::: warning
+**% of limit** needs Wings 1.2.9 on the node. Older Wings ignores the setting and reads the number as an absolute value, so `80` becomes 80% of one core for CPU, or 80 bytes for memory and disk.
+:::
 
 Changes here must be saved with **Update**; navigating away with unsaved changes prompts you first.
 

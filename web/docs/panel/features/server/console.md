@@ -1,11 +1,11 @@
 ---
 title: Console
-description: The Calagopus server console, with power controls, a live terminal, command history, resource stats, and usage graphs.
+description: The Calagopus server console, with power controls, a live terminal, command history, resource stats, usage graphs, and resource history.
 ---
 
 # Console
 
-The Console is the landing tab of every server: power controls, the live terminal, resource stats, and usage graphs on one page.
+The Console is the landing tab of every server: power controls, the live terminal, resource stats, and usage graphs on one page. The graphs link to a [Resource History](#resource-history) view.
 
 ![Server console page with live Minecraft log output, command input, resource cards, and usage graphs](./images/console/overview.webp)
 
@@ -33,6 +33,10 @@ The icons in the top right of the terminal:
 | **Decrease Font Size** / **Increase Font Size** | Adjust the terminal font between 10px and 24px; the choice is saved to your account and follows you to other devices, unless you set it to this device only. With the terminal focused, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14px) do the same, as does `Ctrl` + mouse wheel over it; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts) |
 
 Select text to copy it: `Ctrl`+`C` copies the selection, and so does the browser's own **Copy** (from the right-click menu, for example). The selection is cleared once copied. On touch screens a long press starts selecting and shows a **Copy Selection** button. If you've scrolled up, an arrow button jumps back to the bottom.
+
+Since Panel 1.2.9, runs of the full block character `█` are drawn as solid cells with no gaps between them, so QR codes that plugins print to the console can be scanned. They are drawn as inverted spaces, which means copying such a line gives you spaces where the blocks were, and searching for `█` finds nothing.
+
+Before Wings 1.2.9, Wings stripped leading spaces from every console line, so indented output and ASCII art, QR codes included, lost their left edge. A scannable QR code needs both Panel 1.2.9 and Wings 1.2.9 on the server's node.
 
 When the server's Docker image has to be pulled before it can start, pull and extract progress bars appear below the terminal.
 
@@ -105,7 +109,42 @@ Below everything, three live graphs: **CPU Load**, **Memory Load**, and **Networ
 
 When the server has a CPU or memory limit, that graph draws it as a dashed red **Limit** line. Once usage reaches 40% of the limit, the graph's scale stretches to the limit so you can see how close the server is; below that the line sits off the top of the graph and only a small **Limit** label marks it. Hovering over one graph highlights the same moment on all three.
 
-![CPU load, memory load, and network graphs below the console](./images/console/graphs.webp)
+![CPU load, memory load, and network graphs below the console, each with a clock icon next to its title](./images/console/graphs.webp)
+
+The live graphs show roughly the last 20 seconds. For anything older, use the clock icon in the corner of each graph, which opens [Resource History](#resource-history).
+
+## Resource History
+
+Since Panel 1.2.9, **Resource History** shows what the server used anywhere from the last hour to the last year. Open it with the clock icon on the **CPU Load**, **Memory Load**, or **Network** graph; the page lives at `/server/<id>/console/history` and stays under the Console tab. The data is recorded by the node, so the server's node needs Wings 1.2.9 as well. Viewing history needs no extra subuser permission; any user who can open the server can see it.
+
+![Resource History page showing 24 hours of a running server: range buttons and date pickers, Uptime, CPU, Memory Usage, Network, and Disk Usage cards, the Server State strip, and CPU, memory, network, and disk charts](./images/console/resource-history.webp)
+
+Pick a range with the **1h**, **6h**, **24h**, **7d**, **30d**, and **1y** buttons (24 hours by default). The arrows next to them step one range length **Earlier** or **Later**, and **Jump to Now** returns to the current time. The **Start** and **End** pickers move the window to any point in the past while keeping the selected length. While the window reaches the present, the page refreshes on its own once per chart point: every 30 seconds on 1h, about 2.5 minutes on 6h, 10 minutes on 24h, 1 hour on 7d, 4 hours on 30d, and once a day on 1y. The range and start time are kept in the page URL, so a link opens the same view.
+
+Five cards sum up the selected range:
+
+| Card | Shows |
+| --- | --- |
+| **Uptime** | Share of the recorded time the server was **Running** |
+| **CPU** | Average CPU load while running, with the peak below it |
+| **Memory Usage** | Average memory use while running, with the peak below it |
+| **Network** | Total **Inbound** and **Outbound** traffic |
+| **Disk Usage** | The last disk usage recorded in the range |
+
+Below them are the charts. **Server State** is a strip coloured by how long the server spent in each state, with the running share (like **99.5% running**) in its corner. Hover a slice to see the time per state. **CPU Load** and **Memory Load** each plot an **Average** line, a dashed **Peak** line, and the **Limit** that applied at the time, so a raised or lowered limit shows up where it changed. **Network** plots outbound and inbound rate, and **Disk Usage** plots stored size against the server's current disk limit. Hovering over one of these four charts highlights the same moment on the others. Gaps where nothing was recorded, such as before the node was updated, stay empty, and a chart with no data at all in the range shows **No data recorded in this range**.
+
+Each point on the charts covers a slice of the range, from 30 seconds on the 1h view to a day on the 1y view. How far back the data goes, and how detailed it stays, depends on the node's [`system.resource_history`](../../../wings/configuration.md#system-resource-history-tiers) settings. With the defaults, Wings keeps:
+
+| Detail | Kept for |
+| --- | --- |
+| Every second | 1 hour |
+| Every 10 seconds | 7 days |
+| Every minute | 365 days |
+| Every 10 minutes | Forever |
+
+The history is stored on the node in `resource_history.db` in the Wings root directory. It moves with the server when the server is [transferred](../admin/servers.md#transfer), as long as both nodes run Wings 1.2.9 with resource history turned on, and is deleted along with the server. Nothing is recorded while a transfer is running.
+
+If the node has resource history turned off with `enabled: false`, or runs an older Wings, the page shows **Resource History Unavailable** instead. A node with an empty `tiers` list records nothing, and the charts show **No data recorded in this range**.
 
 ## Automatic Prompts
 

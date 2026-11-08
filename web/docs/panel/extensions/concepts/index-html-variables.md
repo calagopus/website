@@ -48,7 +48,7 @@ Each variable is a name and a function that receives the Panel's `AppSettings` a
 
 The function runs every time `index.html` is rendered: at startup, after every settings save, and whenever an instance reloads its settings cache (at most a minute after a save on another instance). A variable can therefore follow your extension's settings without a restart.
 
-Because it runs while the settings write lock is held, keep the function cheap and avoid network calls or database queries. Read settings from the `settings` argument. Calling `state.settings.get()` inside the function can deadlock.
+Because it runs while the settings writer slot is held, keep the function cheap and avoid network calls or database queries. Read settings from the `settings` argument. Calling `state.settings.get()` inside the function can deadlock.
 
 If the function returns an `Err` or panics, the Panel logs the error and renders the page without that variable. Registering the same name twice replaces the earlier function and logs a warning.
 
@@ -88,4 +88,6 @@ If your extension provides [`src/boot.html`](../file-structure.md#src-boot-html)
 
 ::: info
 In development (`pnpm dev`) the dev server serves the boot screen, and it only substitutes plain <code v-pre>{{ variables.name }}</code> placeholders using values from the running backend. Tags like <code v-pre>{% if %}</code> show up as written until you build.
+
+The dev server also copies the variables block from the running backend's `index.html` (port `BACKEND_PORT`, 8000 by default) into every page it serves, so `getIndexVariable` works in development too. If the backend isn't reachable, the dev server logs a warning and the variables are missing.
 :::

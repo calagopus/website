@@ -659,6 +659,40 @@ export const wingsConfigDoc: ConfigDoc = {
       ],
     },
     {
+      title: 'Resource History Configuration',
+      options: [
+        {
+          key: 'system.resource_history.enabled',
+          description:
+            "Enables or disables resource history. When enabled, Wings samples every server's power state, CPU, memory, disk and network usage once a second and stores the aggregated values in `resource_history.db` inside `system.root_directory`, so the Panel can chart a server's usage over time. When disabled, nothing is recorded and history requests for the node's servers are refused. Data already stored stays in the database file.",
+          default: true,
+          notesBefore: [
+            {
+              type: 'info',
+              body: 'Added in Wings 1.2.9.',
+            },
+          ],
+        },
+        {
+          key: 'system.resource_history.flush_interval',
+          description:
+            'How often (in seconds) Wings writes the samples it has collected in memory to the history database. A lower value loses less history if Wings stops unexpectedly, at the cost of more frequent disk writes.',
+          default: 10,
+        },
+        {
+          key: 'system.resource_history.tiers',
+          description:
+            "The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range.\n\nAt most 8 tiers are allowed, every `step` must be at least `1` and unique, and `retention` must be `0` or at least the tier's `step`, otherwise Wings refuses to load the configuration. An empty list stops recording, but unlike `enabled: false`, history requests are still answered, with no data, and the Panel shows **No data recorded in this range**.\n\nA tier added later is filled from the existing finer tiers whose `step` divides its own. A removed tier stops being written, but its data is kept and pruned under its last `retention` until it runs empty.",
+          default: [
+            { step: 1, retention: 3600 },
+            { step: 10, retention: 604800 },
+            { step: 60, retention: 31536000 },
+            { step: 600, retention: 0 },
+          ],
+        },
+      ],
+    },
+    {
       title: 'File Collaboration Configuration',
       options: [
         {
@@ -819,6 +853,12 @@ export const wingsConfigDoc: ConfigDoc = {
           key: 'system.backups.s3.part_upload_timeout',
           description: 'The maximum time (in seconds) to wait for a single part of a multipart upload.',
           default: 7200,
+          notesAfter: [
+            {
+              type: 'info',
+              body: 'Before Wings 1.2.9 this was also the total time limit for downloading an S3 backup to restore a server backup or a database backup, so a restore that took longer than this failed. Downloads now have a 30-second connect timeout and no total limit.',
+            },
+          ],
         },
         {
           key: 'system.backups.s3.retry_limit',
@@ -874,6 +914,30 @@ export const wingsConfigDoc: ConfigDoc = {
           description:
             'The environment variables passed to the restic process for authentication and configuration. Every variable except `PATH` is passed through. Panel configuration patches cannot change this key.',
           default: {},
+        },
+        {
+          key: 'system.backups.kopia.create_threads',
+          description:
+            "The number of files Kopia uploads in parallel when creating a server backup, passed to `kopia snapshot create` as `--parallel`. `0` leaves the flag off and uses Kopia's own default.",
+          default: 0,
+          notesBefore: [
+            {
+              type: 'info',
+              body: 'The `system.backups.kopia` options were added in Wings 1.2.9.',
+            },
+          ],
+        },
+        {
+          key: 'system.backups.kopia.restore_threads',
+          description:
+            'The number of files Kopia restores in parallel when a backup is restored onto a server, passed to `kopia restore` as `--parallel`.',
+          default: 8,
+        },
+        {
+          key: 'system.backups.kopia.retry_limit',
+          description:
+            'How many times Wings retries a Kopia snapshot or ignore-policy change that failed with a transient error (`policy not found` or `connection refused`). The wait before retry `n` is `n²` seconds plus up to 30% jitter. Set to `0` to fail on the first error.',
+          default: 3,
         },
         {
           key: 'system.backups.btrfs.restore_threads',
