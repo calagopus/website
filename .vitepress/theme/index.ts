@@ -12,6 +12,7 @@ import FeatureTable from '../components/FeatureTable.vue';
 import ImageViewer from '../components/ImageViewer.vue';
 import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
+import { setupDetailsToggle } from './details-toggle.ts';
 import { registerWebMcpTools } from './webmcp.ts';
 import './colors.css';
 import './mantine.css';
@@ -37,6 +38,7 @@ export default {
     if (inBrowser) {
       app.provide('toggle-appearance', createAppearanceToggle(app.runWithContext(() => useData().isDark)));
       void registerWebMcpTools();
+      setupDetailsToggle();
     }
   },
 } satisfies Theme;

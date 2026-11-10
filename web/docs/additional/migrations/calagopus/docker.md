@@ -110,10 +110,10 @@ Then delete `panel.backup` from both machines, or store it somewhere safe. It ho
 
 ## Troubleshooting
 
-::: details Setup wizard (OOBE) appears after starting
+::: details Setup wizard (OOBE) appears after starting {open}
 The database was not imported correctly, or the wrong database was targeted. Run the `pg_restore` line again from `/opt/calagopus`, then restart with `sudo docker compose restart web`.
 :::
 
-::: details Login fails, or encrypted data appears corrupted
+::: details Login fails, or encrypted data appears corrupted {open}
 `APP_ENCRYPTION_KEY` in `compose.yml` probably doesn't match the one from your original installation. Correct the key and run `sudo docker compose up -d` again.
 :::

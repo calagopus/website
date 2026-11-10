@@ -19,9 +19,9 @@ Wings accepts configuration overrides through environment variables prefixed wit
 
 ```yaml
 environment:
-  CALAGOPUS_API_PORT: '8080'
-  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: 'false'
-  CALAGOPUS_ALLOWED_DEVICES: '[/dev/dri/renderD128]'
+  CALAGOPUS_API_PORT: "8080"
+  CALAGOPUS_SYSTEM_BACKUPS_S3_STREAMING: "false"
+  CALAGOPUS_ALLOWED_DEVICES: "[/dev/dri/renderD128]"
 ```
 
 This example belongs under the Wings service in Docker Compose. For a native service, set the variables in its service environment. String fields take the value literally; other fields accept YAML values such as `false`, `8080`, or a list. Set a whole map or list when adding entries. Unknown variable names produce a warning and are ignored; invalid values for a recognized option prevent the configuration from loading.
@@ -116,23 +116,23 @@ Default:
 
 ```yaml
 remote_download_blocked_cidrs:
-  - 0.0.0.0/8
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - 100.64.0.0/10
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 169.254.0.0/16
-  - 192.0.0.0/24
-  - 198.18.0.0/15
-  - 224.0.0.0/4
-  - 240.0.0.0/4
-  - '::'
-  - '::1'
-  - fe80::/10
-  - fc00::/7
-  - 2002::/16
-  - ff00::/8
+- 0.0.0.0/8
+- 127.0.0.0/8
+- 10.0.0.0/8
+- 100.64.0.0/10
+- 172.16.0.0/12
+- 192.168.0.0/16
+- 169.254.0.0/16
+- 192.0.0.0/24
+- 198.18.0.0/15
+- 224.0.0.0/4
+- 240.0.0.0/4
+- "::"
+- "::1"
+- fe80::/10
+- fc00::/7
+- 2002::/16
+- ff00::/8
 ```
 
 ### api.disable_directory_size <Badge type="info" text="Optional" />
@@ -261,23 +261,23 @@ Default:
 
 ```yaml
 blocked_cidrs:
-  - 0.0.0.0/8
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - 100.64.0.0/10
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 169.254.0.0/16
-  - 192.0.0.0/24
-  - 198.18.0.0/15
-  - 224.0.0.0/4
-  - 240.0.0.0/4
-  - '::'
-  - '::1'
-  - fe80::/10
-  - fc00::/7
-  - 2002::/16
-  - ff00::/8
+- 0.0.0.0/8
+- 127.0.0.0/8
+- 10.0.0.0/8
+- 100.64.0.0/10
+- 172.16.0.0/12
+- 192.168.0.0/16
+- 169.254.0.0/16
+- 192.0.0.0/24
+- 198.18.0.0/15
+- 224.0.0.0/4
+- 240.0.0.0/4
+- "::"
+- "::1"
+- fe80::/10
+- fc00::/7
+- 2002::/16
+- ff00::/8
 ```
 
 ## System Configuration
@@ -688,14 +688,14 @@ Default:
 
 ```yaml
 tiers:
-  - step: 1
-    retention: 3600
-  - step: 10
-    retention: 604800
-  - step: 60
-    retention: 31536000
-  - step: 600
-    retention: 0
+- step: 1
+  retention: 3600
+- step: 10
+  retention: 604800
+- step: 60
+  retention: 31536000
+- step: 600
+  retention: 0
 ```
 
 ## File Collaboration Configuration
@@ -1014,8 +1014,8 @@ Default:
 
 ```yaml
 dns:
-  - '1.1.1.1'
-  - '1.0.0.1'
+- "1.1.1.1"
+- "1.0.0.1"
 ```
 
 ### docker.network.dns_options <Badge type="info" text="Optional" />
@@ -1026,10 +1026,10 @@ Default:
 
 ```yaml
 dns_options:
-  - ndots:0
-  - timeout:2
-  - attempts:3
-  - single-request-reopen
+- ndots:0
+- timeout:2
+- attempts:3
+- single-request-reopen
 ```
 
 ### docker.network.name <Badge type="info" text="Optional" />
@@ -1238,9 +1238,9 @@ Each entry is a map, so a raised file descriptor limit looks like this:
 
 ```yaml
 container_ulimits:
-  - name: nofile
-    soft: 65535
-    hard: 65535
+- name: nofile
+  soft: 65535
+  hard: 65535
 ```
 :::
 
@@ -1597,7 +1597,6 @@ This section is a quick reference. [Securing Wings with SSL](./next-steps/ssl.md
 :::
 
 ### Enabling SSL
-
 SSL is disabled by default. To secure Wings' communication, set `enabled` to `true` under `api.ssl` and point `cert`/`key` to your certificate files.
 
 If you're using Let's Encrypt, your config should look like this:
@@ -1613,7 +1612,6 @@ api:
 ```
 
 ### Applying Changes
-
 After saving `config.yml`, restart Wings for the new SSL configuration to take effect:
 
 ```bash
@@ -1636,34 +1634,34 @@ uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
 api:
-  host: '0.0.0.0'
+  host: "0.0.0.0"
   port: 8080
   ssl:
     enabled: false
     ktls_enabled: false
-    cert: ''
-    key: ''
+    cert: ""
+    key: ""
   redirects: {}
   disable_openapi_docs: false
   disable_remote_download: false
   remote_download_blocked_cidrs:
-    - 0.0.0.0/8
-    - 127.0.0.0/8
-    - 10.0.0.0/8
-    - 100.64.0.0/10
-    - 172.16.0.0/12
-    - 192.168.0.0/16
-    - 169.254.0.0/16
-    - 192.0.0.0/24
-    - 198.18.0.0/15
-    - 224.0.0.0/4
-    - 240.0.0.0/4
-    - '::'
-    - '::1'
-    - fe80::/10
-    - fc00::/7
-    - 2002::/16
-    - ff00::/8
+  - 0.0.0.0/8
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - 100.64.0.0/10
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 169.254.0.0/16
+  - 192.0.0.0/24
+  - 198.18.0.0/15
+  - 224.0.0.0/4
+  - 240.0.0.0/4
+  - "::"
+  - "::1"
+  - fe80::/10
+  - fc00::/7
+  - 2002::/16
+  - ff00::/8
   disable_directory_size: false
   directory_entry_limit: 10000
   send_offline_server_logs: false
@@ -1688,32 +1686,32 @@ api:
         window_seconds: 60
         max_response_size: 16384
         blocked_cidrs:
-          - 0.0.0.0/8
-          - 127.0.0.0/8
-          - 10.0.0.0/8
-          - 100.64.0.0/10
-          - 172.16.0.0/12
-          - 192.168.0.0/16
-          - 169.254.0.0/16
-          - 192.0.0.0/24
-          - 198.18.0.0/15
-          - 224.0.0.0/4
-          - 240.0.0.0/4
-          - '::'
-          - '::1'
-          - fe80::/10
-          - fc00::/7
-          - 2002::/16
-          - ff00::/8
+        - 0.0.0.0/8
+        - 127.0.0.0/8
+        - 10.0.0.0/8
+        - 100.64.0.0/10
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 169.254.0.0/16
+        - 192.0.0.0/24
+        - 198.18.0.0/15
+        - 224.0.0.0/4
+        - 240.0.0.0/4
+        - "::"
+        - "::1"
+        - fe80::/10
+        - fc00::/7
+        - 2002::/16
+        - ff00::/8
 system:
   root_directory: /var/lib/calagopus-wings
   log_directory: /var/log/calagopus-wings
-  data: '{root_directory}/volumes'
-  diffs_directory: '{root_directory}/diffs'
-  vmount_directory: '{root_directory}/vmounts'
-  archive_directory: '{root_directory}/archives'
-  backup_directory: '{root_directory}/backups'
-  tmp_directory: '{root_directory}/tmp'
+  data: "{root_directory}/volumes"
+  diffs_directory: "{root_directory}/diffs"
+  vmount_directory: "{root_directory}/vmounts"
+  archive_directory: "{root_directory}/archives"
+  backup_directory: "{root_directory}/backups"
+  tmp_directory: "{root_directory}/tmp"
   username: calagopus
   timezone: +00:00
   user:
@@ -1741,7 +1739,7 @@ system:
   tcp_congestion_control: bbr
   sftp:
     enabled: true
-    bind_address: '0.0.0.0'
+    bind_address: "0.0.0.0"
     bind_port: 2022
     read_only: false
     key_algorithm: ssh-ed25519
@@ -1780,14 +1778,14 @@ system:
     enabled: true
     flush_interval: 10
     tiers:
-      - step: 1
-        retention: 3600
-      - step: 10
-        retention: 604800
-      - step: 60
-        retention: 31536000
-      - step: 600
-        retention: 0
+    - step: 1
+      retention: 3600
+    - step: 10
+      retention: 604800
+    - step: 60
+      retention: 31536000
+    - step: 600
+      retention: 0
   file_collaboration:
     enabled: true
     file_size_cap: 1048576
@@ -1824,8 +1822,8 @@ system:
       restore_threads: 4
       compression_format: zstd
     restic:
-      repository: '{root_directory}/backups/restic'
-      password_file: '{root_directory}/backups/restic_password'
+      repository: "{root_directory}/backups/restic"
+      password_file: "{root_directory}/backups/restic_password"
       retry_lock_seconds: 60
       environment: {}
     kopia:
@@ -1847,16 +1845,16 @@ docker:
   server_name_in_container_name: false
   delete_container_on_stop: true
   network:
-    interface: '172.18.0.1'
+    interface: "172.18.0.1"
     disable_interface_binding: false
     dns:
-      - '1.1.1.1'
-      - '1.0.0.1'
+    - "1.1.1.1"
+    - "1.0.0.1"
     dns_options:
-      - ndots:0
-      - timeout:2
-      - attempts:3
-      - single-request-reopen
+    - ndots:0
+    - timeout:2
+    - attempts:3
+    - single-request-reopen
     name: calagopus_nw
     ispn: false
     driver: bridge
@@ -1868,7 +1866,7 @@ docker:
       v4:
         enabled: true
         subnet: 172.18.0.0/16
-        gateway: '172.18.0.1'
+        gateway: "172.18.0.1"
       v6:
         enabled: true
         subnet: fdba:17c8:6c94::/64
@@ -1879,7 +1877,7 @@ docker:
     source_file_max_bytes: 1048576
   bandwidth:
     backend: auto
-  domainname: ''
+  domainname: ""
   registries: {}
   registry_image_fetch_cache:
     enabled: true
@@ -1889,7 +1887,7 @@ docker:
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   numa_memory_binding: true
@@ -1920,13 +1918,13 @@ docker:
     override: false
     default_multiplier: 1.05
     multipliers: {}
-  userns_mode: ''
+  userns_mode: ""
   mount_options: []
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
       mode: non-blocking
 limits:
@@ -1938,8 +1936,8 @@ throttles:
   line_reset_interval: 100
 tundra:
   enabled: false
-  data_directory: '{root_directory}/tundra'
-  binary: ''
+  data_directory: "{root_directory}/tundra"
+  binary: ""
   image: debian:trixie-slim
   source_image: calagopus/tundra:latest
   metrics_port: 7101
@@ -1966,34 +1964,34 @@ uuid: UUID_HERE
 token_id: TOKEN_ID_HERE
 token: TOKEN_HERE
 api:
-  host: '0.0.0.0'
+  host: "0.0.0.0"
   port: 8080
   ssl:
     enabled: false
     ktls_enabled: false
-    cert: ''
-    key: ''
+    cert: ""
+    key: ""
   redirects: {}
   disable_openapi_docs: false
   disable_remote_download: false
   remote_download_blocked_cidrs:
-    - 0.0.0.0/8
-    - 127.0.0.0/8
-    - 10.0.0.0/8
-    - 100.64.0.0/10
-    - 172.16.0.0/12
-    - 192.168.0.0/16
-    - 169.254.0.0/16
-    - 192.0.0.0/24
-    - 198.18.0.0/15
-    - 224.0.0.0/4
-    - 240.0.0.0/4
-    - '::'
-    - '::1'
-    - fe80::/10
-    - fc00::/7
-    - 2002::/16
-    - ff00::/8
+  - 0.0.0.0/8
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - 100.64.0.0/10
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 169.254.0.0/16
+  - 192.0.0.0/24
+  - 198.18.0.0/15
+  - 224.0.0.0/4
+  - 240.0.0.0/4
+  - "::"
+  - "::1"
+  - fe80::/10
+  - fc00::/7
+  - 2002::/16
+  - ff00::/8
   disable_directory_size: false
   directory_entry_limit: 10000
   send_offline_server_logs: false
@@ -2018,23 +2016,23 @@ api:
         window_seconds: 60
         max_response_size: 16384
         blocked_cidrs:
-          - 0.0.0.0/8
-          - 127.0.0.0/8
-          - 10.0.0.0/8
-          - 100.64.0.0/10
-          - 172.16.0.0/12
-          - 192.168.0.0/16
-          - 169.254.0.0/16
-          - 192.0.0.0/24
-          - 198.18.0.0/15
-          - 224.0.0.0/4
-          - 240.0.0.0/4
-          - '::'
-          - '::1'
-          - fe80::/10
-          - fc00::/7
-          - 2002::/16
-          - ff00::/8
+        - 0.0.0.0/8
+        - 127.0.0.0/8
+        - 10.0.0.0/8
+        - 100.64.0.0/10
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+        - 169.254.0.0/16
+        - 192.0.0.0/24
+        - 198.18.0.0/15
+        - 224.0.0.0/4
+        - 240.0.0.0/4
+        - "::"
+        - "::1"
+        - fe80::/10
+        - fc00::/7
+        - 2002::/16
+        - ff00::/8
 system:
   root_directory: C:\ProgramData\Calagopus-Wings
   log_directory: "{root_directory}\\logs"
@@ -2066,7 +2064,7 @@ system:
   tcp_congestion_control: bbr
   sftp:
     enabled: true
-    bind_address: '0.0.0.0'
+    bind_address: "0.0.0.0"
     bind_port: 2022
     read_only: false
     key_algorithm: ssh-ed25519
@@ -2105,14 +2103,14 @@ system:
     enabled: true
     flush_interval: 10
     tiers:
-      - step: 1
-        retention: 3600
-      - step: 10
-        retention: 604800
-      - step: 60
-        retention: 31536000
-      - step: 600
-        retention: 0
+    - step: 1
+      retention: 3600
+    - step: 10
+      retention: 604800
+    - step: 60
+      retention: 31536000
+    - step: 600
+      retention: 0
   file_collaboration:
     enabled: true
     file_size_cap: 1048576
@@ -2172,16 +2170,16 @@ docker:
   server_name_in_container_name: false
   delete_container_on_stop: true
   network:
-    interface: '172.18.0.1'
+    interface: "172.18.0.1"
     disable_interface_binding: false
     dns:
-      - '1.1.1.1'
-      - '1.0.0.1'
+    - "1.1.1.1"
+    - "1.0.0.1"
     dns_options:
-      - ndots:0
-      - timeout:2
-      - attempts:3
-      - single-request-reopen
+    - ndots:0
+    - timeout:2
+    - attempts:3
+    - single-request-reopen
     name: calagopus_nw
     ispn: false
     driver: bridge
@@ -2193,7 +2191,7 @@ docker:
       v4:
         enabled: true
         subnet: 172.18.0.0/16
-        gateway: '172.18.0.1'
+        gateway: "172.18.0.1"
       v6:
         enabled: true
         subnet: fdba:17c8:6c94::/64
@@ -2204,7 +2202,7 @@ docker:
     source_file_max_bytes: 1048576
   bandwidth:
     backend: auto
-  domainname: ''
+  domainname: ""
   registries: {}
   registry_image_fetch_cache:
     enabled: true
@@ -2214,7 +2212,7 @@ docker:
   shm_size: 0
   container_pid_limit: 5120
   container_apply_seccomp: true
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   numa_memory_binding: true
@@ -2242,13 +2240,13 @@ docker:
     override: false
     default_multiplier: 1.05
     multipliers: {}
-  userns_mode: ''
+  userns_mode: ""
   mount_options: []
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
       mode: non-blocking
 limits:
@@ -2261,7 +2259,7 @@ throttles:
 tundra:
   enabled: false
   data_directory: "{root_directory}\\tundra"
-  binary: ''
+  binary: ""
   image: debian:trixie-slim
   source_image: calagopus/tundra:latest
   metrics_port: 7101

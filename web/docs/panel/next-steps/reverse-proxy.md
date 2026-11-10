@@ -426,53 +426,53 @@ Cloudflare also caps the size of a single request per plan (100 MB on Free), and
 
 ## Troubleshooting
 
-::: details 502 Bad Gateway, or the proxy's own error page
+::: details 502 Bad Gateway, or the proxy's own error page {open}
 The proxy can't reach the Panel. Check that it's running with `sudo docker compose ps` or `sudo systemctl status calagopus-panel`, and that `curl -I http://127.0.0.1:8000` answers on the host. If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`.
 
 `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in [Step 2](#step-2-configure-the-proxy).
 :::
 
-::: details The page loads, but the console stays on "connecting" and statistics never appear
+::: details The page loads, but the console stays on "connecting" and statistics never appear {open}
 The console WebSocket goes to the node's **Public URL**. If that's the node itself, see the [Wings guide](../../wings/next-steps/reverse-proxy.md#troubleshooting). If it's the Panel (All-in-One or Wings Proxy Mode), WebSocket upgrades aren't getting through: on Nginx, confirm the `map` block exists in `nginx.conf` and the `Upgrade` and `Connection` headers are set; on Apache, check the version note above; on Nginx Proxy Manager, enable **Websockets Support**.
 :::
 
-::: details Database instance consoles, or the admin node statistics and log views, stay empty
+::: details Database instance consoles, or the admin node statistics and log views, stay empty {open}
 Those WebSockets are the Panel's own, under `/api`, and go through `location /`. The `Upgrade` and `Connection` headers have to apply there too, which the examples do by setting them at the server level.
 :::
 
-::: details Uploads fail with `413 Request Entity Too Large`
+::: details Uploads fail with `413 Request Entity Too Large` {open}
 Raise the body limit (`client_max_body_size`, `LimitRequestBody`, `max_size`) to at least `100 MiB`. On Caddy, check you wrote `128MiB` and not `100MB`.
 :::
 
-::: details Large uploads or backup downloads through the Panel die partway through, always after about the same time
+::: details Large uploads or backup downloads through the Panel die partway through, always after about the same time {open}
 A timeout on `/wings-proxy/`. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, `ProxyTimeout` on Apache, or `respondingTimeouts.readTimeout` on the Traefik entrypoint.
 :::
 
-::: details Backup downloads through the Panel fill the proxy's disk with temporary files
+::: details Backup downloads through the Panel fill the proxy's disk with temporary files {open}
 Response buffering is on for `/wings-proxy/`. Set `proxy_buffering off` there on Nginx or Nginx Proxy Manager. Caddy and Traefik stream by default.
 :::
 
-::: details A backup or restore fails with `413`, or stops partway
+::: details A backup or restore fails with `413`, or stops partway {open}
 Wings sends backup requests through `/api/remote/backups/`, which needs no body limit, buffering off and long timeouts. Add the dedicated block from [Step 2](#step-2-configure-the-proxy).
 :::
 
-::: details Activity shows `172.x.x.x` or `127.0.0.1` for every user, or rate limits trigger for everyone at once
+::: details Activity shows `172.x.x.x` or `127.0.0.1` for every user, or rate limits trigger for everyone at once {open}
 `APP_TRUSTED_PROXIES` doesn't contain the address the proxy connects from. On Docker, re-run the `docker inspect` command from Step 1; the gateway can change if the compose network was recreated.
 :::
 
-::: details Links in emails or OAuth callbacks point at `http://` or the wrong host
+::: details Links in emails or OAuth callbacks point at `http://` or the wrong host {open}
 The Panel builds links from the URL in **Admin → Settings → Application**, not from the request. Make sure it starts with `https://` and matches the domain the proxy serves. If you serve several hostnames, the extra ones have to be listed under **Additional URLs**, or every request falls back to the primary URL.
 :::
 
-::: details The session cookie has no `Secure` flag even though the site is on HTTPS
+::: details The session cookie has no `Secure` flag even though the site is on HTTPS {open}
 The Panel takes the scheme from the configured URL, not from `X-Forwarded-Proto`. Set **URL** to `https://<domain>` in [Step 3](#step-3-set-the-panel-url).
 :::
 
-::: details The Panel is still reachable at `http://<server-ip>:8000`
+::: details The Panel is still reachable at `http://<server-ip>:8000` {open}
 The listener wasn't restricted to `127.0.0.1`, or the change wasn't applied. On Docker, fix the port mapping in `compose.yml` and run `sudo docker compose up -d` again; on a standalone install, set `BIND=127.0.0.1` in `.env` and restart the Panel.
 :::
 
-::: details Browser shows a certificate warning
+::: details Browser shows a certificate warning {open}
 The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems.
 :::
 

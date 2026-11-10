@@ -153,19 +153,19 @@ The server data stays at the paths in the config, so nothing else moves.
 
 ## Troubleshooting
 
-::: details Servers fail with `network calagopus_nw not found`, or Wings warns about `docker.network.mode` at boot
+::: details Servers fail with `network calagopus_nw not found`, or Wings warns about `docker.network.mode` at boot {open}
 The config keeps `docker.network.name: pterodactyl_nw` (or `pelican_nw`), but picked up the new default for `mode`. Set `docker.network.mode` to the same value as `name`, then restart Wings.
 :::
 
-::: details The log shows `github.com/pterodactyl/wings` in a stack trace, or the node stays offline
+::: details The log shows `github.com/pterodactyl/wings` in a stack trace, or the node stays offline {open}
 The old Wings is still what runs. Check `wings version`, and that the service file was replaced.
 :::
 
-::: details A JSON parse error naming a missing field such as `oom_disabled`, or `retry attempt N failed ... missing field`
+::: details A JSON parse error naming a missing field such as `oom_disabled`, or `retry attempt N failed ... missing field` {open}
 `remote:` still points at the old panel. Set it to the new panel's address and restart Wings.
 :::
 
-::: details `service file already exists`
+::: details `service file already exists` {open}
 You left out `--override`. Run it again with it:
 
 ```bash
@@ -173,7 +173,7 @@ sudo wings service-install --override
 ```
 :::
 
-::: details `Start request repeated too quickly`, and the unit says "Pterodactyl Wings Daemon"
+::: details `Start request repeated too quickly`, and the unit says "Pterodactyl Wings Daemon" {open}
 The old service file is still in place. Replace it:
 
 ```bash
@@ -181,7 +181,7 @@ sudo wings service-install --override
 ```
 :::
 
-::: details `address already in use` on port `8080` or `2022`
+::: details `address already in use` on port `8080` or `2022` {open}
 Another copy of Wings holds the port, usually the old one. Find it and stop it:
 
 ```bash
@@ -189,7 +189,7 @@ sudo ss -tlnp | grep 8080
 ```
 :::
 
-::: details `system.data_directory '...' is not covered by any mount of the wings container`
+::: details `system.data_directory '...' is not covered by any mount of the wings container` {open}
 A directory from the config isn't inside any volume of the `wings` service. Add a volume for it.
 :::
 

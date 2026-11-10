@@ -110,7 +110,8 @@ function cleanMarkdownExport(source: string, page: string): string {
     .replace(/<FeatureTable\s+id="([^"]+)"\s*\/>/g, (_, id) => featureTableMarkdown(id))
     .replace(/<CompareFaq\s*\/>/g, () => compareFaqMarkdown(page))
     .replace(/ *<Badge [^>]*text="([^"]+)"[^>]*\/>/g, ' ($1)')
-    .replace(/<(Yes|No) \/>/g, '$1');
+    .replace(/<(Yes|No) \/>/g, '$1')
+    .replace(/^(:{3,} details .*?) \{open\}$/gm, '$1');
 
   return absoluteLinks(body, page);
 }

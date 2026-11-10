@@ -198,9 +198,9 @@ Each entry is a map, so a raised file descriptor limit looks like this:
 
 ```yaml
 container_ulimits:
-  - name: nofile
-    soft: 65535
-    hard: 65535
+- name: nofile
+  soft: 65535
+  hard: 65535
 ```
 :::
 
@@ -276,8 +276,8 @@ Default:
 
 ```yaml
 config:
-  compress: 'false'
-  max-file: '1'
+  compress: "false"
+  max-file: "1"
   max-size: 5m
 ```
 
@@ -323,23 +323,23 @@ Default:
 
 ```yaml
 remote_import_blocked_cidrs:
-  - 0.0.0.0/8
-  - 127.0.0.0/8
-  - 10.0.0.0/8
-  - 100.64.0.0/10
-  - 172.16.0.0/12
-  - 192.168.0.0/16
-  - 169.254.0.0/16
-  - 192.0.0.0/24
-  - 198.18.0.0/15
-  - 224.0.0.0/4
-  - 240.0.0.0/4
-  - '::'
-  - '::1'
-  - fe80::/10
-  - fc00::/7
-  - 2002::/16
-  - ff00::/8
+- 0.0.0.0/8
+- 127.0.0.0/8
+- 10.0.0.0/8
+- 100.64.0.0/10
+- 172.16.0.0/12
+- 192.168.0.0/16
+- 169.254.0.0/16
+- 192.0.0.0/24
+- 198.18.0.0/15
+- 224.0.0.0/4
+- 240.0.0.0/4
+- "::"
+- "::1"
+- fe80::/10
+- fc00::/7
+- 2002::/16
+- ff00::/8
 ```
 
 ### api.trusted_proxies <Badge type="info" text="Optional" />
@@ -464,11 +464,11 @@ docker:
   tmpfs_size: 100
   shm_size: 0
   container_pid_limit: 512
-  container_apparmor_profile: ''
+  container_apparmor_profile: ""
   container_ulimits: []
   container_sysctls: {}
   timezone: UTC
-  userns_mode: ''
+  userns_mode: ""
   cpu_period: 100000
   cfs_burst:
     enabled: true
@@ -482,8 +482,8 @@ docker:
   log_config:
     type: local
     config:
-      compress: 'false'
-      max-file: '1'
+      compress: "false"
+      max-file: "1"
       max-size: 5m
 api:
   bind: 0.0.0.0:8090
@@ -492,28 +492,28 @@ api:
     ktls_enabled: false
     cert: cert.pem
     key: key.pem
-  token: ''
+  token: ""
   disable_openapi_docs: false
   request_log_limit: 250
   disable_remote_import: false
   remote_import_blocked_cidrs:
-    - 0.0.0.0/8
-    - 127.0.0.0/8
-    - 10.0.0.0/8
-    - 100.64.0.0/10
-    - 172.16.0.0/12
-    - 192.168.0.0/16
-    - 169.254.0.0/16
-    - 192.0.0.0/24
-    - 198.18.0.0/15
-    - 224.0.0.0/4
-    - 240.0.0.0/4
-    - '::'
-    - '::1'
-    - fe80::/10
-    - fc00::/7
-    - 2002::/16
-    - ff00::/8
+  - 0.0.0.0/8
+  - 127.0.0.0/8
+  - 10.0.0.0/8
+  - 100.64.0.0/10
+  - 172.16.0.0/12
+  - 192.168.0.0/16
+  - 169.254.0.0/16
+  - 192.0.0.0/24
+  - 198.18.0.0/15
+  - 224.0.0.0/4
+  - 240.0.0.0/4
+  - "::"
+  - "::1"
+  - fe80::/10
+  - fc00::/7
+  - 2002::/16
+  - ff00::/8
   trusted_proxies: []
 ignore_config_updates: false
 ignore_upgrades: false

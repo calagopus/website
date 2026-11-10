@@ -101,9 +101,11 @@ Each top-level sidebar group, like `Panel` or `Compare`, keeps its previous and 
 - If most of a page splits the same way, use one set of tabs at the top holding the whole guide.
 - Add a key like `::::tabs key:pkg` to remember the choice across pages that share the same labels.
 - Don't put required steps or warnings in a dropdown.
-- A link can't open a dropdown or switch a tab. Link to a heading outside them and name the dropdown or tab in the text.
+- Troubleshooting sections use one dropdown per problem, titled with the symptom and ending in `{open}` so it starts expanded: ``::: details `address already in use` on port `8080` {open}``.
+- Two or more dropdowns under one heading, outside tabs, get an **Expand all** / **Collapse all** button automatically.
+- Links can point at a dropdown or at a heading inside a tab, and the page opens it. A dropdown's anchor is its title, slugified like a heading.
 
-When nesting, the outer container needs more colons, or the inner closing marker closes both:
+When nesting, the outer container needs more colons, or the inner closing marker closes both. Tabs inside tabs also need longer tab markers, `====` instead of `===`:
 
 ```md
 :::::tabs
@@ -144,13 +146,14 @@ Config options show **Optional** unless you set `required: true`, or a string li
 
 Adding a dependency? Say what it does and why in your PR description, or it'll probably get sent back.
 
-| Plugin                                | Purpose                                                              | Docs                                                               |
-| ------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------ |
-| `vite-imagetools`                     | Converts imported PNG and JPEG images to WebP, capped at 1600px wide | [Repo](https://github.com/JonasKruckenberg/imagetools)             |
-| `vite-plugin-image-optimizer`         | Compresses PNG, JPEG and SVG images at build time, skipping WebP     | [npm](https://www.npmjs.com/package/vite-plugin-image-optimizer)   |
-| `vitepress-plugin-mermaid`            | Mermaid diagrams                                                     | [Docs](https://emersonbottero.github.io/vitepress-plugin-mermaid/) |
-| `vitepress-plugin-tabs`               | The `::::tabs` syntax                                                | [Docs](https://vitepress-plugins.sapphi.red/tabs/)                 |
-| `aiDocPlugin` (`./plugins/ai-doc.ts`) | Internal and intentionally undocumented, ignore it                   | n/a                                                                |
+| Plugin                                                | Purpose                                                                                                         | Docs                                                               |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `vite-imagetools`                                     | Converts imported PNG and JPEG images to WebP, capped at 1600px wide                                            | [Repo](https://github.com/JonasKruckenberg/imagetools)             |
+| `vite-plugin-image-optimizer`                         | Compresses PNG, JPEG and SVG images at build time, skipping WebP                                                | [npm](https://www.npmjs.com/package/vite-plugin-image-optimizer)   |
+| `vitepress-plugin-mermaid`                            | Mermaid diagrams                                                                                                | [Docs](https://emersonbottero.github.io/vitepress-plugin-mermaid/) |
+| `vitepress-plugin-tabs`                               | The `::::tabs` syntax                                                                                           | [Docs](https://vitepress-plugins.sapphi.red/tabs/)                 |
+| `aiDocPlugin` (`./plugins/ai-doc.ts`)                 | Internal and intentionally undocumented, ignore it                                                              | n/a                                                                |
+| `detailsTogglePlugin` (`./plugins/details-toggle.ts`) | The **Expand all** / **Collapse all** buttons. `theme/details-toggle.ts` makes them work and animates dropdowns | n/a                                                                |
 
 The click-to-zoom image viewer isn't a plugin. It's `.vitepress/components/ImageViewer.vue`.
 

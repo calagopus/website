@@ -179,26 +179,26 @@ The import skips anything it can't match and lists it in the results, so you can
 
 ## Troubleshooting
 
-::: details Saving the settings fails
+::: details Saving the settings fails {open}
 The panel rejected the key or couldn't be reached. Check the **Panel URL** and enter a valid **admin** API key. Changing the URL also requires entering the key again.
 :::
 
-::: details The Configuration tab shows "Could not load data from the Calagopus panel"
+::: details The Configuration tab shows "Could not load data from the Calagopus panel" {open}
 The panel is unreachable or the saved key stopped working. Fix the module settings; the tab keeps the saved values in the meantime.
 :::
 
-::: details The order goes to **Failed setup** with "only found 0 available allocations"
+::: details The order goes to **Failed setup** with "only found 0 available allocations" {open}
 Deploy mode found no free allocation in the selected locations or port range. Add allocations on the panel or widen the **Port Range**, then activate the order again.
 :::
 
-::: details Activation fails because a panel user already exists
+::: details Activation fails because a panel user already exists {open}
 A panel user with the client's email exists but couldn't be linked automatically. Verify it belongs to the client, then set its external ID to `fb-<client id>`.
 :::
 
-::: details A server has no address
+::: details A server has no address {open}
 The product uses deploy mode without a **Port Range**, and the egg's configuration on the panel doesn't assign allocations. Set a **Port Range**, or configure allocations for the egg.
 :::
 
-::: details Clients see "Unable to load server information from the panel"
+::: details Clients see "Unable to load server information from the panel" {open}
 The panel was unreachable when the page loaded. The details come back on their own once the panel responds again.
 :::

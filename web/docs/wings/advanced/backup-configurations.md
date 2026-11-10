@@ -288,56 +288,59 @@ Click **Test** on the configuration's form and pick a node. [Testing a Configura
 
 ## Troubleshooting
 
-::: details S3 backups fail with `failed to initiate multipart upload`, `417 Expectation Failed`, or `SignatureDoesNotMatch`
+::: details S3 backups fail with `failed to initiate multipart upload`, `417 Expectation Failed`, or `SignatureDoesNotMatch` {open}
 Three causes account for nearly all reports. The bucket name is in the **Endpoint** field as well as the **Bucket** field, which doubles it in the request path, so the endpoint should be the bare service URL. The clock on the Wings host or the panel host is off, which breaks request signing at a skew of a few seconds, so check `timedatectl` on both.
 
 Or the key doesn't have permission on the bucket. Endpoints with a path in them, such as `https://minio.example.com/s3`, aren't supported. Cloudflare R2 works through its S3 endpoint, not through a custom domain on the bucket.
 :::
 
-::: details Restic backups fail with `repository is already locked exclusively`, then succeed on retry
-A backup ran while a deletion or prune held the repository's exclusive lock. Since Wings 1.2.7, operations on one repository are queued within each node: backups and stats runs share it, deletions and prunes wait until they are alone.
+::: details Restic backups fail with `repository is already locked exclusively`, then succeed on retry {open}
+A backup ran while a deletion or prune held the repository's exclusive lock. Since Wings 1.2.7, each node queues operations on a repository: backups and stats runs share it, while deletions and prunes wait until they're alone.
 
-Collisions are still possible between different nodes using the same repository, or with restic run by hand. Raise **Retry Lock Seconds** on the configuration so the backup waits instead of failing, and schedule prune jobs away from scheduled backups.
+Collisions are still possible between nodes that share a repository, or with restic run by hand:
 
-A lock left behind by a crashed restic process is cleared automatically on Wings 1.2.6 and newer; on older versions run `restic unlock` against the repository.
+- Raise **Retry Lock Seconds** on the configuration, so the backup waits instead of failing.
+- Schedule prune jobs away from scheduled backups.
+
+A lock left behind by a crashed restic process clears itself on Wings 1.2.6 and newer. On older versions, run `restic unlock` against the repository.
 :::
 
-::: details Restic storage keeps growing even though old backups are deleted
+::: details Restic storage keeps growing even though old backups are deleted {open}
 Deleting a backup only forgets the snapshot. The data stays until `restic prune` runs. Add a [prune job](#disk-specific-settings) to the configuration; on Panels before 1.2.7 those only did a dry run. To reclaim the space right away, turn on **Maintenance Enabled** for the configuration, run `restic prune` against the repository (and `restic unlock` first if a stale lock is reported), then turn maintenance off.
 :::
 
-::: details Restoring a **Shared** restic, Kopia or Proxmox Backup Server backup onto a server on a different node fails with `internal server error`, because Wings answered `backup not found`
+::: details Restoring a **Shared** restic, Kopia or Proxmox Backup Server backup onto a server on a different node fails with `internal server error`, because Wings answered `backup not found` {open}
 Panels before 1.2.8 only let the node that made a backup fetch its repository details, so cross-node restores of shared backups failed. Update the Panel. Reattaching the backup first is no workaround for Proxmox Backup Server, which looks the snapshot up by server.
 :::
 
-::: details Restic says the repository doesn't exist
+::: details Restic says the repository doesn't exist {open}
 The repository setting points at a directory inside the repository, or at a parent of it. It must be the repository root, the directory that contains `config` and `keys`.
 :::
 
-::: details A backup is stuck at "creating" or "deleting" with no way to remove it
+::: details A backup is stuck at "creating" or "deleting" with no way to remove it {open}
 Restart Wings. Anything still in progress is marked failed, and failed backups can be deleted. Proxmox Backup Server deletions that got stuck because of missing permissions clear themselves after a while.
 :::
 
-::: details Proxmox Backup Server fails with `PBS denied access (HTTP 403)` even though the token has a role on the datastore
+::: details Proxmox Backup Server fails with `PBS denied access (HTTP 403)` even though the token has a role on the datastore {open}
 With **Privilege Separation** on (the PBS default), a token can only do what both it and its user are allowed to do. Add the permission for the user as well as the token. See [the PBS settings](#disk-specific-settings). Deleting backups also needs `DatastorePowerUser` (or anything with `Datastore.Prune`), not just `DatastoreBackup`.
 :::
 
-::: details Backups disappeared after a server transfer or after deleting an old node
+::: details Backups disappeared after a server transfer or after deleting an old node {open}
 Backups belong to the node that made them. When transferring a server, select the backups in the transfer dialog, or they stay behind and are lost when that node is deleted. For remote drivers (S3, restic and Kopia), turn on **Shared** on the configuration so every node can see the same backups and a transferred server keeps them without copying anything.
 
 It's off by default, so an existing configuration almost certainly needs the change.
 :::
 
-::: details ZFS or Btrfs backups fail with `failed to parse dataset name`, `server volume ... is not its own ZFS dataset`, or `Failed to get ZFS dataset name ...` followed by whatever `zfs list` printed
+::: details ZFS or Btrfs backups fail with `failed to parse dataset name`, `server volume ... is not its own ZFS dataset`, or `Failed to get ZFS dataset name ...` followed by whatever `zfs list` printed {open}
 Snapshot backups need the server to live on its own dataset or subvolume, which means `system.disk_limiter_mode` set to `zfs_dataset` or `btrfs_subvolume` and existing servers converted with `sudo wings migrate-disk-limiter`.
 
 See [Disk Limiters](../disk-limiters/index.md). When Wings runs in a container, it also needs to see the pool: bind-mount the dataset at its real mountpoint and pass `/dev/zfs` through to the container, otherwise `zfs list` fails inside the container and its complaint is what ends up in the error.
 :::
 
-::: details Backups drag the server's TPS down
+::: details Backups drag the server's TPS down {open}
 The first snapshot of a server is expensive whatever the driver, later ones are incremental. `system.backups.read_limit` and `system.backups.write_limit` throttle the local, S3, restic and Proxmox Backup Server drivers. Kopia, ddup-bak and the ZFS and Btrfs snapshot drivers ignore them.
 :::
 
-::: details Large backup downloads fail with a `524` from Cloudflare or a `504` from the proxy
+::: details Large backup downloads fail with a `524` from Cloudflare or a `504` from the proxy {open}
 Cloudflare's proxy caps request time and upload size. Serve the node's hostname with the orange cloud off, or download through a hostname that bypasses Cloudflare. See [Cloudflare](../../panel/next-steps/reverse-proxy.md#cloudflare).
 :::

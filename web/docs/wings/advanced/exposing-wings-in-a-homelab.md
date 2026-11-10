@@ -127,19 +127,19 @@ The [private network](./private-network.md) between nodes also bypasses the prox
 
 ## Troubleshooting
 
-::: details Backend to Wings passes, Frontend to Wings fails
+::: details Backend to Wings passes, Frontend to Wings fails {open}
 The Panel reaches the node but your browser does not. With port forwarding, this is almost always the mixed-content block described above: the Panel is on `https://` and the node on `http://`. Otherwise check that the hostname resolves publicly and the port is forwarded from outside your network, not only from the LAN.
 :::
 
-::: details Both checks pass, but the console never connects
+::: details Both checks pass, but the console never connects {open}
 The WebSocket upgrade is not getting through. On a reverse proxy, check the `Upgrade` and `Connection` headers in the [proxy configuration](../next-steps/reverse-proxy.md#step-2-configure-the-proxy).
 :::
 
-::: details The node worked yesterday and is unreachable today
+::: details The node worked yesterday and is unreachable today {open}
 Your home IP changed. Use a dynamic DNS name in the node URL instead of the raw address.
 :::
 
-::: details Users cannot reach their servers
+::: details Users cannot reach their servers {open}
 The game ports are not forwarded, or the allocation shows the LAN IP with no alias. See [Game Server and SFTP Ports](#game-server-and-sftp-ports).
 :::
 

@@ -253,30 +253,30 @@ Upgrades run through the extension of the product being upgraded to, so products
 
 ## Troubleshooting
 
-::: details "Connection failed: Calagopus API Error (HTTP 401)" on Test Connection
+::: details "Connection failed: Calagopus API Error (HTTP 401)" on Test Connection {open}
 The API key is missing, malformed, or lacks admin access. Generate a fresh **admin** API key in your panel and re-enter it.
 :::
 
-::: details "No available allocations on the selected node"
+::: details "No available allocations on the selected node" {open}
 The chosen node has no free allocations. Add allocations to the node, or switch the product to auto-deploy across locations.
 :::
 
-::: details "No node or location UUIDs configured for this product."
+::: details "No node or location UUIDs configured for this product." {open}
 Pick a **Node** or at least one **Location(s)** in the product's server settings.
 :::
 
-::: details "Server already exists on the panel"
+::: details "Server already exists on the panel" {open}
 A server is already linked to this service's ID (`external_id`). Remove or re-link the existing panel server before re-provisioning.
 :::
 
-::: details "User with this email/username already exists on the panel"
+::: details "User with this email/username already exists on the panel" {open}
 A panel user already has the customer's email or username, and the module couldn't link it because the customer's email isn't verified or only the username matches. After checking that the customer owns that panel account, set its `external_id` to the Paymenter user ID given in the message, then retry.
 :::
 
-::: details The service page says "Unable to load server information from the panel."
+::: details The service page says "Unable to load server information from the panel." {open}
 Paymenter couldn't reach the panel with the server's API key. Check the panel is up and use **Test Connection** on the server.
 :::
 
-::: details "Preview failed: Pterodactyl API Error (HTTP 401)" on the import page
+::: details "Preview failed: Pterodactyl API Error (HTTP 401)" on the import page {open}
 The Pterodactyl server in Paymenter no longer has a working application API key. Edit it and enter a key from the Pterodactyl panel, or create a new application key there if the old one was removed.
 :::

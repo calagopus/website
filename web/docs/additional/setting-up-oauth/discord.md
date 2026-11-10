@@ -89,10 +89,10 @@ If everything works correctly, you should now be able to see your Discord accoun
 
 ### Troubleshooting
 
-::: details Error: "Invalid OAuth2 redirect_uri"
+::: details Error: "Invalid OAuth2 redirect_uri" {open}
 The redirect URL in Discord doesn't match the one provided by Calagopus Panel. Go back to your Calagopus Panel OAuth provider configuration page and copy the exact Redirect URL shown, then go to the [Discord Developer Portal](https://discord.com/developers/applications), select your application, navigate to OAuth2 then Redirects, and make sure the redirect URL matches exactly (including `https://`, trailing slashes, etc.) before clicking **Save Changes**.
 :::
 
-::: details Error: "Unknown application"
+::: details Error: "Unknown application" {open}
 The Client ID or Client Secret set on the panel is invalid. Go to the [Discord Developer Portal](https://discord.com/developers/applications), select your application, navigate to OAuth2, copy your Client ID, click **Reset Secret** to generate a new Client Secret and copy it, then update both values in your Calagopus Panel OAuth provider configuration and save.
 :::

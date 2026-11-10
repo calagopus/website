@@ -12,6 +12,7 @@ import { acceptMarkdownPlugin } from './plugins/accept-markdown.ts';
 import { aiDocPlugin } from './plugins/ai-doc.ts';
 import { anchorsPlugin } from './plugins/anchors.ts';
 import { writeConfigDocs } from './plugins/config-docs.ts';
+import { detailsTogglePlugin } from './plugins/details-toggle.ts';
 import { generateLlmsArtifacts } from './plugins/llms.ts';
 import { imageAssetsPlugin, imageMime, writeImageManifest } from './plugins/mcp-images.ts';
 import { recordPage, writePageManifest } from './plugins/mcp-manifest.ts';
@@ -139,6 +140,7 @@ export default withMermaid({
     config(md) {
       md.use(tabsMarkdownPlugin);
       md.use(anchorsPlugin);
+      md.use(detailsTogglePlugin);
 
       md.renderer.rules.table_open = () => '<div class="m-table"><table>\n';
       md.renderer.rules.table_close = () => '</table></div>\n';

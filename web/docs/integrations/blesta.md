@@ -186,26 +186,26 @@ A few Pterodactyl settings have no Calagopus equivalent and are dropped: `port_r
 
 ## Troubleshooting
 
-::: details Saving the server fails with a connection error
+::: details Saving the server fails with a connection error {open}
 The API key is missing, malformed, or lacks admin access, or the Panel URL is incorrect. Confirm the Panel URL points at your panel (HTTPS is assumed if you omit the protocol) and re-enter a valid **admin** API key.
 :::
 
-::: details "No available allocations on the selected node"
+::: details "No available allocations on the selected node" {open}
 The chosen node has no free allocations. Add allocations to the node, or switch the package to auto-deploy across locations.
 :::
 
-::: details The package will not save
+::: details The package will not save {open}
 Either the Nest or Egg is unset, or neither a node nor any locations were selected. All selections must come from the same panel the server is configured against.
 :::
 
-::: details "A panel user with this username already exists and was not linked automatically"
+::: details "A panel user with this username already exists and was not linked automatically" {open}
 The panel already has a user with the generated username but a different email. Check that the account belongs to this client, then link it by setting that panel user's `external_id` to `bl-<client id>` and provision again.
 :::
 
-::: details Clients get a duplicate panel account
+::: details Clients get a duplicate panel account {open}
 The module only links existing users by exact email. If a client registered on the panel with a different email than the one in Blesta, link the accounts by setting that panel user's `external_id` to `bl-<client id>`.
 :::
 
-::: details The server summary shows "Server information is not available."
+::: details The server summary shows "Server information is not available." {open}
 The service has no server UUID yet, or the server was deleted on the panel. Check the service's fields on its admin page.
 :::

@@ -46,14 +46,14 @@ A failed data write rolls back the import. Panel settings are saved after the da
 
 The importer shares its code with the Pterodactyl one, so connection and data errors are covered under [Troubleshooting the Import](./pterodactyl.md#troubleshooting-the-import) on that page. Two things are specific to Pelican.
 
-::: details Login fails with "Invalid username or password" for an account that had an empty password on Pelican
+::: details Login fails with "Invalid username or password" for an account that had an empty password on Pelican {open}
 Signing in with an empty password doesn't work on Calagopus. Set a new password from the CLI with `sudo docker compose exec web calagopus-panel users reset-password` on Docker, or `sudo calagopus-panel users reset-password` from `/etc/calagopus` otherwise, then sign in with it.
 :::
 
-::: details Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect
+::: details Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect {open}
 The `remote:` URL in the Wings config still points at the Pelican panel. Set it to the Calagopus panel's address and restart Wings.
 :::
 
-::: details Config file replacements such as `{{server.environment.SERVER_NAME}}` are written literally, and the Wings log says `unknown server variable: server.environment.SERVER_NAME`
+::: details Config file replacements such as `{{server.environment.SERVER_NAME}}` are written literally, and the Wings log says `unknown server variable: server.environment.SERVER_NAME` {open}
 Calagopus Wings exposes the environment as `server.env`. Wings from 1.1.4 on accepts `server.environment` as an alias. On older versions, edit the egg's config file replacements to use `{{server.env.SERVER_NAME}}`.
 :::

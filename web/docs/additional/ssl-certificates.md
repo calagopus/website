@@ -109,7 +109,7 @@ sudo systemctl list-timers certbot.timer
 
 ### Troubleshooting
 
-::: details Browser shows "Insecure Connection" or another SSL/TLS error
+::: details Browser shows "Insecure Connection" or another SSL/TLS error {open}
 Almost always means the certificate has expired. If `certbot renew` fails with something like `Error: Attempting to renew cert (domain) from /etc/letsencrypt/renew/domain.conf produced an unexpected error`, it's usually because port 80 is already in use; using the `--nginx` / `--apache` plugin flags (as above) avoids this.
 
 Otherwise, stop the webserver, renew, then start it again: `sudo systemctl stop nginx`, `sudo certbot renew`, `sudo systemctl start nginx`.

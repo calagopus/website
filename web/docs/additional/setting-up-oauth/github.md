@@ -78,14 +78,14 @@ If everything works correctly, you should now be able to see your GitHub account
 
 ### Troubleshooting
 
-::: details Error: "Redirect URI Mismatch" or "Invalid Redirect URI"
+::: details Error: "Redirect URI Mismatch" or "Invalid Redirect URI" {open}
 The authorization callback URL in GitHub doesn't match the one provided by Calagopus Panel. Go back to your Calagopus Panel OAuth provider configuration page and copy the exact Redirect URL shown, then go to your GitHub OAuth App settings (Account Settings → Developer Settings → OAuth Apps), click your application, update the "Authorization callback URL" field to match exactly (including `https://`, trailing slashes, etc.), and click **Update application**.
 :::
 
-::: details Error: "Invalid Client Credentials" or "Bad Credentials"
+::: details Error: "Invalid Client Credentials" or "Bad Credentials" {open}
 The Client ID or Client Secret is incorrect or expired. Go to your GitHub OAuth App settings, copy your Client ID, click **Generate a new client secret**, copy the new Client Secret immediately (it won't be shown again), then update both values in your Calagopus Panel OAuth provider configuration and save.
 :::
 
-::: details OAuth connection doesn't work, with a "device_flow" error
+::: details OAuth connection doesn't work, with a "device_flow" error {open}
 Device Flow is enabled on your GitHub OAuth App. Go to your GitHub OAuth App settings, make sure the **Enable Device Flow** checkbox is unchecked, click **Update application**, and try the OAuth connection again.
 :::

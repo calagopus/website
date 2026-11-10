@@ -82,7 +82,7 @@
   transform: rotate(0deg);
 }
 
-/* Let `::: details` titles wrap as one line of text, so inline code doesn't split them into columns. */
+/* Inline code would split the title into columns. */
 .vp-doc .custom-block.details > summary {
   display: block;
   position: relative;
@@ -122,12 +122,95 @@
   margin-inline: var(--mantine-spacing-sm);
 }
 
+/* VitePress sets this margin with !important. */
+.vp-doc .custom-block.details > div[class*='language-'] {
+  margin-inline: var(--mantine-spacing-sm) !important;
+}
+
 .vp-doc .custom-block.details > summary + * {
   margin-top: 4px;
 }
 
 .vp-doc .custom-block.details > :last-child:not(summary) {
   margin-bottom: var(--mantine-spacing-sm);
+}
+
+.vp-doc .custom-block.details > summary {
+  border-bottom: 1px solid transparent;
+  box-shadow: inset 0 0 transparent;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.vp-doc .custom-block.details[open] > summary {
+  border-bottom-color: var(--mantine-color-default-border);
+  background-color: var(--mantine-primary-color-light);
+  box-shadow: inset 3px 0 var(--mantine-primary-color-filled);
+}
+
+.vp-doc .custom-block.details[open] > summary + * {
+  margin-top: var(--mantine-spacing-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .custom-block.details > summary {
+    transition: none;
+  }
+}
+
+/* Animated by theme/details-toggle.ts. */
+.vp-doc .custom-block.details::details-content {
+  transition: none;
+}
+
+/* Set by theme/details-toggle.ts while a block closes. */
+.vp-doc .custom-block.details.details-closing {
+  background-color: transparent;
+}
+
+.vp-doc .custom-block.details.details-closing > summary {
+  border-bottom-color: transparent;
+  background-color: transparent;
+  box-shadow: inset 0 0 transparent;
+  color: var(--mantine-color-dimmed);
+}
+
+.vp-doc .custom-block.details.details-closing > summary::after {
+  transform: rotate(-90deg);
+}
+
+/* plugins/details-toggle.ts */
+.vp-doc .details-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.5rem 0 -0.25rem;
+}
+
+.vp-doc .details-toggle > button {
+  padding: 2px 8px;
+  border-radius: var(--mantine-radius-sm);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .vp-doc .details-toggle > button:hover {
+    background-color: var(--mantine-color-default-hover);
+    color: var(--mantine-color-text);
+  }
+}
+
+.vp-doc .details-toggle > button:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
 }
 
 /* Markdown tables, wrapped in .m-table by the markdown renderer (config.mts). */
@@ -334,14 +417,15 @@
   padding: var(--mantine-spacing-md) 0 0;
 }
 
-/* Tab rows styled like the code-group tab bar. */
-
 .vp-doc .plugin-tabs .plugin-tabs--tab-list {
+  flex-wrap: nowrap;
   width: fit-content;
   max-width: 100%;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   border-radius: var(--mantine-radius-default);
   background-color: var(--vp-code-tab-bg);
+  scrollbar-width: thin;
 }
 
 .vp-doc .plugin-tabs .plugin-tabs--tab-list::after {
@@ -349,8 +433,12 @@
 }
 
 .vp-doc .plugin-tabs .plugin-tabs--tab {
+  flex: 0 1 auto;
   padding-inline: var(--mantine-spacing-sm);
+  line-height: 1.3;
   color: var(--vp-code-tab-text-color);
+  text-align: center;
+  white-space: normal;
 }
 
 .vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected='true'] {
