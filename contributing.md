@@ -159,7 +159,8 @@ The click-to-zoom image viewer isn't a plugin. It's `.vitepress/components/Image
 Run the same checks CI runs:
 
 ```bash
-pnpm run biome:validate
+pnpm run lint
+pnpm run fmt:check
 pnpm run typecheck
 pnpm run check-frontmatter
 pnpm docs:build
@@ -168,9 +169,9 @@ pnpm run check-redirects
 pnpm exec wrangler deploy --dry-run
 ```
 
-Then check the dev server for console errors and broken links.
+Then check the dev server for console errors and broken links. `pnpm run fmt` and `pnpm run lint:fix` fix most of what the first two report.
 
-**`biome:validate` flags dozens of unrelated files?** That's CRLF line endings from a Windows checkout. If you cloned before `.gitattributes` existed, run `git add --renormalize .` once, plus `git config core.autocrlf false` if you set it globally.
+**`fmt:check` flags dozens of unrelated files?** That's CRLF line endings from a Windows checkout. If you cloned before `.gitattributes` existed, run `git add --renormalize .` once, plus `git config core.autocrlf false` if you set it globally.
 
 ## Commits and PRs
 

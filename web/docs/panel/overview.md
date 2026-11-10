@@ -42,7 +42,7 @@ The frontend is built with React and communicates with the backend via REST APIs
 - **State Management**: [Zustand](https://zustand.docs.pmnd.rs/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
 - **Build Tool**: [Vite](https://vite.dev/)
-- **Linting**: [Biome](https://biomejs.dev/)
+- **Linting and formatting**: [oxlint](https://oxc.rs/docs/guide/usage/linter) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
 
 ### Backend
 

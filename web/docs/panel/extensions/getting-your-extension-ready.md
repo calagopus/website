@@ -32,11 +32,12 @@ Run these from the `frontend/` directory.
 
 ```bash
 cd frontend
-pnpm biome:fix-unsafe
+pnpm fmt
+pnpm lint:fix
 pnpm build:ci
 ```
 
-`pnpm biome:fix-unsafe` runs [Biome](https://biomejs.dev) with its auto-fixes enabled, including the ones Biome marks unsafe. This normalizes formatting and fixes a broader set of lint issues. Run it a second time to see what's left to fix by hand. Like `cargo fmt`, it edits files in place, so commit or stash before running if you want to review the diff. `pnpm biome:fix` is the same with the unsafe fixes left out.
+`pnpm fmt` formats your code with [oxfmt](https://oxc.rs/docs/guide/usage/formatter), and `pnpm lint:fix` runs [oxlint](https://oxc.rs/docs/guide/usage/linter) and applies its automatic fixes. Run `pnpm lint` afterwards to see what's left to fix by hand. Like `cargo fmt`, both edit files in place, so commit or stash before running them if you want to review the diff.
 
 `pnpm build:ci` type-checks and does a full production frontend build with all extensions compiled in. If your extension has a TypeScript error, a bad import, or a missing dependency in its `package.json`, this is where you'll catch it. The exported `.c7s.zip` ships your source, not a build artifact, so users will hit the same error on their side if you skip this step. Unlike `pnpm build`, it does not regenerate the translation files first, so run `pnpm build:translations` before it if you changed `translations.ts`.
 
@@ -73,7 +74,7 @@ Before you publish a release, quickly run through:
 
 - `cargo fmt` produced no unexpected changes (or you reviewed and committed them).
 - `cargo clippy` is clean, or every remaining warning is something you've deliberately decided to accept.
-- `pnpm biome:fix-unsafe` produced no unexpected changes.
+- `pnpm fmt` and `pnpm lint:fix` produced no unexpected changes, and `pnpm lint` is clean.
 - `pnpm build:ci` succeeds.
 - The `version` field in your extension's `Cargo.toml` has been bumped if this is a new release.
 - The panel version requirement in your extension's `Metadata.toml` is still correct. Raise it if your extension relies on APIs added in a newer Panel release.

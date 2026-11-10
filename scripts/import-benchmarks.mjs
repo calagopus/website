@@ -147,7 +147,7 @@ for (const kind of Object.keys(KINDS)) {
   if (targets.length > 0) await writeRoot(kind, targets);
 }
 
-await run('npx', ['biome', 'check', '--write', DATA], { maxBuffer: 64 * 1024 * 1024 }).catch((e) => {
+await run('npx', ['oxfmt', DATA], { maxBuffer: 64 * 1024 * 1024 }).catch((e) => {
   console.error(e.stdout || e.message);
   process.exit(1);
 });
