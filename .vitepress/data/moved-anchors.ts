@@ -1,7 +1,3 @@
-// Section links people already shared keep working when a section is renamed or merged.
-// `theme/anchors.ts` applies these, and `check-redirects` makes sure the targets exist.
-
-// Page, then old anchor and the anchor it's now at.
 export const movedAnchors: Record<string, Record<string, string>> = {
   '/compare/calagopus-vs-amp': {
     'ready-to-switch': 'migrating-from-amp',
@@ -169,7 +165,6 @@ export const movedAnchors: Record<string, Record<string, string>> = {
   },
 };
 
-// Page, then tab and the old anchors whose steps are now one block in that tab.
 export const anchorsInTabs: Record<string, Record<string, string[]>> = {
   '/docs/db-agent/updating': {
     'APT / RPM / APK / AUR': ['_1-upgrade-the-package', '_2-restart-the-service'],

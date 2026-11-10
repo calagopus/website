@@ -1,5 +1,3 @@
-// Published URLs have to keep working. When a page moves, add its old route here.
-// Images only need an entry when they're deleted, and can point at the page section they showed.
 export const movedPages: Record<string, string> = {
   '/docs/about/mcp-server': '/docs/integrations/docs-mcp',
   '/docs/additional/reverse-proxies/index': '/docs/additional/reverse-proxies',

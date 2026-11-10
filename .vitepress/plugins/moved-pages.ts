@@ -1,7 +1,6 @@
 import type { PluginOption } from 'vite';
 import { movedPageLocation } from '../lib/redirects.ts';
 
-// The Worker redirects moved pages in production, but `docs:dev` doesn't run it.
 export function movedPagesPlugin(): PluginOption {
   return {
     name: 'moved-pages',

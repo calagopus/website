@@ -1,6 +1,5 @@
 import type { MarkdownRenderer } from 'vitepress';
 
-// Same steps as the heading slugs from @mdit-vue/shared, which VitePress doesn't export.
 const slugify = (text: string) =>
   text
     .normalize('NFKD')
@@ -13,9 +12,6 @@ const slugify = (text: string) =>
     .replace(/^(\d)/, '_$1')
     .toLowerCase();
 
-// Makes every anchor reachable from a link. Dropdowns get the id a heading with
-// the same title would get. Closed tabs aren't in the DOM, so each tab set lists
-// the anchors in its tabs for `theme/anchors.ts` to open the right one.
 export function anchorsPlugin(md: MarkdownRenderer): void {
   md.core.ruler.push('anchors', (state) => {
     const used = new Set(state.tokens.flatMap((token) => (token.type === 'heading_open' ? [token.attrGet('id')] : [])));

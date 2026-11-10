@@ -14,7 +14,6 @@ function tabButton(label: string, tabs: Element | null = document.querySelector(
   return [...(tabs?.querySelectorAll<HTMLElement>('.plugin-tabs--tab') ?? [])].find((tab) => tab.textContent === label);
 }
 
-// Opens the tab an anchor is in. Closed tabs aren't in the DOM until then.
 async function openTabWith(id: string, page: string): Promise<HTMLElement | null> {
   const label = Object.entries(anchorsInTabs[page] ?? {}).find(([, anchors]) => anchors.includes(id))?.[0];
   if (label) {
@@ -34,8 +33,6 @@ async function openTabWith(id: string, page: string): Promise<HTMLElement | null
   return null;
 }
 
-// Takes a link to its section when the browser can't: the section was renamed,
-// or it's in a closed tab or dropdown.
 async function revealAnchor(page: string) {
   const anchor = currentAnchor();
   if (!anchor) return;
@@ -44,8 +41,6 @@ async function revealAnchor(page: string) {
   const id = typeof moved === 'string' ? moved : anchor;
   const position = () => document.getElementById(id)?.getBoundingClientRect().top;
 
-  // Tabs restore the visitor's last choice right after mounting, which can add
-  // the target or move it after the browser already scrolled.
   const before = position();
   await nextTick();
 
