@@ -36,7 +36,7 @@
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
     "@fortawesome/vue-fontawesome": "^3.3.3",
     "@modelcontextprotocol/server": "^2.4.0",
-    "@sentry/cloudflare": "^11.10.0",
+    "@sentry/cloudflare": "^11.11.0",
     "@types/node": "^26.6.6",
     "@unhead/vue": "^3.4.3",
     "agents": "^0.23.0",
@@ -50,15 +50,15 @@
     "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "^7.0.2",
-    "vite": "^8.3.5",
+    "vite": "^8.3.6",
     "vite-imagetools": "^12.0.1",
     "vite-plugin-image-optimizer": "^2.0.3",
     "vitepress": "2.0.0-alpha.21",
     "vitepress-plugin-mermaid": "^2.0.17",
     "vitepress-plugin-tabs": "^0.9.1",
-    "vue": "^3.5.44",
+    "vue": "^3.5.45",
     "vue-echarts": "^8.3.2",
-    "wrangler": "^4.157.0",
+    "wrangler": "^4.158.0",
     "zod": "^4.6.7"
   }
 }
