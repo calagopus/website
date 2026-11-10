@@ -1,5 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
+import { format } from 'oxfmt';
 import {
   type ConfigDoc,
   type ConfigNote,
@@ -293,10 +294,17 @@ export function configDocPaths(doc: ConfigDoc): Set<string> {
  * already up to date so the dev server doesn't reload on every config load.
  */
 export async function writeConfigDocs(docs: ConfigDoc[], srcDir: string): Promise<void> {
+  // Match `pnpm fmt` so builds don't break `fmt:check`.
+  const options = JSON.parse(await readFile(new URL('../../.oxfmtrc.json', import.meta.url), 'utf8'));
+  delete options.$schema;
+  delete options.ignorePatterns;
+
   await Promise.all(
     docs.map(async (doc) => {
       const target = join(srcDir, doc.outFile);
-      const content = renderConfigDoc(doc);
+      const rendered = renderConfigDoc(doc);
+      const { code, errors } = await format(target, rendered, options);
+      const content = errors.length === 0 ? code : rendered;
       const current = await readFile(target, 'utf8').catch(() => null);
       if (current === content) return;
 
