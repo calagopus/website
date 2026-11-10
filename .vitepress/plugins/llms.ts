@@ -1,6 +1,6 @@
+import type { SiteConfig } from 'vitepress';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import type { SiteConfig } from 'vitepress';
 import { featureCategories } from '../data/features.ts';
 import { MARKDOWN_EXPANDERS } from './benchmarks.ts';
 import { expandSnippetImports } from './snippet-imports.ts';

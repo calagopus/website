@@ -272,8 +272,8 @@ The same interceptor pattern exists for every route type - `addGlobalRouteInterc
 Components you slot into existing pages (and pages you register as new routes) usually need to know _which_ server or user the current page is about. The Panel exposes this through Zustand stores, which your components import directly:
 
 ```tsx
-import { useServerStore } from '@/stores/server.ts';
 import { useGlobalStore } from '@/stores/global.ts';
+import { useServerStore } from '@/stores/server.ts';
 ```
 
 - **`useServerStore`** - the currently-viewed server (on server pages). Exposes `server`, `updateServer`, and related state. It is scoped to the server router through React context, so it only works inside server pages and has no module-level `getState()`.

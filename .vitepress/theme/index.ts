@@ -2,15 +2,14 @@
 
 import { createHead } from '@unhead/vue/client';
 import { inBrowser, type Theme, useData } from 'vitepress';
-import DefaultTheme from 'vitepress/theme';
 import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client';
+import DefaultTheme from 'vitepress/theme';
 import { h } from 'vue';
 import CompareFaq from '../components/CompareFaq.vue';
 import FeatureTable from '../components/FeatureTable.vue';
 import ImageViewer from '../components/ImageViewer.vue';
 import { createAppearanceToggle } from './appearance.ts';
 import { registerWebMcpTools } from './webmcp.ts';
-
 import './colors.css';
 import './mantine.css';
 import './components.css';

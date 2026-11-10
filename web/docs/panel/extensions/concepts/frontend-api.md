@@ -121,8 +121,8 @@ The Panel ships a utility called `httpErrorToHuman` that turns any axios error -
 
 ```tsx
 import { httpErrorToHuman } from '@/api/axios.ts';
-import { useToast } from '@/providers/ToastProvider.tsx';
 import updateItem from '@/api/updateItem.ts';
+import { useToast } from '@/providers/ToastProvider.tsx';
 
 export default function EditItemForm({ serverUuid, itemId }: Props) {
   const { addToast } = useToast();
@@ -197,12 +197,12 @@ Writing raw `useEffect` + `useState` fetches is tedious and error-prone. The Pan
 All six are in `@/plugins/resource/`:
 
 ```ts
-import { useResource } from '@/plugins/resource/useResource.ts';
-import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
-import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
-import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
 import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 ```
 
 ### Query Keys
@@ -225,8 +225,8 @@ The hooks append their own dynamic segments to the key you supply - your `deps` 
 Use this when you need to fetch a resource and don't need search or pagination. It wraps TanStack Query's `useQuery`, automatically shows an error toast on failure, and returns `refetch` and `invalidate` helpers.
 
 ```tsx
-import { useResource } from '@/plugins/resource/useResource.ts';
 import getFeatureSettings from '@/api/getFeatureSettings.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
 
 export default function FeatureSettings({ serverUuid }: { serverUuid: string }) {
   const { data, loading, refetch, invalidate } = useResource({
@@ -278,8 +278,8 @@ const { data, error } = useResource({
 Use this when you need to re-fetch a resource on a fixed interval - a build status, a transfer's progress, anything that changes on the backend while the user watches. It's `useResource` plus an `interval`, and an optional `stopWhen` predicate that halts the polling once the data reaches a terminal state. It returns the same `{ data, loading, error, refetch, invalidate }` as `useResource`.
 
 ```tsx
-import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 import getJobStatus from '@/api/getJobStatus.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 
 export default function JobStatus({ jobId }: { jobId: string }) {
   const { data } = usePollingResource({
@@ -333,9 +333,9 @@ interface Pagination<T> {
 This is exactly what `parsePaginationFromApi` returns, so a paginated API file plugs straight in. The hook unwraps `data?.data ?? []` for you, so the returned `items` field is directly `T[]`.
 
 ```tsx
-import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 import getItems from '@/api/getItems.ts';
 import Select from '@/elements/input/Select.tsx';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 
 export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
   const items = useSearchableResource<Item>({
@@ -391,9 +391,9 @@ Since Panel 1.2.9. `useSearchableResource` only ever shows the first page the en
 It takes the same options, except that the fetcher also receives the page number, `(page: number, search: string) => Promise<Pagination<T>>`. Pages start at 1. Another page is requested only while the pages loaded so far hold fewer items than `total` and the last page was not empty. It returns the same `items` (every loaded page, flattened), `loading`, `search`, `setSearch`, `refetch` and `invalidate`, plus an `infiniteScroll` object you hand to the Panel's `Select` or `MultiSelect`:
 
 ```tsx
-import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
 import getItems from '@/api/getItems.ts';
 import Select from '@/elements/input/Select.tsx';
+import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
 
 export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
   const items = useInfiniteSearchableResource<Item>({
@@ -424,11 +424,11 @@ The query key gets an extra `'infinite'` segment, `[...queryKey, ...deps, 'infin
 Use this for full table pages with search and pagination. It manages page and search state, syncs both to URL search params, and renders previous data while the next page loads via TanStack Query's `placeholderData: keepPreviousData`. The hook returns the fetched `data`, along with `error` (already turned into a readable string), `refetch`, `invalidate` and `debouncedSearch`. It also accepts an optional `setStoreData` callback that it calls when fresh data arrives, which is how the Panel's own pages feed a zustand store that the table then reads from:
 
 ```tsx
-import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import getMyItems from '@/api/getMyItems.ts';
 import Table from '@/elements/data-display/Table.tsx';
-import { useMyStore } from '@/stores/myStore.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import { useTranslations } from '@/providers/TranslationProvider.tsx';
+import { useMyStore } from '@/stores/myStore.ts';
 
 export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
   const { t } = useTranslations();
@@ -487,10 +487,10 @@ Use this for forms that manage a single resource's full lifecycle. It takes a Ma
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
-import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 import createItem from '@/api/createItem.ts';
-import updateItem from '@/api/updateItem.ts';
 import deleteItem from '@/api/deleteItem.ts';
+import updateItem from '@/api/updateItem.ts';
+import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 
 const schema = z.object({
   name: z.string().min(1),

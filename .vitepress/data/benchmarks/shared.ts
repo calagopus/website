@@ -1,5 +1,5 @@
-import { systems } from './systems.ts';
 import type { LoadResult, ScenarioResult, TargetBenchmarks, TaskResult } from './types.ts';
+import { systems } from './systems.ts';
 
 export const isLoad = (result: ScenarioResult): result is LoadResult => result.kind === 'load';
 export const isTask = (result: ScenarioResult): result is TaskResult => result.kind === 'task';

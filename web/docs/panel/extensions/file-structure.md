@@ -79,8 +79,8 @@ The fragment is rendered as a MiniJinja template that can use your extension's [
 ### src/index.ts
 
 ```ts
-import { Extension, ExtensionContext } from 'shared';
 import type { CSSVariablesResolver, MantineThemeOverride } from '@mantine/core';
+import { Extension, ExtensionContext } from 'shared';
 
 // the class name doesn't matter much, but naming it after your package is advisable
 class Dev0x7d8TestExtension extends Extension {

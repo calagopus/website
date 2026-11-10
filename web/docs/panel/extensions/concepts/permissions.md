@@ -87,9 +87,9 @@ New groups you register show up in the permission-picker UI with no icon by defa
 Icons are attached **from the frontend**, not the backend. This is a presentation concern and lives on the extension registry, not the permission builder:
 
 ```tsx
-import { Extension, ExtensionContext } from 'shared';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public cardConfigurationPage: React.FC | null = null;

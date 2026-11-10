@@ -166,8 +166,8 @@ An action that only makes sense on one page shouldn't be registered globally wit
 ```tsx
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useQuickActions } from '@/plugins/quick-actions/useQuickActions.ts';
 import { CORE_QUICK_ACTION_CATEGORIES } from '@/lib/quickActions/coreQuickActions.tsx';
+import { useQuickActions } from '@/plugins/quick-actions/useQuickActions.ts';
 
 export default function MyServerPage() {
   const [selected, setSelected] = useState<string[]>([]);

@@ -12,8 +12,8 @@ Toasts are the Panel's transient feedback channel: the little cards that slide i
 Everything goes through one hook, `useToast`, exported from the Panel's `ToastProvider`:
 
 ```tsx
-import { useToast } from '@/providers/ToastProvider.tsx';
 import Button from '@/elements/buttons/Button.tsx';
+import { useToast } from '@/providers/ToastProvider.tsx';
 
 export default function MyCard() {
   const { addToast } = useToast();

@@ -20,8 +20,8 @@ Rule of thumb: pick the broadest layer that does the job. Drop down to hookable 
 The Panel runs on [Mantine](https://mantine.dev/), and Mantine's theme object is where colors, the primary color, fonts, spacing, radii, and per-component default props all live. Your extension chips in by overriding `initializeMantineTheme()` on your `Extension` class:
 
 ```ts
-import { Extension, ExtensionContext } from 'shared';
 import type { MantineThemeOverride } from '@mantine/core';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public initializeMantineTheme(ctx: ExtensionContext): MantineThemeOverride {
@@ -70,8 +70,8 @@ The theme object and a static `app.css` sit at two extremes: the theme is fully 
 Override it on your `Extension` class. Most extensions don't need it, so the default returns `null` (contribute nothing):
 
 ```ts
-import { Extension, ExtensionContext } from 'shared';
 import type { CSSVariablesResolver } from '@mantine/core';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public initializeMantineCssResolver(ctx: ExtensionContext): CSSVariablesResolver | null {
