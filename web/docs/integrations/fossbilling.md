@@ -16,13 +16,13 @@ This module authenticates with an **admin API key**, which grants full administr
 
 The module maps FOSSBilling's order lifecycle onto the Calagopus admin API:
 
-| FOSSBilling action | Effect on the panel |
-| --- | --- |
-| Activate | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). |
-| Suspend / Cancel | Suspends the server. |
-| Unsuspend / Uncancel | Unsuspends the server. |
-| Renew | Unsuspends the server if the order was suspended. |
-| Delete | Deletes the server, including its backups. |
+| FOSSBilling action   | Effect on the panel                                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Activate             | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). |
+| Suspend / Cancel     | Suspends the server.                                                                                                            |
+| Unsuspend / Uncancel | Unsuspends the server.                                                                                                          |
+| Renew                | Unsuspends the server if the order was suspended.                                                                               |
+| Delete               | Deletes the server, including its backups.                                                                                      |
 
 Panel users are linked by the external ID `fb-<client id>` and servers by `fb-<order id>`, so a client reuses the same panel account across all of their orders, and activating an order again never creates a second server. The prefix keeps FOSSBilling's IDs apart from other billing systems connected to the same panel.
 
@@ -52,11 +52,11 @@ The admin order page gets a **Service Management** tab with the same live detail
 
 3. Open the module settings with the ⚙ button next to **Calagopus**, or from **System → Settings**, and configure:
 
-   | Field | Value |
-   | --- | --- |
-   | **Panel URL** | Your panel URL, e.g. `https://panel.example.com`. HTTPS is assumed if you leave out the protocol. |
-   | **API Key** | Your Calagopus **admin API key**. It is stored encrypted and never shown again; leave the field blank to keep the saved key. |
-   | **Default User Language** | The language assigned to panel users the module creates, e.g. `en`. |
+   | Field                     | Value                                                                                                                        |
+   | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+   | **Panel URL**             | Your panel URL, e.g. `https://panel.example.com`. HTTPS is assumed if you leave out the protocol.                            |
+   | **API Key**               | Your Calagopus **admin API key**. It is stored encrypted and never shown again; leave the field blank to keep the saved key. |
+   | **Default User Language** | The language assigned to panel users the module creates, e.g. `en`.                                                          |
 
 4. Click **Update Settings**. The connection is verified before anything is saved, and **Test Connection** checks it again at any time.
 
@@ -74,39 +74,39 @@ Create a product with the type **Calagopus**, then open its **Configuration** ta
 
 ### Server type
 
-| Field | What it does |
-| --- | --- |
-| **Egg** | The egg new servers are created from, grouped by nest. Required. |
-| **Backup Configuration** | Optional backup configuration to assign to the server. **Default** uses the panel's default. |
-| **Node** | Deploy onto a specific node, using its first available allocation. **Auto** lets the panel pick a node in the selected locations. |
-| **Locations (deploy mode)** | The locations the panel can deploy into when the node is set to **Auto**. |
+| Field                        | What it does                                                                                                                                            |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Egg**                      | The egg new servers are created from, grouped by nest. Required.                                                                                        |
+| **Backup Configuration**     | Optional backup configuration to assign to the server. **Default** uses the panel's default.                                                            |
+| **Node**                     | Deploy onto a specific node, using its first available allocation. **Auto** lets the panel pick a node in the selected locations.                       |
+| **Locations (deploy mode)**  | The locations the panel can deploy into when the node is set to **Auto**.                                                                               |
 | **Port Range (deploy mode)** | A port or range such as `25565-25665` the primary allocation is picked from in deploy mode. Leave it blank to use the egg's configuration on the panel. |
 
 Either a node or at least one location is required. Without a port range, deploy mode only assigns an allocation if the egg's configuration on the panel asks for one, so a server can end up without an address.
 
 ### Resources and limits
 
-| Field | Notes |
-| --- | --- |
-| **Memory / Disk** | In MiB. `0` means unlimited. |
-| **Swap** | In MiB. `-1` means unlimited. |
-| **CPU Limit** | Percentage; `100` = one thread, `0` = unlimited. |
-| **Memory Overhead** | Hidden memory added on top of the container's limit. |
-| **IO Weight** | `10`–`1000`; leave blank for the default. |
-| **Pinned CPUs** | Comma-separated core IDs, e.g. `0,1,2`. |
-| **Allocation / Database / Backup / Schedule Limit** | Standard feature limits. |
-| **Custom Feature Limits** | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. The built-in limits can't be set here. |
+| Field                                               | Notes                                                                                                           |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Memory / Disk**                                   | In MiB. `0` means unlimited.                                                                                    |
+| **Swap**                                            | In MiB. `-1` means unlimited.                                                                                   |
+| **CPU Limit**                                       | Percentage; `100` = one thread, `0` = unlimited.                                                                |
+| **Memory Overhead**                                 | Hidden memory added on top of the container's limit.                                                            |
+| **IO Weight**                                       | `10`–`1000`; leave blank for the default.                                                                       |
+| **Pinned CPUs**                                     | Comma-separated core IDs, e.g. `0,1,2`.                                                                         |
+| **Allocation / Database / Backup / Schedule Limit** | Standard feature limits.                                                                                        |
+| **Custom Feature Limits**                           | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. The built-in limits can't be set here. |
 
 ### Startup
 
-| Field | Notes |
-| --- | --- |
-| **Docker Image** | Override the egg default. Blank uses the egg's default image. |
-| **Server Name Prefix** | Servers are named `<prefix><order id>`, e.g. `MC-123`. Blank defaults to `Server-`. |
-| **Startup Command** | Override the egg's default startup command. |
-| **Start on Completion** | Starts the server once installation finishes (default: **Yes**). |
-| **Skip Installer** | Skips the egg's installation script. |
-| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container. |
+| Field                           | Notes                                                                               |
+| ------------------------------- | ----------------------------------------------------------------------------------- |
+| **Docker Image**                | Override the egg default. Blank uses the egg's default image.                       |
+| **Server Name Prefix**          | Servers are named `<prefix><order id>`, e.g. `MC-123`. Blank defaults to `Server-`. |
+| **Startup Command**             | Override the egg's default startup command.                                         |
+| **Start on Completion**         | Starts the server once installation finishes (default: **Yes**).                    |
+| **Skip Installer**              | Skips the egg's installation script.                                                |
+| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container.                     |
 
 ### Egg variables
 
@@ -129,22 +129,22 @@ The module only reads the product's own form, and free-text fields never overwri
 
 ### Overridable settings
 
-| Key | Setting |
-| --- | --- |
-| `nest_uuid`, `egg_uuid` | Nest, Egg |
-| `node_uuid` | Node |
-| `location_uuids` | Locations, comma-separated UUIDs |
-| `port_range` | Port Range, e.g. `25565-25665` |
-| `memory`, `swap`, `disk` | Memory, Swap, Disk in MiB |
-| `cpu` | CPU Limit |
-| `memory_overhead` | Memory Overhead |
-| `io_weight` | IO Weight |
-| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Feature limits |
-| `docker_image` | Docker Image |
-| `startup_command` | Startup Command |
-| `pinned_cpus` | Pinned CPUs |
+| Key                                                                                 | Setting                                                     |
+| ----------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `nest_uuid`, `egg_uuid`                                                             | Nest, Egg                                                   |
+| `node_uuid`                                                                         | Node                                                        |
+| `location_uuids`                                                                    | Locations, comma-separated UUIDs                            |
+| `port_range`                                                                        | Port Range, e.g. `25565-25665`                              |
+| `memory`, `swap`, `disk`                                                            | Memory, Swap, Disk in MiB                                   |
+| `cpu`                                                                               | CPU Limit                                                   |
+| `memory_overhead`                                                                   | Memory Overhead                                             |
+| `io_weight`                                                                         | IO Weight                                                   |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit`             | Feature limits                                              |
+| `docker_image`                                                                      | Docker Image                                                |
+| `startup_command`                                                                   | Startup Command                                             |
+| `pinned_cpus`                                                                       | Pinned CPUs                                                 |
 | `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | `on`, `1`, `yes`, or `true` enables; anything else disables |
-| `backup_configuration_uuid` | Backup Configuration |
+| `backup_configuration_uuid`                                                         | Backup Configuration                                        |
 
 FOSSBilling overwrites some order values at checkout, so fields named `id`, `product_id`, `form_id`, `title`, `type`, `quantity`, `unit`, `price`, `setup_price`, `discount`, `discount_price`, `discount_setup`, `total` or `period` are ignored.
 

@@ -1,13 +1,9 @@
 {
   "name": "website",
-  "private": true,
   "version": "0.0.0",
-  "type": "module",
-  "engines": {
-    "node": ">=24.0.0",
-    "pnpm": ">=11.0.0"
-  },
+  "private": true,
   "license": "MIT",
+  "type": "module",
   "scripts": {
     "docs:dev": "vitepress dev",
     "docs:build": "node scripts/ensure-git-history.mjs && vitepress build",
@@ -25,12 +21,12 @@
     "check-telemetry-clickhouse": "node scripts/check-telemetry-clickhouse.mjs",
     "check-telemetry-policy": "node scripts/check-telemetry-policy.mjs",
     "telemetry": "node --env-file=.dev.vars scripts/telemetry.mjs",
-    "biome:validate": "biome format --css-parse-tailwind-directives=true && biome lint --css-parse-tailwind-directives=true && biome check",
-    "biome:fix": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write",
-    "biome:fix-unsafe": "biome format --write --css-parse-tailwind-directives=true && biome lint --write --css-parse-tailwind-directives=true && biome check --write --unsafe"
+    "lint": "oxlint",
+    "lint:fix": "oxlint --fix",
+    "fmt": "oxfmt",
+    "fmt:check": "oxfmt --check"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.13",
     "@braintree/sanitize-url": "^7.1.2",
     "@fortawesome/fontawesome-svg-core": "^7.3.1",
     "@fortawesome/free-solid-svg-icons": "^7.3.1",
@@ -39,7 +35,7 @@
     "@sentry/cloudflare": "^11.11.0",
     "@types/node": "^26.6.6",
     "@unhead/vue": "^3.4.3",
-    "agents": "^0.23.0",
+    "agents": "^0.33.0",
     "cytoscape": "^3.34.4",
     "cytoscape-cose-bilkent": "^4.1.0",
     "dayjs": "^1.11.23",
@@ -47,6 +43,8 @@
     "echarts": "^6.1.0",
     "markdown-it": "^15.0.3",
     "mermaid": "^12.3.0",
+    "oxfmt": "^0.77.0",
+    "oxlint": "^1.92.0",
     "sharp": "^0.35.5",
     "svgo": "^4.1.0",
     "typescript": "^7.0.2",
@@ -60,5 +58,9 @@
     "vue-echarts": "^8.3.2",
     "wrangler": "^4.158.0",
     "zod": "^4.6.7"
+  },
+  "engines": {
+    "node": ">=24.0.0",
+    "pnpm": ">=11.0.0"
   }
 }

@@ -19,12 +19,12 @@ Wings will run fine in this setup, but game servers are CPU- and RAM-intensive w
 
 The script creates an unprivileged Debian 13 LXC container (x86_64 or ARM64) and installs:
 
-| Component | Details |
-| --- | --- |
+| Component         | Details                                                                                                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
 | **Calagopus AIO** | Panel + Wings in one binary at `/usr/local/bin/calagopus-panel`, run by the `calagopus-panel` systemd service |
-| **PostgreSQL 18** | Database `panel`, owned by the `calagopus` user, with a generated password |
-| **Valkey** | Cache, listening on `localhost` |
-| **Docker** | Used by Wings to run game server containers, the Panel and Wings themselves run natively |
+| **PostgreSQL 18** | Database `panel`, owned by the `calagopus` user, with a generated password                                    |
+| **Valkey**        | Cache, listening on `localhost`                                                                               |
+| **Docker**        | Used by Wings to run game server containers, the Panel and Wings themselves run natively                      |
 
 The default container resources are **4 vCPU**, **4 GiB RAM**, and **40 GB disk**. Check the [Minimum Requirements](../../overview.md#minimum-requirements) and increase these if you plan to run larger or multiple game servers.
 
@@ -62,9 +62,9 @@ You will see the OOBE (Out Of Box Experience) setup screen where you create your
 
 The ports used are:
 
-| Port | Purpose |
-| --- | --- |
-| `8000` | Panel web UI and API |
+| Port   | Purpose                                    |
+| ------ | ------------------------------------------ |
+| `8000` | Panel web UI and API                       |
 | `2022` | SFTP access to game server files via Wings |
 
 Your game servers will also need their own port allocations, configure those on the Wings node after setup.

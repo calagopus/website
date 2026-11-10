@@ -1,6 +1,6 @@
 ---
 title: Panel Next Steps
-description: "What to do after installing the Calagopus panel: use your existing node or connect Wings, add game server templates, and serve the panel over HTTPS."
+description: 'What to do after installing the Calagopus panel: use your existing node or connect Wings, add game server templates, and serve the panel over HTTPS.'
 ---
 
 # Next Steps

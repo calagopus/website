@@ -7,19 +7,19 @@ description: Write audit log entries from your extension so operators can see wh
 
 Every mutation in the Panel writes an activity log entry, so that months later someone can find out who deleted a world folder or changed a setting. Your extension's endpoints should do the same.
 
-Logging takes one call: extract a logger in your route handler and call `.log(...).await`. IP, timestamp, and who did it (including the impersonating admin or the API key, when either applies) are all captured automatically, so your payload only has to describe *what* happened.
+Logging takes one call: extract a logger in your route handler and call `.log(...).await`. IP, timestamp, and who did it (including the impersonating admin or the API key, when either applies) are all captured automatically, so your payload only has to describe _what_ happened.
 
 ## The Three Loggers
 
 There are three logger extractors, one per activity scope. Use the one that matches your router: the admin logger in admin routes, the server logger in server routes, and so on.
 
-| Logger | Import from | Shows up in | Use from |
-| ------ | ----------- | ----------- | -------- |
-| `GetAdminActivityLogger` | `shared::models::admin_activity` | Panel-wide admin audit log | `add_admin_api_router` routes |
-| `GetServerActivityLogger` | `shared::models::server` | The server's activity tab | `add_client_server_api_router` routes |
-| `GetUserActivityLogger` | `shared::models::user_activity` | The user's account activity page | `add_client_api_router` routes |
+| Logger                    | Import from                      | Shows up in                      | Use from                              |
+| ------------------------- | -------------------------------- | -------------------------------- | ------------------------------------- |
+| `GetAdminActivityLogger`  | `shared::models::admin_activity` | Panel-wide admin audit log       | `add_admin_api_router` routes         |
+| `GetServerActivityLogger` | `shared::models::server`         | The server's activity tab        | `add_client_server_api_router` routes |
+| `GetUserActivityLogger`   | `shared::models::user_activity`  | The user's account activity page | `add_client_api_router` routes        |
 
-All three have the same `.log(event_name, payload).await` signature, so once you've used one you've used all of them. The only thing that changes is *who sees the entry*. `log` returns nothing: a database failure is logged as a warning and swallowed, so there is no `?` to add and no way for a broken audit write to fail the request. The server logger also drops the entry when the actor is an admin who is neither the owner nor a subuser of that server, unless the operator turned on the "log admin activity" setting under the activity settings.
+All three have the same `.log(event_name, payload).await` signature, so once you've used one you've used all of them. The only thing that changes is _who sees the entry_. `log` returns nothing: a database failure is logged as a warning and swallowed, so there is no `?` to add and no way for a broken audit write to fail the request. The server logger also drops the entry when the actor is an admin who is neither the owner nor a subuser of that server, unless the operator turned on the "log admin activity" setting under the activity settings.
 
 ## Logging an Event
 
@@ -72,12 +72,12 @@ So `server:version.install` reads as "in the server scope, under version, the in
 
 Some examples of well-formed event names:
 
-| Event name | What it represents |
-| ---------- | ------------------ |
+| Event name                   | What it represents                                 |
+| ---------------------------- | -------------------------------------------------- |
 | `settings:extensions:update` | Extension settings were updated in the admin panel |
-| `server:version.install` | A server had a new version installed |
-| `server:backup.create` | A backup was created for a server |
-| `user:api-key.update` | A user changed one of their API keys |
+| `server:version.install`     | A server had a new version installed               |
+| `server:backup.create`       | A backup was created for a server                  |
+| `user:api-key.update`        | A user changed one of their API keys               |
 
 If you're adding a new event type, fit it into an existing scope instead of inventing a new top-level one. Filtering by `server:*` is easier for users than remembering that your extension uses `minecraftstuff:*`. When in doubt, prefix with the resource you're acting on (`server`, `node`, `settings`, `user`) and let the sub-action carry the extension-specific meaning.
 
@@ -120,7 +120,7 @@ activity_logger
 ```
 
 ::: info
-An empty payload `serde_json::json!({})` is valid for events where the name says everything (such as `session.logout`). Most events have *something* worth capturing, though.
+An empty payload `serde_json::json!({})` is valid for events where the name says everything (such as `session.logout`). Most events have _something_ worth capturing, though.
 :::
 
 ## When to Log

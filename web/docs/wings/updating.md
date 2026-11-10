@@ -49,15 +49,18 @@ sudo apt update
 sudo apt install -y --only-upgrade calagopus-wings
 sudo systemctl restart wings
 ```
+
 ```bash [RPM]
 sudo dnf upgrade -y calagopus-wings
 sudo systemctl restart wings
 ```
+
 ```bash [APK]
 apk update
 apk upgrade calagopus-wings
 rc-service wings restart
 ```
+
 ```bash [AUR]
 yay -S --noconfirm calagopus-wings-bin
 sudo systemctl restart wings
@@ -76,6 +79,7 @@ sudo chmod +x /usr/local/bin/wings
 sudo /usr/local/bin/wings version
 sudo systemctl start wings
 ```
+
 ```bash [OpenRC (Alpine)]
 rc-service wings stop
 curl -L "https://github.com/calagopus/wings/releases/latest/download/wings-rs-$(uname -m)-linux" -o /usr/local/bin/wings

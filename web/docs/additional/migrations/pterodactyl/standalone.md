@@ -41,7 +41,7 @@ sudo docker compose cp /tmp/pterodactyl.env web:/.env
 sudo docker compose exec web calagopus-panel import pterodactyl --environment /.env --dry-run --on-invalid=abort --report /tmp/pterodactyl-import-report.json
 ```
 
-Read the reported problems before continuing. The report is inside the `web` container; copy it out with `sudo docker compose cp web:/tmp/pterodactyl-import-report.json ./pterodactyl-import-report.json` if needed. Review the [import options](../pterodactyl.md#import-options) to choose fixes or skipped rows. If it fails right away with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, see the **Allowing the Database User to Connect from Docker** dropdown below.
+Read the reported problems before continuing. The report is inside the `web` container; copy it out with `sudo docker compose cp web:/tmp/pterodactyl-import-report.json ./pterodactyl-import-report.json` if needed. Review the [import options](../pterodactyl.md#import-options) to choose fixes or skipped rows. If it fails right away with something like _"Host 'X' is not allowed to connect"_ or _"Access denied for user"_, see the **Allowing the Database User to Connect from Docker** dropdown below.
 
 Then run the import interactively:
 

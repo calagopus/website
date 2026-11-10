@@ -1,6 +1,6 @@
+import type { PluginOption } from 'vite';
 import { mkdir, stat, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import type { PluginOption } from 'vite';
 
 export const IMAGE_MANIFEST_ROUTE = '/_mcp/images.json';
 

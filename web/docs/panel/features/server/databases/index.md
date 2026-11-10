@@ -45,13 +45,13 @@ A searchable **Tables** sidebar (collapsible via **Hide Tables**) lists the data
 
 In **Rows**, the cell editor follows the column type:
 
-| Column | Editor |
-| --- | --- |
-| Enum | Searchable list of the allowed values; column filters also offer these choices. |
-| MariaDB/MySQL `SET` | Multiple-choice selector. |
-| PostgreSQL boolean, or recognized MySQL `tinyint(1)` boolean values | **True** / **False** selector. |
-| Date, time, timestamp, or year | Text input with an optional calendar or time picker. |
-| Other types | Text input. |
+| Column                                                              | Editor                                                                          |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Enum                                                                | Searchable list of the allowed values; column filters also offer these choices. |
+| MariaDB/MySQL `SET`                                                 | Multiple-choice selector.                                                       |
+| PostgreSQL boolean, or recognized MySQL `tinyint(1)` boolean values | **True** / **False** selector.                                                  |
+| Date, time, timestamp, or year                                      | Text input with an optional calendar or time picker.                            |
+| Other types                                                         | Text input.                                                                     |
 
 These controls apply to table rows, not arbitrary SQL results in **Query**. Editing and deleting existing rows requires a primary key and is unavailable for views. A row with a truncated primary key is locked against changes. Use a database client to edit values the explorer cannot display in full.
 

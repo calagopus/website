@@ -38,11 +38,11 @@ The proxy also passes through the client's `CLIENT_FOUND_ROWS` setting, preservi
 
 DB Agent uses several directories on the host. Knowing where each one is matters for troubleshooting, backups, and disk management.
 
-| Volume | Description | Default Path |
-| :--- | :--- | :--- |
-| `socket_dir` | Unix sockets bind-mounted into each database container | `/run/calagopus-db-agent` |
-| `data_dir` | Database data, bind-mounted into each database container | `/var/lib/calagopus-db-agent/data` |
-| `log_dir` | DB Agent log files | `/var/log/calagopus-db-agent` |
+| Volume       | Description                                              | Default Path                       |
+| :----------- | :------------------------------------------------------- | :--------------------------------- |
+| `socket_dir` | Unix sockets bind-mounted into each database container   | `/run/calagopus-db-agent`          |
+| `data_dir`   | Database data, bind-mounted into each database container | `/var/lib/calagopus-db-agent/data` |
+| `log_dir`    | DB Agent log files                                       | `/var/log/calagopus-db-agent`      |
 
 ::: info Running inside a container
 When DB Agent itself runs inside a container (`OCI_CONTAINER` is set, as in the official Docker image), it inspects its own container on boot and translates bind mount sources to host paths automatically. This means the host side of the `data_dir`, `log_dir`, and `socket_dir` volumes can be relocated freely, only the paths inside the DB Agent container need to match the config.

@@ -86,8 +86,8 @@ api:
 Any configuration key can also be set with a `CALAGOPUS_`-prefixed environment variable, which Wings re-applies after every configuration push from the Panel. On the `wings` service in `compose.yml`:
 
 ```yaml
-    environment:
-      CALAGOPUS_API_TRUSTED_PROXIES: '["172.20.0.1"]'
+environment:
+  CALAGOPUS_API_TRUSTED_PROXIES: '["172.20.0.1"]'
 ```
 :::
 
@@ -135,11 +135,11 @@ api:
 
 Create the directory first, with permissions the proxy's user can traverse, then point the proxy at the socket:
 
-| Proxy | Target |
-| --- | --- |
-| Nginx | `server unix:/run/calagopus-wings/api.sock;` in the `upstream` block, in place of `server 127.0.0.1:8080;` |
-| Apache | `ProxyPass / unix:/run/calagopus-wings/api.sock\|http://localhost/ retry=0 upgrade=websocket` |
-| Caddy | `reverse_proxy unix//run/calagopus-wings/api.sock` |
+| Proxy  | Target                                                                                                     |
+| ------ | ---------------------------------------------------------------------------------------------------------- |
+| Nginx  | `server unix:/run/calagopus-wings/api.sock;` in the `upstream` block, in place of `server 127.0.0.1:8080;` |
+| Apache | `ProxyPass / unix:/run/calagopus-wings/api.sock\|http://localhost/ retry=0 upgrade=websocket`              |
+| Caddy  | `reverse_proxy unix//run/calagopus-wings/api.sock`                                                         |
 :::
 
 ### Trust the Proxy's Address
@@ -176,18 +176,18 @@ A `401` is the expected answer, since the request carries no token. It proves Wi
 
 Every configuration below does the same things. If you use a proxy that isn't listed, these are the settings to replicate:
 
-| Setting | Why Wings needs it |
-| --- | --- |
-| Forward to `http://127.0.0.1:8080` | The address Wings listens on after Step 1 |
-| Pass `Upgrade` and `Connection` through | The console, live statistics, transfers and the node's system log use WebSockets |
-| Allow `HEAD`, `PATCH` and `DELETE` | Resumable uploads need all three: `HEAD` reads the current offset, `PATCH` appends a chunk, `DELETE` discards a cancelled upload |
-| No request body limit | Server transfers and file copies from another node arrive as one chunked request per stream, carrying the whole server. Wings lifts its own limit for them, and caps uploads with `api.upload_limit` itself (no limit by default from Wings 1.2.6) |
-| Request buffering off | With it on, the proxy reads a whole upload chunk or transfer to disk before Wings sees a byte of it |
-| Response buffering off | Backups and file archives stream from disk and can be many gigabytes. With buffering on, the proxy keeps reading ahead of the client and writing the excess to temporary files |
-| Read and write timeouts above 60s | A slow client moving a multi-gigabyte file, or another node transferring a server, holds one connection open far longer than the defaults allow |
-| `X-Forwarded-For` or `X-Real-IP` | The client IPs from Step 1 |
-| No CORS headers | Wings sets `Access-Control-Allow-Origin` from the Panel URL it was configured with, and exposes `Upload-Offset` for resumable uploads. A second copy from the proxy makes the browser reject every response |
-| No `X-Robots-Tag` | Every endpoint answers `401` without a token, so there is nothing to crawl |
+| Setting                                 | Why Wings needs it                                                                                                                                                                                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Forward to `http://127.0.0.1:8080`      | The address Wings listens on after Step 1                                                                                                                                                                                                          |
+| Pass `Upgrade` and `Connection` through | The console, live statistics, transfers and the node's system log use WebSockets                                                                                                                                                                   |
+| Allow `HEAD`, `PATCH` and `DELETE`      | Resumable uploads need all three: `HEAD` reads the current offset, `PATCH` appends a chunk, `DELETE` discards a cancelled upload                                                                                                                   |
+| No request body limit                   | Server transfers and file copies from another node arrive as one chunked request per stream, carrying the whole server. Wings lifts its own limit for them, and caps uploads with `api.upload_limit` itself (no limit by default from Wings 1.2.6) |
+| Request buffering off                   | With it on, the proxy reads a whole upload chunk or transfer to disk before Wings sees a byte of it                                                                                                                                                |
+| Response buffering off                  | Backups and file archives stream from disk and can be many gigabytes. With buffering on, the proxy keeps reading ahead of the client and writing the excess to temporary files                                                                     |
+| Read and write timeouts above 60s       | A slow client moving a multi-gigabyte file, or another node transferring a server, holds one connection open far longer than the defaults allow                                                                                                    |
+| `X-Forwarded-For` or `X-Real-IP`        | The client IPs from Step 1                                                                                                                                                                                                                         |
+| No CORS headers                         | Wings sets `Access-Control-Allow-Origin` from the Panel URL it was configured with, and exposes `Upload-Offset` for resumable uploads. A second copy from the proxy makes the browser reject every response                                        |
+| No `X-Robots-Tag`                       | Every endpoint answers `401` without a token, so there is nothing to crawl                                                                                                                                                                         |
 
 Other nodes use this proxy too: a server transfer or file copy to this node is POSTed by the source node's Wings to `/api/transfers` on this node's URL.
 

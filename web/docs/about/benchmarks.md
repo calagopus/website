@@ -1,6 +1,6 @@
 ---
 title: Panel Benchmarks
-description: "Benchmarks of the Calagopus panel against Pterodactyl, Pelican, PufferPanel, FeatherPanel, and Hydrodactyl: throughput, latency, memory, and CPU on identical hardware."
+description: 'Benchmarks of the Calagopus panel against Pterodactyl, Pelican, PufferPanel, FeatherPanel, and Hydrodactyl: throughput, latency, memory, and CPU on identical hardware.'
 ---
 
 <script setup>

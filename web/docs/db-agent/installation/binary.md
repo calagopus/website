@@ -79,6 +79,7 @@ This creates and enables a systemd or OpenRC service (auto-detected) that starts
 sudo /usr/local/bin/calagopus-db-agent service-install
 sudo systemctl status db-agent --no-pager
 ```
+
 ```bash [OpenRC (Alpine)]
 calagopus-db-agent service-install
 rc-service db-agent status

@@ -17,12 +17,12 @@ Selecting servers in the list opens an action bar at the bottom of the page that
 
 ![Admin server selected with Clear State, Unsuspend, Suspend and Delete controls](./images/servers/bulk-actions.webp)
 
-| Action | Effect | Needs |
-| --- | --- | --- |
+| Action          | Effect                                                                                                    | Needs            |
+| --------------- | --------------------------------------------------------------------------------------------------------- | ---------------- |
 | **Clear State** | Clears the stored installation/transfer state, the same as [Clear State](#server-view) on a single server | `servers.update` |
-| **Unsuspend** | Lifts suspension | `servers.update` |
-| **Suspend** | Suspends the servers, stopping them and cutting off their owners | `servers.update` |
-| **Delete** | Permanently deletes the servers and everything on them | `servers.delete` |
+| **Unsuspend**   | Lifts suspension                                                                                          | `servers.update` |
+| **Suspend**     | Suspends the servers, stopping them and cutting off their owners                                          | `servers.update` |
+| **Delete**      | Permanently deletes the servers and everything on them                                                    | `servers.delete` |
 
 Each action asks for confirmation first, and **Delete** spells out that it cannot be undone. Only the actions your role permits appear.
 
@@ -34,7 +34,7 @@ Servers are processed independently, so a bulk action can partly succeed; the to
 
 ## Creating a Server
 
-Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an **Advanced mode** toggle in the top right reveals the fields marked *advanced* below and is remembered across admin forms.
+Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an **Advanced mode** toggle in the top right reveals the fields marked _advanced_ below and is remembered across admin forms.
 
 ![Create Server form](./images/servers/create-form.webp)
 
@@ -44,13 +44,13 @@ Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an
 
 ### Server Assignment
 
-| Field | Notes |
-| --- | --- |
-| **Node** | Required. Where the server will be deployed. |
-| **Owner** | Required. The user who owns the server. The dropdown searches by username *and* email, and each entry shows both. If nobody matches, a **Can't find them? Create a new user** link opens a create-user modal inline and selects the new account as the owner (needs `users.create`). |
-| **Nest** | Narrows the egg dropdown to one nest. Optional when creating: picking an egg fills it in, and changing it clears the egg. |
-| **Egg** | Required. Determines images, startup commands, and variables. Without a nest selected, the dropdown searches the eggs of every nest, grouped by nest name. |
-| **Backup Configuration** | Optional; defaults to "Inherit from Node/Location". |
+| Field                    | Notes                                                                                                                                                                                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Node**                 | Required. Where the server will be deployed.                                                                                                                                                                                                                                         |
+| **Owner**                | Required. The user who owns the server. The dropdown searches by username _and_ email, and each entry shows both. If nobody matches, a **Can't find them? Create a new user** link opens a create-user modal inline and selects the new account as the owner (needs `users.create`). |
+| **Nest**                 | Narrows the egg dropdown to one nest. Optional when creating: picking an egg fills it in, and changing it clears the egg.                                                                                                                                                            |
+| **Egg**                  | Required. Determines images, startup commands, and variables. Without a nest selected, the dropdown searches the eggs of every nest, grouped by nest name.                                                                                                                           |
+| **Backup Configuration** | Optional; defaults to "Inherit from Node/Location".                                                                                                                                                                                                                                  |
 
 All five are searchable dropdowns. Picking an egg immediately prefills the Docker image and startup command from the egg's defaults.
 
@@ -60,32 +60,32 @@ If the egg you need isn't installed, the **Can't find it? Install one from a rep
 
 Size fields take a value plus a unit (B through PiB). The two bandwidth fields use bit rates instead: Kbps, Mbps, or Gbps, in decimal units (1 Mbps is 1,000,000 bits per second).
 
-| Field | Meaning |
-| --- | --- |
-| **CPU Limit (%)** | 1 thread = 100%. `0` sets no limit. |
-| **Memory** | Memory limit of the server container. `0` sets no limit. |
-| **Disk Space** | "This is a soft-limit unless the disk limiter is configured on Wings.", see [`system.disk_limiter_mode`](../../../wings/configuration.md#system-disk-limiter-mode). `0` sets no limit. |
-| **Swap** (*advanced*) | Amount of swap. `-1` sets no limit. |
-| **Memory Overhead** (*advanced*) | "Hidden Memory that will be added to the container.", extra headroom the owner doesn't see. |
-| **IO Weight** (*advanced*) | Relative IO weight compared to other containers, 0 to 1000. May not work on all systems. |
-| **Pinned CPUs** (*advanced*) | CPU cores the server is pinned to, by index (e.g. `0`, `1`, `2`). Empty allows all cores. |
+| Field                                 | Meaning                                                                                                                                                                                      |
+| ------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CPU Limit (%)**                     | 1 thread = 100%. `0` sets no limit.                                                                                                                                                          |
+| **Memory**                            | Memory limit of the server container. `0` sets no limit.                                                                                                                                     |
+| **Disk Space**                        | "This is a soft-limit unless the disk limiter is configured on Wings.", see [`system.disk_limiter_mode`](../../../wings/configuration.md#system-disk-limiter-mode). `0` sets no limit.       |
+| **Swap** (_advanced_)                 | Amount of swap. `-1` sets no limit.                                                                                                                                                          |
+| **Memory Overhead** (_advanced_)      | "Hidden Memory that will be added to the container.", extra headroom the owner doesn't see.                                                                                                  |
+| **IO Weight** (_advanced_)            | Relative IO weight compared to other containers, 0 to 1000. May not work on all systems.                                                                                                     |
+| **Pinned CPUs** (_advanced_)          | CPU cores the server is pinned to, by index (e.g. `0`, `1`, `2`). Empty allows all cores.                                                                                                    |
 | **Upload Limit** / **Download Limit** | Caps the server's outgoing and incoming network traffic. `0` sets no limit; otherwise the rate must be between 8 bits/s and 100 Gbps. Needs bandwidth limits enabled on the node, see below. |
 
 Bandwidth limits are enforced by Wings and need a Linux node where [`docker.bandwidth.backend`](../../../wings/configuration.md#docker-bandwidth-backend) is not `disabled` (it is `auto` by default; Wings before 1.2.6 used `docker.bandwidth.enabled`) and that can apply them. Once a node is picked, the panel asks it whether it can apply limits, and the description under both fields tells you where it stands: "0 will not set a limit." when limits work, "Bandwidth limits are disabled in the node configuration." when the backend is `disabled`, or "The node does not support bandwidth limits." (or the reason Wings gave) when the node can't apply them. Setting or changing a non-zero limit on a node that isn't ready fails with a 409 naming the reason ("bandwidth limits are disabled on this node" when the backend is `disabled`); `0` always saves. The owner sees the limits on the [console's](../server/console.md#stats) network tiles.
 
 ### Server Configuration
 
-| Field | Meaning |
-| --- | --- |
-| **Docker Image** | Required. Pick from the egg's predefined images. |
-| **Timezone** | Timezone inside the container; **System** uses the node's own. |
-| **Predefined Startup Commands** | Only shown when the egg defines named startup commands; picking one fills the field below, **Custom** lets you write your own. |
-| **Startup Command** | Required. What actually runs in the container. |
-| **Start on Completion** | "Start server after installation completes." On by default. |
-| **Skip Installer** | "Skip running the install script." Useful when restoring files by other means. |
-| **Container Labels** (*advanced*) | Docker labels put on the server's container, as key/value pairs. See below. |
-| **Enable Hugepages Passthrough** (*advanced*) | Mounts `/dev/hugepages` into the container. |
-| **Enable KVM Passthrough** (*advanced*) | Allows access to `/dev/kvm` inside the container. |
+| Field                                         | Meaning                                                                                                                        |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **Docker Image**                              | Required. Pick from the egg's predefined images.                                                                               |
+| **Timezone**                                  | Timezone inside the container; **System** uses the node's own.                                                                 |
+| **Predefined Startup Commands**               | Only shown when the egg defines named startup commands; picking one fills the field below, **Custom** lets you write your own. |
+| **Startup Command**                           | Required. What actually runs in the container.                                                                                 |
+| **Start on Completion**                       | "Start server after installation completes." On by default.                                                                    |
+| **Skip Installer**                            | "Skip running the install script." Useful when restoring files by other means.                                                 |
+| **Container Labels** (_advanced_)             | Docker labels put on the server's container, as key/value pairs. See below.                                                    |
+| **Enable Hugepages Passthrough** (_advanced_) | Mounts `/dev/hugepages` into the container.                                                                                    |
+| **Enable KVM Passthrough** (_advanced_)       | Allows access to `/dev/kvm` inside the container.                                                                              |
 
 Container labels are for tooling outside the panel that reads Docker labels, such as a monitoring agent or a reverse proxy that routes by label (`com.example.tier` = `gold`). They are applied the next time the container is created, which is the next start; changing them does not mark the server as needing a restart, so restart it yourself. An egg's [configuration file replacements](./nests.md#general) can read one as `{{server.labels.<key>}}` (a missing key resolves to an empty string). The startup command cannot: its `{{...}}` placeholders only see the server's environment variables. A server takes at most 64 labels, keys and values are capped at 255 characters and cannot contain control characters, and `Service` and `ContainerType` are refused because Wings sets those itself. The server's **Overview** tab lists the labels as `key=value` badges.
 
@@ -107,18 +107,18 @@ Finish with **Save** (returns to the list) or **Save & Stay**.
 
 Clicking a server opens its admin view. Tabs appear based on your [admin permissions](../dashboard/permissions.md):
 
-| Tab | Requires |
-| --- | --- |
-| Overview | - |
-| General | - |
-| Allocations | `servers.allocations` |
-| Variables | `servers.variables` |
-| Mounts | `servers.mounts` |
-| Backups | `nodes.backups` |
-| Databases | `database-hosts.read` |
-| Logs | `servers.read` |
-| Management | - (individual actions gated below) |
-| View in Client Area | `servers.read` |
+| Tab                 | Requires                           |
+| ------------------- | ---------------------------------- |
+| Overview            | -                                  |
+| General             | -                                  |
+| Allocations         | `servers.allocations`              |
+| Variables           | `servers.variables`                |
+| Mounts              | `servers.mounts`                   |
+| Backups             | `nodes.backups`                    |
+| Databases           | `database-hosts.read`              |
+| Logs                | `servers.read`                     |
+| Management          | - (individual actions gated below) |
+| View in Client Area | `servers.read`                     |
 
 ### Overview
 

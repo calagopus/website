@@ -45,15 +45,18 @@ sudo apt update
 sudo apt install -y --only-upgrade calagopus-panel
 sudo systemctl restart calagopus-panel
 ```
+
 ```bash [RPM]
 sudo dnf upgrade -y calagopus-panel
 sudo systemctl restart calagopus-panel
 ```
+
 ```bash [APK]
 apk update
 apk upgrade calagopus-panel
 rc-service calagopus-panel restart
 ```
+
 ```bash [AUR]
 yay -S --noconfirm calagopus-panel-bin
 sudo systemctl restart calagopus-panel
@@ -74,6 +77,7 @@ sudo chmod +x /usr/local/bin/calagopus-panel
 sudo /usr/local/bin/calagopus-panel version
 sudo systemctl start calagopus-panel
 ```
+
 ```powershell [Windows]
 nssm stop "Calagopus Panel"
 Invoke-WebRequest "https://github.com/calagopus/panel/releases/latest/download/panel-rs-x86_64-windows.exe" -OutFile "C:\bin\calagopus-panel.exe"

@@ -35,6 +35,7 @@ echo "deb [signed-by=/usr/share/keyrings/calagopus-archive-keyring.gpg] https://
 sudo apt update
 sudo apt install -y calagopus-panel
 ```
+
 ```bash [All-in-One]
 sudo apt update
 sudo apt install -y postgresql-18 valkey
@@ -117,6 +118,7 @@ gpgkey=https://packages.calagopus.com/pubring.gpg
 EOF
 sudo dnf install -y calagopus-panel
 ```
+
 ```bash [All-in-One]
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server postgresql18-contrib valkey
@@ -199,6 +201,7 @@ echo "https://packages.calagopus.com/apk" >> /etc/apk/repositories
 apk update
 apk add calagopus-panel
 ```
+
 ```bash [All-in-One]
 apk add postgresql postgresql-contrib valkey
 rc-update add postgresql
@@ -273,6 +276,7 @@ sudo systemctl enable --now postgresql valkey
 
 yay -S --noconfirm calagopus-panel-bin
 ```
+
 ```bash [All-in-One]
 sudo pacman -S --noconfirm postgresql valkey
 sudo -u postgres initdb -D /var/lib/postgres/data

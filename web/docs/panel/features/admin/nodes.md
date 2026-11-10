@@ -11,12 +11,12 @@ The list shows a health indicator, ID, Name, Location, **Servers** (how many ser
 
 Next to the name, a badge shows whether the node can still take new servers:
 
-| Badge | Meaning |
-| --- | --- |
-| **Deployment Enabled** (green) | The node can take new servers. |
-| **Nearly Full** (yellow) | Allocated memory or disk is close to the node's limit. |
-| **No Capacity** (orange) | Allocated memory or disk has hit the node's limit. |
-| **Deployment Disabled** (red) | Deployment is turned off for this node. |
+| Badge                          | Meaning                                                |
+| ------------------------------ | ------------------------------------------------------ |
+| **Deployment Enabled** (green) | The node can take new servers.                         |
+| **Nearly Full** (yellow)       | Allocated memory or disk is close to the node's limit. |
+| **No Capacity** (orange)       | Allocated memory or disk has hit the node's limit.     |
+| **Deployment Disabled** (red)  | Deployment is turned off for this node.                |
 
 Hovering the badge shows allocated memory and disk against the node's limits, or "no node limit" where a limit is `0`. A red **Under Maintenance** badge sits alongside it while the node is in maintenance, and an All-in-One node (Wings built into the panel container) gets a purple heart after its badges, separate from the health heart in the first column.
 
@@ -42,29 +42,29 @@ Click **Create** in the top right (requires `nodes.create`). If no location exis
 
 ![Create Node form with name, location, URLs, SFTP, memory and disk, and deployment and maintenance toggles](./images/nodes/create-form.webp)
 
-| Field | Description |
-|---|---|
-| **Name** | Required. A short, identifiable name. |
-| **Location** | Required. The [location](./locations.md) this node belongs to. |
-| **Description** | Optional notes. |
+| Field           | Description                                                    |
+| --------------- | -------------------------------------------------------------- |
+| **Name**        | Required. A short, identifiable name.                          |
+| **Location**    | Required. The [location](./locations.md) this node belongs to. |
+| **Description** | Optional notes.                                                |
 
 **Connection** section:
 
-| Field | Description |
-|---|---|
-| **URL** | Required. "Used for internal communication with the node.", e.g. `https://node.example.com:8080`. If you leave the port off, a warning explains the panel will connect on the URL's implicit port instead of the Wings default `8080`, with a one-click **Add :8080** button. |
-| **Public URL** | Optional. "Used for websocket connections and downloads." by users' browsers. When editing, the globe button fills in a `wings-proxy` URL that routes browser traffic through the panel. |
-| **SFTP Host** | Optional. Custom SFTP hostname shown to users; defaults to the URL's hostname. |
-| **SFTP Port** | Required, default `2022`. |
+| Field          | Description                                                                                                                                                                                                                                                                   |
+| -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **URL**        | Required. "Used for internal communication with the node.", e.g. `https://node.example.com:8080`. If you leave the port off, a warning explains the panel will connect on the URL's implicit port instead of the Wings default `8080`, with a one-click **Add :8080** button. |
+| **Public URL** | Optional. "Used for websocket connections and downloads." by users' browsers. When editing, the globe button fills in a `wings-proxy` URL that routes browser traffic through the panel.                                                                                      |
+| **SFTP Host**  | Optional. Custom SFTP hostname shown to users; defaults to the URL's hostname.                                                                                                                                                                                                |
+| **SFTP Port**  | Required, default `2022`.                                                                                                                                                                                                                                                     |
 
 ![Node URL field with a warning that no port is specified and an Add :8080 button](./images/nodes/no-port-specified.webp)
 
 **Resources** section:
 
-| Field | Description |
-|---|---|
-| **Memory** | Required, default 8 GiB. "The total memory available for servers on this node." `0` means no limit. |
-| **Disk** | Required, default 10 GiB. "The total disk available for servers on this node." `0` means no limit. |
+| Field                    | Description                                                                                                                     |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| **Memory**               | Required, default 8 GiB. "The total memory available for servers on this node." `0` means no limit.                             |
+| **Disk**                 | Required, default 10 GiB. "The total disk available for servers on this node." `0` means no limit.                              |
 | **Backup Configuration** | Optional. Defaults to **Inherit from Location**. See [Backup Configurations](../../../wings/advanced/backup-configurations.md). |
 
 **Options** section: **Deployment Enabled** (on by default) controls whether new servers can be deployed to this node. **Maintenance Enabled** (off by default) marks the node as under maintenance. New servers are not deployed to it while that is on, and users cannot interact with the servers it already hosts.
@@ -186,11 +186,11 @@ Same attach/detach pattern for [database agent](../../../db-agent/index.md) host
 
 Every backup stored on this node, regardless of which server it belongs to (requires `nodes.backups`).
 
-| Column | Shows |
-| --- | --- |
-| **Kind** | Separates file archives from database dumps. |
-| **Source** | Names either the server files or the instance a dump came from. |
-| Name, Server, Checksum, Size, Files, Created | As on the server-level backups list. |
+| Column                                       | Shows                                                           |
+| -------------------------------------------- | --------------------------------------------------------------- |
+| **Kind**                                     | Separates file archives from database dumps.                    |
+| **Source**                                   | Names either the server files or the instance a dump came from. |
+| Name, Server, Checksum, Size, Files, Created | As on the server-level backups list.                            |
 
 Restore, export to files, detach and reattach apply to file backups only; dumps get **Reassign** instead, which moves them to another database instance of the same type, optionally on a different server. The **Only show detached backups** switch filters to backups no longer linked to any server, and also decides which failed backups the button below clears. A warning icon marks backups whose server now lives on a different node; those aren't viewable from the client area.
 
@@ -223,14 +223,14 @@ Select individual servers (checkboxes, drag, `Ctrl+A`, or click while holding `S
 
 **Transfer Servers** moves servers to another node:
 
-| Field | Description |
-|---|---|
-| **Node** | The destination node. |
-| **Allocation Mode** | How allocations map onto the destination node; the six modes are listed below. |
-| **Transfer backups** | "Whether to transfer backups along with the servers." |
-| **Delete source backups** | Deletes the transferred backups on the source node once the transfer finishes. |
+| Field                                      | Description                                                                                                                                                                                                                       |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Node**                                   | The destination node.                                                                                                                                                                                                             |
+| **Allocation Mode**                        | How allocations map onto the destination node; the six modes are listed below.                                                                                                                                                    |
+| **Transfer backups**                       | "Whether to transfer backups along with the servers."                                                                                                                                                                             |
+| **Delete source backups**                  | Deletes the transferred backups on the source node once the transfer finishes.                                                                                                                                                    |
 | **Archive Format** / **Compression Level** | How the server data is packed for the move: `.tar` or `.itaf`, plain or compressed as `.gz`, `.xz`, `.lz`, `.bz2`, `.lz4`, or `.zst`; the level is **Best Speed**, **Good Speed**, **Good Compression**, or **Best Compression**. |
-| **Multiplex Channels** | Extra parallel HTTP connections for split archives, 0 to 16. |
+| **Multiplex Channels**                     | Extra parallel HTTP connections for split archives, 0 to 16.                                                                                                                                                                      |
 
 The six **Allocation Mode** options, with the caveats their dropdown entries state:
 
@@ -257,19 +257,19 @@ This tab puts the node on the **private network** (requires `nodes.tunnel`). Onc
 
 The tunnel daemon has to be turned on for the node first, and it is off by default on a standalone node: see [`tundra.enabled`](../../../wings/configuration.md#tundra-enabled). A fresh All-in-One install has it on already; an older one does not, and its **Configuration** tab is where you turn it on. **Host** defaults to the node URL's hostname, or the panel URL's on an All-in-One node, since its own URL is a loopback address. Three alerts cover the cases where the node cannot take part:
 
-| Alert | Meaning |
-| --- | --- |
-| **Unreachable** | "The node could not be reached, so its side of the network could not be checked." |
-| **Not supported** | "This node **cannot run the private network**. It is either turned off in the node configuration, or the node uses rootless Docker, which is unsupported." |
+| Alert              | Meaning                                                                                                                                                                                                                            |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Unreachable**    | "The node could not be reached, so its side of the network could not be checked."                                                                                                                                                  |
+| **Not supported**  | "This node **cannot run the private network**. It is either turned off in the node configuration, or the node uses rootless Docker, which is unsupported."                                                                         |
 | **No certificate** | "This node has **not reported a certificate**, so no peer can open a connection to it. Restart the node's tunnel daemon to re-enrol it." Peers dial a node by its certificate, so until one is reported nothing can connect to it. |
 
 ![Node Private Network tab with host and port settings, node state, and live peer links](./images/nodes/tunnel.webp)
 
 **Network Settings** holds the two fields peers need to find this node, and **Enable** puts it on the network:
 
-| Field | Description |
-|---|---|
-| **Host** | "The hostname or IP other nodes dial this one on. Resolved at connection time." Defaults to the hostname from the node's URL. |
+| Field    | Description                                                                                                                                |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Host** | "The hostname or IP other nodes dial this one on. Resolved at connection time." Defaults to the hostname from the node's URL.              |
 | **Port** | "The UDP port the node listens on for other nodes. Must be reachable from them." Default `7100`. It is a UDP port, not the Wings API port. |
 
 **Node State** below reports whether the daemon is **Connected**, the state version it is on, and the certificate fingerprint it enrolled with.

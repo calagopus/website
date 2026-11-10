@@ -17,10 +17,10 @@ Click **Create** and fill in **Name**, **Git Repository** (the repository URL), 
 
 Two more fields control what happens after that:
 
-| Field | What it does |
-|---|---|
-| **Default Nest** | "Eggs installed from this repository go into this nest unless another one is chosen." Install dialogs preselect it, and the API falls back to it when an install request names no nest. Optional; the **Can't find one? Create a new nest** link below the picker creates a nest in place. Deleting the nest clears the setting. |
-| **Automatic Sync** | On by default. The repository is re-synced once a day, so new and updated eggs appear without anyone pressing **Sync**. |
+| Field              | What it does                                                                                                                                                                                                                                                                                                                     |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Default Nest**   | "Eggs installed from this repository go into this nest unless another one is chosen." Install dialogs preselect it, and the API falls back to it when an install request names no nest. Optional; the **Can't find one? Create a new nest** link below the picker creates a nest in place. Deleting the nest clears the setting. |
+| **Automatic Sync** | On by default. The repository is re-synced once a day, so new and updated eggs appear without anyone pressing **Sync**.                                                                                                                                                                                                          |
 
 ![Update Egg Repository form for Ptero Game Eggs with Default Nest set to Minecraft, Automatic Sync on, and Save, Sync, and Delete buttons](./images/egg-repositories/general.webp)
 

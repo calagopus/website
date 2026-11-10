@@ -39,15 +39,18 @@ sudo apt update
 sudo apt install -y --only-upgrade calagopus-db-agent
 sudo systemctl restart db-agent
 ```
+
 ```bash [RPM]
 sudo dnf upgrade -y calagopus-db-agent
 sudo systemctl restart db-agent
 ```
+
 ```bash [APK]
 apk update
 apk upgrade calagopus-db-agent
 rc-service db-agent restart
 ```
+
 ```bash [AUR]
 yay -S --noconfirm calagopus-db-agent-bin
 sudo systemctl restart db-agent
@@ -66,6 +69,7 @@ sudo chmod +x /usr/local/bin/calagopus-db-agent
 sudo /usr/local/bin/calagopus-db-agent version
 sudo systemctl start db-agent
 ```
+
 ```bash [OpenRC (Alpine)]
 rc-service db-agent stop
 curl -L "https://github.com/calagopus/db-agent/releases/latest/download/db-agent-$(uname -m)-linux" -o /usr/local/bin/calagopus-db-agent

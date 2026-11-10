@@ -144,14 +144,14 @@ A `401` is the expected answer, since the request carries no token. It proves DB
 
 Every configuration below does the same things. If you use a proxy that isn't listed, these are the settings to replicate:
 
-| Setting | Why DB Agent needs it |
-| --- | --- |
-| Forward to `http://127.0.0.1:8090` | The address the management API listens on after Step 1 |
-| Pass `Upgrade` and `Connection` through | The Panel streams instance logs and statistics over WebSockets |
-| No request body limit | A database import arrives as one streamed request carrying the whole dump |
-| Request and response buffering off | Imports and exports stream; with buffering on, the proxy spools them to disk first |
-| Read and write timeouts above 60s | A large import or export holds one connection open far longer than the defaults allow |
-| `X-Forwarded-For` or `X-Real-IP` | The client IPs from Step 1 |
+| Setting                                 | Why DB Agent needs it                                                                 |
+| --------------------------------------- | ------------------------------------------------------------------------------------- |
+| Forward to `http://127.0.0.1:8090`      | The address the management API listens on after Step 1                                |
+| Pass `Upgrade` and `Connection` through | The Panel streams instance logs and statistics over WebSockets                        |
+| No request body limit                   | A database import arrives as one streamed request carrying the whole dump             |
+| Request and response buffering off      | Imports and exports stream; with buffering on, the proxy spools them to disk first    |
+| Read and write timeouts above 60s       | A large import or export holds one connection open far longer than the defaults allow |
+| `X-Forwarded-For` or `X-Real-IP`        | The client IPs from Step 1                                                            |
 
 ::::: tabs
 === Nginx

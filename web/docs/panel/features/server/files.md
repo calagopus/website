@@ -19,13 +19,13 @@ The breadcrumb bar above the table always starts at `home / container` and every
 
 The gear next to the page title opens the file manager settings:
 
-| Setting | Effect |
-|---|---|
-| **Click once to open file or folder** | Single-click opens entries instead of selecting them. |
-| **Always overwrite existing files** | Skips upload conflict choices and defaults file-copy operations to overwriting existing files. Off by default. |
-| **Show physical size instead of logical size** | The Size column shows actual disk usage rather than file length. |
-| **Preview files in tree tabs** | In the tree view, opening a file reuses a single preview tab until you edit it or double-click its tab. On by default. See [Editor Tabs](#editor-tabs). |
-| **VS Code URI Scheme** | Which editor the **via VS Code** connect option launches (`vscode` by default, e.g. `vscodium` or `cursor` for forks). |
+| Setting                                        | Effect                                                                                                                                                  |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Click once to open file or folder**          | Single-click opens entries instead of selecting them.                                                                                                   |
+| **Always overwrite existing files**            | Skips upload conflict choices and defaults file-copy operations to overwriting existing files. Off by default.                                          |
+| **Show physical size instead of logical size** | The Size column shows actual disk usage rather than file length.                                                                                        |
+| **Preview files in tree tabs**                 | In the tree view, opening a file reuses a single preview tab until you edit it or double-click its tab. On by default. See [Editor Tabs](#editor-tabs). |
+| **VS Code URI Scheme**                         | Which editor the **via VS Code** connect option launches (`vscode` by default, e.g. `vscodium` or `cursor` for forks).                                  |
 
 ### Connect
 
@@ -40,14 +40,14 @@ The **Connect** menu offers two ways to work on your files outside the browser:
 
 The **New** menu (shown when you can write to the current directory and hold `files.create`) creates content in the directory you are browsing:
 
-| Option | What it does |
-|---|---|
-| **File from Editor** | Opens an empty code editor; **Create** asks for a file name. |
-| **Directory** | Creates a new directory. |
-| **Symlink** | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in, or to the server root when starting with /", and the modal previews both resolved paths before you commit. |
-| **File from Pull** | Downloads a file from a URL directly onto the server, see [Pulling from a URL](#pulling-from-a-url). |
-| **File from Upload** | Uploads files from your device. |
-| **Directory from Upload** | Uploads an entire folder, keeping its structure. |
+| Option                    | What it does                                                                                                                                                                                                                                       |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **File from Editor**      | Opens an empty code editor; **Create** asks for a file name.                                                                                                                                                                                       |
+| **Directory**             | Creates a new directory.                                                                                                                                                                                                                           |
+| **Symlink**               | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in, or to the server root when starting with /", and the modal previews both resolved paths before you commit. |
+| **File from Pull**        | Downloads a file from a URL directly onto the server, see [Pulling from a URL](#pulling-from-a-url).                                                                                                                                               |
+| **File from Upload**      | Uploads files from your device.                                                                                                                                                                                                                    |
+| **Directory from Upload** | Uploads an entire folder, keeping its structure.                                                                                                                                                                                                   |
 
 ### Disk Usage
 
@@ -61,11 +61,11 @@ Files in the [trash](#trash) count towards that total, and since Panel 1.2.8 the
 
 **Search** (or `Ctrl+K`) opens the **Search Files** modal, which remembers your last query when reopened. The plain text box matches file names anywhere below the current directory. **Advanced Filters** adds three optional sections:
 
-| Filter | Fields |
-|---|---|
-| **Path Patterns** | **Include** and **Exclude** glob patterns (`*.js`, `node_modules/**`), plus a **Case insensitive** toggle. |
-| **File Content** | Deep search: **Search text** looked for inside files, a **Max file size** per file, **Include oversized files** (list files that match the other filters but are too large to scan), and **Case insensitive**. |
-| **File Size** | **Minimum** and **Maximum** file size. |
+| Filter            | Fields                                                                                                                                                                                                         |
+| ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Path Patterns** | **Include** and **Exclude** glob patterns (`*.js`, `node_modules/**`), plus a **Case insensitive** toggle.                                                                                                     |
+| **File Content**  | Deep search: **Search text** looked for inside files, a **Max file size** per file, **Include oversized files** (list files that match the other filters but are too large to scan), and **Case insensitive**. |
+| **File Size**     | **Minimum** and **Maximum** file size.                                                                                                                                                                         |
 
 Results replace the listing, with a banner summarizing the query and active filters; close the banner to return to normal browsing. The content-search size cap is limited by a panel-wide maximum under [Settings > Server](../admin/settings.md#server), and the **File Content** section only appears on filesystems where the daemon supports fast content scanning.
 
@@ -81,12 +81,12 @@ Previews are capped: at most six lines are shown per file, and **More matches no
 
 Some results show a short status instead of content:
 
-| Status | Meaning |
-| --- | --- |
-| **Content permission required** | You have `files.read` but not `files.read-content`, so the panel may list matching files but not show what is inside them. |
-| **Match found, preview unavailable** | The file matched, but the node returned no context for it, usually because it is larger than the node's preview limit. |
-| **Preview unavailable** | The file's contents could not be read back. |
-| **Empty file** | The file matched the name or size filters and has no content. |
+| Status                               | Meaning                                                                                                                    |
+| ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| **Content permission required**      | You have `files.read` but not `files.read-content`, so the panel may list matching files but not show what is inside them. |
+| **Match found, preview unavailable** | The file matched, but the node returned no context for it, usually because it is larger than the node's preview limit.     |
+| **Preview unavailable**              | The file's contents could not be read back.                                                                                |
+| **Empty file**                       | The file matched the name or size filters and has no content.                                                              |
 
 A search that actually returns previews is recorded in the [activity log](./activity.md) as a `server:file.read-content` entry naming the directory searched, the files that matched, and a truncated copy of the query. A search by a user who only holds `files.read` never reaches file contents and so records nothing.
 
@@ -142,15 +142,15 @@ Use the row checkboxes, `Ctrl`-click to toggle, `Shift`-click for a range, drag 
 
 Right-clicking a selected row opens the mass action menu:
 
-| Item | What it does |
-|---|---|
-| **Download** | Bundles the selection into an archive; pick the format from **Download as** (`.tar`, `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.bz2`, `.tar.lz4`, `.tar.zst`, `.zip`). |
-| **Remote Copy** | Copies the selection to another server, see [Remote Copy](#remote-copy). |
-| **Copy** | Marks the selection for copying. |
-| **Archive** | Packs the selection into an archive on the server. |
-| **Rename** | Opens the batch [Rename Files](#renaming) modal. |
-| **Move** | Marks the selection for moving. |
-| **Delete** | Deletes the selection after confirmation. Called **Move to Trash** while the [trash](#trash) is on. |
+| Item            | What it does                                                                                                                                                       |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Download**    | Bundles the selection into an archive; pick the format from **Download as** (`.tar`, `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.bz2`, `.tar.lz4`, `.tar.zst`, `.zip`). |
+| **Remote Copy** | Copies the selection to another server, see [Remote Copy](#remote-copy).                                                                                           |
+| **Copy**        | Marks the selection for copying.                                                                                                                                   |
+| **Archive**     | Packs the selection into an archive on the server.                                                                                                                 |
+| **Rename**      | Opens the batch [Rename Files](#renaming) modal.                                                                                                                   |
+| **Move**        | Marks the selection for moving.                                                                                                                                    |
+| **Delete**      | Deletes the selection after confirmation. Called **Move to Trash** while the [trash](#trash) is on.                                                                |
 
 **Copy** and **Move** work like cut and paste: the marked files stay highlighted while you navigate to the target directory, then the action bar offers **Copy ... here** or **Move ... here** (or `Ctrl+V`), with a cancel button to back out.
 
@@ -162,20 +162,20 @@ Drag rows onto a directory row or a breadcrumb segment to move them; dragging an
 
 Right-click a row (or use its menu button) for the single-file context menu below. Middle-clicking a row opens it in a new browser tab straight away, and that includes the parent-directory row and the entries of the tree view:
 
-| Item | What it does |
-|---|---|
-| **Open** | Opens the file or directory, the same as clicking it. Its submenu offers **Open in Virtual Window** (a floating window inside the panel, so you can keep browsing next to it), **Open in Popup** (a separate 1280x800 browser window), and **Open in New Tab**. On touch devices the menu shows **Open in New Tab** alone. |
-| **Rename** | Renames the file. |
-| **Copy** | Copies it; in read-only directories you pick a destination instead. |
-| **Remote Copy** | Copies it to another server. |
-| **Move** | Marks it for moving, same paste-style flow as mass move. |
-| **Symlink** | Creates a symlink pointing at this entry, with the target pre-filled. |
-| **Archive** / **Extract** | Packs the entry into an archive; for archive files the item becomes **Extract** instead. |
-| **Download** | Downloads the file directly; for directories, pick an archive format from the **Download as** submenu. |
-| **More** > **Details** | Shows **Path**, **Mode**, **Logical Size**, **Physical Size**, **MIME Type**, **Last Modified At**, and **Created At**. |
-| **More** > **Fingerprint** | Computes a checksum: MD5, CRC32, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512, or CurseForge. |
-| **More** > **Permissions** | Unix permissions editor, see below. |
-| **Delete** | Deletes the file after confirmation. While the [trash](#trash) is on, the item reads **Move to Trash** and the file can be restored later. |
+| Item                       | What it does                                                                                                                                                                                                                                                                                                               |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Open**                   | Opens the file or directory, the same as clicking it. Its submenu offers **Open in Virtual Window** (a floating window inside the panel, so you can keep browsing next to it), **Open in Popup** (a separate 1280x800 browser window), and **Open in New Tab**. On touch devices the menu shows **Open in New Tab** alone. |
+| **Rename**                 | Renames the file.                                                                                                                                                                                                                                                                                                          |
+| **Copy**                   | Copies it; in read-only directories you pick a destination instead.                                                                                                                                                                                                                                                        |
+| **Remote Copy**            | Copies it to another server.                                                                                                                                                                                                                                                                                               |
+| **Move**                   | Marks it for moving, same paste-style flow as mass move.                                                                                                                                                                                                                                                                   |
+| **Symlink**                | Creates a symlink pointing at this entry, with the target pre-filled.                                                                                                                                                                                                                                                      |
+| **Archive** / **Extract**  | Packs the entry into an archive; for archive files the item becomes **Extract** instead.                                                                                                                                                                                                                                   |
+| **Download**               | Downloads the file directly; for directories, pick an archive format from the **Download as** submenu.                                                                                                                                                                                                                     |
+| **More** > **Details**     | Shows **Path**, **Mode**, **Logical Size**, **Physical Size**, **MIME Type**, **Last Modified At**, and **Created At**.                                                                                                                                                                                                    |
+| **More** > **Fingerprint** | Computes a checksum: MD5, CRC32, SHA-1, SHA-224, SHA-256, SHA-384, SHA-512, or CurseForge.                                                                                                                                                                                                                                 |
+| **More** > **Permissions** | Unix permissions editor, see below.                                                                                                                                                                                                                                                                                        |
+| **Delete**                 | Deletes the file after confirmation. While the [trash](#trash) is on, the item reads **Move to Trash** and the file can be restored later.                                                                                                                                                                                 |
 
 The folder a [mount](./mounts.md) appears at can't be renamed, moved, or deleted, so those items are missing from its menu. Wings (1.2.6 and newer) also refuses to delete, rename, or change the permissions of a folder that contains a mount point, with "path is a mount point or virtual directory".
 
@@ -193,13 +193,13 @@ A single **Rename** is a simple name prompt (also `F2`), undoable from the toast
 
 Renaming a selection opens **Rename Files**, a batch tool:
 
-| Field | What it does |
-| --- | --- |
+| Field                       | What it does                                                                                                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Find** / **Replace with** | Text or, with **Case sensitive** on, a regular expression with `$1` group references. **Replace all occurrences** controls whether every match or just the first is replaced. |
-| **Apply to** | Which part of the name the find/replace runs against: **Name**, **Extension**, or **Full name**. |
-| Prefix / Suffix | Text added before or after the result. |
-| Case conversion | Forces the result to a case. |
-| Automatic numbering | A `{n}` token in the name, with **Start at**, **Step**, and **Minimum digits** controls. |
+| **Apply to**                | Which part of the name the find/replace runs against: **Name**, **Extension**, or **Full name**.                                                                              |
+| Prefix / Suffix             | Text added before or after the result.                                                                                                                                        |
+| Case conversion             | Forces the result to a case.                                                                                                                                                  |
+| Automatic numbering         | A `{n}` token in the name, with **Start at**, **Step**, and **Minimum digits** controls.                                                                                      |
 
 A live preview shows every resulting name and flags conflicts before anything is renamed.
 
@@ -243,13 +243,13 @@ The trash can button in the toolbar, between **Connect** and **New**, opens the 
 
 Each row's menu, and the action bar that appears once you select rows, offer:
 
-| Action | What it does |
-| --- | --- |
-| **Open** | Since Panel 1.2.9, menu only. Opens the entry in the file manager, see [Browsing the Trash](#browsing-the-trash). Clicking the row does the same. |
-| **Download** | Since Panel 1.2.9, menu only, and only for a deleted file. Downloads it without restoring it first. Needs `files.read-content`. |
-| **Restore** | Puts the entry back where it was deleted from, recreating missing parent folders. |
-| **Restore to...** | Opens **Restore to Directory**: pick a **Destination Directory** and, per entry, the name it should get. |
-| **Delete Permanently** | Removes the entry for good, after confirmation. |
+| Action                 | What it does                                                                                                                                      |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Open**               | Since Panel 1.2.9, menu only. Opens the entry in the file manager, see [Browsing the Trash](#browsing-the-trash). Clicking the row does the same. |
+| **Download**           | Since Panel 1.2.9, menu only, and only for a deleted file. Downloads it without restoring it first. Needs `files.read-content`.                   |
+| **Restore**            | Puts the entry back where it was deleted from, recreating missing parent folders.                                                                 |
+| **Restore to...**      | Opens **Restore to Directory**: pick a **Destination Directory** and, per entry, the name it should get.                                          |
+| **Delete Permanently** | Removes the entry for good, after confirmation.                                                                                                   |
 
 **Empty Trash** in the header deletes every entry at once. **Restore**, **Restore to...**, **Delete Permanently** and **Empty Trash** need the `files.delete` permission. **Open**, like the page itself, only needs `files.read`, and **Download** needs `files.read-content`.
 
@@ -305,11 +305,11 @@ With **Always overwrite existing files** off, the panel checks whether the names
 
 ![Resolve Upload Conflicts dialog with Skip, Overwrite, and Rename choices per file](./images/files/upload-conflicts-modal.webp)
 
-| Action | Effect |
-| --- | --- |
-| **Skip** | Leaves the existing entry alone and drops that item from the upload. The default for every row. |
+| Action        | Effect                                                                                                                                                                                           |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Skip**      | Leaves the existing entry alone and drops that item from the upload. The default for every row.                                                                                                  |
 | **Overwrite** | Replaces the existing file. For a folder the option is called **Merge**: its files are written into the existing directory, overwriting any with the same name, and everything else in it stays. |
-| **Rename** | Uploads under a different name, prefilled as `name copy.ext`. The name cannot be empty or contain `/`. |
+| **Rename**    | Uploads under a different name, prefilled as `name copy.ext`. The name cannot be empty or contain `/`.                                                                                           |
 
 **Skip all** and **Overwrite all** set every row at once. Files without a conflict are uploaded either way, and the modal says how many. The upload button stays disabled while every row is on **Skip**, so **Close** is how you back out, and it skips every conflicting item. Folders are compared by their top-level name only, and an upload of more than 1000 loose files skips the check for those files. If the check itself fails, the panel warns "Could not check for existing files; uploading anyway." and uploads everything as before.
 
@@ -321,11 +321,11 @@ An upload in flight is staged as a `.upload-part` file next to its destination, 
 
 Uploads are not private to the tab that started them. Wings tracks each one and pushes its progress to everyone watching the server, so the same row updates for your other sessions and for anyone else with access to the file. The listing shows the name the file will end up with, never the `.upload-part` suffix, and replaces the size column with progress while the upload runs:
 
-| Row state | What you see |
-| --- | --- |
-| Uploading | Green row with an **Uploading 42%** badge, and `137.2 MiB / 320 MiB` in place of the size. |
-| Incomplete | Yellow row with an **Incomplete** badge. The upload has stopped without finishing. |
-| Someone else's | The same badges, plus `by <user>` next to them. Your own uploads are not attributed. |
+| Row state      | What you see                                                                               |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| Uploading      | Green row with an **Uploading 42%** badge, and `137.2 MiB / 320 MiB` in place of the size. |
+| Incomplete     | Yellow row with an **Incomplete** badge. The upload has stopped without finishing.         |
+| Someone else's | The same badges, plus `by <user>` next to them. Your own uploads are not attributed.       |
 
 ![File list with an Incomplete Uploads banner, a modpack.zip upload at 18 percent, and an incomplete file](./images/files/uploads.webp)
 
@@ -343,11 +343,11 @@ An upload that goes 30 seconds without progress is treated as incomplete. Its ba
 
 How to clear one depends on where it came from:
 
-| Partial file | How to deal with it |
-| --- | --- |
-| Yours, still in this session | Right-click the row for **Pause**, **Resume**, and **Cancel**, or use the upload popover next to the toolbar. Cancelling deletes the partial file from the node for you. |
-| Yours, after a page reload | The browser no longer holds the file's contents, so the row offers **Re-select file to resume**. Pick the same file again and it carries on from where it stopped. |
-| Someone else's, or left by a Wings restart | Delete the partial file from the listing. Restart leftovers are listed without an owner or a total size and cannot be resumed at all. |
+| Partial file                               | How to deal with it                                                                                                                                                      |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Yours, still in this session               | Right-click the row for **Pause**, **Resume**, and **Cancel**, or use the upload popover next to the toolbar. Cancelling deletes the partial file from the node for you. |
+| Yours, after a page reload                 | The browser no longer holds the file's contents, so the row offers **Re-select file to resume**. Pick the same file again and it carries on from where it stopped.       |
+| Someone else's, or left by a Wings restart | Delete the partial file from the listing. Restart leftovers are listed without an owner or a total size and cannot be resumed at all.                                    |
 
 ::: info
 Files larger than the current request size are sent in chunks, and only those can be paused and resumed. Smaller files are bundled into shared requests, so **Cancel** is the only action offered on their rows. The request size starts at 8 MiB for each server and adapts to your connection as the upload runs, aiming for requests that take about a minute, never below 4 MiB or above 95 MiB. A slow connection therefore uses small chunks rather than running into proxy timeouts, and whether a file counts as large is decided when you start the upload.
@@ -369,13 +369,13 @@ Staging appends `.upload-part` to the name, so a file whose name is longer than 
 
 Openable files launch a code editor at `/files/edit` with syntax highlighting and search. **Save** or `Ctrl+S` writes the file back; leaving with unsaved changes prompts you first. The gear next to the title holds the editor settings:
 
-| Setting | Effect |
-|---|---|
-| **Editor Engine** | **Monaco** or **Pierre**. Monaco is the full desktop editor; Pierre is lighter and built for touch. Touch devices default to Pierre, everything else to Monaco. |
-| **Show File Minimap** | Toggles the code overview strip on the right. Monaco only. |
-| **Wrap Line Overflow** | Wraps long lines instead of scrolling horizontally. |
-| **Editor Font Size** | Font size, 6 to 72. Since Panel 1.2.8, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14) change it from inside the editor, as does `Ctrl` + mouse wheel; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts). |
-| **VS Code URI Scheme** | Same setting as in the list view; the editor's **Connect** menu can hand the open file straight to your editor. |
+| Setting                | Effect                                                                                                                                                                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Editor Engine**      | **Monaco** or **Pierre**. Monaco is the full desktop editor; Pierre is lighter and built for touch. Touch devices default to Pierre, everything else to Monaco.                                                                         |
+| **Show File Minimap**  | Toggles the code overview strip on the right. Monaco only.                                                                                                                                                                              |
+| **Wrap Line Overflow** | Wraps long lines instead of scrolling horizontally.                                                                                                                                                                                     |
+| **Editor Font Size**   | Font size, 6 to 72. Since Panel 1.2.8, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14) change it from inside the editor, as does `Ctrl` + mouse wheel; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts). |
+| **VS Code URI Scheme** | Same setting as in the list view; the editor's **Connect** menu can hand the open file straight to your editor.                                                                                                                         |
 
 ![File editor](./images/files/editor.webp)
 

@@ -178,7 +178,7 @@ For a global setup, use:
 
 Cursor should automatically connect to Calagopus after the config is saved.
 
-=== Kiro CLI 
+=== Kiro CLI
 
 Open your Kiro MCP configuration and add:
 
@@ -214,12 +214,12 @@ Clients configured through a JSON file usually want an entry along these lines. 
 
 ## What the server exposes
 
-| Tool | Purpose |
-| --- | --- |
+| Tool          | Purpose                                                                                                                                                                                                       |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `query_pages` | Searches by meaning and by keyword at once, and returns ranked pages together with the passage that matched and its score. Takes a real question or an exact string such as a config key or an error message. |
-| `list_pages` | Walks the table of contents, optionally narrowed by a substring of the path, title, or description. Use it to see what coverage exists rather than to answer a question. |
-| `get_pages` | Returns the full Markdown of up to ten pages, under a byte budget so one long reference cannot swallow the whole context window. |
-| `get_images` | Returns up to four screenshots as images you can actually look at. SVG diagrams come back as their source markup, since that reads better than a picture of it. |
+| `list_pages`  | Walks the table of contents, optionally narrowed by a substring of the path, title, or description. Use it to see what coverage exists rather than to answer a question.                                      |
+| `get_pages`   | Returns the full Markdown of up to ten pages, under a byte budget so one long reference cannot swallow the whole context window.                                                                              |
+| `get_images`  | Returns up to four screenshots as images you can actually look at. SVG diagrams come back as their source markup, since that reads better than a picture of it.                                               |
 
 Start with `query_pages` when you have a question and `list_pages` when you want to survey an area. Both hand back page names, which are site paths such as `/docs/wings/installation`, and both report each page's size so a client can budget before reading anything. Those names go straight into `get_pages`.
 

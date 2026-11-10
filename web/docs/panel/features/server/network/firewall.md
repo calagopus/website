@@ -29,15 +29,15 @@ The ruleset above does exactly that: one rule allowing whatever a source file li
 
 **Add Rule** opens a modal with five fields. An empty field means "match everything", so a rule with nothing filled in matches all traffic.
 
-| Field | What it does |
-| --- | --- |
-| **Action** | **Allow** or **Deny** the traffic this rule matches. |
-| **Protocols** | **TCP**, **UDP**, or both. Leave empty to match both. |
-| **Sources** | IP addresses or networks such as `10.0.0.0/8`. A network must have its host bits zeroed, so `10.1.0.0/8` is rejected while `10.0.0.0/8` is fine. Leave empty to match any source. |
-| **Source File** | Path of a file in the server directory, such as `firewall/allowed.txt`, whose entries are added to the sources above. See [Source Files](#source-files). |
-| **Ports** | Allocation ports the rule applies to. Ranges like `25565-25570` are expanded into individual ports. Leave empty to match every allocation of the server. |
+| Field           | What it does                                                                                                                                                                      |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Action**      | **Allow** or **Deny** the traffic this rule matches.                                                                                                                              |
+| **Protocols**   | **TCP**, **UDP**, or both. Leave empty to match both.                                                                                                                             |
+| **Sources**     | IP addresses or networks such as `10.0.0.0/8`. A network must have its host bits zeroed, so `10.1.0.0/8` is rejected while `10.0.0.0/8` is fine. Leave empty to match any source. |
+| **Source File** | Path of a file in the server directory, such as `firewall/allowed.txt`, whose entries are added to the sources above. See [Source Files](#source-files).                          |
+| **Ports**       | Allocation ports the rule applies to. Ranges like `25565-25570` are expanded into individual ports. Leave empty to match every allocation of the server.                          |
 
-Each rule card summarizes itself in the form *protocols* from *sources* to *ports*, falling back to "TCP & UDP", "any source" and "all allocations" for the empty cases. A source file shows up in that summary as *file firewall/allowed.txt*. Right-click a rule to edit, or use its card menu to remove it.
+Each rule card summarizes itself in the form _protocols_ from _sources_ to _ports_, falling back to "TCP & UDP", "any source" and "all allocations" for the empty cases. A source file shows up in that summary as _file firewall/allowed.txt_. Right-click a rule to edit, or use its card menu to remove it.
 
 <img src="./images/firewall/rule-form.webp" width="220" alt="Create Firewall Rule dialog with action, protocols, sources, source file, and ports fields" />
 
@@ -86,12 +86,12 @@ Because a ruleset carries no server-specific identifiers, exporting from one ser
 
 On top of the default-allow notice above, the page raises these:
 
-| Alert | Meaning |
-| --- | --- |
-| **Not enforced** | "This node will not enforce firewall rules. Rules are saved but have no effect, and **this server may refuse to start while any are configured.**" The node either runs Wings rootless or has its firewall backend disabled. Don't leave rules configured on a node like that. |
-| **Shadowed rule** | "Rule *N* can never match, an earlier rule already covers everything it does." Harmless, but that rule is doing nothing; reorder or remove it. |
-| **Unallocated ports** | The ruleset names ports that aren't allocated to this server. The node ignores them until matching allocations exist. |
-| **Limitations** | "Rules cover traffic reaching this server from elsewhere, both through its published ports and directly on its container address. Connections opened by the node itself are not filtered." Traffic arriving over a [private connection](./connections.md) is not filtered either; that connection is its own access grant. |
+| Alert                 | Meaning                                                                                                                                                                                                                                                                                                                    |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Not enforced**      | "This node will not enforce firewall rules. Rules are saved but have no effect, and **this server may refuse to start while any are configured.**" The node either runs Wings rootless or has its firewall backend disabled. Don't leave rules configured on a node like that.                                             |
+| **Shadowed rule**     | "Rule _N_ can never match, an earlier rule already covers everything it does." Harmless, but that rule is doing nothing; reorder or remove it.                                                                                                                                                                             |
+| **Unallocated ports** | The ruleset names ports that aren't allocated to this server. The node ignores them until matching allocations exist.                                                                                                                                                                                                      |
+| **Limitations**       | "Rules cover traffic reaching this server from elsewhere, both through its published ports and directly on its container address. Connections opened by the node itself are not filtered." Traffic arriving over a [private connection](./connections.md) is not filtered either; that connection is its own access grant. |
 
 ::: info
 How many rules a server may have, and how many sources each rule may list, are set by the administrator under [Settings > Server](../../admin/settings.md#server). Whether a node can enforce rules at all depends on its Wings configuration.

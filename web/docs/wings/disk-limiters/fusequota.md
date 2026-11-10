@@ -11,7 +11,7 @@ Using `fuse_quota` with a Docker Wings installation is **strongly** discouraged.
 
 ## What is it?
 
-The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on *any* underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount. This makes it the fallback option when no native limiter is available.
+The `fuse_quota` disk limiter uses [Fusequota](https://github.com/calagopus/fusequota), a user-space filesystem built on FUSE, to enforce per-server disk limits on _any_ underlying filesystem. Unlike [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md), which all require specific filesystem support on the host, Fusequota works on top of whatever filesystem your server volumes already live on - ext4, XFS without `prjquota`, a network mount. This makes it the fallback option when no native limiter is available.
 
 Wings spawns a dedicated `fusequota` daemon process per server on startup. The daemon mounts a FUSE filesystem over the server's volume directory, enforces the configured quota, and exposes a local Unix socket for Wings to query and update usage. Wings batches usage deltas and syncs them to the daemon every second.
 

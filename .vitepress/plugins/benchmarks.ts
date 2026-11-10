@@ -1,3 +1,4 @@
+import type { SystemInfo } from '../data/benchmarks/systems.ts';
 import {
   type DaemonId,
   daemonCpuOptions,
@@ -23,7 +24,6 @@ import {
   type TaskResult,
   type VariantReport,
 } from '../data/benchmarks/index.ts';
-import type { SystemInfo } from '../data/benchmarks/systems.ts';
 
 export const BENCHMARKS_PAGE = 'docs/about/benchmarks.md';
 export const DAEMON_BENCHMARKS_PAGE = 'docs/about/daemon-benchmarks.md';

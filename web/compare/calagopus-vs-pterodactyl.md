@@ -1,6 +1,6 @@
 ---
 title: Calagopus vs Pterodactyl - Game Server Panel Comparison
-description: "Calagopus and Pterodactyl compared: Rust against PHP on performance, features, and extensibility."
+description: 'Calagopus and Pterodactyl compared: Rust against PHP on performance, features, and extensibility.'
 head:
   - - meta
     - name: robots
@@ -23,8 +23,8 @@ Calagopus uses the same design, a web panel talking to a node daemon that runs s
 | **License**               | MIT                  | MIT                                        |
 | **Price**                 | Free                 | Free                                       |
 | **Extension System**      | Native (Rust traits) | None (Blueprint is a community workaround) |
-| **Windows Panel Support** | <Yes />                   | <No />                                         |
-| **ARM64 Support**         | <Yes />                   | Limited                                    |
+| **Windows Panel Support** | <Yes />              | <No />                                     |
+| **ARM64 Support**         | <Yes />              | Limited                                    |
 
 ## Which Should You Choose?
 
@@ -47,64 +47,65 @@ On identical hardware and under the same CPU limits, the project's benchmarks sh
 How much that matters depends heavily on scale. A homelab running four servers for friends probably won't notice much difference in panel request latency. A hosting provider managing hundreds of nodes, on the other hand, sees it in CPU and memory: the panel holds its resting footprint under load where PHP-FPM grows into it, and on the daemon side the file manager's metadata work (directory listings, stat calls) costs several times less CPU per operation, as the [daemon benchmarks](/docs/about/daemon-benchmarks) show.
 
 ## Feature Comparison
+
 The table below is based on the [full feature reference](/docs/about/features) and focuses specifically on Calagopus and Pterodactyl.
 
 **Platform**
 
-| Feature | Calagopus | Pterodactyl |
-| --- | :---: | :---: |
-| Free & Open Source | <Yes /> | <Yes /> |
-| Native Extension System | <Yes /> | <No /> |
-| Support for Multiple Nodes | <Yes /> | <Yes /> |
-| Extra Allocations | <Yes /> | <Yes /> |
-| Mount Management | <Yes /> | <Yes /> |
-| Private Server-to-Server Network | <Yes /> | <No /> |
+| Feature                          | Calagopus | Pterodactyl |
+| -------------------------------- | :-------: | :---------: |
+| Free & Open Source               |  <Yes />  |   <Yes />   |
+| Native Extension System          |  <Yes />  |   <No />    |
+| Support for Multiple Nodes       |  <Yes />  |   <Yes />   |
+| Extra Allocations                |  <Yes />  |   <Yes />   |
+| Mount Management                 |  <Yes />  |   <Yes />   |
+| Private Server-to-Server Network |  <Yes />  |   <No />    |
 
 **Servers and Files**
 
-| Feature | Calagopus | Pterodactyl |
-| --- | :---: | :---: |
-| Live Console | <Yes /> | <Yes /> |
-| File Manager | <Yes /> | <Yes /> |
-| File Edit History | <Yes /> | <No /> |
-| Archive Browsing Support | <Yes /> | <No /> |
-| SFTP Support | <Yes /> | <Yes /> |
-| SSH (Shell) Support | <Yes /> | <No /> |
-| Schedule Tasks | <Yes /> | <Yes /> |
-| Advanced Schedule Triggers | <Yes /> | <No /> |
+| Feature                    | Calagopus | Pterodactyl |
+| -------------------------- | :-------: | :---------: |
+| Live Console               |  <Yes />  |   <Yes />   |
+| File Manager               |  <Yes />  |   <Yes />   |
+| File Edit History          |  <Yes />  |   <No />    |
+| Archive Browsing Support   |  <Yes />  |   <No />    |
+| SFTP Support               |  <Yes />  |   <Yes />   |
+| SSH (Shell) Support        |  <Yes />  |   <No />    |
+| Schedule Tasks             |  <Yes />  |   <Yes />   |
+| Advanced Schedule Triggers |  <Yes />  |   <No />    |
 
 **Databases**
 
-| Feature | Calagopus | Pterodactyl |
-| --- | :---: | :---: |
-| Database Management | <Yes /> | <Yes /> |
-| MySQL Server-Database Support | <Yes /> | <Yes /> |
-| PostgreSQL Server-Database Support | <Yes /> | <No /> |
-| MongoDB Server-Database Support | <Yes /> | <No /> |
-| Redis Server-Database Support | <Yes /> | <No /> |
-| In-Panel Database Explorer | <Yes /> | <No /> |
+| Feature                            | Calagopus | Pterodactyl |
+| ---------------------------------- | :-------: | :---------: |
+| Database Management                |  <Yes />  |   <Yes />   |
+| MySQL Server-Database Support      |  <Yes />  |   <Yes />   |
+| PostgreSQL Server-Database Support |  <Yes />  |   <No />    |
+| MongoDB Server-Database Support    |  <Yes />  |   <No />    |
+| Redis Server-Database Support      |  <Yes />  |   <No />    |
+| In-Panel Database Explorer         |  <Yes />  |   <No />    |
 
 **Backups**
 
-| Feature | Calagopus | Pterodactyl |
-| --- | :---: | :---: |
-| Backups | <Yes /> | <Yes /> |
-| Backup Browsing Support | <Yes /> | <No /> |
-| Advanced Backup Drivers | <Yes /> | <No /> |
-| Dynamic Backup Configuration | <Yes /> | <No /> |
+| Feature                      | Calagopus | Pterodactyl |
+| ---------------------------- | :-------: | :---------: |
+| Backups                      |  <Yes />  |   <Yes />   |
+| Backup Browsing Support      |  <Yes />  |   <No />    |
+| Advanced Backup Drivers      |  <Yes />  |   <No />    |
+| Dynamic Backup Configuration |  <Yes />  |   <No />    |
 
 **Users and Administration**
 
-| Feature | Calagopus | Pterodactyl |
-| --- | :---: | :---: |
-| User Management | <Yes /> | <Yes /> |
-| Subuser Management | <Yes /> | <Yes /> |
-| Role Management | <Yes /> | <No /> |
-| WebAuthn Authentication | <Yes /> | <No /> |
-| OAuth Support | <Yes /> | <No /> |
-| User Impersonation | <Yes /> | <No /> |
-| Admin-Action Audit Log | <Yes /> | <No /> |
-| Asset Management | <Yes /> | <No /> |
+| Feature                 | Calagopus | Pterodactyl |
+| ----------------------- | :-------: | :---------: |
+| User Management         |  <Yes />  |   <Yes />   |
+| Subuser Management      |  <Yes />  |   <Yes />   |
+| Role Management         |  <Yes />  |   <No />    |
+| WebAuthn Authentication |  <Yes />  |   <No />    |
+| OAuth Support           |  <Yes />  |   <No />    |
+| User Impersonation      |  <Yes />  |   <No />    |
+| Admin-Action Audit Log  |  <Yes />  |   <No />    |
+| Asset Management        |  <Yes />  |   <No />    |
 
 ## Where Calagopus Goes Further
 

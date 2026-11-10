@@ -29,17 +29,17 @@ Click **Create**, or open a configuration's ID to edit it. The base fields are *
 
 Pick a **Matcher Type**:
 
-| Matcher Type | Applies when | Fields |
-| --- | --- | --- |
-| **Never (Applies to nothing)** | Never, which parks a configuration without deleting it | none |
-| **All (Always applies)** | Every server | none |
-| **AND (All must match)** | Every nested matcher applies | nested matchers |
-| **OR (Any must match)** | At least one nested matcher applies | nested matchers |
-| **NOT (Must not match)** | Its nested matcher does not apply | one nested matcher |
-| **Eggs** | The server uses one of the selected eggs | eggs, grouped by nest |
-| **Nests** | The server's egg belongs to one of the selected nests | nests |
-| **Nodes** | The server runs on one of the selected nodes | nodes |
-| **Locations** | The server's node is in one of the selected locations | locations |
+| Matcher Type                   | Applies when                                           | Fields                |
+| ------------------------------ | ------------------------------------------------------ | --------------------- |
+| **Never (Applies to nothing)** | Never, which parks a configuration without deleting it | none                  |
+| **All (Always applies)**       | Every server                                           | none                  |
+| **AND (All must match)**       | Every nested matcher applies                           | nested matchers       |
+| **OR (Any must match)**        | At least one nested matcher applies                    | nested matchers       |
+| **NOT (Must not match)**       | Its nested matcher does not apply                      | one nested matcher    |
+| **Eggs**                       | The server uses one of the selected eggs               | eggs, grouped by nest |
+| **Nests**                      | The server's egg belongs to one of the selected nests  | nests                 |
+| **Nodes**                      | The server runs on one of the selected nodes           | nodes                 |
+| **Locations**                  | The server's node is in one of the selected locations  | locations             |
 
 ![Applies To section with an AND matcher combining a Nests matcher and a Locations matcher](./images/egg-configurations/matcher.webp)
 
@@ -92,7 +92,6 @@ Reorders the server sidebar for affected servers. Each entry shows its path and 
 The icon button at the start of a route or redirect entry picks its sidebar icon from the Font Awesome solid, regular and brands sets, searchable by name. **Use Default Icon** goes back to the page's own icon (or the external-link icon for a redirect). The same picker is in the [Client Route Order](./settings.md#user) editor.
 
 ![Route Configuration section listing server routes from Console to Activity, each with an icon button, and a route picker](./images/egg-configurations/route-config.webp)
-
 
 ::: warning
 Pages left out of the list are hidden from the sidebar and become inaccessible for those servers. Only remove pages you want to cut off.

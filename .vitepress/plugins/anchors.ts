@@ -4,7 +4,7 @@ const slugify = (text: string) =>
   text
     .normalize('NFKD')
     .replace(/[\u0300-\u036F]/g, '')
-    // biome-ignore lint/suspicious/noControlCharactersInRegex: matches the upstream slug
+    // eslint-disable-next-line no-control-regex -- matches the upstream slug
     .replace(/[\u0000-\u001f]/g, '')
     .replace(/[\s~`!@#$%^&*()\-_+=[\]{}|\\;:"'“”‘’<>,.?/]+/g, '-')
     .replace(/-{2,}/g, '-')

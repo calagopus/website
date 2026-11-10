@@ -122,15 +122,23 @@ const BASELINE_REASONS = ['probation', 'probation', 'accepted', 'accepted', 'acc
   assert.equal(result.history.at(-1).users_total, 10_000);
 }
 {
-  const r = reasons([...days(0, 5, { users_total: 3_000, servers_total: 300 }), ...days(5, 15, { users_total: 50, servers_total: 3 })]);
+  const r = reasons([
+    ...days(0, 5, { users_total: 3_000, servers_total: 300 }),
+    ...days(5, 15, { users_total: 50, servers_total: 3 }),
+  ]);
   assert.deepEqual(r.slice(5), ['drop:users_total', 'drop:users_total', 'rebaseline', ...Array(7).fill('accepted')]);
 }
 {
-  const r = reasons([...days(0, 5, { ...SMALL, backups_total: 6_000 }), ...days(5, 10, { ...SMALL, backups_total: 900 })]);
+  const r = reasons([
+    ...days(0, 5, { ...SMALL, backups_total: 6_000 }),
+    ...days(5, 10, { ...SMALL, backups_total: 900 }),
+  ]);
   assert.deepEqual(r.slice(5), Array(5).fill('accepted'));
 }
 {
-  const online = Array.from({ length: 12 }, (_, d) => obs(d, 12, { servers_total: 1_000, servers_online: d % 2 ? 600 : 0 }));
+  const online = Array.from({ length: 12 }, (_, d) =>
+    obs(d, 12, { servers_total: 1_000, servers_online: d % 2 ? 600 : 0 }),
+  );
   const memory = Array.from({ length: 12 }, (_, d) =>
     obs(d, 12, { ...SMALL, node_count: 1, node_memory_bytes: d % 2 ? 3 * 1024 ** 4 : 0 }),
   );

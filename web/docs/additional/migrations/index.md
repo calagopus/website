@@ -6,13 +6,13 @@ description: Migrate to Calagopus from Pterodactyl or Pelican, or move an existi
 
 Pick the guide for what you're doing:
 
-| You want to | Guide |
-| --- | --- |
-| Move from Pterodactyl to Calagopus | [Migrating from Pterodactyl](./pterodactyl.md) |
-| Move from Pelican to Calagopus | [Migrating from Pelican](./pelican.md) |
-| Move an existing Pterodactyl or Pelican node to Calagopus Wings | [Migrating Wings Nodes](./wings.md) |
-| Move a standalone Calagopus install to Docker | [Migrating to Docker Compose](./calagopus/docker.md) |
-| Move a Calagopus install in Docker to standalone | [Migrating to Standalone](./calagopus/standalone.md) |
+| You want to                                                     | Guide                                                |
+| --------------------------------------------------------------- | ---------------------------------------------------- |
+| Move from Pterodactyl to Calagopus                              | [Migrating from Pterodactyl](./pterodactyl.md)       |
+| Move from Pelican to Calagopus                                  | [Migrating from Pelican](./pelican.md)               |
+| Move an existing Pterodactyl or Pelican node to Calagopus Wings | [Migrating Wings Nodes](./wings.md)                  |
+| Move a standalone Calagopus install to Docker                   | [Migrating to Docker Compose](./calagopus/docker.md) |
+| Move a Calagopus install in Docker to standalone                | [Migrating to Standalone](./calagopus/standalone.md) |
 
 ## Resetting the Calagopus Database
 

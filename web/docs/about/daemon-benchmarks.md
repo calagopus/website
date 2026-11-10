@@ -1,6 +1,6 @@
 ---
 title: Daemon Benchmarks
-description: "Benchmarks of the Calagopus daemon against Pterodactyl and Pelican Wings: archive compression, file operations, directory listings, SFTP transfers, throughput, latency, and CPU cost."
+description: 'Benchmarks of the Calagopus daemon against Pterodactyl and Pelican Wings: archive compression, file operations, directory listings, SFTP transfers, throughput, latency, and CPU cost.'
 ---
 
 <script setup>

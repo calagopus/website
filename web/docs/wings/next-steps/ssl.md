@@ -11,11 +11,11 @@ Browsers connect to Wings directly for the console, file uploads and downloads. 
 
 You have three ways to secure a standalone node, and most setups only need the first:
 
-| Approach | When to use it |
-| --- | --- |
-| Wings' built-in SSL (this guide) | The node runs nothing else on ports 443/8080. Point Wings at the certificate files and you're done. No proxy involved. |
-| [Reverse proxy](./reverse-proxy.md) in front of Wings | A proxy already runs on the node, you want Wings on port 443, or you want one place to manage certificates. |
-| [Wings Proxy Mode](../advanced/exposing-wings-in-a-homelab.md) | The node can't be reached from the internet at all. The Panel relays browser traffic to it. |
+| Approach                                                       | When to use it                                                                                                         |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Wings' built-in SSL (this guide)                               | The node runs nothing else on ports 443/8080. Point Wings at the certificate files and you're done. No proxy involved. |
+| [Reverse proxy](./reverse-proxy.md) in front of Wings          | A proxy already runs on the node, you want Wings on port 443, or you want one place to manage certificates.            |
+| [Wings Proxy Mode](../advanced/exposing-wings-in-a-homelab.md) | The node can't be reached from the internet at all. The Panel relays browser traffic to it.                            |
 
 With the first two options, browsers connect to Wings directly for the console, file uploads and downloads, so the node's public URL must be reachable from your users' machines. Only Wings Proxy Mode routes that traffic through the Panel instead.
 
@@ -114,11 +114,11 @@ sudo systemctl restart wings
 
 Wings re-reads its certificate files from disk once a day, so a renewed certificate is picked up on its own within 24 hours. If you would rather have Wings switch immediately, restart it from your ACME client after every renewal:
 
-| Client | How |
-| --- | --- |
-| Certbot | A deploy hook, shown below |
-| acme.sh | `--reloadcmd "systemctl restart wings"` on `--install-cert` |
-| lego | `--renew-hook "systemctl restart wings"` on the `renew` cron job |
+| Client  | How                                                              |
+| ------- | ---------------------------------------------------------------- |
+| Certbot | A deploy hook, shown below                                       |
+| acme.sh | `--reloadcmd "systemctl restart wings"` on `--install-cert`      |
+| lego    | `--renew-hook "systemctl restart wings"` on the `renew` cron job |
 
 For certbot, create the hook:
 

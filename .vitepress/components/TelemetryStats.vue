@@ -167,8 +167,8 @@ const historyOption = computed(() => {
     <div v-else-if="stats && !enough" class="tip custom-block">
       <p class="custom-block-title">Not enough data yet</p>
       <p>
-        Too few panels are reporting to publish a total without singling anyone out. This page fills in once enough
-        of them do.
+        Too few panels are reporting to publish a total without singling anyone out. This page fills in once enough of
+        them do.
       </p>
     </div>
 

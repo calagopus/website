@@ -15,12 +15,12 @@ This module authenticates with an **admin API key**, which grants full administr
 
 Once configured against a product, the module maps Paymenter's service lifecycle onto the Calagopus admin API:
 
-| Paymenter action | Effect on the panel |
-| --- | --- |
-| Create | Finds or creates a panel user for the customer, then provisions a server (on a specific node, or auto-deployed across locations). |
-| Suspend / Unsuspend | Toggles the server's suspended state. |
+| Paymenter action         | Effect on the panel                                                                                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Create                   | Finds or creates a panel user for the customer, then provisions a server (on a specific node, or auto-deployed across locations).                                                     |
+| Suspend / Unsuspend      | Toggles the server's suspended state.                                                                                                                                                 |
 | Upgrade / Change package | Updates the server's resource limits, feature limits, passthrough flags, pinned CPUs, and Docker image to match the new product configuration and the service's configurable options. |
-| Terminate | Deletes the server, including its backups. |
+| Terminate                | Deletes the server, including its backups.                                                                                                                                            |
 
 Customers are matched to panel users by their Paymenter user ID, stored as the panel user's `external_id`, so each customer reuses the same panel account across all of their services. When [OAuth linking](#optional-oauth-account-linking) is set up, the module first looks for a panel user already linked to the customer's Paymenter account.
 
@@ -57,12 +57,12 @@ Live usage comes from the node. If the node can't be reached, the summary falls 
 
 3. Configure the server with the following fields:
 
-   | Field | Description |
-   | --- | --- |
-   | **Panel URL** | Full URL of your panel, e.g. `https://panel.example.com`. |
-   | **API Key** | An admin API key for your Calagopus panel (stored encrypted). |
-   | **Default User Language** | Two-letter language code for newly created users. Defaults to `en`. |
-   | **OAuth Provider UUID** | Optional - used for account linking, see [below](#optional-oauth-account-linking). |
+   | Field                     | Description                                                                        |
+   | ------------------------- | ---------------------------------------------------------------------------------- |
+   | **Panel URL**             | Full URL of your panel, e.g. `https://panel.example.com`.                          |
+   | **API Key**               | An admin API key for your Calagopus panel (stored encrypted).                      |
+   | **Default User Language** | Two-letter language code for newly created users. Defaults to `en`.                |
+   | **OAuth Provider UUID**   | Optional - used for account linking, see [below](#optional-oauth-account-linking). |
 
 4. Click **Create**. On the saved server, use **Test Connection** next to the **Server** field to confirm Paymenter can reach the panel with the supplied key.
 
@@ -89,27 +89,27 @@ If no node is selected and no locations are provided, provisioning fails with "N
 
 ### Resources and limits
 
-| Field | Notes |
-| --- | --- |
-| **Memory / Swap / Disk** | In MiB. Set swap to `-1` for unlimited or `0` to disable. |
-| **CPU Limit** | Percentage; `100` = one thread, `0` = unlimited. |
-| **Memory Overhead** | Hidden memory added on top of the container's limit. |
-| **IO Weight** | `10`–`1000`; leave blank for the default. |
-| **Allocations / Databases / Backups / Schedules** | Standard feature limits. |
-| **Custom Feature Limits** | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. Numbers are sent as numbers, `true` and `false` as booleans, anything else as text. |
+| Field                                             | Notes                                                                                                                                                        |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Memory / Swap / Disk**                          | In MiB. Set swap to `-1` for unlimited or `0` to disable.                                                                                                    |
+| **CPU Limit**                                     | Percentage; `100` = one thread, `0` = unlimited.                                                                                                             |
+| **Memory Overhead**                               | Hidden memory added on top of the container's limit.                                                                                                         |
+| **IO Weight**                                     | `10`–`1000`; leave blank for the default.                                                                                                                    |
+| **Allocations / Databases / Backups / Schedules** | Standard feature limits.                                                                                                                                     |
+| **Custom Feature Limits**                         | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. Numbers are sent as numbers, `true` and `false` as booleans, anything else as text. |
 
 ### Egg and advanced options
 
-| Field | Notes |
-| --- | --- |
-| **Docker Image** | Override the egg default. Blank uses the egg's default image. |
-| **Startup Command** | Override the egg default startup command. |
-| **Server Name Prefix** | Servers are named `<prefix><service id>`, e.g. `MC-12345`. Blank defaults to `Server-`. |
-| **Skip Egg Install Script** | Skips the egg's installation script. |
-| **Start on Completion** | Starts the server automatically once installation finishes. |
-| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container. |
-| **Pinned CPUs** | Comma-separated core IDs, e.g. `0,1,2`. Blank disables pinning. |
-| **Backup Configuration UUID** | Optional backup configuration to assign to the server. |
+| Field                           | Notes                                                                                   |
+| ------------------------------- | --------------------------------------------------------------------------------------- |
+| **Docker Image**                | Override the egg default. Blank uses the egg's default image.                           |
+| **Startup Command**             | Override the egg default startup command.                                               |
+| **Server Name Prefix**          | Servers are named `<prefix><service id>`, e.g. `MC-12345`. Blank defaults to `Server-`. |
+| **Skip Egg Install Script**     | Skips the egg's installation script.                                                    |
+| **Start on Completion**         | Starts the server automatically once installation finishes.                             |
+| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container.                         |
+| **Pinned CPUs**                 | Comma-separated core IDs, e.g. `0,1,2`. Blank disables pinning.                         |
+| **Backup Configuration UUID**   | Optional backup configuration to assign to the server.                                  |
 
 ::: tip
 The product configuration has no field for egg variables. To set them, use [configurable options](#overriding-settings-with-configurable-options) whose environment variable matches the egg variable.
@@ -125,21 +125,21 @@ The match is made on the option's **Environment Variable**. The value it passes 
 
 Name the environment variable after a product setting key and its value replaces the product's value for that service.
 
-| Environment variable | Overrides | Value |
-| --- | --- | --- |
-| `memory`, `swap`, `disk` | Memory / Swap / Disk | MiB |
-| `cpu` | CPU Limit | Percentage, `100` = one thread |
-| `memory_overhead` | Memory Overhead | MiB |
-| `io_weight` | IO Weight | `10`–`1000` |
-| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Feature limits | Count |
-| `custom_feature_limits` | Custom Feature Limits | `key:value,key:value` |
-| `docker_image` | Docker Image | Image reference |
-| `startup_command` | Startup Command | Command string |
-| `server_name_prefix` | Server Name Prefix | Text |
-| `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | Checkboxes | `true`/`false`, `1`/`0`, `yes`/`no` |
-| `pinned_cpus` | Pinned CPUs | `0,1,2` |
-| `backup_configuration_uuid` | Backup Configuration UUID | UUID |
-| `node_uuid`, `location_uuids`, `nest_uuid`, `egg_uuid` | Deployment target and egg | UUIDs from your panel |
+| Environment variable                                                                | Overrides                 | Value                               |
+| ----------------------------------------------------------------------------------- | ------------------------- | ----------------------------------- |
+| `memory`, `swap`, `disk`                                                            | Memory / Swap / Disk      | MiB                                 |
+| `cpu`                                                                               | CPU Limit                 | Percentage, `100` = one thread      |
+| `memory_overhead`                                                                   | Memory Overhead           | MiB                                 |
+| `io_weight`                                                                         | IO Weight                 | `10`–`1000`                         |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit`             | Feature limits            | Count                               |
+| `custom_feature_limits`                                                             | Custom Feature Limits     | `key:value,key:value`               |
+| `docker_image`                                                                      | Docker Image              | Image reference                     |
+| `startup_command`                                                                   | Startup Command           | Command string                      |
+| `server_name_prefix`                                                                | Server Name Prefix        | Text                                |
+| `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | Checkboxes                | `true`/`false`, `1`/`0`, `yes`/`no` |
+| `pinned_cpus`                                                                       | Pinned CPUs               | `0,1,2`                             |
+| `backup_configuration_uuid`                                                         | Backup Configuration UUID | UUID                                |
+| `node_uuid`, `location_uuids`, `nest_uuid`, `egg_uuid`                              | Deployment target and egg | UUIDs from your panel               |
 
 For example, a config option named **Memory** with the environment variable `memory`, the type **Select**, and choices whose environment variables are `2048`, `4096`, and `8192` lets a customer pick their RAM tier at checkout. The product's own **Memory** field is the default when the option is not on the service.
 
@@ -202,14 +202,14 @@ Links are only created at server creation, so customers who already had a server
 
 Neither creates panel accounts; they only add missing links. A customer is linked only when their panel user has the same email and they have verified their email in Paymenter. The **Calagopus OAuth Links** page lists every customer with a service on the server, shows the progress of a running sweep, and keeps each customer's last result:
 
-| Result | Meaning |
-| --- | --- |
-| Linked | The link was created. |
-| Already linked | The customer was already linked. |
-| No panel account | No panel user has this customer's Paymenter user ID as its `external_id`. |
-| Email mismatch | The matching panel user has a different email, so it wasn't linked automatically. |
+| Result           | Meaning                                                                                                                                                                                    |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Linked           | The link was created.                                                                                                                                                                      |
+| Already linked   | The customer was already linked.                                                                                                                                                           |
+| No panel account | No panel user has this customer's Paymenter user ID as its `external_id`.                                                                                                                  |
+| Email mismatch   | The matching panel user has a different email, so it wasn't linked automatically.                                                                                                          |
 | Email unverified | The customer hasn't verified their Paymenter email. Email verification is off on a default Paymenter install, so most customers land here until they verify or you link them in the panel. |
-| Failed | The panel rejected the request. The reason is shown on the page. |
+| Failed           | The panel rejected the request. The reason is shown on the page.                                                                                                                           |
 
 ![Paymenter Calagopus OAuth Links page listing a customer with an Already linked result and a Sync button](./images/paymenter/oauth-links.webp)
 

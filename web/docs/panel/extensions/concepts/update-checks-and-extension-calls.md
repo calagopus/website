@@ -49,7 +49,7 @@ impl Extension for ExtensionStruct {
 The return shape:
 
 - **`Ok(None)`**: you're up to date, nothing to show.
-- **`Ok(Some(ExtensionUpdateInfo { version, changes }))`**: there's a newer version. `version` is the new `semver::Version`, `changes` is a list of human-readable changelog lines. The changes list *should* cover everything between the current version and the new one, so if there have been multiple releases since the user's version, walk your changelog and collect every entry that's newer than `current_version`.
+- **`Ok(Some(ExtensionUpdateInfo { version, changes }))`**: there's a newer version. `version` is the new `semver::Version`, `changes` is a list of human-readable changelog lines. The changes list _should_ cover everything between the current version and the new one, so if there have been multiple releases since the user's version, walk your changelog and collect every entry that's newer than `current_version`.
 - **`Err(...)`**: something went wrong (a network issue, a malformed response from your update server, and so on). The Panel records the error text against your extension, the admin updates page lists it in its extension errors block, and the check runs again on the next cycle.
 
 An empty `changes` vec is fine: the Panel still shows the update, just without a changelog list.
@@ -114,7 +114,7 @@ The cache key should be scoped to your extension (prefix with your package name)
 
 ## Extension Calls
 
-`process_call` is how your extension exposes a callable surface to *other extensions* running in the same Panel. It's an in-process async call, not HTTP or events: one extension awaits a function on another.
+`process_call` is how your extension exposes a callable surface to _other extensions_ running in the same Panel. It's an in-process async call, not HTTP or events: one extension awaits a function on another.
 
 The sending side looks like this:
 

@@ -66,7 +66,7 @@
 
 .m-collapsible > summary::after,
 .vp-doc .custom-block.details > summary::after {
-  content: "";
+  content: '';
   flex-shrink: 0;
   width: 0.75em;
   height: 0.75em;
@@ -312,7 +312,7 @@
   transition: none;
 }
 
-.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"]::after,
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected='true']::after,
 .vp-doc .vp-code-group .tabs input:checked + label::after {
   background-color: var(--mantine-primary-color-filled);
 }
@@ -324,7 +324,7 @@
     color: var(--mantine-color-text);
   }
 
-  .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected="true"]):hover::after,
+  .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected='true']):hover::after,
   .vp-doc .vp-code-group .tabs input:not(:checked) + label:hover::after {
     background-color: var(--tab-border-color);
   }
@@ -353,7 +353,7 @@
   color: var(--vp-code-tab-text-color);
 }
 
-.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"] {
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected='true'] {
   color: var(--vp-code-tab-active-text-color);
 }
 
@@ -378,9 +378,9 @@
 /* The plugin repaints light-mode code blocks in its tabs with the page background, which is grey here. */
 :root:not(.dark)
   .vp-doc
-  .plugin-tabs:not([data-variant="code"])
+  .plugin-tabs:not([data-variant='code'])
   .plugin-tabs--content.plugin-tabs--content
-  div[class*="language-"] {
+  div[class*='language-'] {
   background-color: var(--vp-code-block-bg);
 }
 
@@ -447,8 +447,8 @@
 
 /* Internal doc links get a chevron, built like the default theme's external link icon so it
    never wraps onto a line of its own. */
-.VPDoc .vp-doc a:not([class], [download], [href*="://"], [target="_blank"], svg a, :has(img, svg))::after {
-  content: var(--vp-direction-mark) "\2060";
+.VPDoc .vp-doc a:not([class], [download], [href*='://'], [target='_blank'], svg a, :has(img, svg))::after {
+  content: var(--vp-direction-mark) '\2060';
   display: inline;
   margin-inline-start: 0.125rem;
   padding-inline-start: 0.6875rem;

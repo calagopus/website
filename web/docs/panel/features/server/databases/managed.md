@@ -57,14 +57,14 @@ Not shown for Redis, which has no named databases. Lists the databases inside th
 
 Right-click a database for:
 
-| Action | What it does |
-| --- | --- |
-| **Explore Data** | Opens the [Data Explorer](./index.md#data-explorer). |
-| **Import** | Uploads a **Dump File**, optionally wiping existing data first. The file picker only offers `.sql` and `.gz` files for PostgreSQL and MariaDB, `.archive` for MongoDB, and `.rdb` for Redis. Gzip-compressed dumps are detected by their content and unpacked, so a plain `.sql` and an exported `.sql.gz` both work (DB Agent 1.2.3 and newer). MongoDB imports also need the **Source Database** name the dump was taken from. |
-| **Export** | Downloads a dump of this database: a gzip-compressed `.sql.gz` for PostgreSQL and MariaDB, a `.archive` for MongoDB. |
-| **Import from Remote** | Dumps another database server over a **Connection String** and imports the result. An optional **Source Database** field "Overrides the database named in the connection string", and a wipe toggle clears the target first. The connection string is only used to take the dump, it is never stored. Runs in the background as a cancellable operation. |
-| **Recreate** | Wipes all data and recreates an empty database with the same name and user access. Type the name to confirm. |
-| **Delete** | Permanently deletes the database and its data. |
+| Action                 | What it does                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Explore Data**       | Opens the [Data Explorer](./index.md#data-explorer).                                                                                                                                                                                                                                                                                                                                                                             |
+| **Import**             | Uploads a **Dump File**, optionally wiping existing data first. The file picker only offers `.sql` and `.gz` files for PostgreSQL and MariaDB, `.archive` for MongoDB, and `.rdb` for Redis. Gzip-compressed dumps are detected by their content and unpacked, so a plain `.sql` and an exported `.sql.gz` both work (DB Agent 1.2.3 and newer). MongoDB imports also need the **Source Database** name the dump was taken from. |
+| **Export**             | Downloads a dump of this database: a gzip-compressed `.sql.gz` for PostgreSQL and MariaDB, a `.archive` for MongoDB.                                                                                                                                                                                                                                                                                                             |
+| **Import from Remote** | Dumps another database server over a **Connection String** and imports the result. An optional **Source Database** field "Overrides the database named in the connection string", and a wipe toggle clears the target first. The connection string is only used to take the dump, it is never stored. Runs in the background as a cancellable operation.                                                                         |
+| **Recreate**           | Wipes all data and recreates an empty database with the same name and user access. Type the name to confirm.                                                                                                                                                                                                                                                                                                                     |
+| **Delete**             | Permanently deletes the database and its data.                                                                                                                                                                                                                                                                                                                                                                                   |
 
 ### Importing from a Remote MariaDB/MySQL Server
 
@@ -106,11 +106,11 @@ Classic databases keep their password behind a separate `databases.read-password
 
 Right-click a user for:
 
-| Action | What it does |
-| --- | --- |
-| **Details** | Opens the **Database Credentials** modal: address, username, password, and a **JDBC Connection String**, plus the same **Rotate Password** button classic databases have. When the user can reach more than one database, a selector switches which one the connection string is built for. |
-| **Permissions** | Opens **Database Permissions** ("Controls which databases **{username}** can access, and what it may do in them."), the same No Access / Read Only / Read & Write list used when creating the user. |
-| **Delete** | Removes the user. |
+| Action          | What it does                                                                                                                                                                                                                                                                                |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Details**     | Opens the **Database Credentials** modal: address, username, password, and a **JDBC Connection String**, plus the same **Rotate Password** button classic databases have. When the user can reach more than one database, a selector switches which one the connection string is built for. |
+| **Permissions** | Opens **Database Permissions** ("Controls which databases **{username}** can access, and what it may do in them."), the same No Access / Read Only / Read & Write list used when creating the user.                                                                                         |
+| **Delete**      | Removes the user.                                                                                                                                                                                                                                                                           |
 
 For MariaDB/MySQL, a client may display the proxy's greeting version rather than your instance's version. Run `SELECT VERSION()` after connecting to check the server itself. See [MariaDB/MySQL Client Compatibility](../../../../db-agent/overview.md#mariadb-mysql-client-compatibility).
 

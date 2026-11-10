@@ -20,10 +20,10 @@ The list shows each role's ID, Name, Server Permissions and Admin Permissions (a
 
 The form is the same for creating and updating:
 
-| Field | Notes |
-| --- | --- |
-| **Name** | Required. |
-| **Description** | Optional. |
+| Field                  | Notes                                                                                                                                                                                                                   |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**               | Required.                                                                                                                                                                                                               |
+| **Description**        | Optional.                                                                                                                                                                                                               |
 | **Require Two Factor** | "Require users with this role to use two factor authentication." Enforced hard: holders without 2FA are blocked from everything except setting up 2FA on their [Account page](../dashboard/account.md) and logging out. |
 
 ![Create Role form with name, description, Require Two Factor toggle, and grouped server permissions](./images/roles/create-form.webp)

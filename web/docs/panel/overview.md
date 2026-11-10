@@ -1,6 +1,6 @@
 ---
 title: Panel Overview
-description: "Overview of the Calagopus Panel, the web UI and backend for game server management: minimum requirements, the React and Rust stack, and real-world resource usage."
+description: 'Overview of the Calagopus Panel, the web UI and backend for game server management: minimum requirements, the React and Rust stack, and real-world resource usage.'
 ---
 
 # Panel

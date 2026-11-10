@@ -2,8 +2,8 @@ import { wantsMarkdown } from '../http.ts';
 import { handleGuild } from './guild.ts';
 import { handleLatest, handleReleases, RELEASES_PATTERN } from './releases.ts';
 import { handleSponsorSections, handleSponsors } from './sponsors.ts';
-import { handleTelemetry } from './telemetry.ts';
 import { handleTelemetryHistory, handleTelemetryStats } from './telemetry-stats.ts';
+import { handleTelemetry } from './telemetry.ts';
 
 export const API_PREFIX = '/api/';
 

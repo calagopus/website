@@ -1,6 +1,6 @@
 ---
 title: Binary Panel Installation
-description: "Install the Calagopus Panel as a standalone binary on Linux or Windows without Docker: prerequisites, database setup, configuration, and running as a service."
+description: 'Install the Calagopus Panel as a standalone binary on Linux or Windows without Docker: prerequisites, database setup, configuration, and running as a service.'
 ---
 
 # Binary Panel Installation
@@ -28,6 +28,7 @@ sudo apt update
 sudo apt install -y postgresql-18 valkey
 sudo systemctl enable --now postgresql valkey-server
 ```
+
 ```bash [RPM]
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server postgresql18-contrib valkey
@@ -115,6 +116,7 @@ Under **System variables**, find `Path`, click **Edit**, then **New**, and add t
 ![Add PATH](./images/path.webp)
 
 Click OK on both dialogs. Open a new terminal and verify:
+
 ```powershell
 calagopus-panel version
 ```
@@ -126,6 +128,7 @@ Open the SQL Shell by searching for `psql` in the Start menu. Press Enter throug
 ![SQL Shell (psql) with default prompts accepted and a postgres=# prompt after login](./images/auth.webp)
 
 Create the user and database, with a password of your own:
+
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -140,11 +143,13 @@ Paste the contents of [`.env.example`](https://github.com/calagopus/panel/blob/m
 ![Notepad showing a .env file with Redis and PostgreSQL URLs, port 8000, and APP_ENCRYPTION_KEY set to CHANGEME](./images/contents.webp)
 
 Open the `.env` and set `DATABASE_URL` to your database connection string:
+
 ```
 DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 ```
 
 From the same folder, set `APP_ENCRYPTION_KEY` to a random value:
+
 ```powershell
 $RandomString = -join ((65..90) + (97..122) + (48..57) | Get-Random -Count 16 | ForEach-Object {[char]$_})
 (Get-Content .env) -replace 'CHANGEME', $RandomString | Set-Content .env
@@ -169,10 +174,12 @@ Download [NSSM](https://github.com/dkxce/NSSM/releases/download/v2.25/NSSM_v2.25
 ![Explorer copying nssm.exe from the win64 folder into the folder with the panel executable](./images/nssm.webp)
 
 Install and start the service:
+
 ```powershell
 nssm install "Calagopus Panel" "C:\bin\calagopus-panel.exe"
 nssm start "Calagopus Panel"
 ```
+
 ![PowerShell running nssm install and nssm start for the Calagopus Panel service, both succeeding](./images/nssmcli.webp)
 
 The panel is now available at `http://<your-server-ip>:8000` and will show the OOBE setup screen.

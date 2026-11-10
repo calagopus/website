@@ -55,9 +55,9 @@ You can leave the file empty, the container populates it on first startup.
 
 Back in the **Apps** tab, search for **Calagopus**, and click the template that matches your needs:
 
-| Template | Use when |
-| --- | --- |
-| **calagopus-aio** | Standard install, Panel + Wings, no extensions |
+| Template                | Use when                                                                                                       |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **calagopus-aio**       | Standard install, Panel + Wings, no extensions                                                                 |
 | **calagopus-heavy-aio** | You plan to install [extensions](../../extensions/index.md), includes the build tooling needed to compile them |
 
 On the configuration page:

@@ -2,8 +2,8 @@
 
 import { createHead } from '@unhead/vue/client';
 import { inBrowser, type Theme, useData } from 'vitepress';
-import DefaultTheme from 'vitepress/theme';
 import { enhanceAppWithTabs } from 'vitepress-plugin-tabs/client';
+import DefaultTheme from 'vitepress/theme';
 import { h } from 'vue';
 import CompareFaq from '../components/CompareFaq.vue';
 import CompareSidebarLinks from '../components/CompareSidebarLinks.vue';
@@ -13,7 +13,6 @@ import ImageViewer from '../components/ImageViewer.vue';
 import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
 import { registerWebMcpTools } from './webmcp.ts';
-
 import './colors.css';
 import './mantine.css';
 import './components.css';
@@ -28,7 +27,7 @@ export default {
       'sidebar-nav-after': () => h(CompareSidebarLinks),
     });
   },
-  enhanceApp({ app, router, siteData }) {
+  enhanceApp({ app }) {
     enhanceAppWithTabs(app);
     app.use(createHead());
     app.component('CompareFaq', CompareFaq);

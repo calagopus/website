@@ -24,24 +24,24 @@ Three projects come up in almost every search for a replacement. **Pelican** is 
 
 ## At a Glance
 
-|                                  | Pterodactyl                 | Pelican                        | AMP                         | Calagopus                          |
-| -------------------------------- | --------------------------- | ------------------------------ | --------------------------- | ---------------------------------- |
-| **Language**                     | PHP (Laravel) + Go (Wings)  | PHP (Laravel/Filament) + Go    | C# (.NET)                   | Rust (panel and Wings)             |
-| **Origin**                       | Original, 2015              | Pterodactyl fork, 2024         | Original, 2014              | Original rewrite, 2025             |
-| **License**                      | MIT                         | AGPL-3.0                       | Proprietary                 | MIT                                |
-| **Price**                        | Free                        | Free                           | Paid, per instance          | Free                               |
-| **Commercial hosting use**       | Allowed                     | Allowed                        | Enterprise Edition required | Allowed                            |
-| **Server isolation**             | Docker per server           | Docker per server              | Native process (Docker optional) | Docker per server             |
-| **Pterodactyl eggs**             | Native                      | Compatible                     | Not used                    | Compatible                         |
-| **Extension system**             | None (Blueprint, unofficial) | First-party PHP plugins       | Yes                         | Native Rust extension API          |
-| **Panel database**               | MySQL/MariaDB               | MySQL, PostgreSQL, SQLite      | Built in                    | PostgreSQL (read replicas supported) |
-| **Game-server database types**   | MySQL/MariaDB               | MySQL/MariaDB                  | MySQL, PostgreSQL, MongoDB  | MySQL, PostgreSQL, MongoDB, Redis  |
-| **Private server network**       | No                          | No                             | Not compared                | Encrypted node-to-node tunnel      |
-| **Passkeys / OAuth**             | No / No                     | Yes / Yes                      | Yes / Yes (OIDC)            | Yes / Yes (any OAuth2/OIDC)        |
-| **Admin roles / audit log**      | No / No                     | Yes / No                       | Yes / not compared          | Yes / Yes                          |
-| **Windows panel host**           | No                          | No                             | Yes                         | Yes                                |
-| **ARM64**                        | Limited                     | Limited                        | Yes                         | Yes                                |
-| **Importer from Pterodactyl**    | n/a                         | Same PHP stack (see Pelican docs) | No                       | Built-in database importer         |
+|                                | Pterodactyl                  | Pelican                           | AMP                              | Calagopus                            |
+| ------------------------------ | ---------------------------- | --------------------------------- | -------------------------------- | ------------------------------------ |
+| **Language**                   | PHP (Laravel) + Go (Wings)   | PHP (Laravel/Filament) + Go       | C# (.NET)                        | Rust (panel and Wings)               |
+| **Origin**                     | Original, 2015               | Pterodactyl fork, 2024            | Original, 2014                   | Original rewrite, 2025               |
+| **License**                    | MIT                          | AGPL-3.0                          | Proprietary                      | MIT                                  |
+| **Price**                      | Free                         | Free                              | Paid, per instance               | Free                                 |
+| **Commercial hosting use**     | Allowed                      | Allowed                           | Enterprise Edition required      | Allowed                              |
+| **Server isolation**           | Docker per server            | Docker per server                 | Native process (Docker optional) | Docker per server                    |
+| **Pterodactyl eggs**           | Native                       | Compatible                        | Not used                         | Compatible                           |
+| **Extension system**           | None (Blueprint, unofficial) | First-party PHP plugins           | Yes                              | Native Rust extension API            |
+| **Panel database**             | MySQL/MariaDB                | MySQL, PostgreSQL, SQLite         | Built in                         | PostgreSQL (read replicas supported) |
+| **Game-server database types** | MySQL/MariaDB                | MySQL/MariaDB                     | MySQL, PostgreSQL, MongoDB       | MySQL, PostgreSQL, MongoDB, Redis    |
+| **Private server network**     | No                           | No                                | Not compared                     | Encrypted node-to-node tunnel        |
+| **Passkeys / OAuth**           | No / No                      | Yes / Yes                         | Yes / Yes (OIDC)                 | Yes / Yes (any OAuth2/OIDC)          |
+| **Admin roles / audit log**    | No / No                      | Yes / No                          | Yes / not compared               | Yes / Yes                            |
+| **Windows panel host**         | No                           | No                                | Yes                              | Yes                                  |
+| **ARM64**                      | Limited                      | Limited                           | Yes                              | Yes                                  |
+| **Importer from Pterodactyl**  | n/a                          | Same PHP stack (see Pelican docs) | No                               | Built-in database importer           |
 
 Feature rows come from the [full feature reference](/docs/about/features) and the three detailed comparisons linked below. "Compatible" for eggs means the format is read without modification.
 
@@ -79,22 +79,22 @@ Read the detailed [Calagopus vs Pterodactyl](/compare/calagopus-vs-pterodactyl) 
 
 ## How to Decide
 
-| Your situation                                                | Best fit                    | Why                                                                                          |
-| ------------------------------------------------------------- | --------------------------- | -------------------------------------------------------------------------------------------- |
-| Homelab, a few servers, Pterodactyl works                     | Stay, or Pelican            | Nothing to gain from a migration; Pelican if you want plugins and OAuth on the same stack     |
-| Community with many subusers and schedules                    | Calagopus                   | Event-driven triggers, role management, file history and collaborative editing               |
-| Hosting business on Linux                                     | Calagopus or Pelican        | Both are free for commercial use; Calagopus if panel load or PostgreSQL/Redis provisioning matters |
-| Windows-native game servers                                   | AMP or Calagopus            | AMP runs games as native Windows processes; Calagopus runs the panel on Windows but servers in Docker |
-| You rely on Blueprint extensions                              | Pelican or Calagopus        | Neither runs Blueprint; both offer a supported extension API to rebuild against              |
-| You need commercial support with an SLA                       | AMP                         | The open-source panels are community supported                                               |
+| Your situation                             | Best fit             | Why                                                                                                   |
+| ------------------------------------------ | -------------------- | ----------------------------------------------------------------------------------------------------- |
+| Homelab, a few servers, Pterodactyl works  | Stay, or Pelican     | Nothing to gain from a migration; Pelican if you want plugins and OAuth on the same stack             |
+| Community with many subusers and schedules | Calagopus            | Event-driven triggers, role management, file history and collaborative editing                        |
+| Hosting business on Linux                  | Calagopus or Pelican | Both are free for commercial use; Calagopus if panel load or PostgreSQL/Redis provisioning matters    |
+| Windows-native game servers                | AMP or Calagopus     | AMP runs games as native Windows processes; Calagopus runs the panel on Windows but servers in Docker |
+| You rely on Blueprint extensions           | Pelican or Calagopus | Neither runs Blueprint; both offer a supported extension API to rebuild against                       |
+| You need commercial support with an SLA    | AMP                  | The open-source panels are community supported                                                        |
 
 ## Migration Effort
 
-| From Pterodactyl to | What moves                                              | What you redo                                    |
-| ------------------- | ------------------------------------------------------- | ------------------------------------------------ |
-| Pelican             | Same PHP stack; check Pelican's docs for the in-place path | Blueprint extensions, some config              |
-| AMP                 | Nothing automatically                                    | Every server, by hand                            |
-| Calagopus           | Users, servers, nodes, eggs via the built-in importer    | API keys, Wings on each node, Blueprint extensions |
+| From Pterodactyl to | What moves                                                 | What you redo                                      |
+| ------------------- | ---------------------------------------------------------- | -------------------------------------------------- |
+| Pelican             | Same PHP stack; check Pelican's docs for the in-place path | Blueprint extensions, some config                  |
+| AMP                 | Nothing automatically                                      | Every server, by hand                              |
+| Calagopus           | Users, servers, nodes, eggs via the built-in importer      | API keys, Wings on each node, Blueprint extensions |
 
 The Calagopus importer is documented step by step for [Pterodactyl](/docs/additional/migrations/pterodactyl) and [Pelican](/docs/additional/migrations/pelican), including Docker and standalone installs, and you can run both panels side by side while you move nodes one at a time.
 

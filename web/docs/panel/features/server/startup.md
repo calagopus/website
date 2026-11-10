@@ -25,13 +25,13 @@ If an administrator assigned an image outside the egg's list, the selector locks
 
 Each variable is a card with its name, a description, and an input. The input type follows the variable's validation rules:
 
-| Variable | Input |
-| --- | --- |
-| Boolean (or a `0`/`1`, `true`/`false` choice) | Toggle switch |
-| Fixed list of allowed values | Dropdown of those values |
-| Integer or numeric | Number input |
-| Secret | Password-style input that hides the value |
-| Anything else | Text input with a **Reset to default** button |
+| Variable                                      | Input                                         |
+| --------------------------------------------- | --------------------------------------------- |
+| Boolean (or a `0`/`1`, `true`/`false` choice) | Toggle switch                                 |
+| Fixed list of allowed values                  | Dropdown of those values                      |
+| Integer or numeric                            | Number input                                  |
+| Secret                                        | Password-style input that hides the value     |
+| Anything else                                 | Text input with a **Reset to default** button |
 
 Required variables are marked with an asterisk (toggle-style boolean variables never are), and the input's placeholder shows the default value. Variables the egg does not let users change carry a **Read-Only** badge.
 

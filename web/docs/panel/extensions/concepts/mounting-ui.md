@@ -49,7 +49,7 @@ Four fields on the class map directly to admin-panel surfaces:
 - **`cardIcon`**: a React node that overrides the icon next to your extension's name in the admin extension list (a puzzle piece by default). Any element works, such as a `<FontAwesomeIcon />`, an `<img>` or an inline SVG. It goes into the row's icon slot as-is, inside the existing styled container. Leave it `null` to keep the default puzzle piece.
 
 ::: info
-**Configuration pages are already wrapped for you.** The route shell that mounts your `cardConfigurationPage` at `/admin/extensions/<id>` provides the admin layout, navigation and title bar; your component only returns its content (a `<div>`, a `<Stack>`, anything). This is the *only* exception. Every other route you add needs to wrap its own content (see [Container Wrappers](#container-wrappers) below).
+**Configuration pages are already wrapped for you.** The route shell that mounts your `cardConfigurationPage` at `/admin/extensions/<id>` provides the admin layout, navigation and title bar; your component only returns its content (a `<div>`, a `<Stack>`, anything). This is the _only_ exception. Every other route you add needs to wrap its own content (see [Container Wrappers](#container-wrappers) below).
 :::
 
 The `initialize()` method runs once when the Panel loads your extension, and receives a `ctx: ExtensionContext` that exposes the registry. Any UI beyond the two class fields gets added here.
@@ -77,11 +77,11 @@ The component you pass takes no props. It's a self-contained card that reads wha
 
 <img src="./images/mounting-ui/settings-card.webp" alt="The server Settings page with an extension's Change Egg card rendered in the grid between the stock Rename Server and Auto-Start cards" width="828">
 
-That is the shape of a plain component list. A few slots are *containers* instead (the file manager's `container` and `editorContainer`, for example) and expose `prependComponent`, `prependContentComponent`, `appendContentComponent` and `addPropsInterceptor`; the [File Manager](./file-manager.md#where-your-components-land) page walks through one.
+That is the shape of a plain component list. A few slots are _containers_ instead (the file manager's `container` and `editorContainer`, for example) and expose `prependComponent`, `prependContentComponent`, `appendContentComponent` and `addPropsInterceptor`; the [File Manager](./file-manager.md#where-your-components-land) page walks through one.
 
 ### Ordering Between Entries
 
-Append and prepend get you to the ends. If you need to land *between* existing entries, the slot points use Tailwind's `order-` utility classes on each entry to control visual position. Stock entries count up by 10 starting at `order-10`, so `order-10`, `order-20`, `order-30` and so on, which leaves gaps for extensions at `order-15` or `order-25`.
+Append and prepend get you to the ends. If you need to land _between_ existing entries, the slot points use Tailwind's `order-` utility classes on each entry to control visual position. Stock entries count up by 10 starting at `order-10`, so `order-10`, `order-20`, `order-30` and so on, which leaves gaps for extensions at `order-15` or `order-25`.
 
 Since the exact numbers depend on what's already there in the version of the Panel you're targeting, **inspect the page in DevTools** to find the existing orders: right-click an entry next to where you want to land, inspect, and look for the `order-<n>` class on the wrapper. Then set your own component's outer element to an order that falls in the right gap:
 
@@ -95,25 +95,23 @@ export default function MyServerSettingsCard() {
 }
 ```
 
-This is a slightly manual process but it's flexible and it avoids the common "ordering API where nobody agrees on priorities" mess. On a slot whose stock entries carry `order-` classes, an entry without one has CSS order `0` and lands *first*, whatever `appendComponent` suggests, so on those pages pick a number. The card in the screenshot above uses `order-25`, which is why it sits after Rename Server and before Auto-Start.
+This is a slightly manual process but it's flexible and it avoids the common "ordering API where nobody agrees on priorities" mess. On a slot whose stock entries carry `order-` classes, an entry without one has CSS order `0` and lands _first_, whatever `appendComponent` suggests, so on those pages pick a number. The card in the screenshot above uses `order-25`, which is why it sits after Rename Server and before Auto-Start.
 
 ### Action Bars, Schedules, and Devices
 
 Selection action bars have their own slots. Register a component before or after the built-in actions:
 
 ```ts
-ctx.extensionRegistry.pages.server.schedules.enterActionBar((bar) =>
-  bar.appendComponent(MyScheduleAction),
-);
+ctx.extensionRegistry.pages.server.schedules.enterActionBar((bar) => bar.appendComponent(MyScheduleAction));
 ```
 
 `MyScheduleAction` is your React component. These slots use `ComponentListRegistry` with no selection props: registration does not hand your component the selected rows, a clear-selection callback, or the page's refresh function. The slot renders with the action bar when the user selects rows.
 
-| Registry under `pages` | Action-bar slot |
-| --- | --- |
+| Registry under `pages`                                                                        | Action-bar slot       |
+| --------------------------------------------------------------------------------------------- | --------------------- |
 | `dashboard.apiKeys`, `dashboard.sshKeys`, `dashboard.oauthLinks`, `dashboard.commandSnippets` | `enterActionBar(...)` |
-| `server.backups`, `server.databases`, `server.databases.instances` | `enterActionBar(...)` |
-| `server.mounts`, `server.devices`, `server.network`, `server.schedules`, `server.subusers` | `enterActionBar(...)` |
+| `server.backups`, `server.databases`, `server.databases.instances`                            | `enterActionBar(...)` |
+| `server.mounts`, `server.devices`, `server.network`, `server.schedules`, `server.subusers`    | `enterActionBar(...)` |
 
 Each supports `prependComponent` and `appendComponent`. `server.schedules` and `server.devices` also expose `enterContainer(...)` for their page wrappers. Schedules do not expose a per-schedule context-menu registry.
 
@@ -146,13 +144,13 @@ public initialize(ctx: ExtensionContext): void {
 
 `enterRoutes(...)` gives you a `RouteRegistry` with one `add*Route` method per route type. The route types correspond 1:1 with the Panel's major navigation scopes:
 
-| Method | Definition type | Where it appears | Has name/icon? | Has permission? |
-| ------ | --------------- | ---------------- | -------------- | --------------- |
-| `addGlobalRoute` | `GlobalRouteDefinition` | Top-level, no layout | No | No |
-| `addAuthenticationRoute` | `GlobalRouteDefinition` | Inside the auth flow | No | No |
-| `addAccountRoute` | `RouteDefinition` | User's account area | Yes | No |
-| `addAdminRoute` | `AdminRouteDefinition` | Admin panel sidebar | Yes | Yes |
-| `addServerRoute` | `ServerRouteDefinition` | Per-server sidebar (like "Console", "Files", etc.) | Yes | Yes |
+| Method                   | Definition type         | Where it appears                                   | Has name/icon? | Has permission? |
+| ------------------------ | ----------------------- | -------------------------------------------------- | -------------- | --------------- |
+| `addGlobalRoute`         | `GlobalRouteDefinition` | Top-level, no layout                               | No             | No              |
+| `addAuthenticationRoute` | `GlobalRouteDefinition` | Inside the auth flow                               | No             | No              |
+| `addAccountRoute`        | `RouteDefinition`       | User's account area                                | Yes            | No              |
+| `addAdminRoute`          | `AdminRouteDefinition`  | Admin panel sidebar                                | Yes            | Yes             |
+| `addServerRoute`         | `ServerRouteDefinition` | Per-server sidebar (like "Console", "Files", etc.) | Yes            | Yes             |
 
 ### Route Definition Fields
 
@@ -177,7 +175,7 @@ The definition types form a small hierarchy, each level adding fields. These are
 
 **Additionally for permissioned routes (`AdminRouteDefinition`, `ServerRouteDefinition`):**
 
-- **`permission?: string | string[] | null`**: the permission node(s) required to see this route. A single string requires that permission; an array passes if the user holds *any* of them, so use it for "this page is reachable through more than one grant", not to require a combination. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend; see [Permissions](./permissions.md). `null` or omitted means no permission is required.
+- **`permission?: string | string[] | null`**: the permission node(s) required to see this route. A single string requires that permission; an array passes if the user holds _any_ of them, so use it for "this page is reachable through more than one grant", not to require a combination. Routes whose permission check fails are hidden from the sidebar and inaccessible via direct URL. This is the frontend counterpart to `has_server_permission` on the backend; see [Permissions](./permissions.md). `null` or omitted means no permission is required.
 
 **Additionally for admin routes (`AdminRouteDefinition`):**
 
@@ -209,13 +207,13 @@ ctx.extensionRegistry.enterRoutes((routes) =>
 
 Unlike configuration pages, **route components don't get a page frame automatically**. Your `element` is rendered inside the layout for its route type, but inside that layout you still need to wrap your content in the right **content container**, which handles the title, header, and other per-page chrome. Importing from `@/elements/containers/`:
 
-| Route type | Wrapper | Notes |
-| ---------- | ------- | ----- |
-| `addGlobalRoute`, `addAuthenticationRoute` | `ContentContainer` | Minimal: sets the browser tab title and renders children directly |
-| `addAccountRoute` | `AccountContentContainer` | Full account page chrome |
-| `addAdminRoute` (top-level) | `AdminContentContainer` | Full admin page chrome |
-| `addAdminRoute` (under a tabbed page with SubNavigation) | `AdminSubContentContainer` | For admin pages that live as a tab underneath a parent page |
-| `addServerRoute` | `ServerContentContainer` | Full server page chrome |
+| Route type                                               | Wrapper                    | Notes                                                             |
+| -------------------------------------------------------- | -------------------------- | ----------------------------------------------------------------- |
+| `addGlobalRoute`, `addAuthenticationRoute`               | `ContentContainer`         | Minimal: sets the browser tab title and renders children directly |
+| `addAccountRoute`                                        | `AccountContentContainer`  | Full account page chrome                                          |
+| `addAdminRoute` (top-level)                              | `AdminContentContainer`    | Full admin page chrome                                            |
+| `addAdminRoute` (under a tabbed page with SubNavigation) | `AdminSubContentContainer` | For admin pages that live as a tab underneath a parent page       |
+| `addServerRoute`                                         | `ServerContentContainer`   | Full server page chrome                                           |
 
 The other containers all take the same core props: `title` (required, the page header), plus optional ones like `subtitle`, `search` / `setSearch` (wires up a search input in the header), `contentRight` (a ReactNode rendered on the right of the header, for buttons), `hideTitleComponent` and `titleOrder`. All but `AdminSubContentContainer` also take `fullscreen`. A typical server page looks like this:
 
@@ -257,7 +255,7 @@ public initialize(ctx: ExtensionContext): void {
 
 Two legitimate uses:
 
-- **Changing default route order.** Move entries around to land in a specific spot. For account and server routes this is the *default* order only: if an admin has set a custom order, their ordering wins and your reordering is discarded (the custom order is applied by path, so an element you replaced stays replaced). Admin routes have no custom order, so there the order your interceptor leaves is what renders.
+- **Changing default route order.** Move entries around to land in a specific spot. For account and server routes this is the _default_ order only: if an admin has set a custom order, their ordering wins and your reordering is discarded (the custom order is applied by path, so an element you replaced stays replaced). Admin routes have no custom order, so there the order your interceptor leaves is what renders.
 
 - **Replacing a stock page entirely.** Find the route you want to replace by its path, swap its `element` for your own component. This lets an extension take over a built-in page to offer a different UI for an existing Panel feature.
 
@@ -271,11 +269,11 @@ The same interceptor exists for every route type: `addGlobalRouteInterceptor`, `
 
 ## Reading Panel State
 
-Components you slot into existing pages (and pages you register as new routes) usually need to know *which* server or user the current page is about. The Panel exposes this through Zustand stores, which your components import directly:
+Components you slot into existing pages (and pages you register as new routes) usually need to know _which_ server or user the current page is about. The Panel exposes this through Zustand stores, which your components import directly:
 
 ```tsx
-import { useServerStore } from '@/stores/server.ts';
 import { useGlobalStore } from '@/stores/global.ts';
+import { useServerStore } from '@/stores/server.ts';
 ```
 
 - **`useServerStore`**: the currently viewed server (on server pages). Exposes `server`, `updateServer`, and related state. It is scoped to the server router through React context, so it only works inside server pages and has no module-level `getState()`.

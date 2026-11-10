@@ -28,14 +28,14 @@ That is all of it. Everything else panels report stays internal to the project (
 A panel with telemetry enabled sends one submission a day, at a randomized time, to
 `https://calagopus.com/api/telemetry`:
 
-| Field | Contents |
-| --- | --- |
-| `uuid` | A random identifier generated once per panel, so repeated submissions can be deduplicated |
-| `panel` | Panel version, container image type, database and cache version, CPU architecture, kernel version |
-| `resources` | Total counts of users, servers and backups, a count of users per interface language, and a count of backups per storage target |
-| `nodes` | Per node: Wings version, container image type, architecture, kernel version, memory totals, and server counts |
-| `database_agent_hosts` | The same shape as `nodes`, for database agent hosts |
-| `extensions` | Installed extensions: package name, display name, description, authors, version, and whether a license is bundled |
+| Field                  | Contents                                                                                                                       |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `uuid`                 | A random identifier generated once per panel, so repeated submissions can be deduplicated                                      |
+| `panel`                | Panel version, container image type, database and cache version, CPU architecture, kernel version                              |
+| `resources`            | Total counts of users, servers and backups, a count of users per interface language, and a count of backups per storage target |
+| `nodes`                | Per node: Wings version, container image type, architecture, kernel version, memory totals, and server counts                  |
+| `database_agent_hosts` | The same shape as `nodes`, for database agent hosts                                                                            |
+| `extensions`           | Installed extensions: package name, display name, description, authors, version, and whether a license is bundled              |
 
 The receiving server adds two more things the panel does not send: the country the
 submission arrived from, derived from the connecting IP, and the time it arrived. The IP

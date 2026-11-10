@@ -13,10 +13,10 @@ This guide covers the operator side: what has to be true on each node, how to en
 
 ## What Runs Where
 
-| Component | Where | What it does |
-| --- | --- | --- |
-| **Panel** | Your panel | Decides which nodes are on the network and which server may reach which. Stores each node's host, port and certificate fingerprint. |
-| **Wings** | Every node | Runs the tunnel daemon, in a container it creates and updates itself, and relays the panel's state to it. |
+| Component                    | Where                                          | What it does                                                                                                                               |
+| ---------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Panel**                    | Your panel                                     | Decides which nodes are on the network and which server may reach which. Stores each node's host, port and certificate fingerprint.        |
+| **Wings**                    | Every node                                     | Runs the tunnel daemon, in a container it creates and updates itself, and relays the panel's state to it.                                  |
 | **Tunnel daemon** (`tundra`) | Every node, container `calagopus-wings-tundra` | Dials the other nodes, binds the private addresses inside server containers and writes their hostnames into each container's `/etc/hosts`. |
 
 You never install or configure the daemon yourself. Wings extracts its binary from a pinned image, writes its configuration, keeps it running and restarts it in place when the binary or the configuration changes, so open connections survive an update.
@@ -63,7 +63,7 @@ The configuration is `config/config.yml` next to your `compose.yml`.
 sudo docker compose restart wings
 ```
 
-Wings is itself in a container here, but the daemon is still started on the host's container engine through the mounted Docker socket, exactly as with a package install. The one thing to keep right is paths: Wings tells the engine to mount the daemon's data directory and the vmounts directory by the paths it sees *inside its own container*, so those paths must be mounted at the same location on both sides. The shipped `compose.yml` mounts `/var/lib/calagopus-wings/` to the same path, which covers both, so nothing extra is needed.
+Wings is itself in a container here, but the daemon is still started on the host's container engine through the mounted Docker socket, exactly as with a package install. The one thing to keep right is paths: Wings tells the engine to mount the daemon's data directory and the vmounts directory by the paths it sees _inside its own container_, so those paths must be mounted at the same location on both sides. The shipped `compose.yml` mounts `/var/lib/calagopus-wings/` to the same path, which covers both, so nothing extra is needed.
 
 If you split `/var/lib/calagopus-wings` into separate volumes, the `tundra` and `vmounts` directories both have to stay covered by one, at an identical absolute path. Mount the **directory** that holds the daemon's control socket, never the socket file itself. A file bind mount pins the inode it was created from, so the daemon would keep talking to a dead socket after Wings restarts and rebinds it.
 
@@ -103,10 +103,10 @@ If the tab shows the node **cannot run the private network**, Wings either still
 
 Fill in the two fields other nodes need to find this one:
 
-| Field | Value |
-| --- | --- |
-| **Host** | The hostname or IP other *nodes* dial this one on. It defaults to the hostname from the node's URL, which is right for a plain install and wrong when that URL goes through a proxy or a tunnel that does not carry UDP. |
-| **Port** | The UDP port from step 2. `7100` unless you picked another. |
+| Field    | Value                                                                                                                                                                                                                    |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Host** | The hostname or IP other _nodes_ dial this one on. It defaults to the hostname from the node's URL, which is right for a plain install and wrong when that URL goes through a proxy or a tunnel that does not carry UDP. |
+| **Port** | The UDP port from step 2. `7100` unless you picked another.                                                                                                                                                              |
 
 Click **Enable**. Within a minute the following happens on the node without any input from you:
 
@@ -125,7 +125,7 @@ From here on, the work moves to the users of the servers. Each server joins from
 On the operator side:
 
 - **Servers that were already running** when you enabled the daemon need a restart before they can resolve `.tunnel` hostnames. Wings mounts a managed `/etc/hosts` into each server container when the daemon is enabled, and that mount is only added when the container is created.
-- **Port planning matters.** A destination's private address is bound *inside the source server's container* on the destination's port. A game server listening on all addresses (`0.0.0.0` or `[::]`, which is how nearly all of them bind) already holds that port for every address in its container, so it cannot reach a peer on a port it listens on itself with the same protocol. Two Minecraft servers both on `25565` cannot be connected to each other on that port. TCP and UDP are separate, so a server listening on UDP `25565` can still reach a peer's TCP `25565`. The panel refuses connections and offered ports that clash with a server's allocations, but it only looks at the port number, and it does not see listeners that have no allocation, such as an RCON or query port. Distinct ports across servers you intend to connect saves the trouble. How many connections and offered ports a server may have is set under [Settings > Server](../../panel/features/admin/settings.md#server).
+- **Port planning matters.** A destination's private address is bound _inside the source server's container_ on the destination's port. A game server listening on all addresses (`0.0.0.0` or `[::]`, which is how nearly all of them bind) already holds that port for every address in its container, so it cannot reach a peer on a port it listens on itself with the same protocol. Two Minecraft servers both on `25565` cannot be connected to each other on that port. TCP and UDP are separate, so a server listening on UDP `25565` can still reach a peer's TCP `25565`. The panel refuses connections and offered ports that clash with a server's allocations, but it only looks at the port number, and it does not see listeners that have no allocation, such as an RCON or query port. Distinct ports across servers you intend to connect saves the trouble. How many connections and offered ports a server may have is set under [Settings > Server](../../panel/features/admin/settings.md#server).
 
   Lifting this limit in the daemon is possible and may be done in the future, but for now plan ports around it.
 
@@ -197,7 +197,7 @@ The server was started before the daemon was enabled, so restart it. Otherwise n
 :::
 
 ::: details The hostname resolves but every connection is refused
-The peer offers no ports, or offers the wrong ones. Ports are opened by the *destination* under **Offered Ports**.
+The peer offers no ports, or offers the wrong ones. Ports are opened by the _destination_ under **Offered Ports**.
 :::
 
 ::: details `EADDRINUSE` in the daemon log, or a game server that fails to bind its port

@@ -13,15 +13,15 @@ Routes are plain [axum](https://docs.rs/axum) routes wrapped in [utoipa_axum](ht
 
 The `ExtensionRouteBuilder` has seven routers, each mounted at a different base path with different authentication and extractor behavior. Use only the ones you need.
 
-| Builder method | Mount point | Auth | Typical use |
-| -------------- | ----------- | ---- | ----------- |
-| `add_global_router` | `/` | None | Public endpoints, webhooks, health checks |
-| `add_auth_api_router` | `/api/auth` | None | Custom auth flows (OAuth callbacks, SSO) |
-| `add_admin_api_router` | `/api/admin` | User session + Permission check | Admin-only endpoints, settings, statistics |
-| `add_client_api_router` | `/api/client` | User session | User-scoped endpoints that aren't tied to a server |
+| Builder method                 | Mount point                    | Auth                               | Typical use                                                       |
+| ------------------------------ | ------------------------------ | ---------------------------------- | ----------------------------------------------------------------- |
+| `add_global_router`            | `/`                            | None                               | Public endpoints, webhooks, health checks                         |
+| `add_auth_api_router`          | `/api/auth`                    | None                               | Custom auth flows (OAuth callbacks, SSO)                          |
+| `add_admin_api_router`         | `/api/admin`                   | User session + Permission check    | Admin-only endpoints, settings, statistics                        |
+| `add_client_api_router`        | `/api/client`                  | User session                       | User-scoped endpoints that aren't tied to a server                |
 | `add_client_server_api_router` | `/api/client/servers/{server}` | User session + server access check | The most common one: anything a user does to one of their servers |
-| `add_remote_api_router` | `/api/remote` | Node token | Endpoints called by Wings nodes |
-| `add_remote_server_api_router` | `/api/remote/servers/{server}` | Node token + server scope | Endpoints called by Wings about a specific server |
+| `add_remote_api_router`        | `/api/remote`                  | Node token                         | Endpoints called by Wings nodes                                   |
+| `add_remote_server_api_router` | `/api/remote/servers/{server}` | Node token + server scope          | Endpoints called by Wings about a specific server                 |
 
 The important thing to understand is that **authentication and permission middleware is already applied by the parent router** for every method except `add_global_router` and `add_auth_api_router`. You don't write auth code; you only check specific permissions inside your handler (see below). The admin middleware only lets through admin accounts and roles holding at least one admin permission (anyone else gets a 401), and the client-server middleware also answers 409 while the server is installing, transferring or suspended, for every path except the server's own GET, its websocket, install cancellation and backup unlock; admins stay exempt from the suspended case. Your server routes inherit that gate.
 
@@ -98,7 +98,7 @@ The rules:
 - Each directory has a `mod.rs` that nests its children.
 - Leaf files contain the actual handlers for that URL segment.
 - **A filename or folder wrapped in underscores like `_item_`** marks a path parameter. It still has to be wired up as `{item}` in the parent's `.nest(...)` call; the underscores only show at a glance which files are parameterized.
-- A `mod.rs` can also have its own handlers, not just nests. For example, `items/mod.rs` responds to `GET /items` *and* nests `/{item}`, with no separate `index.rs`.
+- A `mod.rs` can also have its own handlers, not just nests. For example, `items/mod.rs` responds to `GET /items` _and_ nests `/{item}`, with no separate `index.rs`.
 
 ::: info
 This is the file-based routing idea from Next.js or SvelteKit, wired by hand through `mod.rs` instead of discovered by a bundler. Keeping the underscore convention for params means you can grep your codebase for `_server_` and find every route that touches a server ID.
@@ -185,7 +185,7 @@ pub fn router(state: &State) -> OpenApiRouter<State> {
 
 **The return type.** `ApiResponseResult` is an alias for `Result<ApiResponse, ApiResponse>`. Both sides being `ApiResponse` is intentional. See [Response Types and Errors](#response-types-and-errors) below.
 
-**The `routes!` macro.** At the bottom, `.routes(routes!(get::route))` is the utoipa-axum macro that both registers the handler with axum *and* adds its schema to the OpenAPI spec. You call it once per method. If you have both GET and PUT on the same path you chain `.routes(routes!(get::route)).routes(routes!(put::route))`.
+**The `routes!` macro.** At the bottom, `.routes(routes!(get::route))` is the utoipa-axum macro that both registers the handler with axum _and_ adds its schema to the OpenAPI spec. You call it once per method. If you have both GET and PUT on the same path you chain `.routes(routes!(get::route)).routes(routes!(put::route))`.
 
 ## Path Parameters
 
@@ -322,7 +322,7 @@ mod put {
 
 - **`#[garde(...)]` attributes describe validation rules**; `#[schema(...)]` attributes describe the OpenAPI schema. Keep them in sync: if the schema says `min_length = 1`, enforce it with garde too, or the API docs are wrong.
 - **`shared::Payload<T>` is the recommended extractor for JSON bodies.** It handles content-type negotiation and gives you better error messages than plain `axum::Json<T>`. Both work, but prefer `shared::Payload` unless you have a specific reason not to.
-- **Validation doesn't run automatically.** Call `shared::utils::validate_data(&data)` yourself and return a `400 Bad Request` with `ApiError::new_strings_value(errors)` on failure. Do this *before* the permission check if you want 400s to take precedence over 403s (which is usually what you want, since validation errors are more informative).
+- **Validation doesn't run automatically.** Call `shared::utils::validate_data(&data)` yourself and return a `400 Bad Request` with `ApiError::new_strings_value(errors)` on failure. Do this _before_ the permission check if you want 400s to take precedence over 403s (which is usually what you want, since validation errors are more informative).
 
 ::: warning
 Only use `Option<Option<T>>` fields in a payload on purpose. That pattern is used with `#[serde(with = "::serde_with::rust::double_option")]` to distinguish between "field absent" (leave unchanged) and "field explicitly set to null" (clear it). It suits PATCH-style updates; for "update if provided", use a plain `Option<T>`.
@@ -375,7 +375,7 @@ fn find_item(id: &str) -> Result<Item, anyhow::Error> {
 let item = find_item(&id)?; // bubbles as 404 "item not found"
 ```
 
-A helper three or four calls deep has no access to `ApiResponse`, but every layer in between already returns `anyhow::Error`, so `DisplayError` passes through unchanged. You set the HTTP status where the error *happens*, which is usually where you know most about it, and the handler doesn't need to know.
+A helper three or four calls deep has no access to `ApiResponse`, but every layer in between already returns `anyhow::Error`, so `DisplayError` passes through unchanged. You set the HTTP status where the error _happens_, which is usually where you know most about it, and the handler doesn't need to know.
 
 `DisplayError::new` defaults to `400 Bad Request` if you don't call `.with_status(...)`. The message has to outlive the function that produced it, so pass a string literal or an owned `String`; a slice borrowed from a local won't convert into `anyhow::Error`.
 
@@ -424,20 +424,18 @@ This works on any of the seven builder methods, not just `add_global_router`. If
 
 Your frontend calls these routes with the Panel's preconfigured axios instance. The URL depends on which router you registered under:
 
-| Router | URL shape from frontend |
-| ------ | ----------------------- |
-| `add_admin_api_router` | `/api/admin/<whatever path you nested under>` |
-| `add_client_api_router` | `/api/client/<whatever path you nested under>` |
+| Router                         | URL shape from frontend                                        |
+| ------------------------------ | -------------------------------------------------------------- |
+| `add_admin_api_router`         | `/api/admin/<whatever path you nested under>`                  |
+| `add_client_api_router`        | `/api/client/<whatever path you nested under>`                 |
 | `add_client_server_api_router` | `/api/client/servers/${uuid}/<whatever path you nested under>` |
-| `add_global_router` | `/<whatever path you nested under>` |
+| `add_global_router`            | `/<whatever path you nested under>`                            |
 
 ```ts
 import { axiosInstance } from '@/api/axios';
 
 export default async (uuid: string, item: string) => {
-  const { data } = await axiosInstance.get(
-    `/api/client/servers/${uuid}/my-feature/items/${item}`,
-  );
+  const { data } = await axiosInstance.get(`/api/client/servers/${uuid}/my-feature/items/${item}`);
   return data;
 };
 ```

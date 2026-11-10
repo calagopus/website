@@ -7,9 +7,9 @@ description: Serve the Calagopus DB Agent management API and database proxies ov
 
 DB Agent has two kinds of listeners, and each can use TLS on its own:
 
-| Listener | Default port | Who connects |
-| --- | --- | --- |
-| Management API (`api`) | `8090` | The Panel, authenticating with the host token |
+| Listener                                                     | Default port                    | Who connects                                         |
+| ------------------------------------------------------------ | ------------------------------- | ---------------------------------------------------- |
+| Management API (`api`)                                       | `8090`                          | The Panel, authenticating with the host token        |
 | Database proxies (`postgres`, `mariadb`, `mongodb`, `redis`) | `5432`, `3306`, `27017`, `6379` | Game servers and users connecting to their databases |
 
 Browsers never connect to DB Agent directly; database consoles and logs go through the Panel. TLS on the management API matters when the Panel reaches the agent over a network you don't trust, such as the internet, because the host token and database data travel over that connection. TLS on the database proxies encrypts users' database connections.
@@ -18,9 +18,9 @@ The database proxies still accept plain-text clients with TLS on. The management
 
 ## Pick an Approach
 
-| Approach | When to use it |
-| --- | --- |
-| DB Agent's built-in TLS (this guide) | Works for the management API and the database proxies. Point DB Agent at the certificate files and you're done. |
+| Approach                                                           | When to use it                                                                                                                                                       |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DB Agent's built-in TLS (this guide)                               | Works for the management API and the database proxies. Point DB Agent at the certificate files and you're done.                                                      |
 | [Reverse proxy](./reverse-proxy.md) in front of the management API | A proxy already runs on the machine, or you want one place to manage certificates. It only covers the management API, because the database proxies don't speak HTTP. |
 
 ## Prerequisites
@@ -139,11 +139,11 @@ On OpenRC (Alpine), run `rc-service db-agent restart` instead.
 
 DB Agent re-reads every listener's certificate files from disk once a day, so a renewed certificate is picked up on its own within 24 hours. If you would rather have it switch immediately, restart it from your ACME client after every renewal:
 
-| Client | How |
-| --- | --- |
-| Certbot | A deploy hook, shown below |
-| acme.sh | `--reloadcmd "systemctl restart db-agent"` on `--install-cert` |
-| lego | `--renew-hook "systemctl restart db-agent"` on the `renew` cron job |
+| Client  | How                                                                 |
+| ------- | ------------------------------------------------------------------- |
+| Certbot | A deploy hook, shown below                                          |
+| acme.sh | `--reloadcmd "systemctl restart db-agent"` on `--install-cert`      |
+| lego    | `--renew-hook "systemctl restart db-agent"` on the `renew` cron job |
 
 For certbot, create the hook:
 

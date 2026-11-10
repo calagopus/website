@@ -26,10 +26,10 @@ Nests created this way say in their description which tag they came from. An egg
 
 Pterodactyl comes in two flavors and the import process is slightly different for each. Figure out which one you're running and follow the matching guide:
 
-| You're running | Guide |
-| --- | --- |
-| A normal install on a Linux box, Pterodactyl running directly on the host | [Standalone](./pterodactyl/standalone.md) |
-| Pterodactyl inside Docker containers, with a `docker-compose.yml` somewhere | [Dockerized](./pterodactyl/docker.md) |
+| You're running                                                              | Guide                                     |
+| --------------------------------------------------------------------------- | ----------------------------------------- |
+| A normal install on a Linux box, Pterodactyl running directly on the host   | [Standalone](./pterodactyl/standalone.md) |
+| Pterodactyl inside Docker containers, with a `docker-compose.yml` somewhere | [Dockerized](./pterodactyl/docker.md)     |
 
 If you're not sure which setup you're using, run `sudo docker compose ps` in your Pterodactyl directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
 
@@ -37,17 +37,17 @@ If you're not sure which setup you're using, run `sudo docker compose ps` in you
 
 The importer reads the source, validates an import plan, and reports problems before writing records. Start with `--dry-run --on-invalid=abort` to inspect that plan. Add the options below to the import command in your installation guide; keep its `--environment` path and Docker prefix where applicable.
 
-| Option | Behavior |
-| --- | --- |
-| `--dry-run` | Validates and reports without writing imported records or applying the imported Panel settings. |
-| `--on-invalid=ask` | Default. Prompts for decisions in a terminal; aborts on unresolved problems when no terminal is attached. |
-| `--on-invalid=abort` | Reports validation problems and stops without importing if any are found. |
-| `--on-invalid=fix` | Applies suggested repairs where available and skips rows that cannot be repaired. Review the report and planned counts before writing. |
-| `--on-invalid=skip` | Skips rows with validation problems. Dependent records may also need to be skipped. |
-| `--report /path/report.json` | Writes problems, fixes, and skipped rows to a JSON file on the machine or container running the command. |
-| `--unlimited-as 100` | Converts unlimited source database, allocation, and backup limits to this value. Defaults to `100`. |
-| `--force` | Allows an occupied target and checks imported rows against its existing records. It does not clear the target or overwrite conflicting records automatically. |
-| `--yes` / `-y` | Skips the final confirmation before writing. It does not choose a policy for invalid rows. |
+| Option                       | Behavior                                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                  | Validates and reports without writing imported records or applying the imported Panel settings.                                                               |
+| `--on-invalid=ask`           | Default. Prompts for decisions in a terminal; aborts on unresolved problems when no terminal is attached.                                                     |
+| `--on-invalid=abort`         | Reports validation problems and stops without importing if any are found.                                                                                     |
+| `--on-invalid=fix`           | Applies suggested repairs where available and skips rows that cannot be repaired. Review the report and planned counts before writing.                        |
+| `--on-invalid=skip`          | Skips rows with validation problems. Dependent records may also need to be skipped.                                                                           |
+| `--report /path/report.json` | Writes problems, fixes, and skipped rows to a JSON file on the machine or container running the command.                                                      |
+| `--unlimited-as 100`         | Converts unlimited source database, allocation, and backup limits to this value. Defaults to `100`.                                                           |
+| `--force`                    | Allows an occupied target and checks imported rows against its existing records. It does not clear the target or overwrite conflicting records automatically. |
+| `--yes` / `-y`               | Skips the final confirmation before writing. It does not choose a policy for invalid rows.                                                                    |
 
 For example, after reviewing an initial report, `--dry-run --on-invalid=fix` previews the proposed repairs and skipped rows. Remove `--dry-run` only when that result is acceptable. For unattended imports, choose an explicit invalid-row policy instead of relying on interactive prompts.
 

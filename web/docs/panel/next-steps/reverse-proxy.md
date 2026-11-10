@@ -37,15 +37,15 @@ All of the changes in this tab happen in the `compose.yml` you created during in
 The compose file publishes the Panel on every interface of the host:
 
 ```yaml
-    ports:
-      - 8000:8000
+ports:
+  - 8000:8000
 ```
 
 Once the proxy is in place, nobody but the proxy should be able to reach that port. Restrict it to the loopback interface:
 
 ```yaml
-    ports:
-      - 127.0.0.1:8000:8000
+ports:
+  - 127.0.0.1:8000:8000
 ```
 
 Leave any other port mappings alone. On the All-in-One image, `2022:2022` (SFTP) must stay reachable from outside.
@@ -112,10 +112,10 @@ On Windows, run `nssm restart "Calagopus Panel"` instead.
 
 `APP_TRUSTED_PROXIES` takes a comma-separated list of IPs or CIDR ranges. Only list addresses you control. When a request arrives from a trusted address, the Panel believes three headers on it:
 
-| Header | What the Panel does with it |
-| --- | --- |
-| `X-Forwarded-For` | Reads the visitor's IP, walking the list from the right and skipping every address that is itself trusted |
-| `X-Real-IP` | Same, used as a fallback when `X-Forwarded-For` yields nothing usable |
+| Header             | What the Panel does with it                                                                                                                                        |
+| ------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `X-Forwarded-For`  | Reads the visitor's IP, walking the list from the right and skipping every address that is itself trusted                                                          |
+| `X-Real-IP`        | Same, used as a fallback when `X-Forwarded-For` yields nothing usable                                                                                              |
 | `X-Forwarded-Host` | Picks which of the configured Panel URLs to build links and cookies from, when you serve the Panel on more than one hostname ([Step 3](#step-3-set-the-panel-url)) |
 
 When a request arrives from anywhere else, all three are ignored and the connecting address and the `Host` header are used instead. Trusting too much lets a visitor spoof their IP by sending the header themselves.
@@ -132,19 +132,19 @@ A `200` (or a redirect status) means the Panel answers on the loopback address a
 
 Every configuration below does the same things. If you use a proxy that isn't listed, these are the settings to replicate:
 
-| Setting | Why the Panel needs it |
-| --- | --- |
-| Forward to `http://127.0.0.1:8000` | The address the Panel listens on after Step 1 |
-| Pass `Upgrade` and `Connection` headers through | The server console, live statistics and file manager use WebSockets, which start as an HTTP upgrade |
-| Request body limit of at least `100 MiB` | Server files over 95 MiB are uploaded as chunks of at most 95 MiB, and smaller ones are batched to the same size. Admin asset uploads are not chunked and the Panel puts no limit on them, so here the proxy is the only cap |
-| Pass the visitor's hostname through, as `Host` or `X-Forwarded-Host` | Only matters when the Panel answers on more than one hostname, which is what **Additional URLs** is for. Every example preserves `Host`, which is enough for a single domain |
-| Set `X-Forwarded-For` and `X-Real-IP` | Real client IPs for logs and rate limiting |
-| Stream `/wings-proxy/` instead of buffering it | On the All-in-One image, and on a node in Wings Proxy Mode, browsers reach Wings through the Panel. See [All-in-One and Wings Proxy Mode](#all-in-one-and-wings-proxy-mode) |
-| Stream `/api/remote/backups/` with no body limit | Every node makes its backup requests here. Most are small, but some carry a whole backup as one streamed request, in either direction, and the Panel limits neither |
-| No CORS headers and no `Content-Security-Policy` | The Panel sends its own CSP, `X-Frame-Options` and `X-Content-Type-Options`, and sandboxes the file previews it serves. A copy from the proxy either overrides that or makes the browser reject the response |
-| No `Cache-Control` or `ETag` overrides | The Panel sets its own: `public, max-age=31536000, immutable` for the content-hashed files under `/assets/`, and `no-cache` with an `ETag` for the page and everything else. Forcing a long cache on the page makes browsers keep an old frontend after an update |
-| Compression is optional | The Panel already gzips JSON, JavaScript, SVG and text responses of 1 KiB or more. Proxy compression doesn't hurt, but it adds nothing for those |
-| No `X-Robots-Tag` | Indexing is [**Allow Search Engine Indexing**](../features/admin/settings.md#metadata) under Admin → Settings → Metadata. The header overrides that setting instead of following it, because crawlers apply whichever of the header and the page's `<meta name="robots">` tag is stricter |
+| Setting                                                              | Why the Panel needs it                                                                                                                                                                                                                                                                    |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Forward to `http://127.0.0.1:8000`                                   | The address the Panel listens on after Step 1                                                                                                                                                                                                                                             |
+| Pass `Upgrade` and `Connection` headers through                      | The server console, live statistics and file manager use WebSockets, which start as an HTTP upgrade                                                                                                                                                                                       |
+| Request body limit of at least `100 MiB`                             | Server files over 95 MiB are uploaded as chunks of at most 95 MiB, and smaller ones are batched to the same size. Admin asset uploads are not chunked and the Panel puts no limit on them, so here the proxy is the only cap                                                              |
+| Pass the visitor's hostname through, as `Host` or `X-Forwarded-Host` | Only matters when the Panel answers on more than one hostname, which is what **Additional URLs** is for. Every example preserves `Host`, which is enough for a single domain                                                                                                              |
+| Set `X-Forwarded-For` and `X-Real-IP`                                | Real client IPs for logs and rate limiting                                                                                                                                                                                                                                                |
+| Stream `/wings-proxy/` instead of buffering it                       | On the All-in-One image, and on a node in Wings Proxy Mode, browsers reach Wings through the Panel. See [All-in-One and Wings Proxy Mode](#all-in-one-and-wings-proxy-mode)                                                                                                               |
+| Stream `/api/remote/backups/` with no body limit                     | Every node makes its backup requests here. Most are small, but some carry a whole backup as one streamed request, in either direction, and the Panel limits neither                                                                                                                       |
+| No CORS headers and no `Content-Security-Policy`                     | The Panel sends its own CSP, `X-Frame-Options` and `X-Content-Type-Options`, and sandboxes the file previews it serves. A copy from the proxy either overrides that or makes the browser reject the response                                                                              |
+| No `Cache-Control` or `ETag` overrides                               | The Panel sets its own: `public, max-age=31536000, immutable` for the content-hashed files under `/assets/`, and `no-cache` with an `ETag` for the page and everything else. Forcing a long cache on the page makes browsers keep an old frontend after an update                         |
+| Compression is optional                                              | The Panel already gzips JSON, JavaScript, SVG and text responses of 1 KiB or more. Proxy compression doesn't hurt, but it adds nothing for those                                                                                                                                          |
+| No `X-Robots-Tag`                                                    | Indexing is [**Allow Search Engine Indexing**](../features/admin/settings.md#metadata) under Admin → Settings → Metadata. The header overrides that setting instead of following it, because crawlers apply whichever of the header and the page's `<meta name="robots">` tag is stricter |
 
 Pick the proxy you use:
 
@@ -418,6 +418,7 @@ If your domain is proxied through Cloudflare (orange cloud), the proxy chain bec
   Replace `172.18.0.1` with your own gateway address from Step 1 and put the whole output in `APP_TRUSTED_PROXIES`. Cloudflare updates its ranges rarely; the list is published at [cloudflare.com/ips](https://www.cloudflare.com/ips/).
 
   This works as written with Nginx and Nginx Proxy Manager, which append to the `X-Forwarded-For` header Cloudflare sends. Caddy and Traefik replace that header unless Cloudflare's ranges are also trusted in the proxy itself: Caddy through `trusted_proxies` inside the `reverse_proxy` block, Traefik through `forwardedHeaders.trustedIPs` on the entrypoint.
+
 - **Set the SSL/TLS mode to Full (strict)** in the Cloudflare dashboard, so Cloudflare verifies your certificate instead of connecting over plain HTTP.
 - **Keep non-HTTP hostnames DNS-only (grey cloud).** Cloudflare's proxy only carries HTTP and WebSocket traffic. SFTP (port `2022`), game server ports and the [private network](../../wings/advanced/private-network.md) tunnel do not pass through it. Give Wings nodes a hostname that resolves directly to the machine, or turn the proxy off for those records. The same applies to a standalone node's own hostname; see [Docker and Cloudflare](../../wings/next-steps/reverse-proxy.md#docker-and-cloudflare) on the Wings guide.
 

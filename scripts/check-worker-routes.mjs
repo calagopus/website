@@ -5,8 +5,7 @@ const DIST = '.vitepress/dist';
 const CONFIG = 'wrangler.json';
 
 function matches(patterns, pathname) {
-  const toRegExp = (pattern) =>
-    new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
+  const toRegExp = (pattern) => new RegExp(`^${pattern.replace(/[.+?^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*')}$`);
 
   for (const pattern of patterns) {
     if (pattern.startsWith('!') && toRegExp(pattern.slice(1)).test(pathname)) return false;

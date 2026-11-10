@@ -1,6 +1,6 @@
 ---
 title: Calagopus vs Pelican Panel - Game Server Panel Comparison
-description: "Calagopus and Pelican Panel compared: Rust against PHP/Laravel on performance, features, and extensibility."
+description: 'Calagopus and Pelican Panel compared: Rust against PHP/Laravel on performance, features, and extensibility.'
 head:
   - - meta
     - name: robots
@@ -24,8 +24,8 @@ Calagopus aims at the same goal from a different starting point. Instead of buil
 | **License**               | MIT                  | AGPL-3.0             |
 | **Price**                 | Free                 | Free                 |
 | **Extension System**      | Native (Rust traits) | Native (PHP plugins) |
-| **Windows Panel Support** | <Yes />                   | <No />                   |
-| **ARM64 Support**         | <Yes />                   | Limited              |
+| **Windows Panel Support** | <Yes />              | <No />               |
+| **ARM64 Support**         | <Yes />              | Limited              |
 
 ## Which Should You Choose?
 
@@ -53,60 +53,60 @@ The table below is based on the [full feature reference](/docs/about/features) a
 
 **Platform**
 
-| Feature | Calagopus | Pelican |
-| --- | :---: | :---: |
-| Free & Open Source | <Yes /> | <Yes /> |
-| Native Extension System | <Yes /> | <Yes /> |
-| Support for Multiple Nodes | <Yes /> | <Yes /> |
-| Extra Allocations | <Yes /> | <Yes /> |
-| Mount Management | <Yes /> | <Yes /> |
-| Private Server-to-Server Network | <Yes /> | <No /> |
+| Feature                          | Calagopus | Pelican |
+| -------------------------------- | :-------: | :-----: |
+| Free & Open Source               |  <Yes />  | <Yes /> |
+| Native Extension System          |  <Yes />  | <Yes /> |
+| Support for Multiple Nodes       |  <Yes />  | <Yes /> |
+| Extra Allocations                |  <Yes />  | <Yes /> |
+| Mount Management                 |  <Yes />  | <Yes /> |
+| Private Server-to-Server Network |  <Yes />  | <No />  |
 
 **Servers and Files**
 
-| Feature | Calagopus | Pelican |
-| --- | :---: | :---: |
-| Live Console | <Yes /> | <Yes /> |
-| File Manager | <Yes /> | <Yes /> |
-| File Edit History | <Yes /> | <No /> |
-| Archive Browsing Support | <Yes /> | <No /> |
-| SFTP Support | <Yes /> | <Yes /> |
-| SSH (Shell) Support | <Yes /> | <No /> |
-| Schedule Tasks | <Yes /> | <Yes /> |
-| Advanced Schedule Triggers | <Yes /> | <No /> |
+| Feature                    | Calagopus | Pelican |
+| -------------------------- | :-------: | :-----: |
+| Live Console               |  <Yes />  | <Yes /> |
+| File Manager               |  <Yes />  | <Yes /> |
+| File Edit History          |  <Yes />  | <No />  |
+| Archive Browsing Support   |  <Yes />  | <No />  |
+| SFTP Support               |  <Yes />  | <Yes /> |
+| SSH (Shell) Support        |  <Yes />  | <No />  |
+| Schedule Tasks             |  <Yes />  | <Yes /> |
+| Advanced Schedule Triggers |  <Yes />  | <No />  |
 
 **Databases**
 
-| Feature | Calagopus | Pelican |
-| --- | :---: | :---: |
-| Database Management | <Yes /> | <Yes /> |
-| MySQL Server-Database Support | <Yes /> | <Yes /> |
-| PostgreSQL Server-Database Support | <Yes /> | <No /> |
-| MongoDB Server-Database Support | <Yes /> | <No /> |
-| Redis Server-Database Support | <Yes /> | <No /> |
-| In-Panel Database Explorer | <Yes /> | <No /> |
+| Feature                            | Calagopus | Pelican |
+| ---------------------------------- | :-------: | :-----: |
+| Database Management                |  <Yes />  | <Yes /> |
+| MySQL Server-Database Support      |  <Yes />  | <Yes /> |
+| PostgreSQL Server-Database Support |  <Yes />  | <No />  |
+| MongoDB Server-Database Support    |  <Yes />  | <No />  |
+| Redis Server-Database Support      |  <Yes />  | <No />  |
+| In-Panel Database Explorer         |  <Yes />  | <No />  |
 
 **Backups**
 
-| Feature | Calagopus | Pelican |
-| --- | :---: | :---: |
-| Backups | <Yes /> | <Yes /> |
-| Backup Browsing Support | <Yes /> | <No /> |
-| Advanced Backup Drivers | <Yes /> | <No /> |
-| Dynamic Backup Configuration | <Yes /> | <Yes /> |
+| Feature                      | Calagopus | Pelican |
+| ---------------------------- | :-------: | :-----: |
+| Backups                      |  <Yes />  | <Yes /> |
+| Backup Browsing Support      |  <Yes />  | <No />  |
+| Advanced Backup Drivers      |  <Yes />  | <No />  |
+| Dynamic Backup Configuration |  <Yes />  | <Yes /> |
 
 **Users and Administration**
 
-| Feature | Calagopus | Pelican |
-| --- | :---: | :---: |
-| User Management | <Yes /> | <Yes /> |
-| Subuser Management | <Yes /> | <Yes /> |
-| Role Management | <Yes /> | <Yes /> |
-| WebAuthn Authentication | <Yes /> | <Yes /> |
-| OAuth Support | <Yes /> | <Yes /> |
-| User Impersonation | <Yes /> | <No /> |
-| Admin-Action Audit Log | <Yes /> | <No /> |
-| Asset Management | <Yes /> | <No /> |
+| Feature                 | Calagopus | Pelican |
+| ----------------------- | :-------: | :-----: |
+| User Management         |  <Yes />  | <Yes /> |
+| Subuser Management      |  <Yes />  | <Yes /> |
+| Role Management         |  <Yes />  | <Yes /> |
+| WebAuthn Authentication |  <Yes />  | <Yes /> |
+| OAuth Support           |  <Yes />  | <Yes /> |
+| User Impersonation      |  <Yes />  | <No />  |
+| Admin-Action Audit Log  |  <Yes />  | <No />  |
+| Asset Management        |  <Yes />  | <No />  |
 
 Pelican has closed many of the gaps between Pterodactyl-based panels and Calagopus: WebAuthn, OAuth, role management and dynamic backup configuration are all there now. The remaining differences are in file management, scheduling, database options and admin audit logging.
 

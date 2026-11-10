@@ -66,6 +66,7 @@ sudo /usr/local/bin/wings service-install
 sudo systemctl status wings --no-pager
 sudo journalctl -u wings -n 50 --no-pager
 ```
+
 ```bash [OpenRC (Alpine)]
 wings service-install
 rc-service wings status

@@ -29,7 +29,7 @@ The five fields, in order:
 
 - **`identifier`** is a `&'static str` that uniquely names this template. It's how your code looks the template up later when sending an email, and it's how the admin UI keys overrides in the database. Identifiers are global across the whole Panel (core templates and every extension share one namespace), so prefix yours with your package name (e.g. `dev.0x7d8.test.welcome`, not just `welcome`) to avoid collisions.
 
-- **`available_variables`** is a `Vec<&'static str>` listing the variables your template can use. This is **metadata for the admin UI**, showing operators which variables they can use; it isn't enforced. The actual rendering uses whatever variables the calling code passes. A reference to an undefined variable renders as nothing, but reaching *into* one (`{{ usr.name }}` with a typo in `usr`) fails the render, and the send is logged or propagated as an error. Keep this list accurate so operators editing the template have something to work from.
+- **`available_variables`** is a `Vec<&'static str>` listing the variables your template can use. This is **metadata for the admin UI**, showing operators which variables they can use; it isn't enforced. The actual rendering uses whatever variables the calling code passes. A reference to an undefined variable renders as nothing, but reaching _into_ one (`{{ usr.name }}` with a typo in `usr`) fails the render, and the send is logged or propagated as an error. Keep this list accurate so operators editing the template have something to work from.
 
 - **`default_subject`** is the email subject line, as a MiniJinja template string. It supports the same <code v-pre>{{ variable }}</code> syntax as the body, so <code v-pre>{{ settings.app.name }}</code> works here too. Operators can override the subject through the admin UI independently of the body.
 
@@ -106,8 +106,8 @@ Template content is a [MiniJinja](https://docs.rs/minijinja) template, close to 
 <p>Your account at {{ settings.app.name }} is ready to go.</p>
 
 <p>
-  Click <a href="{{ invite_link }}">here</a> to set a password and log in.
-  This link expires in {{ user.invite_expiry_hours }} hours.
+  Click <a href="{{ invite_link }}">here</a> to set a password and log in. This link expires in {{
+  user.invite_expiry_hours }} hours.
 </p>
 ```
 

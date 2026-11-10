@@ -1,7 +1,7 @@
+import type { LoadScenario } from './types.ts';
 import { panelIds, panels } from './panels/index.ts';
 import { assertCoverage, assertSingleRun, targetVersion } from './shared.ts';
 import { systems } from './systems.ts';
-import type { LoadScenario } from './types.ts';
 
 export type { PanelId } from './panels/index.ts';
 export { panelIds, panels } from './panels/index.ts';

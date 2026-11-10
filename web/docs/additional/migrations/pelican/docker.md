@@ -37,6 +37,7 @@ sudo sed -i '/^APP_URL=/d;/^DB_CONNECTION=/d;/^DB_DATABASE=/d' /tmp/pelican.env
 printf '\nAPP_URL=%s\nDB_CONNECTION=sqlite\nDB_DATABASE=/tmp/database.sqlite\n' "$(sudo docker compose exec -T panel printenv APP_URL)" | sudo tee -a /tmp/pelican.env > /dev/null
 sudo cat /tmp/pelican.env
 ```
+
 ```bash [MySQL / MariaDB / PostgreSQL]
 sudo docker compose cp panel:/pelican-data/.env /tmp/pelican.env
 sudo chmod 600 /tmp/pelican.env

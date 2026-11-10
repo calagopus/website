@@ -17,12 +17,12 @@ Frontend events arrived in Panel 1.2.6. On 1.2.5 and older there is no `enterEve
 
 All frontend events share one shape:
 
-| Member | What it is |
-| ------ | ---------- |
-| `data` | What the Panel is about to do. It's mutable, and whatever it holds after the handlers ran is what the Panel uses |
-| `cancel()` | Stops the Panel from doing it at all |
-| `uncancel()` | Undoes an earlier `cancel()` |
-| `cancelled` | Whether the event is currently cancelled |
+| Member       | What it is                                                                                                       |
+| ------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `data`       | What the Panel is about to do. It's mutable, and whatever it holds after the handlers ran is what the Panel uses |
+| `cancel()`   | Stops the Panel from doing it at all                                                                             |
+| `uncancel()` | Undoes an earlier `cancel()`                                                                                     |
+| `cancelled`  | Whether the event is currently cancelled                                                                         |
 
 Each event type extends this with read-only context about what happened, such as the toast's id or the server the websocket belongs to. That context is information for your handler. Changing it does nothing, so edit `data` instead.
 
@@ -58,23 +58,23 @@ Doing the thing an event intercepts from inside its own handler, such as showing
 
 ## Event Groups
 
-| Group | Entered with | Events |
-| ----- | ------------ | ------ |
-| Toasts | `enterToast` | Show, update and dismiss. See [Intercepting Toasts](./toasts.md#intercepting-toasts) |
-| Server websocket | `enterServerWebsocket` | Frames received from and sent to Wings |
-| API | `enterApi` | Requests and responses made through the Panel's axios instance |
-| Auth | `enterAuth` | Logging out and impersonating |
-| Clipboard | `enterClipboard` | Copying and pasting through the Panel's clipboard helpers |
-| Quick actions | `enterQuickActions` | Selecting a row in the quick actions palette |
+| Group            | Entered with           | Events                                                                               |
+| ---------------- | ---------------------- | ------------------------------------------------------------------------------------ |
+| Toasts           | `enterToast`           | Show, update and dismiss. See [Intercepting Toasts](./toasts.md#intercepting-toasts) |
+| Server websocket | `enterServerWebsocket` | Frames received from and sent to Wings                                               |
+| API              | `enterApi`             | Requests and responses made through the Panel's axios instance                       |
+| Auth             | `enterAuth`            | Logging out and impersonating                                                        |
+| Clipboard        | `enterClipboard`       | Copying and pasting through the Panel's clipboard helpers                            |
+| Quick actions    | `enterQuickActions`    | Selecting a row in the quick actions palette                                         |
 
 ## Server Websocket
 
 On a server's pages, the Panel keeps one websocket open to Wings. It carries console output, stats, status changes, backup and install progress, and the commands the user sends. Two events sit on that socket:
 
-| Handler | Event | `data` | Extra info |
-| ------- | ----- | ------ | ---------- |
-| `addMessageHandler` | `ServerWebsocketMessageEvent` | `{ event, args }` received from Wings | `serverUuid`, `socket` |
-| `addSendHandler` | `ServerWebsocketSendEvent` | `{ event, args }` about to be sent to Wings | `serverUuid`, `socket` |
+| Handler             | Event                         | `data`                                      | Extra info             |
+| ------------------- | ----------------------------- | ------------------------------------------- | ---------------------- |
+| `addMessageHandler` | `ServerWebsocketMessageEvent` | `{ event, args }` received from Wings       | `serverUuid`, `socket` |
+| `addSendHandler`    | `ServerWebsocketSendEvent`    | `{ event, args }` about to be sent to Wings | `serverUuid`, `socket` |
 
 `event` is the frame name (`'console output'`, `'stats'`, `'send command'`, ...), and `args` is the frame's arguments.
 
@@ -107,7 +107,11 @@ class MyExtension extends Extension {
           })
           .addSendHandler((event) => {
             const command = event.data.args[0];
-            if (event.data.event === SocketRequest.SEND_COMMAND && typeof command === 'string' && command.startsWith('op ')) {
+            if (
+              event.data.event === SocketRequest.SEND_COMMAND &&
+              typeof command === 'string' &&
+              command.startsWith('op ')
+            ) {
               event.cancel();
             }
           }),
@@ -140,10 +144,10 @@ Console output and stats frames arrive many times a second. Keep message handler
 
 Every request the Panel makes goes through one axios instance (`axiosInstance` from `@/api/axios.ts`), and so do yours if you use it. Two events sit on it:
 
-| Handler | Event | `data` |
-| ------- | ----- | ------ |
-| `addRequestHandler` | `ApiRequestEvent` | The axios request config (`method`, `url`, `params`, `headers`, `data`, ...) before it's sent |
-| `addResponseHandler` | `ApiResponseEvent` | The axios response (`status`, `headers`, `data`, ...) before the caller receives it |
+| Handler              | Event              | `data`                                                                                        |
+| -------------------- | ------------------ | --------------------------------------------------------------------------------------------- |
+| `addRequestHandler`  | `ApiRequestEvent`  | The axios request config (`method`, `url`, `params`, `headers`, `data`, ...) before it's sent |
+| `addResponseHandler` | `ApiResponseEvent` | The axios response (`status`, `headers`, `data`, ...) before the caller receives it           |
 
 ```ts
 ctx.extensionRegistry.enterEvents((events) =>
@@ -175,10 +179,10 @@ This sees everything: login and two-factor bodies, password changes, freshly cre
 
 ## Auth
 
-| Handler | Event | Extra info | Cancelling it |
-| ------- | ----- | ---------- | ------------- |
-| `addLogoutHandler` | `AuthLogoutEvent` | `kind` (`'logout'` or `'stopImpersonating'`), `user` | The user stays logged in (or keeps impersonating) |
-| `addImpersonateHandler` | `AuthImpersonateEvent` | `user` (who is about to be impersonated), `currentUser` | The admin stays themselves |
+| Handler                 | Event                  | Extra info                                              | Cancelling it                                     |
+| ----------------------- | ---------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| `addLogoutHandler`      | `AuthLogoutEvent`      | `kind` (`'logout'` or `'stopImpersonating'`), `user`    | The user stays logged in (or keeps impersonating) |
+| `addImpersonateHandler` | `AuthImpersonateEvent` | `user` (who is about to be impersonated), `currentUser` | The admin stays themselves                        |
 
 Both have no `data`. They exist to veto the action, or to run cleanup right before it, such as flushing state your extension keeps for the current user:
 
@@ -197,9 +201,9 @@ Logging in isn't an event. By the time the Panel's frontend learns about a login
 
 ## Clipboard
 
-| Handler | Event | `data` |
-| ------- | ----- | ------ |
-| `addCopyHandler` | `ClipboardCopyEvent` | The text about to be written to the clipboard |
+| Handler           | Event                 | `data`                                                     |
+| ----------------- | --------------------- | ---------------------------------------------------------- |
+| `addCopyHandler`  | `ClipboardCopyEvent`  | The text about to be written to the clipboard              |
 | `addPasteHandler` | `ClipboardPasteEvent` | The text read from the clipboard, before the Panel uses it |
 
 These cover every copy and paste button in the Panel, and copying a selection in the server console with Ctrl+C. They don't cover the browser's own copy and paste in text fields, which never goes through the Panel.
@@ -218,12 +222,12 @@ Cancelling makes `copyToClipboard` / `pasteFromClipboard` reject with a `Clipboa
 
 `addSelectHandler` receives a `QuickActionSelectEvent` whenever a row in the [quick actions palette](./quick-actions.md) is picked, whether by click or Enter. That covers actions, navigation rows, servers and rows contributed by modes.
 
-| Member | What it is |
-| ------ | ---------- |
-| `data` | A copy of the selected row (`key`, `category`, `label`, `onSelect`, ...) |
-| `scope` | `'dashboard'`, `'server'` or `'admin'` |
-| `serverId` | The current server, on server pages |
-| `mode` | The id of the active prefix mode, if one is active |
+| Member     | What it is                                                               |
+| ---------- | ------------------------------------------------------------------------ |
+| `data`     | A copy of the selected row (`key`, `category`, `label`, `onSelect`, ...) |
+| `scope`    | `'dashboard'`, `'server'` or `'admin'`                                   |
+| `serverId` | The current server, on server pages                                      |
+| `mode`     | The id of the active prefix mode, if one is active                       |
 
 Only `data.onSelect` is used after your handlers run. The other fields tell you what was picked, and changing them does nothing. Each row closes the palette from its own `onSelect`, so if you replace it, close the palette yourself with `useQuickActionsStore.getState().setOpen(false)` (from `@/stores/quickActions.ts`). Cancelling does nothing at all and leaves the palette open.
 

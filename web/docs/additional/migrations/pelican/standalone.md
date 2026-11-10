@@ -46,6 +46,7 @@ sudo chmod 600 /tmp/pelican.env
 sudo sed -i 's/^DB_HOST=.*/DB_HOST=host.docker.internal/' /tmp/pelican.env
 sudo docker compose cp /tmp/pelican.env web:/.env
 ```
+
 ```bash [SQLite]
 sudo cp /var/www/pelican/.env /tmp/pelican.env
 sudo chmod 600 /tmp/pelican.env
@@ -62,7 +63,7 @@ Validate without importing records:
 sudo docker compose exec web calagopus-panel import pelican --environment /.env --dry-run --on-invalid=abort --report /tmp/pelican-import-report.json
 ```
 
-Read the reported problems before continuing. The report is inside the `web` container; copy it out with `sudo docker compose cp web:/tmp/pelican-import-report.json ./pelican-import-report.json` if needed. Review the [import options](../pelican.md#import-options) to choose fixes or skipped rows. If it fails right away with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, see the **Allowing the Database User to Connect from Docker** dropdown below.
+Read the reported problems before continuing. The report is inside the `web` container; copy it out with `sudo docker compose cp web:/tmp/pelican-import-report.json ./pelican-import-report.json` if needed. Review the [import options](../pelican.md#import-options) to choose fixes or skipped rows. If it fails right away with something like _"Host 'X' is not allowed to connect"_ or _"Access denied for user"_, see the **Allowing the Database User to Connect from Docker** dropdown below.
 
 Then run the import interactively:
 

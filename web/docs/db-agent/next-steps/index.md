@@ -1,6 +1,6 @@
 ---
 title: DB Agent Next Steps
-description: "What to do after installing DB Agent: connect it to the Panel, then secure the management API and database connections with TLS or a reverse proxy."
+description: 'What to do after installing DB Agent: connect it to the Panel, then secure the management API and database connections with TLS or a reverse proxy.'
 ---
 
 # Next Steps

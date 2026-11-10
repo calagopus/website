@@ -38,7 +38,7 @@ services:
     volumes:
       - ./data:/data/db
     ports:
-      - "0.0.0.0:27017:27017"
+      - '0.0.0.0:27017:27017'
 ```
 
 Start the service and open a `mongosh` shell inside the container:
@@ -71,7 +71,7 @@ db.createUser({
 Exit the shell:
 
 ```js
-exit
+exit;
 ```
 
 ### Enable Authentication
@@ -83,11 +83,11 @@ services:
   mongodb:
     image: mongo:8
     restart: unless-stopped
-    command: ["--auth"]
+    command: ['--auth']
     volumes:
       - ./data:/data/db
     ports:
-      - "0.0.0.0:27017:27017"
+      - '0.0.0.0:27017:27017'
 ```
 
 Restart the service and verify that authentication is working:
@@ -129,7 +129,7 @@ db.createUser({
 Exit the shell:
 
 ```js
-exit
+exit;
 ```
 
 ### Enable Authentication and Remote Access
@@ -182,7 +182,7 @@ db.createUser({
 Exit the shell:
 
 ```js
-exit
+exit;
 ```
 
 ### Enable Authentication and Remote Access

@@ -1,6 +1,6 @@
 ---
 title: Wings Next Steps
-description: "What to do after installing Wings: set up IP and port allocations so the panel can place game servers on your node."
+description: 'What to do after installing Wings: set up IP and port allocations so the panel can place game servers on your node.'
 ---
 
 # Next Steps

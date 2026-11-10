@@ -5,7 +5,7 @@ description: Attach your extension data to the Panel models and API objects.
 
 # Extending Models
 
-Routes, settings and UI all live *next to* the Panel's data model. A setting can say "the subdomain limit for server X is 5", but it can't add a column to the `servers` table that everything loading a server sees, and it doesn't show up in API responses or the admin "create server" form.
+Routes, settings and UI all live _next to_ the Panel's data model. A setting can say "the subdomain limit for server X is 5", but it can't add a column to the `servers` table that everything loading a server sees, and it doesn't show up in API responses or the admin "create server" form.
 
 **Model extensions** do that. Your extension registers against a core model (`Server`, `Node`, `User` and so on), declares the extra columns it owns, hooks into the create, update and delete flows, and can extend the API structs sent over the wire. To core code and other extensions, your data looks like part of the model.
 
@@ -23,7 +23,7 @@ This system extends two related but separate things:
 
 **Models** are the database-backed types: `Server`, `Node`, `User`, `NestEgg`, `ServerSchedule`, and so on. The rest of the codebase works with them internally, and they are your extension's interface to the database. When you add a column to the `servers` table and want code that queries `Server` to know about it, you're extending the model.
 
-**API structs** are the over-the-wire types: `ApiServer`, `AdminApiServer`, `ApiServerFeatureLimits` and so on. These are what get serialized into JSON for HTTP responses and deserialized from JSON in request bodies. They're documented in the OpenAPI spec, they're consumed by the frontend, and they're often a *projection* of a model rather than a 1:1 mirror (e.g. `ApiServer` hides internal columns like deletion timestamps, exposes derived fields, and so on). When you want your extra column to appear in the JSON, you're extending the API struct.
+**API structs** are the over-the-wire types: `ApiServer`, `AdminApiServer`, `ApiServerFeatureLimits` and so on. These are what get serialized into JSON for HTTP responses and deserialized from JSON in request bodies. They're documented in the OpenAPI spec, they're consumed by the frontend, and they're often a _projection_ of a model rather than a 1:1 mirror (e.g. `ApiServer` hides internal columns like deletion timestamps, exposes derived fields, and so on). When you want your extra column to appear in the JSON, you're extending the API struct.
 
 The two extension surfaces are independent. You can extend a model without extending its API struct (your column exists in the database but doesn't appear in JSON). You can extend an API struct without extending the model (you compute and expose a derived value). Most extensions do both.
 
@@ -220,7 +220,7 @@ impl Extension for ExtensionStruct {
 
 The `register_create_handler` and `register_update_handler` calls are part of the `CreatableModel` / `UpdatableModel` lifecycle handler systems, which are documented fully on the [Events](./events.md) page along with `register_delete_handler`. The closure parameters are listed there.
 
-What matters here is how they work with model extensions. Both closures receive an `options` argument carrying the incoming payload, the same one the core create and update logic uses. When that payload includes an extended struct (here, `feature_limits`), you call `parse_extended::<YourExtensionStruct>()` to pull out *your* extension's slice of it as a typed Rust struct.
+What matters here is how they work with model extensions. Both closures receive an `options` argument carrying the incoming payload, the same one the core create and update logic uses. When that payload includes an extended struct (here, `feature_limits`), you call `parse_extended::<YourExtensionStruct>()` to pull out _your_ extension's slice of it as a typed Rust struct.
 
 ### Create
 
@@ -433,7 +433,7 @@ pub async fn route(
 :::
 
 - **This works anywhere you have a loaded `Server`**: route handlers, lifecycle handlers, background tasks and CLI commands.
-- **`parse_model_extension` is read-only.** To *change* the value, go through the normal update flow: submit a PATCH to the admin update endpoint with the new `feature_limits.subdomains`, and your update handler from earlier in this page will write it.
+- **`parse_model_extension` is read-only.** To _change_ the value, go through the normal update flow: submit a PATCH to the admin update endpoint with the new `feature_limits.subdomains`, and your update handler from earlier in this page will write it.
 
 #### Writing via Direct Calls to `Server::update`
 
@@ -445,7 +445,7 @@ The `Extendible` trait has a method for this:
 fn insert_extension<E: Serialize>(&mut self, ext_value: E) -> Result<(), anyhow::Error>;
 ```
 
-You cannot write an extendible struct as a plain literal: the `#[extendible]` derive adds a hidden overlay field that holds every extension's slice, so `ApiServerFeatureLimits { backups: 5, .. }` does not compile. Start from the server's current limits instead, which the model hands you fully initialised, change the core fields you care about, then call `insert_extension` with your extended struct *before* passing the whole thing to `update`:
+You cannot write an extendible struct as a plain literal: the `#[extendible]` derive adds a hidden overlay field that holds every extension's slice, so `ApiServerFeatureLimits { backups: 5, .. }` does not compile. Start from the server's current limits instead, which the model hands you fully initialised, change the core fields you care about, then call `insert_extension` with your extended struct _before_ passing the whole thing to `update`:
 
 ```rs
 use shared::{Extendible, models::{UpdatableModel, server::UpdateServerOptions}};
@@ -494,7 +494,9 @@ export default function SubdomainsCard() {
 
   return (
     <div>
-      <p>You can create up to {limit} subdomain{limit === 1 ? '' : 's'} on this server.</p>
+      <p>
+        You can create up to {limit} subdomain{limit === 1 ? '' : 's'} on this server.
+      </p>
     </div>
   );
 }
@@ -507,7 +509,7 @@ Parse `server.featureLimits`, not `server`: extension fields sit on the node you
 
 ## Rewriting Variable Rules
 
-`ServerVariable::register_rules_handler` is a different kind of model hook: it lets you rewrite a variable's validation rules just before they are handed to the client. It is also the only way to make an egg variable's input *dynamic*.
+`ServerVariable::register_rules_handler` is a different kind of model hook: it lets you rewrite a variable's validation rules just before they are handed to the client. It is also the only way to make an egg variable's input _dynamic_.
 
 ```rs
 use shared::models::server_variable::ServerVariable;
@@ -527,7 +529,7 @@ ServerVariable::register_rules_handler(ListenerPriority::Normal, |server, env_va
 
 The rules do more than validate. They also decide **which input widget the panel renders**: `boolean` (or an `in:` of `1,0` / `true,false`) becomes a switch, any other `in:a,b,c` becomes a dropdown built from that list, `numeric` or `integer` becomes a number input, and so on. Rewriting `in:` at request time is therefore how you build something like a version selector whose options come from an upstream API rather than being baked into the egg.
 
-Two caveats. The handler only runs on the client startup endpoints, meaning reading and updating a server's variables. It does not run on admin variable routes, server creation, or the remote endpoint Wings uses, so it shapes what the user sees rather than what ends up stored. You also cannot invent new rule *types*: the rule set is fixed, so your handler composes existing rules rather than adding a validator of its own. Like the other lifecycle registrations, this one returns nothing, so a registered rules handler cannot be unregistered.
+Two caveats. The handler only runs on the client startup endpoints, meaning reading and updating a server's variables. It does not run on admin variable routes, server creation, or the remote endpoint Wings uses, so it shapes what the user sees rather than what ends up stored. You also cannot invent new rule _types_: the rule set is fixed, so your handler composes existing rules rather than adding a validator of its own. Like the other lifecycle registrations, this one returns nothing, so a registered rules handler cannot be unregistered.
 
 ## Where to Go From Here
 

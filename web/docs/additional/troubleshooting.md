@@ -8,18 +8,18 @@ next: false
 
 This page collects the problems that come up again and again in support, with the fix that worked each time. Problems tied to one feature live on that feature's page:
 
-| Feature | Where |
-| --- | --- |
-| Reverse proxies | [Panel](../panel/next-steps/reverse-proxy.md#troubleshooting) or [Wings](../wings/next-steps/reverse-proxy.md#troubleshooting), including "connection lost" banners, `413` errors, and wrong client IPs |
-| Exposing Wings in a homelab | [Troubleshooting](../wings/advanced/exposing-wings-in-a-homelab.md#troubleshooting) |
-| SSL certificates | [Troubleshooting](./ssl-certificates.md#troubleshooting) |
-| SSL on Wings | [Troubleshooting](../wings/next-steps/ssl.md#troubleshooting) |
-| SSL and reverse proxies for DB Agent | [SSL](../db-agent/next-steps/ssl.md#troubleshooting) or [Reverse Proxy](../db-agent/next-steps/reverse-proxy.md#troubleshooting) |
-| Backups | [Troubleshooting](../wings/advanced/backup-configurations.md#troubleshooting) |
-| Extensions | [Troubleshooting](../panel/extensions/installing-extensions.md#troubleshooting) |
-| Migrating from Pterodactyl | [Troubleshooting the Import](./migrations/pterodactyl.md#troubleshooting-the-import) |
-| Migrating from Pelican | [Troubleshooting](./migrations/pelican.md#troubleshooting) |
-| Wings in Docker | [Troubleshooting](../wings/installation/docker.md#troubleshooting) |
+| Feature                              | Where                                                                                                                                                                                                   |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Reverse proxies                      | [Panel](../panel/next-steps/reverse-proxy.md#troubleshooting) or [Wings](../wings/next-steps/reverse-proxy.md#troubleshooting), including "connection lost" banners, `413` errors, and wrong client IPs |
+| Exposing Wings in a homelab          | [Troubleshooting](../wings/advanced/exposing-wings-in-a-homelab.md#troubleshooting)                                                                                                                     |
+| SSL certificates                     | [Troubleshooting](./ssl-certificates.md#troubleshooting)                                                                                                                                                |
+| SSL on Wings                         | [Troubleshooting](../wings/next-steps/ssl.md#troubleshooting)                                                                                                                                           |
+| SSL and reverse proxies for DB Agent | [SSL](../db-agent/next-steps/ssl.md#troubleshooting) or [Reverse Proxy](../db-agent/next-steps/reverse-proxy.md#troubleshooting)                                                                        |
+| Backups                              | [Troubleshooting](../wings/advanced/backup-configurations.md#troubleshooting)                                                                                                                           |
+| Extensions                           | [Troubleshooting](../panel/extensions/installing-extensions.md#troubleshooting)                                                                                                                         |
+| Migrating from Pterodactyl           | [Troubleshooting the Import](./migrations/pterodactyl.md#troubleshooting-the-import)                                                                                                                    |
+| Migrating from Pelican               | [Troubleshooting](./migrations/pelican.md#troubleshooting)                                                                                                                                              |
+| Wings in Docker                      | [Troubleshooting](../wings/installation/docker.md#troubleshooting)                                                                                                                                      |
 
 If you end up asking for help on [Discord](https://discord.gg/uSM8tvTxBV), bring the logs and a diagnostics link. Both are described in the next section.
 
@@ -27,12 +27,12 @@ If you end up asking for help on [Discord](https://discord.gg/uSM8tvTxBV), bring
 
 Most problems are diagnosed in under a minute once the right log is in front of someone. Which log depends on how you installed things:
 
-| Installed as | Command |
-| --- | --- |
-| Panel in Docker | `sudo docker compose logs web` |
+| Installed as                 | Command                                |
+| ---------------------------- | -------------------------------------- |
+| Panel in Docker              | `sudo docker compose logs web`         |
 | Panel as a binary or package | `sudo journalctl -xeu calagopus-panel` |
-| Wings in Docker | `sudo docker compose logs wings` |
-| Wings as a binary or package | `sudo journalctl -u wings --no-pager` |
+| Wings in Docker              | `sudo docker compose logs wings`       |
+| Wings as a binary or package | `sudo journalctl -u wings --no-pager`  |
 
 - Run the Docker commands from the directory that holds `compose.yml`. `no configuration file provided: not found` means you're in the wrong directory.
 - On the AIO image the bundled Wings writes to the panel's log, each line prefixed with `[wings]`.
@@ -43,11 +43,11 @@ Most problems are diagnosed in under a minute once the right log is in front of 
 
 Both binaries can collect their configuration, versions and recent logs into a single diagnostics report and offer to upload it to pastes.dev. You get to review the output before anything is sent.
 
-| Installed as | Command |
-| --- | --- |
-| Panel in Docker | `sudo docker compose exec web calagopus-panel diagnostics` |
-| Panel as a binary | `cd /etc/calagopus && sudo calagopus-panel diagnostics` |
-| Wings | `sudo wings diagnostics` |
+| Installed as      | Command                                                    |
+| ----------------- | ---------------------------------------------------------- |
+| Panel in Docker   | `sudo docker compose exec web calagopus-panel diagnostics` |
+| Panel as a binary | `cd /etc/calagopus && sudo calagopus-panel diagnostics`    |
+| Wings             | `sudo wings diagnostics`                                   |
 
 ::: details A server install failed, but the panel shows no log
 There is nothing to show if the install container never started. The reason is in the Wings log.
@@ -416,7 +416,7 @@ In order of likelihood:
 2. The host firewall doesn't allow the port. Secondary ports, such as a Steam query port, are easy to forget.
 3. The router isn't forwarding it.
 
-On Oracle Cloud, the port must be open in both the security list and the instance's `iptables` rules; see [Opening Up Ports on Oracle Cloud](https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)).
+On Oracle Cloud, the port must be open in both the security list and the instance's `iptables` rules; see [Opening Up Ports on Oracle Cloud](<https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)>).
 
 Wings proxy mode doesn't help here. It only carries panel traffic, never game traffic.
 :::

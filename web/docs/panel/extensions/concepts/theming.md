@@ -5,13 +5,13 @@ description: Restyle the Panel from an extension, beyond slotting components int
 
 # Theming
 
-Most extensions keep the Panel's look: a card slotted onto a page inherits the styling around it (see [Mounting UI](./mounting-ui.md)). Sometimes you need to change the *look* itself: recolor the whole Panel to match your brand, restyle every `Button` at once, or replace a stock component with your own everywhere it shows up.
+Most extensions keep the Panel's look: a card slotted onto a page inherits the styling around it (see [Mounting UI](./mounting-ui.md)). Sometimes you need to change the _look_ itself: recolor the whole Panel to match your brand, restyle every `Button` at once, or replace a stock component with your own everywhere it shows up.
 
 There are three layers for this, from broadest to most surgical:
 
 1. **The Mantine theme.** `initializeMantineTheme()` returns a theme override that is merged across all extensions and applied globally. Use it for colors, fonts, radii and default component props, anything Mantine's theming already covers.
 2. **CSS variables and Tailwind tokens.** Ship your own `app.css` to override the `--mantine-color-*` variables and the Tailwind tokens the Panel defines. This covers what sits below the Mantine theme object, such as chart colors.
-3. **Hookable components.** Every element in the Panel's component library is *hookable*. You can intercept its props, wrap its rendered output, or replace its implementation entirely, and your change applies everywhere that component is used (core pages included).
+3. **Hookable components.** Every element in the Panel's component library is _hookable_. You can intercept its props, wrap its rendered output, or replace its implementation entirely, and your change applies everywhere that component is used (core pages included).
 
 Pick the broadest layer that does the job. Drop down to hookable components only when the theme and CSS layers can't get you there.
 
@@ -20,8 +20,8 @@ Pick the broadest layer that does the job. Drop down to hookable components only
 The Panel runs on [Mantine](https://mantine.dev/), and Mantine's theme object is where colors, the primary color, fonts, spacing, radii, and per-component default props all live. Your extension contributes by overriding `initializeMantineTheme()` on your `Extension` class:
 
 ```ts
-import { Extension, ExtensionContext } from 'shared';
 import type { MantineThemeOverride } from '@mantine/core';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public initializeMantineTheme(ctx: ExtensionContext): MantineThemeOverride {
@@ -48,7 +48,7 @@ export default new MyExtension();
 `initializeMantineTheme()` runs once at load, on every installed extension. The Panel deep-merges each returned override, in installation order, into one object, runs it through Mantine's `createTheme`, and hands it to the top-level `MantineProvider`. So:
 
 - Your override is **merged, not replacing**. You only name what you want to change; everything else keeps Mantine's default. The Panel has no theme object of its own, since its look lives in `app.css`, so the merge starts from an empty object.
-- **Multiple extensions can contribute.** Two extensions setting `primaryColor` is last-writer-wins (later install order wins). Two extensions setting *different* keys both take effect.
+- **Multiple extensions can contribute.** Two extensions setting `primaryColor` is last-writer-wins (later install order wins). Two extensions setting _different_ keys both take effect.
 - It's a deep merge, so nested keys like `components.Button.defaultProps` combines key-by-key instead of clobbering the whole `components` map.
 
 ::: info
@@ -70,8 +70,8 @@ The theme object and a static `app.css` sit at two extremes: the theme is fully 
 Override it on your `Extension` class. Most extensions don't need it, so the default returns `null` (contribute nothing):
 
 ```ts
-import { Extension, ExtensionContext } from 'shared';
 import type { CSSVariablesResolver } from '@mantine/core';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public initializeMantineCssResolver(ctx: ExtensionContext): CSSVariablesResolver | null {
@@ -111,11 +111,11 @@ Unlike `initializeMantineTheme()`, resolvers are **not merged**. The Panel walks
 When that one resolver runs, Mantine calls it with the **already-merged** theme, with every extension's `initializeMantineTheme()` override folded in first, so you derive from the final palette, not your own slice of it.
 
 ::: warning
-Because only the first non-null resolver is used, two extensions that both ship a resolver don't cooperate: the later one silently contributes nothing. If you need variables that another extension's resolver also sets, you can't rely on merging here; prefer scoping CSS variable overrides to your own surfaces, or set theme-derived values through `initializeMantineTheme()` (which *does* deep-merge) where Mantine models them.
+Because only the first non-null resolver is used, two extensions that both ship a resolver don't cooperate: the later one silently contributes nothing. If you need variables that another extension's resolver also sets, you can't rely on merging here; prefer scoping CSS variable overrides to your own surfaces, or set theme-derived values through `initializeMantineTheme()` (which _does_ deep-merge) where Mantine models them.
 :::
 
 ::: info
-The resolver sees the merged theme but runs separately from it. If your variable is purely theme-derived and Mantine already models the target (a palette shade, a spacing value), set it in `initializeMantineTheme()` instead. The resolver is for variables Mantine *doesn't* model but that you still want computed from the theme, like the chart colors above.
+The resolver sees the merged theme but runs separately from it. If your variable is purely theme-derived and Mantine already models the target (a palette shade, a spacing value), set it in `initializeMantineTheme()` instead. The resolver is for variables Mantine _doesn't_ model but that you still want computed from the theme, like the chart colors above.
 :::
 
 ::: info
@@ -131,14 +131,14 @@ Your extension can ship its own `src/app.css`, and the build picks it up automat
 ```css
 /* my-extension/src/app.css */
 
-:root[data-mantine-color-scheme="dark"] {
+:root[data-mantine-color-scheme='dark'] {
   --chart-grid-color: #2a2a2a;
   --chart-tick-color: #e5e7eb;
   --chart-series-1: #c084fc;
   --chart-series-2: #f0abfc;
 }
 
-:root[data-mantine-color-scheme="light"] {
+:root[data-mantine-color-scheme='light'] {
   --chart-grid-color: #e5e7eb;
   --chart-tick-color: #374151;
   --chart-series-1: #9333ea;
@@ -162,7 +162,7 @@ Most elements in the Panel's component library, such as `Button`, `Card`, `Modal
 export default makeComponentHookable(Button);
 ```
 
-`makeComponentHookable` returns a thin wrapper that's a **process-wide singleton**. Importing `@/elements/buttons/Button.tsx` from anywhere, core code or your extension, gives you the *same* wrapper instance. That call at the bottom of a module is also how you tell whether an element is hookable at all: a few layout pieces such as `ContentContainer` and `ExtensionSlot` are exported bare. The wrapper exposes three methods, and because the instance is shared, registering a hook changes every render of that component across the whole Panel:
+`makeComponentHookable` returns a thin wrapper that's a **process-wide singleton**. Importing `@/elements/buttons/Button.tsx` from anywhere, core code or your extension, gives you the _same_ wrapper instance. That call at the bottom of a module is also how you tell whether an element is hookable at all: a few layout pieces such as `ContentContainer` and `ExtensionSlot` are exported bare. The wrapper exposes three methods, and because the instance is shared, registering a hook changes every render of that component across the whole Panel:
 
 ```ts
 Button.addPropsInterceptor((props) => props); // transform incoming props
@@ -211,7 +211,7 @@ Interceptors run in registration order, each getting the previous one's output, 
 
 ### `addRenderInterceptor`: wrap or replace the output
 
-Where a props interceptor changes *what the component renders with*, a render interceptor changes *what comes out*. It gets the already-created React element plus the (post-props-interceptor) props, and returns the element to render. Use it to wrap the component in extra markup, or to swap it out conditionally:
+Where a props interceptor changes _what the component renders with_, a render interceptor changes _what comes out_. It gets the already-created React element plus the (post-props-interceptor) props, and returns the element to render. Use it to wrap the component in extra markup, or to swap it out conditionally:
 
 ```tsx
 import { cloneElement } from 'react';
@@ -272,14 +272,14 @@ Hooking the parent (`Spinner`) doesn't hook the children (`Spinner.Centered`), a
 
 ## Choosing the Right Layer
 
-| You want to... | Use |
-| -------------- | --- |
-| Recolor the Panel, change fonts, radii, spacing | `initializeMantineTheme()` |
-| Set a default prop on a whole class of component | Mantine theme `components.X.defaultProps` |
-| Retheme charts, or override a CSS variable | Your extension's `src/app.css` |
-| Force or rewrite props on one component everywhere | `addPropsInterceptor` |
-| Wrap or conditionally swap a component's output | `addRenderInterceptor` |
-| Replace a component's implementation wholesale | `replaceBaseComponent` (last resort) |
-| Replace a file that has no hookable export or slot | [File overrides](./file-overrides.md) |
+| You want to...                                     | Use                                       |
+| -------------------------------------------------- | ----------------------------------------- |
+| Recolor the Panel, change fonts, radii, spacing    | `initializeMantineTheme()`                |
+| Set a default prop on a whole class of component   | Mantine theme `components.X.defaultProps` |
+| Retheme charts, or override a CSS variable         | Your extension's `src/app.css`            |
+| Force or rewrite props on one component everywhere | `addPropsInterceptor`                     |
+| Wrap or conditionally swap a component's output    | `addRenderInterceptor`                    |
+| Replace a component's implementation wholesale     | `replaceBaseComponent` (last resort)      |
+| Replace a file that has no hookable export or slot | [File overrides](./file-overrides.md)     |
 
 When more than one layer would work, prefer the one higher up the list. It's less coupled to internals.

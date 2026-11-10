@@ -15,11 +15,11 @@ You need:
 - **Minecraft Java Edition** on your computer. Bedrock needs a different egg and different ports.
 - A **domain** whose DNS records you can edit, if you want HTTPS. It's optional:
 
-| | With a domain | Without a domain |
-| --- | --- | --- |
-| Panel address | `https://panel.example.com` | `http://203.0.113.10:8000` |
-| Encryption | Yes, Caddy gets a certificate | No, your password crosses the internet in plain text |
-| Passkeys | Available | Unavailable, use an authenticator app instead |
+|               | With a domain                 | Without a domain                                     |
+| ------------- | ----------------------------- | ---------------------------------------------------- |
+| Panel address | `https://panel.example.com`   | `http://203.0.113.10:8000`                           |
+| Encryption    | Yes, Caddy gets a certificate | No, your password crosses the internet in plain text |
+| Passkeys      | Available                     | Unavailable, use an authenticator app instead        |
 
 Running without a domain is reasonable for one administrator on a hobby server. You can add a domain later with the [reverse proxy guide](../next-steps/reverse-proxy.md). The **With a domain** and **Without a domain** tabs below switch together, so you only pick once.
 
@@ -36,13 +36,13 @@ In your domain's DNS settings, create an `A` record for `panel` pointing at your
 
 In your provider's firewall (sometimes called a security group), allow these inbound:
 
-| Port | Source | Used for |
-| --- | --- | --- |
-| TCP `22` | Your IP where practical | SSH, or your provider's port if it differs |
-| TCP `80` | Internet | Certificate validation and HTTP redirects |
-| TCP `443` | Internet | The Panel |
-| TCP `25565` | Your players | The Minecraft server |
-| TCP `2022` | Your IP, optional | SFTP access to game files |
+| Port        | Source                  | Used for                                   |
+| ----------- | ----------------------- | ------------------------------------------ |
+| TCP `22`    | Your IP where practical | SSH, or your provider's port if it differs |
+| TCP `80`    | Internet                | Certificate validation and HTTP redirects  |
+| TCP `443`   | Internet                | The Panel                                  |
+| TCP `25565` | Your players            | The Minecraft server                       |
+| TCP `2022`  | Your IP, optional       | SFTP access to game files                  |
 
 If `sudo ufw status` says it's active, allow the same ports there:
 
@@ -57,11 +57,11 @@ sudo ufw allow 25565/tcp
 
 In your provider's firewall (sometimes called a security group), allow these inbound:
 
-| Port | Source | Used for |
-| --- | --- | --- |
-| TCP `22` | Your IP where practical | SSH, or your provider's port if it differs |
-| TCP `25565` | Your players | The Minecraft server |
-| TCP `2022` | Your IP, optional | SFTP access to game files |
+| Port        | Source                  | Used for                                   |
+| ----------- | ----------------------- | ------------------------------------------ |
+| TCP `22`    | Your IP where practical | SSH, or your provider's port if it differs |
+| TCP `25565` | Your players            | The Minecraft server                       |
+| TCP `2022`  | Your IP, optional       | SFTP access to game files                  |
 
 Leave port `8000` closed for now. You'll open it in step 4, once your administrator account exists, so nobody else can claim it first.
 
@@ -76,7 +76,7 @@ sudo ufw allow 25565/tcp
 
 Keep everything else closed. Docker's published ports [bypass UFW](https://docs.docker.com/engine/network/packet-filtering-firewalls/#docker-and-ufw), so the provider firewall is what actually protects them.
 
-On **Oracle Cloud**, also open the ports in the instance's own `iptables` rules, which `ufw status` doesn't show. [This guide](https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)) covers both places.
+On **Oracle Cloud**, also open the ports in the instance's own `iptables` rules, which `ufw status` doesn't show. [This guide](<https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)>) covers both places.
 
 ## 2. Install Calagopus
 
@@ -213,11 +213,11 @@ Open **Admin → Nodes**. Calagopus already created **Integrated Node** for you,
 2. In **Overview**, check that **Wings Version** shows a number. If it says **Unavailable**, check `sudo docker compose logs --tail 80 web` before continuing.
 3. In **Allocations**, click **Create** and fill it in, then click **Create 1**:
 
-| Field | Value |
-| --- | --- |
-| IP | `0.0.0.0` |
-| IP Alias | Your VPS's public IPv4 address |
-| Port Ranges | `25565`, then click **Add** |
+| Field       | Value                          |
+| ----------- | ------------------------------ |
+| IP          | `0.0.0.0`                      |
+| IP Alias    | Your VPS's public IPv4 address |
+| Port Ranges | `25565`, then click **Add**    |
 
 ![Allocation form with a bind address, example public IP alias, and Minecraft port](./images/first-vps/allocation.webp)
 
@@ -236,17 +236,17 @@ An **egg** describes how a game server is installed and run, and a **nest** is a
 
 Go to **Admin → Servers → Create** with **Advanced mode** off and fill in the fields below. Leave everything else as it is.
 
-| Field | Value |
-| --- | --- |
-| Server Name | `Example` |
-| Node | `Integrated Node` |
-| Owner | Your administrator account |
-| Nest | `Minecraft` |
-| Egg | `Paper` |
-| CPU Limit | `200`, which is two threads |
-| Memory | `2 GiB` |
-| Disk Space | `10 GiB` |
-| Docker Image | `Java 25` |
+| Field              | Value                                 |
+| ------------------ | ------------------------------------- |
+| Server Name        | `Example`                             |
+| Node               | `Integrated Node`                     |
+| Owner              | Your administrator account            |
+| Nest               | `Minecraft`                           |
+| Egg                | `Paper`                               |
+| CPU Limit          | `200`, which is two threads           |
+| Memory             | `2 GiB`                               |
+| Disk Space         | `10 GiB`                              |
+| Docker Image       | `Java 25`                             |
 | Primary Allocation | Your public IP alias and port `25565` |
 
 ![Server creation form with Paper, Java 25, and the example resource limits](./images/first-vps/create-server.webp)
@@ -292,12 +292,12 @@ sudo docker compose exec -T db pg_dump -U panel -d panel -F c | sudo tee panel.b
 
 Copy these to another machine, and treat them as secrets:
 
-| What | Where |
-| --- | --- |
-| Database export, `compose.yml` (holds your encryption key) and `wings-config.yml` | `/opt/calagopus-panel/` |
-| Panel files | `/opt/calagopus-panel/data/` |
-| Wings configuration and game data | `/etc/calagopus-wings/` and `/var/lib/calagopus-wings/` |
-| Caddy configuration, with a domain | `/etc/caddy/Caddyfile` |
+| What                                                                              | Where                                                   |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Database export, `compose.yml` (holds your encryption key) and `wings-config.yml` | `/opt/calagopus-panel/`                                 |
+| Panel files                                                                       | `/opt/calagopus-panel/data/`                            |
+| Wings configuration and game data                                                 | `/etc/calagopus-wings/` and `/var/lib/calagopus-wings/` |
+| Caddy configuration, with a domain                                                | `/etc/caddy/Caddyfile`                                  |
 
 When restoring, reuse the original encryption key, because a new key can't decrypt stored values. The [database import instructions](../../additional/migrations/calagopus/docker.md#import-the-database-into-docker) cover the PostgreSQL side.
 :::

@@ -127,13 +127,13 @@ export function buildEmailSubject(filesCount: number): string {
 
 Both `useExtTranslations()` and `getExtTranslations()` return an object with these methods:
 
-| Method | Returns | Use when |
-| --- | --- | --- |
-| `t(key, values)` | `string` | Plain text rendering. Most cases. |
+| Method                | Returns     | Use when                                                                                                              |
+| --------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------- |
+| `t(key, values)`      | `string`    | Plain text rendering. Most cases.                                                                                     |
 | `tReact(key, values)` | `ReactNode` | Your interpolation values include React nodes (links, icons, styled spans). Renders the surrounding text as Markdown. |
-| `tItem(key, count)` | `string` | Pluralized count rendering. Returns "5 Files" / "1 File" / etc. |
-| `setLanguage(lang)` | `void` | Programmatically switch the user's active language. |
-| `language` | `string` | The currently active language code (e.g. `'en'`, `'de'`, `'es'`). |
+| `tItem(key, count)`   | `string`    | Pluralized count rendering. Returns "5 Files" / "1 File" / etc.                                                       |
+| `setLanguage(lang)`   | `void`      | Programmatically switch the user's active language.                                                                   |
+| `language`            | `string`    | The currently active language code (e.g. `'en'`, `'de'`, `'es'`).                                                     |
 
 `setLanguage` and `language` are useful when building a custom language picker or reacting to the active language elsewhere in your code. The Panel itself ships a language picker in user account settings, so you usually don't need your own.
 
@@ -160,26 +160,26 @@ return (
   <p>
     {tExtReact('userMessage', {
       user: <strong>{currentUser.name}</strong>,
-      link: <a href="/help">help center</a>,
+      link: <a href='/help'>help center</a>,
     })}
   </p>
 );
 ```
 
-`tReact` does the markdown rendering for the surrounding text *and* splices ReactNode values into the right places at the placeholders. This is the only way to get React content into a translated string while keeping the surrounding text translatable.
+`tReact` does the markdown rendering for the surrounding text _and_ splices ReactNode values into the right places at the placeholders. This is the only way to get React content into a translated string while keeping the surrounding text translatable.
 
 **Pick by what you're putting in, not by what you're rendering:**
 
 - All your interpolation values are strings or numbers? → use `t(...)`, optionally with `.md()` if you need markdown
 - One or more interpolation values is a React node? → use `tReact(...)`
 
-`tReact` *also* renders markdown for the non-ReactNode parts of the translation, so a translation like `'Welcome **{name}**'` works through `tReact` even with a string `name`, but if you don't need React interpolation, `t(...).md()` is simpler.
+`tReact` _also_ renders markdown for the non-ReactNode parts of the translation, so a translation like `'Welcome **{name}**'` works through `tReact` even with a string `name`, but if you don't need React interpolation, `t(...).md()` is simpler.
 
 ### Missing Keys
 
 If you call `t`, `tReact`, or `tItem` with a key that doesn't exist in the English base, the call **throws an Error**. A key that is only missing from the active language falls back to English, so the throw is reserved for keys nobody defined. There is no fallback to the key name, no empty string and no warning; the error goes up to the nearest error boundary.
 
-This is intentional. With TypeScript-inferred key types, missing keys are caught at compile time. The runtime throw covers keys built dynamically (such as `t(\`status.${state}\`, {})` where `state` comes from an API): it is better to find out immediately than to show users a literal "status.frobnicated".
+This is intentional. With TypeScript-inferred key types, missing keys are caught at compile time. The runtime throw covers keys built dynamically (such as `t(\`status.${state}\`, {})`where`state` comes from an API): it is better to find out immediately than to show users a literal "status.frobnicated".
 
 If you have genuinely-dynamic keys, narrow the input set with a TypeScript union or a runtime check before calling the translation function:
 
@@ -199,13 +199,13 @@ By default, the Panel only uses the English translations you defined in `transla
 
 ```yml
 backend-extensions/
-  (package_name_with_underscores)/
-    frontend/
-      public/translations/
-        es/
-          dev.yourname.extension.json
-        de/
-          dev.yourname.extension.json
+(package_name_with_underscores)/
+frontend/
+public/translations/
+es/
+dev.yourname.extension.json
+de/
+dev.yourname.extension.json
 ```
 
 The filename is your package identifier: if your `Metadata.toml` says `package_name = "dev.0x7d8.test"`, the file is `dev.0x7d8.test.json`. The directory says the language code (`es` for Spanish, `de` for German, etc.). The build discovers the files through the `frontend/extensions/<identifier>` compatibility symlink described in [Extension File Structure](../file-structure.md#frontend), so the older path works too.
@@ -250,7 +250,7 @@ For non-English item translations, you fill in **each plural category your langu
 ::: warning Never ship incomplete translations
 If you ship a Spanish translation file, every translation key your extension uses needs a Spanish value. Users with their language set to Spanish will see your Spanish file, and any missing key falls back to the **English** translation, which gives a mixed-language UI. Shipping no Spanish at all is better than shipping 80% of it: users then get English for the whole extension, which is at least consistent.
 
-The Panel's `pnpm diff:translations` script compares the Panel's *own* language files, which carry every namespace at once, so pointing it at a per-extension file reports every one of your keys as extra. To find gaps in your file, diff it against the generated English file yourself; the two share a structure, so any JSON diff tool shows the missing keys.
+The Panel's `pnpm diff:translations` script compares the Panel's _own_ language files, which carry every namespace at once, so pointing it at a per-extension file reports every one of your keys as extra. To find gaps in your file, diff it against the generated English file yourself; the two share a structure, so any JSON diff tool shows the missing keys.
 :::
 
 ## Using Base Panel Translations

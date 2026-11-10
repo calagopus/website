@@ -19,7 +19,6 @@ Click **Create** in the top right. Give it a name, optionally an expiry date, an
 
 Expiry uses a calendar picker with an optional time:
 
-
 Below that are the permission categories: **User**, **Server**, and **Admin** (the last only shown if your own account has admin permissions). Check individual permissions, or toggle an entire category at once.
 
 Everything you've selected shows up on the right under **Selected Permissions**, where **Select All** and **Deselect All** toggle everything and a clipboard menu offers **Copy Permissions** and **Paste Permissions**. See the [Permissions Reference](./permissions.md) for what every permission does.
@@ -31,7 +30,6 @@ When the selection is ready, scroll down and hit **Save**, or **Close** to back 
 Right-click a key (or open the menu at the end of its row) for **Edit**, **Disable** (or **Enable**), **Duplicate**, **Recreate**, or **Remove**.
 
 **Disable** switches the key off without deleting it: it keeps its name, permissions and value, but every request made with it is refused with "api key is disabled" until you enable it again. Use it when you suspect a key is being misused but aren't ready to invalidate it; unlike **Remove**, it can be undone. A key cannot disable itself, so you can't lock yourself out through the API with the very key you're calling with.
-
 
 **Edit** opens the same form as creating one, letting you change the name, expiry, allowed IPs, and permissions.
 

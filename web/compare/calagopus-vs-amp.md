@@ -1,6 +1,6 @@
 ---
 title: Calagopus vs AMP - Game Server Panel Comparison
-description: "Calagopus and CubeCoders AMP compared: a free, open-source, Rust-based panel against a commercial, closed-source C#/.NET platform."
+description: 'Calagopus and CubeCoders AMP compared: a free, open-source, Rust-based panel against a commercial, closed-source C#/.NET platform.'
 head:
   - - meta
     - name: robots
@@ -16,16 +16,16 @@ Calagopus is the opposite on licensing: it's MIT-licensed, free at any scale, an
 
 ## Quick Summary
 
-|                           | Calagopus            | AMP                                      |
-| ------------------------- | -------------------- | ---------------------------------------- |
-| **Language**              | Rust                 | C# (.NET)                                |
-| **First release**         | June 2025            | 2014                                     |
-| **License**               | MIT (open source)    | Proprietary (closed source)              |
-| **Price**                 | Free                 | Paid, per-instance                       |
-| **Commercial Use**        | Allowed              | Requires Enterprise Edition              |
-| **Extension System**      | <Yes />                   | <Yes />                                       |
-| **Windows Panel Support** | <Yes />                   | <Yes />                                       |
-| **ARM64 Support**         | <Yes />                   | <Yes />                                       |
+|                           | Calagopus         | AMP                         |
+| ------------------------- | ----------------- | --------------------------- |
+| **Language**              | Rust              | C# (.NET)                   |
+| **First release**         | June 2025         | 2014                        |
+| **License**               | MIT (open source) | Proprietary (closed source) |
+| **Price**                 | Free              | Paid, per-instance          |
+| **Commercial Use**        | Allowed           | Requires Enterprise Edition |
+| **Extension System**      | <Yes />           | <Yes />                     |
+| **Windows Panel Support** | <Yes />           | <Yes />                     |
+| **ARM64 Support**         | <Yes />           | <Yes />                     |
 
 ## Which Should You Choose?
 
@@ -51,45 +51,45 @@ The table below is based on the [full feature reference](/docs/about/features) a
 
 **Platform**
 
-| Feature | Calagopus | AMP |
-| --- | :---: | :---: |
-| Free & Open Source | <Yes /> | <No /> |
-| Support for Multiple Nodes | <Yes /> | <Yes /> |
-| Extra Allocations | <Yes /> | <Yes /> |
+| Feature                    | Calagopus |   AMP   |
+| -------------------------- | :-------: | :-----: |
+| Free & Open Source         |  <Yes />  | <No />  |
+| Support for Multiple Nodes |  <Yes />  | <Yes /> |
+| Extra Allocations          |  <Yes />  | <Yes /> |
 
 **Servers and Files**
 
-| Feature | Calagopus | AMP |
-| --- | :---: | :---: |
-| Live Console | <Yes /> | <Yes /> |
-| File Manager | <Yes /> | <Yes /> |
-| Collaborative File Editing | <Yes /> | <No /> |
-| SFTP Support | <Yes /> | <Yes /> |
-| Schedule Tasks | <Yes /> | <Yes /> |
-| Advanced Schedule Triggers | <Yes /> | <Yes /> |
+| Feature                    | Calagopus |   AMP   |
+| -------------------------- | :-------: | :-----: |
+| Live Console               |  <Yes />  | <Yes /> |
+| File Manager               |  <Yes />  | <Yes /> |
+| Collaborative File Editing |  <Yes />  | <No />  |
+| SFTP Support               |  <Yes />  | <Yes /> |
+| Schedule Tasks             |  <Yes />  | <Yes /> |
+| Advanced Schedule Triggers |  <Yes />  | <Yes /> |
 
 **Databases**
 
-| Feature | Calagopus | AMP |
-| --- | :---: | :---: |
-| Database Management | <Yes /> | <Yes /> |
-| Redis Server-Database Support | <Yes /> | <No /> |
+| Feature                       | Calagopus |   AMP   |
+| ----------------------------- | :-------: | :-----: |
+| Database Management           |  <Yes />  | <Yes /> |
+| Redis Server-Database Support |  <Yes />  | <No />  |
 
 **Backups**
 
-| Feature | Calagopus | AMP |
-| --- | :---: | :---: |
-| Backups | <Yes /> | <Yes /> |
-| Backup Browsing Support | <Yes /> | <Yes /> |
+| Feature                 | Calagopus |   AMP   |
+| ----------------------- | :-------: | :-----: |
+| Backups                 |  <Yes />  | <Yes /> |
+| Backup Browsing Support |  <Yes />  | <Yes /> |
 
 **Users and Administration**
 
-| Feature | Calagopus | AMP |
-| --- | :---: | :---: |
-| User Management | <Yes /> | <Yes /> |
-| Subuser Management | <Yes /> | <Yes /> |
-| WebAuthn Authentication | <Yes /> | <Yes /> |
-| OAuth Support | <Yes /> | <Yes /> |
+| Feature                 | Calagopus |   AMP   |
+| ----------------------- | :-------: | :-----: |
+| User Management         |  <Yes />  | <Yes /> |
+| Subuser Management      |  <Yes />  | <Yes /> |
+| WebAuthn Authentication |  <Yes />  | <Yes /> |
+| OAuth Support           |  <Yes />  | <Yes /> |
 
 ## Where Calagopus Goes Further
 

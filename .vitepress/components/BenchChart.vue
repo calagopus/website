@@ -59,27 +59,27 @@ const themedOption = computed(() => {
     backgroundColor: 'transparent',
     textStyle: { color: text, fontFamily: 'inherit' },
     tooltip: {
-      ...(base.tooltip || {}),
+      ...base.tooltip,
       backgroundColor: bg,
       borderColor: grid,
       textStyle: { color: text, fontFamily: 'inherit' },
     },
     legend: base.legend ? { ...base.legend, textStyle: { color: text, fontFamily: 'inherit' } } : undefined,
-    xAxis: applyAxisTheme(base.xAxis, text, muted, grid),
-    yAxis: applyAxisTheme(base.yAxis, text, muted, grid),
+    xAxis: applyAxisTheme(base.xAxis, muted, grid),
+    yAxis: applyAxisTheme(base.yAxis, muted, grid),
     series: (base.series ?? []).map((s) => (s.label ? { ...s, label: { color: muted, ...s.label } } : s)),
   };
 });
 
-function applyAxisTheme(axis, text, muted, grid) {
+function applyAxisTheme(axis, muted, grid) {
   if (!axis) return axis;
-  if (Array.isArray(axis)) return axis.map((a) => applyAxisTheme(a, text, muted, grid));
+  if (Array.isArray(axis)) return axis.map((a) => applyAxisTheme(a, muted, grid));
   return {
     ...axis,
-    axisLabel: { color: muted, fontFamily: 'inherit', hideOverlap: true, ...(axis.axisLabel || {}) },
-    nameTextStyle: { color: muted, fontFamily: 'inherit', ...(axis.nameTextStyle || {}) },
-    axisLine: { lineStyle: { color: grid }, ...(axis.axisLine || {}) },
-    splitLine: { lineStyle: { color: grid, type: 'dashed' }, ...(axis.splitLine || {}) },
+    axisLabel: { color: muted, fontFamily: 'inherit', hideOverlap: true, ...axis.axisLabel },
+    nameTextStyle: { color: muted, fontFamily: 'inherit', ...axis.nameTextStyle },
+    axisLine: { lineStyle: { color: grid }, ...axis.axisLine },
+    splitLine: { lineStyle: { color: grid, type: 'dashed' }, ...axis.splitLine },
   };
 }
 

@@ -1,7 +1,7 @@
+import type { ScenarioResult, TaskOperation } from './types.ts';
 import { daemonIds, daemons } from './daemons/index.ts';
 import { assertCoverage, assertSingleRun, assertSingleStorage, targetVersion } from './shared.ts';
 import { systems } from './systems.ts';
-import type { ScenarioResult, TaskOperation } from './types.ts';
 
 export type { DaemonId } from './daemons/index.ts';
 export { daemonIds, daemons } from './daemons/index.ts';

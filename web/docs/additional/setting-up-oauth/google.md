@@ -4,6 +4,7 @@ description: Set up Google OAuth login for your Calagopus Panel, from creating t
 ---
 
 # Google OAuth Setup
+
 This guide walks through setting up Google OAuth for your Calagopus Panel.
 
 ::: warning
@@ -13,16 +14,20 @@ Google's login page leaks your email address in the `Developer info` popup, open
 ![Developer info](./files/images/google/warning2.webp)
 
 If you don't want your personal email to be shared, you have 2 options:
-* **1. Create a separate Google account with a work email.** The work email is shown instead, keeping bot spam away from your personal address.
-* **2. Don't use Google OAuth.** Use another provider from [this list](./index.md).
+
+- **1. Create a separate Google account with a work email.** The work email is shown instead, keeping bot spam away from your personal address.
+- **2. Don't use Google OAuth.** Use another provider from [this list](./index.md).
 :::
 
 ### Prerequisites
+
 To set up Google OAuth, you need:
-* [A Google account](https://accounts.google.com)
-* A running Calagopus Panel
+
+- [A Google account](https://accounts.google.com)
+- A running Calagopus Panel
 
 ### Downloading required files
+
 Download the `google.yml` template to import the Google provider configuration without entering values manually.
 
 Right-click the link below and save the file locally.
@@ -30,6 +35,7 @@ Right-click the link below and save the file locally.
 <a href="/oauth2/google.yml" download>Download <code>google.yml</code> ➚</a>
 
 ### Import the template config
+
 Once `google.yml` has been downloaded, head to your Calagopus Panel's admin page, and click on `OAuth Providers` on the side.
 ![OAuth Providers tab](./files/images/oauth-providers.webp)
 
@@ -44,6 +50,7 @@ Copy the Redirect URL provided by the panel and proceed to the next step.
 ### Setting up Google OAuth
 
 #### Select or create a Google Cloud project
+
 Go to [Google Cloud console](https://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
 ![Google Cloud landing page with the Console link highlighted in the top navigation](./files/images/google/image-1.webp)
 
@@ -62,6 +69,7 @@ Once the project has been created, wait for all the other steps to complete and 
 :::
 
 #### Register the OAuth application
+
 In the search bar, search for `APIs & Services`.
 ![Google Cloud search box with APIs & Services highlighted in the top results](./files/images/google/image-6.webp)
 
@@ -94,6 +102,7 @@ Next, go to the `Audience` tab, and publish the application.
 ![Google Auth Platform Audience page with Publish app and the Push to production Confirm dialog highlighted](./files/images/google/image-14.webp)
 
 #### Issue an OAuth client and key for that application
+
 Go back to the `APIs & Services` page. To do so, search for `APIs & Services` in the search bar.
 ![Google Cloud search box with APIs & Services highlighted in the top results](./files/images/google/image-6.webp)
 
@@ -107,6 +116,7 @@ Copy both your Client ID and your Client secret, and then you can close Google C
 ![Google Cloud OAuth client created dialog showing the Client ID and Client secret](./files/images/google/image-17.webp)
 
 ### Configuring the OAuth Provider
+
 Back in the panel, enter the Client ID and Client Secret you copied from Google Cloud.
 
 On the switches below, choose if you want to enable Google OAuth, only allow login, allow the user to view the connection and allow the user to link and unlink their accounts.
@@ -119,6 +129,7 @@ It should normally look like this:
 Finally, save your changes.
 
 ### Test the configuration
+
 To test your configuration, head into your account settings, click on `OAuth Links` at the sidebar, and connect to your Google account.
 ![Testing Google](./files/images/google/test.webp)
 

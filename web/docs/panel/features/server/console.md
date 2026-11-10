@@ -25,11 +25,11 @@ Output streams in live over a websocket. The dot in the top left shows the conne
 
 The icons in the top right of the terminal:
 
-| Icon | Does |
-| --- | --- |
-| **Search** | Search the scrollback (also `Ctrl`+`F`). Enter jumps to the next match, Shift+Enter to the previous. |
-| **SSH Details** | Connection details for SSH access, see below |
-| **Command History** | Previously sent commands, see below |
+| Icon                                            | Does                                                                                                                                                                                                                                                                                                                                                                         |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Search**                                      | Search the scrollback (also `Ctrl`+`F`). Enter jumps to the next match, Shift+Enter to the previous.                                                                                                                                                                                                                                                                         |
+| **SSH Details**                                 | Connection details for SSH access, see below                                                                                                                                                                                                                                                                                                                                 |
+| **Command History**                             | Previously sent commands, see below                                                                                                                                                                                                                                                                                                                                          |
 | **Decrease Font Size** / **Increase Font Size** | Adjust the terminal font between 10px and 24px; the choice is saved to your account and follows you to other devices, unless you set it to this device only. With the terminal focused, `Ctrl+=`, `Ctrl+-` and `Ctrl+0` (reset to 14px) do the same, as does `Ctrl` + mouse wheel over it; see [Font Size Shortcuts](../dashboard/keyboard-shortcuts.md#font-size-shortcuts) |
 
 Select text to copy it: `Ctrl`+`C` copies the selection, and so does the browser's own **Copy** (from the right-click menu, for example). The selection is cleared once copied. On touch screens a long press starts selecting and shows a **Copy Selection** button. If you've scrolled up, an arrow button jumps back to the bottom.
@@ -72,15 +72,15 @@ Every field except the password copies on click, and **Launch** opens the connec
 
 The SSH shell is the server console: it shows the console output, and each line you type is sent to the server as a command (requires `control.console`). Lines starting with `.wings` are handled by Wings instead. The node can rename the prefix with [`system.sftp.shell.cli.name`](../../../wings/configuration.md#system-sftp-shell-cli-name) or turn the shell off with [`system.sftp.shell.enabled`](../../../wings/configuration.md#system-sftp-shell-enabled), and opening it needs the `websocket.connect` permission.
 
-| Command | What it does |
-| --- | --- |
-| `.wings help` | Lists the commands. |
-| `.wings version` | Shows the Wings version of the node. |
-| `.wings status [--json]` | Shows the server state and whether a restart is pending. |
+| Command                                            | What it does                                                                                                                                                                 |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.wings help`                                      | Lists the commands.                                                                                                                                                          |
+| `.wings version`                                   | Shows the Wings version of the node.                                                                                                                                         |
+| `.wings status [--json]`                           | Shows the server state and whether a restart is pending.                                                                                                                     |
 | `.wings power start\|restart\|stop\|kill [--wait]` | Sends a power action; needs the matching `control.*` permission. With `--wait`, waits up to 10 minutes until the server is running (start, restart) or offline (stop, kill). |
-| `.wings stats [--json]` | Shows CPU, memory, disk and network usage against the server's limits. |
-| `.wings logs [lines]` | Prints the last console lines, by default as many as the console loads on connect. Needs `control.read-console`. |
-| `.wings permissions [--json]` | Lists your permissions on the server, and says when some files are hidden from you. |
+| `.wings stats [--json]`                            | Shows CPU, memory, disk and network usage against the server's limits.                                                                                                       |
+| `.wings logs [lines]`                              | Prints the last console lines, by default as many as the console loads on connect. Needs `control.read-console`.                                                             |
+| `.wings permissions [--json]`                      | Lists your permissions on the server, and says when some files are hidden from you.                                                                                          |
 
 `status`, `logs`, `permissions`, `power --wait` and the `--json` options need Wings 1.2.8 or newer; older versions only have `help`, `version`, `power` and `stats`. On 1.2.8 the commands also work without an interactive shell, which makes them usable from scripts. The SSH exit status is `0` on success and `1` on failure:
 
@@ -94,13 +94,13 @@ A command that does not start with `.wings` is sent to the console the same way,
 
 To the right of the terminal, tiles show the server's live stats. Usage tiles show current use against the server's limit, like `869.89 MiB / 4 GiB`, or **Unlimited** where no limit is set; while the server is offline they read **Offline**, except **Disk Usage**, which always shows the stored amount.
 
-| Tile | Shows |
-| --- | --- |
-| **Address** | The server's primary address, click to copy. Eggs that use a separate port show a **Port** tile too. |
-| **Uptime** | Time since the server started |
-| **CPU Load** | CPU usage against the CPU limit, like `2.35% / 400%`. A checkbox on the tile, **Normalize CPU Load (shifted to max 100%)**, rescales it to a 0-100% range instead. |
-| **Memory Load** | Memory usage against the memory limit |
-| **Disk Usage** | Disk usage against the disk limit |
+| Tile                                 | Shows                                                                                                                                                                                                                                                  |
+| ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Address**                          | The server's primary address, click to copy. Eggs that use a separate port show a **Port** tile too.                                                                                                                                                   |
+| **Uptime**                           | Time since the server started                                                                                                                                                                                                                          |
+| **CPU Load**                         | CPU usage against the CPU limit, like `2.35% / 400%`. A checkbox on the tile, **Normalize CPU Load (shifted to max 100%)**, rescales it to a 0-100% range instead.                                                                                     |
+| **Memory Load**                      | Memory usage against the memory limit                                                                                                                                                                                                                  |
+| **Disk Usage**                       | Disk usage against the disk limit                                                                                                                                                                                                                      |
 | **Network (In)** / **Network (Out)** | Current receive and send rate in bits per second, against the server's download and upload [bandwidth limits](../admin/servers.md#resource-limits). The line below shows the total traffic and the packets per second, like `1.2 GiB total · 340 pps`. |
 
 ## Graphs
@@ -123,24 +123,24 @@ Pick a range with the **1h**, **6h**, **24h**, **7d**, **30d**, and **1y** butto
 
 Five cards sum up the selected range:
 
-| Card | Shows |
-| --- | --- |
-| **Uptime** | Share of the recorded time the server was **Running** |
-| **CPU** | Average CPU load while running, with the peak below it |
+| Card             | Shows                                                    |
+| ---------------- | -------------------------------------------------------- |
+| **Uptime**       | Share of the recorded time the server was **Running**    |
+| **CPU**          | Average CPU load while running, with the peak below it   |
 | **Memory Usage** | Average memory use while running, with the peak below it |
-| **Network** | Total **Inbound** and **Outbound** traffic |
-| **Disk Usage** | The last disk usage recorded in the range |
+| **Network**      | Total **Inbound** and **Outbound** traffic               |
+| **Disk Usage**   | The last disk usage recorded in the range                |
 
 Below them are the charts. **Server State** is a strip coloured by how long the server spent in each state, with the running share (like **99.5% running**) in its corner. Hover a slice to see the time per state. **CPU Load** and **Memory Load** each plot an **Average** line, a dashed **Peak** line, and the **Limit** that applied at the time, so a raised or lowered limit shows up where it changed. **Network** plots outbound and inbound rate, and **Disk Usage** plots stored size against the server's current disk limit. Hovering over one of these four charts highlights the same moment on the others. Gaps where nothing was recorded, such as before the node was updated, stay empty, and a chart with no data at all in the range shows **No data recorded in this range**.
 
 Each point on the charts covers a slice of the range, from 30 seconds on the 1h view to a day on the 1y view. How far back the data goes, and how detailed it stays, depends on the node's [`system.resource_history`](../../../wings/configuration.md#system-resource-history-tiers) settings. With the defaults, Wings keeps:
 
-| Detail | Kept for |
-| --- | --- |
-| Every second | 1 hour |
-| Every 10 seconds | 7 days |
-| Every minute | 365 days |
-| Every 10 minutes | Forever |
+| Detail           | Kept for |
+| ---------------- | -------- |
+| Every second     | 1 hour   |
+| Every 10 seconds | 7 days   |
+| Every minute     | 365 days |
+| Every 10 minutes | Forever  |
 
 The history is stored on the node in `resource_history.db` in the Wings root directory. It moves with the server when the server is [transferred](../admin/servers.md#transfer), as long as both nodes run Wings 1.2.9 with resource history turned on, and is deleted along with the server. Nothing is recorded while a transfer is running.
 

@@ -12,22 +12,22 @@ ctx.extensionRegistry.pages.server.files;
 ```
 
 ::: info
-Not to be confused with [File Storage](./file-storage.md), which is the backend abstraction for files your *extension* owns. This page is about the UI a user browses their *server's* files with.
+Not to be confused with [File Storage](./file-storage.md), which is the backend abstraction for files your _extension_ owns. This page is about the UI a user browses their _server's_ files with.
 :::
 
 ## The Three Surfaces
 
 The same registry drives three different screens, and a slot point rarely appears on all three:
 
-| Surface | URL | What it is |
-| ------- | --- | ---------- |
-| **List view** | `/server/<id>/files` | The table of files, one directory at a time |
-| **Tree workspace** | `/server/<id>/files` | The same page with the tree sidebar and editor panes, toggled by the user |
-| **Editor page** | `/server/<id>/files/<action>` | One file, full screen, its own route |
+| Surface            | URL                           | What it is                                                                |
+| ------------------ | ----------------------------- | ------------------------------------------------------------------------- |
+| **List view**      | `/server/<id>/files`          | The table of files, one directory at a time                               |
+| **Tree workspace** | `/server/<id>/files`          | The same page with the tree sidebar and editor panes, toggled by the user |
+| **Editor page**    | `/server/<id>/files/<action>` | One file, full screen, its own route                                      |
 
 List and tree are the same route. Which one a user gets is a per-user preference they flip with the two buttons in the toolbar, so **you cannot assume either**. A component slotted into the list toolbar appears in both; a component slotted into the tree toolbar appears in one of them.
 
-The editor page is a separate route, and the tree workspace embeds the *same* editor component inside a pane. That pairing shows up throughout the registry as `surface: 'page'` versus `surface: 'inline'`.
+The editor page is a separate route, and the tree workspace embeds the _same_ editor component inside a pane. That pairing shows up throughout the registry as `surface: 'page'` versus `surface: 'inline'`.
 
 ## Where Your Components Land
 
@@ -47,22 +47,22 @@ The toolbar and action bar slots come out either side of the stock controls, wit
 
 The full list:
 
-| Slot | Enter with | Renders | Visible when |
-| ---- | ---------- | ------- | ------------ |
-| `container` | `enterContainer` | Around the whole `/files` page | Always. See the warning below |
-| `editorContainer` | `enterEditorContainer` | Around the editor route | Editor page only, not inside a tree pane |
-| `fileToolbar` | `enterFileToolbar` | Either side of the **Connect** and **New** buttons | Both views |
-| `fileTreeToolbar` | `enterFileTreeToolbar` | The icon row at the top of the tree sidebar | Tree view only |
-| `fileActionBar` | `enterFileActionBar` | The floating bar that rises when rows are selected | While something is selected or queued for copy or move |
-| `fileOperationsProgress` | `enterFileOperationsProgress` | Inside the operations popover | Only while an archive, extract or upload is running, and only once the user opens the popover |
-| `fileSettings` | `enterFileSettings` | The gear popover beside the page title | Both views |
-| `fileEditorSettings` | `enterFileEditorSettings` | The gear popover beside the file name in the editor | `edit` and `new` only |
-| `fileImageViewerSettings` | `enterFileImageViewerSettings` | The same popover for the image viewer | `image` only |
+| Slot                      | Enter with                     | Renders                                             | Visible when                                                                                  |
+| ------------------------- | ------------------------------ | --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `container`               | `enterContainer`               | Around the whole `/files` page                      | Always. See the warning below                                                                 |
+| `editorContainer`         | `enterEditorContainer`         | Around the editor route                             | Editor page only, not inside a tree pane                                                      |
+| `fileToolbar`             | `enterFileToolbar`             | Either side of the **Connect** and **New** buttons  | Both views                                                                                    |
+| `fileTreeToolbar`         | `enterFileTreeToolbar`         | The icon row at the top of the tree sidebar         | Tree view only                                                                                |
+| `fileActionBar`           | `enterFileActionBar`           | The floating bar that rises when rows are selected  | While something is selected or queued for copy or move                                        |
+| `fileOperationsProgress`  | `enterFileOperationsProgress`  | Inside the operations popover                       | Only while an archive, extract or upload is running, and only once the user opens the popover |
+| `fileSettings`            | `enterFileSettings`            | The gear popover beside the page title              | Both views                                                                                    |
+| `fileEditorSettings`      | `enterFileEditorSettings`      | The gear popover beside the file name in the editor | `edit` and `new` only                                                                         |
+| `fileImageViewerSettings` | `enterFileImageViewerSettings` | The same popover for the image viewer               | `image` only                                                                                  |
 
 The three settings slots all land inside a popover dropdown laid out as a narrow vertical stack, so put compact controls there, such as a switch, a select or a short number input. A card will look wrong.
 
 ::: warning
-**`container` components sit outside the file manager's provider.** The `/files` page renders `FileManagerProvider` as a *child* of the container, and the container's slots render outside that child, so a component slotted into `container` cannot call `useFileManager` or `useFileManagerApi`; the hook throws. Use `container` for chrome that does not need file state, and `fileToolbar` or `fileSettings` for anything that does.
+**`container` components sit outside the file manager's provider.** The `/files` page renders `FileManagerProvider` as a _child_ of the container, and the container's slots render outside that child, so a component slotted into `container` cannot call `useFileManager` or `useFileManagerApi`; the hook throws. Use `container` for chrome that does not need file state, and `fileToolbar` or `fileSettings` for anything that does.
 
 `editorContainer` is the other way round: it renders inside the provider, so it can read file state.
 :::
@@ -96,13 +96,13 @@ ctx.extensionRegistry.pages.server.files.enterFileContextMenu((menu) =>
 
 <img src="./images/file-manager/context-menu.webp" width="310" alt="A file row context menu with an item added by an extension" />
 
-| Menu | Enter with | Props your interceptor receives |
-| ---- | ---------- | ------------------------------- |
-| `fileContextMenu` | `enterFileContextMenu` | `{ file, directory, surface: 'table' \| 'tree' }` |
-| `newFileContextMenu` | `enterNewFileContextMenu` | None |
-| `fileMassContextMenu` | `enterFileMassContextMenu` | None |
+| Menu                  | Enter with                 | Props your interceptor receives                   |
+| --------------------- | -------------------------- | ------------------------------------------------- |
+| `fileContextMenu`     | `enterFileContextMenu`     | `{ file, directory, surface: 'table' \| 'tree' }` |
+| `newFileContextMenu`  | `enterNewFileContextMenu`  | None                                              |
+| `fileMassContextMenu` | `enterFileMassContextMenu` | None                                              |
 
-`newFileContextMenu` is shared: it backs the **New** button in both views *and* the right-click menu on empty space in the tree.
+`newFileContextMenu` is shared: it backs the **New** button in both views _and_ the right-click menu on empty space in the tree.
 
 ::: info
 `enterFileMassContextMenu` was added in 1.2.3. On earlier Panels the field is there but the helper is not, so reach for it directly: `ctx.extensionRegistry.pages.server.files.fileMassContextMenu.addItemInterceptor(...)`.
@@ -157,11 +157,11 @@ When a server has the trash enabled, deleting a file moves it to `/server/<id>/f
 ctx.extensionRegistry.pages.server.files.trash;
 ```
 
-| Slot | Enter with | Renders | Visible when |
-| ---- | ---------- | ------- | ------------ |
-| `container` | `enterContainer` | Around the whole trash page | Always |
-| `actionBar` | `enterActionBar` | Either side of the **Restore**, **Restore to...** and **Delete Permanently** buttons | While entries are selected |
-| `entryContextMenu` | `enterEntryContextMenu` | The row menu, interceptors receive `{ entry }` | Always |
+| Slot               | Enter with              | Renders                                                                              | Visible when               |
+| ------------------ | ----------------------- | ------------------------------------------------------------------------------------ | -------------------------- |
+| `container`        | `enterContainer`        | Around the whole trash page                                                          | Always                     |
+| `actionBar`        | `enterActionBar`        | Either side of the **Restore**, **Restore to...** and **Delete Permanently** buttons | While entries are selected |
+| `entryContextMenu` | `enterEntryContextMenu` | The row menu, interceptors receive `{ entry }`                                       | Always                     |
 
 The trash page is its own route and does not render `FileManagerProvider`, so nothing slotted here can call `useFileManager`. An `entry` carries `uuid`, `name`, `path` (where it was deleted from, relative to the server root), `directory`, `file`, `size` and `deleted`. Before Panel 1.2.9 the deletion time was called `deletedAt` and there was no `file` flag, so update interceptors that read it.
 
@@ -195,9 +195,9 @@ ctx.extensionRegistry.pages.server.files.diskUsageBar;
 
 A section is `{ id, label, color, bytes }`. The Panel ships two:
 
-| `id` | `bytes` | Shown when |
-| ---- | ------- | ---------- |
-| `files` | `null`, the remainder | Always |
+| `id`    | `bytes`                     | Shown when                                  |
+| ------- | --------------------------- | ------------------------------------------- |
+| `files` | `null`, the remainder       | Always                                      |
 | `trash` | The total size of the trash | The node reports it (Wings 1.2.8 and newer) |
 
 The section whose `bytes` is `null` is sized last, to whatever disk usage the other sections leave over. That is what lets you carve something out of the total: push a section with its own byte count and `files` shrinks by the same amount, the same way the trash does. Once any section other than the remainder takes up space, a legend appears under the bar.
@@ -257,10 +257,10 @@ ctx.extensionRegistry.pages.server.files
 
 - You cannot claim a directory, a `.zip`, a `.7z` or a `.ddup`.
 - You can claim anything else, including files the Panel would otherwise refuse as too large.
-- **There is no veto.** The loop takes the first handler that returns `openable: true` and ignores every `{ openable: false }` along the way. You cannot use a handler to make something *stop* being openable, and the `reason: 'tooLarge'` field is only ever set by core.
+- **There is no veto.** The loop takes the first handler that returns `openable: true` and ignores every `{ openable: false }` along the way. You cannot use a handler to make something _stop_ being openable, and the `reason: 'tooLarge'` field is only ever set by core.
 
 ::: warning
-Claiming an oversized file only gets you past the *frontend* check. The same limit is enforced by the backend: the file contents endpoint passes `max_file_manager_view_size` to Wings and returns `413` above it, and writes are capped the same way. A custom editor for very large files has to fetch its content from your own extension route, because the Panel's content endpoint will refuse.
+Claiming an oversized file only gets you past the _frontend_ check. The same limit is enforced by the backend: the file contents endpoint passes `max_file_manager_view_size` to Wings and returns `413` above it, and writes are capped the same way. A custom editor for very large files has to fetch its content from your own extension route, because the Panel's content endpoint will refuse.
 :::
 
 ## The Open Handler Contract
@@ -274,7 +274,7 @@ Claiming an oversized file only gets you past the *frontend* check. The same lim
 Which gives one rule:
 
 ::: warning
-**Route through `handleFileOpen` and `handleDirectoryOpen`, and treat `handleOpen` as pure.** Calling `navigate()` or `setSearchParams()` yourself works in the list view and then breaks everywhere else: in the tree workspace it navigates the user out of their workspace rather than opening a tab, and under `fileOpenUrl` any side effect you perform runs while the Panel is merely *computing a URL* for a middle-click. Side effects belong in the component you open, not in the handler that opens it.
+**Route through `handleFileOpen` and `handleDirectoryOpen`, and treat `handleOpen` as pure.** Calling `navigate()` or `setSearchParams()` yourself works in the list view and then breaks everywhere else: in the tree workspace it navigates the user out of their workspace rather than opening a tab, and under `fileOpenUrl` any side effect you perform runs while the Panel is merely _computing a URL_ for a middle-click. Side effects belong in the component you open, not in the handler that opens it.
 :::
 
 `handleFileOpen(file, action, params)` takes the entry's name, the action name that selects the editor, and extra query parameters. Two details worth having:
@@ -317,7 +317,7 @@ export default function McFunctionEditor({ content, setContent, readOnly, contex
 There is no reserved-name check and no deduplication between extensions, so name collisions resolve by accident:
 
 - **`diff` and `sqlite` are unreachable.** Both are registered as their own routes ahead of `/files/:action`, and the tree checks for `sqlite` before it checks your action. An action under either name is dead code.
-- **`new`, `edit`, `image` and `audio` silently win.** A custom action is matched *before* the built-in branches on both surfaces, so registering `name: 'edit'` replaces the Panel's file editor for every text file on the instance. That is occasionally what someone wants; it should never be an accident.
+- **`new`, `edit`, `image` and `audio` silently win.** A custom action is matched _before_ the built-in branches on both surfaces, so registering `name: 'edit'` replaces the Panel's file editor for every text file on the instance. That is occasionally what someone wants; it should never be an accident.
 - **Two extensions registering the same name**: whichever initialised first takes it.
 
 Prefix your action names the way you prefix everything else.
@@ -326,19 +326,19 @@ Prefix your action names the way you prefix everything else.
 
 `contentType` decides what your component is handed, and the Panel always fetches the file first either way. There is no opt-out, so a custom editor costs one full download even if it never reads the result.
 
-| `contentType` | Your `content` receives | Stock **Save** button |
-| ------------- | ----------------------- | --------------------- |
-| `'string'` | The decoded text, plus `setContent` | Works inside a tree pane, does nothing on the editor page |
-| `'blob'` | The raw `Blob`, plus `setContent` | Never works. Persistence is yours |
+| `contentType` | Your `content` receives             | Stock **Save** button                                     |
+| ------------- | ----------------------------------- | --------------------------------------------------------- |
+| `'string'`    | The decoded text, plus `setContent` | Works inside a tree pane, does nothing on the editor page |
+| `'blob'`      | The raw `Blob`, plus `setContent`   | Never works. Persistence is yours                         |
 
-On the **editor page** the stock Save button writes whatever your component last passed to `setContent`: the string as `text/plain`, or the blob as raw bytes, to the file the page was opened for. Panels before 1.2.3 rendered the button but silently did nothing for custom actions, and showed Create instead of Save for them. Supplying `header.rightSection` with your own save control removes the stock button, since on that surface `rightSection` *replaces* the entire stock button group.
+On the **editor page** the stock Save button writes whatever your component last passed to `setContent`: the string as `text/plain`, or the blob as raw bytes, to the file the page was opened for. Panels before 1.2.3 rendered the button but silently did nothing for custom actions, and showed Create instead of Save for them. Supplying `header.rightSection` with your own save control removes the stock button, since on that surface `rightSection` _replaces_ the entire stock button group.
 
 ### The Header, And How It Differs Per Surface
 
 `header` has two optional components, and they do not behave the same way:
 
 - **`header.settings`** replaces the gear popover next to the title, on both surfaces. Because it replaces it, a custom action also suppresses the `fileEditorSettings` and `fileImageViewerSettings` slots, which live inside the stock popovers that no longer render.
-- **`header.rightSection`** replaces the whole right-hand group on the **editor page**, but is rendered *alongside* the stock revert, history, save and close controls inside a **tree pane**. Design it so it reads correctly next to those, not only instead of them.
+- **`header.rightSection`** replaces the whole right-hand group on the **editor page**, but is rendered _alongside_ the stock revert, history, save and close controls inside a **tree pane**. Design it so it reads correctly next to those, not only instead of them.
 
 `title(file)` is your page title, and it wins over every built-in title rule. A tree pane falls back to the bare file name if no action matched.
 
@@ -379,15 +379,15 @@ const directory = useFileManager((state) => state.browsingDirectory);
 
 The fields extensions usually want:
 
-| Field | What it tells you |
-| ----- | ----------------- |
-| `browsingDirectory` | The directory currently open |
-| `browsingWritableDirectory` | Whether writes are allowed here |
-| `browsingPrimaryFilesystem` | Whether this is the server's real filesystem. Gates revisions and collaborative editing |
-| `browsingFastDirectory` | Whether the backing filesystem supports archive browsing |
-| `browsingBackup` | The backup being browsed, or `null` |
-| `selectedFiles`, `actingFiles` | The current selection and the copy or move queue |
-| `searchInfo` | The active search, or `null` |
+| Field                          | What it tells you                                                                       |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| `browsingDirectory`            | The directory currently open                                                            |
+| `browsingWritableDirectory`    | Whether writes are allowed here                                                         |
+| `browsingPrimaryFilesystem`    | Whether this is the server's real filesystem. Gates revisions and collaborative editing |
+| `browsingFastDirectory`        | Whether the backing filesystem supports archive browsing                                |
+| `browsingBackup`               | The backup being browsed, or `null`                                                     |
+| `selectedFiles`, `actingFiles` | The current selection and the copy or move queue                                        |
+| `searchInfo`                   | The active search, or `null`                                                            |
 
 Gate destructive menu items on `browsingWritableDirectory`, not on permissions alone. A user with `files.delete` still cannot delete anything while browsing a backup.
 
@@ -445,14 +445,14 @@ The only escape hatch is a route interceptor that replaces the whole page, descr
 
 The component slots, the context menus and `addFileIconHandler` have been there since the first 1.0.0 pre-releases. Everything else arrived later:
 
-| Added | In |
-| ----- | -- |
-| `fileMassContextMenu` | 1.0.0 |
-| `addFileOpenableHandler`, `addFileEditorAction` | 1.0.2 |
-| `reason: 'tooLarge'` | 1.1.3 |
+| Added                                                                                                                      | In    |
+| -------------------------------------------------------------------------------------------------------------------------- | ----- |
+| `fileMassContextMenu`                                                                                                      | 1.0.0 |
+| `addFileOpenableHandler`, `addFileEditorAction`                                                                            | 1.0.2 |
+| `reason: 'tooLarge'`                                                                                                       | 1.1.3 |
 | `fileTreeToolbar`, `FileEditorActionContext`, the `surface` prop on file context menus, `readOnly` on editor content props | 1.2.0 |
-| `enterFileMassContextMenu`, `elements.enterPierreEditor` | 1.2.3 |
-| `trash`, `enterTrash` | 1.2.6 |
-| `diskUsageBar`, `enterDiskUsageBar`, promise-returning context menu items | 1.2.8 |
+| `enterFileMassContextMenu`, `elements.enterPierreEditor`                                                                   | 1.2.3 |
+| `trash`, `enterTrash`                                                                                                      | 1.2.6 |
+| `diskUsageBar`, `enterDiskUsageBar`, promise-returning context menu items                                                  | 1.2.8 |
 
 An extension using the 1.2.0 additions will not build against an older Panel.

@@ -240,11 +240,11 @@ The latest SBOMs are published at [packages.calagopus.com/sbom](https://packages
 
 Publishing an SBOM allows administrators and security teams to:
 
-* Audit the third-party dependencies included in a release.
-* Identify whether a known vulnerability affects a deployed version of Calagopus.
-* Meet compliance, governance, or regulatory requirements.
-* Track dependency changes between releases.
-* Integrate Calagopus into existing Software Composition Analysis (SCA) and vulnerability management workflows.
+- Audit the third-party dependencies included in a release.
+- Identify whether a known vulnerability affects a deployed version of Calagopus.
+- Meet compliance, governance, or regulatory requirements.
+- Track dependency changes between releases.
+- Integrate Calagopus into existing Software Composition Analysis (SCA) and vulnerability management workflows.
 
 ### Supported Formats
 

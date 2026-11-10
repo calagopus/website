@@ -1,6 +1,6 @@
+import type { PluginOption } from 'vite';
 import { readdir, readFile } from 'node:fs/promises';
 import { isAbsolute, join, relative } from 'node:path';
-import type { PluginOption } from 'vite';
 
 export interface AiDocBundle {
   route: string;

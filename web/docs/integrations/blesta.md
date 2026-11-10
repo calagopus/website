@@ -1,6 +1,7 @@
 ---
 description: The Calagopus Blesta module provisions, suspends, upgrades and terminates Calagopus servers from your Blesta billing workflow through the panel admin API.
 ---
+
 # Blesta
 
 The **Calagopus Blesta module** is a server provisioning module for [Blesta](https://www.blesta.com). It provisions and manages Calagopus servers from Blesta as part of your billing workflow, with support for nests/eggs, node- or location-based deployment, egg variables, and custom (extension-added) feature limits.
@@ -17,12 +18,12 @@ This module authenticates with an **admin API key**, which grants full administr
 
 The module maps Blesta's service lifecycle onto the Calagopus admin API:
 
-| Blesta action | Effect on the panel |
-| --- | --- |
-| Add | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). |
-| Suspend / Unsuspend | Toggles the server's suspended state. |
+| Blesta action         | Effect on the panel                                                                                                                                  |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Add                   | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations).                      |
+| Suspend / Unsuspend   | Toggles the server's suspended state.                                                                                                                |
 | Edit / Change package | Updates the server's resource and feature limits, name, and egg variables to match the package configuration and the service's configurable options. |
-| Cancel | Deletes the server from the panel, including its backups. |
+| Cancel                | Deletes the server from the panel, including its backups.                                                                                            |
 
 Clients are matched to panel users by the `external_id` `bl-<client id>`, so each client reuses the same panel account across all of their services. When the module creates a user and the panel reports that the email or username is already taken, it looks for a panel user with exactly the client's email address and links that account by setting its `external_id`. A clash on the username alone is never linked automatically - provisioning stops with an error so you can check who owns that account first.
 
@@ -64,11 +65,11 @@ Staff see the same live state, address and usage when they expand the service on
 
 3. Click **Manage** on the Calagopus module, then **Add Server** and configure:
 
-   | Field | Description |
-   | --- | --- |
-   | **Server Label** | A friendly name for this panel connection. |
-   | **Panel URL** | Your panel URL, e.g. `https://panel.example.com`. |
-   | **API Key** | An admin API key for your Calagopus panel. |
+   | Field                     | Description                                                  |
+   | ------------------------- | ------------------------------------------------------------ |
+   | **Server Label**          | A friendly name for this panel connection.                   |
+   | **Panel URL**             | Your panel URL, e.g. `https://panel.example.com`.            |
+   | **API Key**               | An admin API key for your Calagopus panel.                   |
    | **Default User Language** | Two-letter language code for newly created users, e.g. `en`. |
 
    Saving validates the connection against the panel.
@@ -96,27 +97,27 @@ At least one of a node or one or more locations must be set, or the package will
 
 ### Resources and limits
 
-| Field | Notes |
-| --- | --- |
-| **Memory / Swap / Disk** | In MiB. Set swap to `-1` for unlimited or `0` to disable. |
-| **CPU Limit** | Percentage; `100` = one thread, `0` = unlimited. |
-| **Memory Overhead** | Hidden memory added on top of the container's limit. |
-| **IO Weight** | `10`–`1000`; leave blank for the default. |
-| **Allocations / Databases / Backups / Schedules** | Standard feature limits. |
-| **Custom Feature Limits** | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. |
+| Field                                             | Notes                                                                    |
+| ------------------------------------------------- | ------------------------------------------------------------------------ |
+| **Memory / Swap / Disk**                          | In MiB. Set swap to `-1` for unlimited or `0` to disable.                |
+| **CPU Limit**                                     | Percentage; `100` = one thread, `0` = unlimited.                         |
+| **Memory Overhead**                               | Hidden memory added on top of the container's limit.                     |
+| **IO Weight**                                     | `10`–`1000`; leave blank for the default.                                |
+| **Allocations / Databases / Backups / Schedules** | Standard feature limits.                                                 |
+| **Custom Feature Limits**                         | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. |
 
 ### Egg and advanced options
 
-| Field | Notes |
-| --- | --- |
-| **Docker Image** | Override the egg default. Blank uses the egg's default image. |
-| **Startup Command** | Override the egg default startup command. |
-| **Server Name Prefix** | Names the server `<prefix><client id>` when a service is created without a server name. The order form requires a **Server Name**, so this only applies to services added some other way. Blank defaults to `Server-`. |
-| **Pinned CPUs** | Comma-separated core IDs, e.g. `0,1,2`. Blank disables pinning. |
-| **Backup Configuration UUID** | Optional backup configuration to assign to the server. |
-| **Skip Egg Install Script** | Skips the egg's installation script. |
-| **Start on Completion** | Starts the server automatically once installation finishes. |
-| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container. |
+| Field                           | Notes                                                                                                                                                                                                                  |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Docker Image**                | Override the egg default. Blank uses the egg's default image.                                                                                                                                                          |
+| **Startup Command**             | Override the egg default startup command.                                                                                                                                                                              |
+| **Server Name Prefix**          | Names the server `<prefix><client id>` when a service is created without a server name. The order form requires a **Server Name**, so this only applies to services added some other way. Blank defaults to `Server-`. |
+| **Pinned CPUs**                 | Comma-separated core IDs, e.g. `0,1,2`. Blank disables pinning.                                                                                                                                                        |
+| **Backup Configuration UUID**   | Optional backup configuration to assign to the server.                                                                                                                                                                 |
+| **Skip Egg Install Script**     | Skips the egg's installation script.                                                                                                                                                                                   |
+| **Start on Completion**         | Starts the server automatically once installation finishes.                                                                                                                                                            |
+| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container.                                                                                                                                                        |
 
 ### Egg variables
 
@@ -128,16 +129,16 @@ The package form renders a field for each of the egg's environment variables, va
 
 Blesta **configurable options** (Packages → Configurable Options) attached to the package override the matching package field whenever a service is added or edited. The option's name must equal the package field key exactly, in lowercase. Options with any other name are ignored.
 
-| Option name | Overrides | Value |
-| --- | --- | --- |
-| `memory`, `swap`, `disk` | Memory / Swap / Disk | MiB |
-| `cpu` | CPU Limit | Percentage, `100` = one thread |
-| `memory_overhead` | Memory Overhead | MiB |
-| `io_weight` | IO Weight | `10`–`1000` |
-| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Feature limits | Count |
-| `docker_image` | Docker Image | Image reference |
-| `startup_command` | Startup Command | Command string |
-| `nest_uuid`, `egg_uuid`, `node_uuid` | Nest, Egg, Node | UUIDs from your panel |
+| Option name                                                             | Overrides            | Value                          |
+| ----------------------------------------------------------------------- | -------------------- | ------------------------------ |
+| `memory`, `swap`, `disk`                                                | Memory / Swap / Disk | MiB                            |
+| `cpu`                                                                   | CPU Limit            | Percentage, `100` = one thread |
+| `memory_overhead`                                                       | Memory Overhead      | MiB                            |
+| `io_weight`                                                             | IO Weight            | `10`–`1000`                    |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Feature limits       | Count                          |
+| `docker_image`                                                          | Docker Image         | Image reference                |
+| `startup_command`                                                       | Startup Command      | Command string                 |
+| `nest_uuid`, `egg_uuid`, `node_uuid`                                    | Nest, Egg, Node      | UUIDs from your panel          |
 
 Locations, custom feature limits, the server name prefix, pinned CPUs, the backup configuration, and the checkbox settings always come from the package.
 

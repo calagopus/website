@@ -1,16 +1,16 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
-import { insertRows, queryRows } from '../worker/clickhouse.ts';
-import { buildRow, telemetrySchema } from '../worker/api/telemetry.ts';
 import { DAILY_QUERY, TOTALS_QUERY, refreshTelemetryStats } from '../worker/api/telemetry-stats.ts';
+import { buildRow, telemetrySchema } from '../worker/api/telemetry.ts';
+import { insertRows, queryRows } from '../worker/clickhouse.ts';
+import { POLICY_VERSION, SERVED_POLICY_VERSIONS } from '../worker/telemetry-policy.ts';
 import {
   COMMITTED_REPUTATION,
   DIRTY_IDENTITIES,
   ELIGIBLE_GENERATIONS,
   replayIdentity,
 } from '../worker/telemetry-review.ts';
-import { POLICY_VERSION, SERVED_POLICY_VERSIONS } from '../worker/telemetry-policy.ts';
 
 const config = {
   url: 'http://127.0.0.1:18123',
@@ -241,9 +241,13 @@ try {
   assert.equal(head.filter((r) => newcomers.includes(r.uuid)).length, 25);
   assert.ok(queue.some((r) => r.uuid === flood));
   assert.equal(await replayIdentity(config, flood), true);
-  const [flooded] = await queryRows(config, 'SELECT count() AS count FROM telemetry_decisions WHERE uuid = {uuid:UUID}', {
-    uuid: flood,
-  });
+  const [flooded] = await queryRows(
+    config,
+    'SELECT count() AS count FROM telemetry_decisions WHERE uuid = {uuid:UUID}',
+    {
+      uuid: flood,
+    },
+  );
   assert.equal(Number(flooded.count), 24);
   await refreshTelemetryStats({
     CLICKHOUSE_URL: config.url,

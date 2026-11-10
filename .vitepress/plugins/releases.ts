@@ -1,6 +1,6 @@
+import markdownit, { type MarkdownIt, type StateCore, type Token } from 'markdown-it';
 import { readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import markdownit, { type MarkdownIt, type StateCore, type Token } from 'markdown-it';
 import { type ReleaseCallout, type ReleaseNote, releaseNotes } from '../data/release-notes.ts';
 import { fetchJson } from '../lib/fetch-retry.ts';
 

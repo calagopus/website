@@ -46,11 +46,11 @@ export const itemSchema = z.object({
 - **`parsePaginationFromApi(schema, raw)`** for paginated list responses. Pass it the raw paginated object (`{ total, per_page, page, data }`) and it returns a `Pagination<T>` with each entry run through `parseFromApi`.
 - **`serializeForApi(schema, data, extraSchemas?)`** for outgoing request bodies. The reverse direction: camelCase keys in your typed object become snake_case on the wire. Fields that are `undefined` are skipped entirely. The optional third argument is an array of additional schemas whose serialized output is deep-merged into the result. This is how the core endpoints for extensible forms include extension-registered fields: they pass `formExtensionSchemas(formId)`, which returns the `zodShape`s extensions registered for that form (see [Forms](./forms.md)).
 
-Fields a backend extension added to a *core* response need no special helper: the top-level entity schemas are `z.looseObject`, so any key they don't declare is camelCased and kept on the parsed object alongside the core fields. Some nested sub-schemas are still plain `z.object` and drop undeclared keys, so check the schema of the node you extended under `@/lib/schemas/` before relying on this. Run your own Zod schema over that node to get typed values back; see [Extending Models](./extending-models.md#from-frontend-components) for the full pattern.
+Fields a backend extension added to a _core_ response need no special helper: the top-level entity schemas are `z.looseObject`, so any key they don't declare is camelCased and kept on the parsed object alongside the core fields. Some nested sub-schemas are still plain `z.object` and drop undeclared keys, so check the schema of the node you extended under `@/lib/schemas/` before relying on this. Run your own Zod schema over that node to get typed values back; see [Extending Models](./extending-models.md#from-frontend-components) for the full pattern.
 
 Two things to know about the transform:
 
-- **It's schema-guided, not blind.** Only keys that appear in the schema (or in one of the `extraSchemas`) are transformed, and for `serializeForApi`, only those keys are *sent*; anything else in the object is dropped. A field typed as `z.record(...)` has its keys passed through verbatim in both directions, so maps whose keys are data (user-provided names, UUIDs, enum constants) survive untouched. Older builds mangled such map keys; that no longer happens.
+- **It's schema-guided, not blind.** Only keys that appear in the schema (or in one of the `extraSchemas`) are transformed, and for `serializeForApi`, only those keys are _sent_; anything else in the object is dropped. A field typed as `z.record(...)` has its keys passed through verbatim in both directions, so maps whose keys are data (user-provided names, UUIDs, enum constants) survive untouched. Older builds mangled such map keys; that no longer happens.
 - **Requests and responses are symmetric.** Define the schema once and use it in both directions; there's no need to snake_case request bodies by hand.
 
 ## One File Per Endpoint
@@ -66,9 +66,7 @@ import { parseFromApi } from '@/lib/serialization/api-transform.ts';
 import { itemSchema } from '../lib/schemas.ts';
 
 export default async (serverUuid: string, itemType: string): Promise<z.infer<typeof itemSchema>[]> => {
-  const { data } = await axiosInstance.get(
-    `/api/client/servers/${serverUuid}/my-feature/items/${itemType}`,
-  );
+  const { data } = await axiosInstance.get(`/api/client/servers/${serverUuid}/my-feature/items/${itemType}`);
   return data.items.map((item: unknown) => parseFromApi(itemSchema, item));
 };
 ```
@@ -123,8 +121,8 @@ The Panel ships a utility called `httpErrorToHuman` that turns any axios error, 
 
 ```tsx
 import { httpErrorToHuman } from '@/api/axios.ts';
-import { useToast } from '@/providers/ToastProvider.tsx';
 import updateItem from '@/api/updateItem.ts';
+import { useToast } from '@/providers/ToastProvider.tsx';
 
 export default function EditItemForm({ serverUuid, itemId }: Props) {
   const { addToast } = useToast();
@@ -150,12 +148,12 @@ export default function EditItemForm({ serverUuid, itemId }: Props) {
 This three-callback shape (`.then` success toast → `.catch` error toast → `.finally` loading reset) is what the Panel's own code uses; follow it so your extension behaves like the rest of the UI. `httpErrorToHuman` already knows how to unpack the standard error shape your backend returns (see [Response Types and Errors](./routing.md#response-types-and-errors) in the routing docs), so you almost never need to inspect the raw error yourself.
 
 ::: info
-To branch on *what* went wrong, for example to show a different message for a conflict than for a not-found, check `err.response?.status` before calling `httpErrorToHuman`. Otherwise, pass the whole error to the helper.
+To branch on _what_ went wrong, for example to show a different message for a conflict than for a not-found, check `err.response?.status` before calling `httpErrorToHuman`. Otherwise, pass the whole error to the helper.
 :::
 
 ## Designing API Shapes
 
-This section is about the *shape* of the JSON your backend returns. It is covered here because the frontend is where a bad shape causes problems.
+This section is about the _shape_ of the JSON your backend returns. It is covered here because the frontend is where a bad shape causes problems.
 
 ### Maps keyed by user input: use `z.record`
 
@@ -171,7 +169,7 @@ Consider a route that returns categories keyed by their (user-provided) names:
 }
 ```
 
-Those keys are *data*: they come from the user, a database, or an external API, and you don't control their casing. Type the field as a record and the transform leaves the keys alone while still transforming the field names *inside* the values:
+Those keys are _data_: they come from the user, a database, or an external API, and you don't control their casing. Type the field as a record and the transform leaves the keys alone while still transforming the field names _inside_ the values:
 
 ```ts
 const responseSchema = z.object({
@@ -190,7 +188,7 @@ Arrays of objects are still usually the better shape: they preserve ordering, ar
 }
 ```
 
-If the keys of an object are something a human or another system *typed in*, prefer making them values in an array. If you do want a keyed structure, `z.record` keeps the keys unchanged in both directions.
+If the keys of an object are something a human or another system _typed in_, prefer making them values in an array. If you do want a keyed structure, `z.record` keeps the keys unchanged in both directions.
 
 ## Data-Fetching Hooks
 
@@ -199,12 +197,12 @@ Instead of writing raw `useEffect` + `useState` fetches, use the Panel's six dat
 All six are in `@/plugins/resource/`:
 
 ```ts
-import { useResource } from '@/plugins/resource/useResource.ts';
-import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
-import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
-import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
 import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 ```
 
 ### Query Keys
@@ -214,8 +212,8 @@ TanStack Query identifies cached data by a query key, an array compared structur
 The Panel's own code builds keys using `@/lib/queryKeys.ts`. **Extensions must not import from that file.** Those keys are Panel internals, and sharing a prefix with a Panel query means invalidation can flush Panel caches or vice versa. Define your own inline arrays instead, namespaced under `'extensions'` and your extension ID:
 
 ```ts
-queryKey: ['extensions', 'dev.yourname.test', 'items']
-queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid]
+queryKey: ['extensions', 'dev.yourname.test', 'items'];
+queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid];
 ```
 
 Because of prefix matching, invalidating `['extensions', 'dev.yourname.test', 'items']` also invalidates `['extensions', 'dev.yourname.test', 'items', serverUuid]` and any deeper keys. Use narrow keys when you only want one server's cache to re-fetch; use the shorter prefix when you want everything under that namespace to re-fetch.
@@ -227,8 +225,8 @@ The hooks append their own dynamic segments to the key you supply: your `deps` a
 Use this when you need to fetch a resource and don't need search or pagination. It wraps TanStack Query's `useQuery`, automatically shows an error toast on failure, and returns `refetch` and `invalidate` helpers.
 
 ```tsx
-import { useResource } from '@/plugins/resource/useResource.ts';
 import getFeatureSettings from '@/api/getFeatureSettings.ts';
+import { useResource } from '@/plugins/resource/useResource.ts';
 
 export default function FeatureSettings({ serverUuid }: { serverUuid: string }) {
   const { data, loading, refetch, invalidate } = useResource({
@@ -280,8 +278,8 @@ const { data, error } = useResource({
 Use this to re-fetch a resource on a fixed interval, such as a build status, a transfer's progress, or anything else that changes on the backend while the user watches. It's `useResource` plus an `interval`, and an optional `stopWhen` predicate that halts the polling once the data reaches a terminal state. It returns the same `{ data, loading, error, refetch, invalidate }` as `useResource`.
 
 ```tsx
-import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 import getJobStatus from '@/api/getJobStatus.ts';
+import { usePollingResource } from '@/plugins/resource/usePollingResource.ts';
 
 export default function JobStatus({ jobId }: { jobId: string }) {
   const { data } = usePollingResource({
@@ -335,9 +333,9 @@ interface Pagination<T> {
 This is exactly what `parsePaginationFromApi` returns, so a paginated API file plugs straight in. The hook unwraps `data?.data ?? []` for you, so the returned `items` field is directly `T[]`.
 
 ```tsx
-import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 import getItems from '@/api/getItems.ts';
 import Select from '@/elements/input/Select.tsx';
+import { useSearchableResource } from '@/plugins/resource/useSearchableResource.ts';
 
 export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
   const items = useSearchableResource<Item>({
@@ -374,7 +372,7 @@ const items = useSearchableResource<Item>({
 });
 ```
 
-**`canRequest`** is an additional gate on top of `deps`. The query runs only when `canRequest` is true *and* every element of `deps` is truthy (or `deps` is empty). Default is `true`. Use it for conditions that aren't part of the fetcher's argument list: permission flags, parent-component readiness, modal-open state.
+**`canRequest`** is an additional gate on top of `deps`. The query runs only when `canRequest` is true _and_ every element of `deps` is truthy (or `deps` is empty). Default is `true`. Use it for conditions that aren't part of the fetcher's argument list: permission flags, parent-component readiness, modal-open state.
 
 **`defaultSearchValue`** sets the initial value for both `search` and the internal debounced state on mount. Use it in edit forms where you already know the currently selected item's name and want it to appear in the input without the user having to open and search the dropdown:
 
@@ -393,9 +391,9 @@ Since Panel 1.2.9. `useSearchableResource` only ever shows the first page the en
 It takes the same options, except that the fetcher also receives the page number, `(page: number, search: string) => Promise<Pagination<T>>`. Pages start at 1. Another page is requested only while the pages loaded so far hold fewer items than `total` and the last page was not empty. It returns the same `items` (every loaded page, flattened), `loading`, `search`, `setSearch`, `refetch` and `invalidate`, plus an `infiniteScroll` object you hand to the Panel's `Select` or `MultiSelect`:
 
 ```tsx
-import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
 import getItems from '@/api/getItems.ts';
 import Select from '@/elements/input/Select.tsx';
+import { useInfiniteSearchableResource } from '@/plugins/resource/useInfiniteSearchableResource.ts';
 
 export default function ItemPicker({ serverUuid }: { serverUuid: string }) {
   const items = useInfiniteSearchableResource<Item>({
@@ -426,11 +424,11 @@ The query key gets an extra `'infinite'` segment, `[...queryKey, ...deps, 'infin
 Use this for full table pages with search and pagination. It manages page and search state, syncs both to URL search params, and renders previous data while the next page loads via TanStack Query's `placeholderData: keepPreviousData`. The hook returns the fetched `data`, along with `error` (already turned into a readable string), `refetch`, `invalidate` and `debouncedSearch`. It also accepts an optional `setStoreData` callback that it calls when fresh data arrives, which is how the Panel's own pages feed a zustand store that the table then reads from:
 
 ```tsx
-import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import getMyItems from '@/api/getMyItems.ts';
 import Table from '@/elements/data-display/Table.tsx';
-import { useMyStore } from '@/stores/myStore.ts';
+import { useSearchablePaginatedTable } from '@/plugins/resource/useSearchablePaginatedTable.ts';
 import { useTranslations } from '@/providers/TranslationProvider.tsx';
+import { useMyStore } from '@/stores/myStore.ts';
 
 export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
   const { t } = useTranslations();
@@ -444,11 +442,7 @@ export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
 
   return (
     <Table
-      columns={[
-        t('common.table.columns.name'),
-        t('common.table.columns.created'),
-        ''
-      ]}
+      columns={[t('common.table.columns.name'), t('common.table.columns.created'), '']}
       loading={loading}
       pagination={items}
       onPageSelect={setPage}
@@ -465,7 +459,7 @@ The fetcher signature is `(page: number, search: string) => Promise<T>`. The hoo
 
 **URL params:** On mount, the hook initialises `search` from `?search=` and `page` from `?page=` in the URL (the page param is parsed and ignored unless it's a finite integer `>= 1`). Whenever either changes, the hook rewrites just those two params and leaves any others in the URL alone; `page` is dropped from the URL while it equals `initialPage` and `search` while it is empty, so a table at rest has a clean address. The immediate `search` value (not debounced) is written to the URL on every keystroke; the debounced copy is what drives the query. Clearing the search field bypasses the debounce entirely and immediately resets both the debounced state and the query.
 
-**Pagination auto-correction:** When a fetch returns, the hook inspects `total`, `perPage`, and `page` on the response (or on `response[paginationKey]` if `paginationKey` is set) *before* calling `setStoreData`. If the current page exceeds the last valid page, it calls `setPage(totalPages)` and skips the store update for this fetch; the resulting re-fetch populates the store. If the total is zero and the current page isn't 1, it resets to page 1 the same way. Only when the page is already valid does `setStoreData` get called with the response. This handles the common case of deleting the last item on a page.
+**Pagination auto-correction:** When a fetch returns, the hook inspects `total`, `perPage`, and `page` on the response (or on `response[paginationKey]` if `paginationKey` is set) _before_ calling `setStoreData`. If the current page exceeds the last valid page, it calls `setPage(totalPages)` and skips the store update for this fetch; the resulting re-fetch populates the store. If the total is zero and the current page isn't 1, it resets to page 1 the same way. Only when the page is already valid does `setStoreData` get called with the response. This handles the common case of deleting the last item on a page.
 
 **`paginationKey`** handles responses where the paginated shape is nested under a key. Without it, the hook looks for `total`, `perPage`, and `page` at the root of the fetcher's return value. With it, it looks at `response[paginationKey]` for those fields, while still passing the full response to `setStoreData`:
 
@@ -494,10 +488,10 @@ Use this for forms that manage a single resource's full lifecycle. It takes a Ma
 import { useForm } from '@mantine/form';
 import { zod4Resolver } from 'mantine-form-zod-resolver';
 import { z } from 'zod';
-import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 import createItem from '@/api/createItem.ts';
-import updateItem from '@/api/updateItem.ts';
 import deleteItem from '@/api/deleteItem.ts';
+import updateItem from '@/api/updateItem.ts';
+import { useResourceForm } from '@/plugins/resource/useResourceForm.ts';
 
 const schema = z.object({
   name: z.string().min(1),
@@ -529,14 +523,18 @@ export default function ItemCreateOrUpdate({ existing }: { existing?: Item }) {
       <TextInput label='Name' {...form.getInputProps('name')} />
       <Switch label='Enabled' {...form.getInputProps('enabled', { type: 'checkbox' })} />
       <Group>
-        <Button type='submit' loading={loading}>Save</Button>
+        <Button type='submit' loading={loading}>
+          Save
+        </Button>
         {!existing && (
           <Button onClick={() => doCreateOrUpdate(true)} loading={loading}>
             Save & Stay
           </Button>
         )}
         {existing && (
-          <Button color='red' onClick={doDelete} loading={loading}>Delete</Button>
+          <Button color='red' onClick={doDelete} loading={loading}>
+            Delete
+          </Button>
         )}
       </Group>
     </form>
@@ -569,16 +567,16 @@ useResourceForm({
 
 ## Summary
 
-| Situation | Use |
-| --------- | --- |
-| Any response | `axiosInstance` + `parseFromApi(schema, data.<wrapper_key>)` |
-| Paginated list response | `parsePaginationFromApi(schema, data.<wrapper_key>)` |
-| Any request with a body | `axiosInstance` + `serializeForApi(schema, data)` |
-| Map whose object *keys* are data | type the field as `z.record(...)`; keys pass through untouched |
-| Any error from any of the above | `httpErrorToHuman(err)` into a toast |
-| Simple one-off data fetch | `useResource` |
-| Data that must re-fetch on an interval | `usePollingResource` |
-| Searchable `<Select>` or `<MultiSelect>` options | `useSearchableResource` |
-| Searchable `<Select>` or `<MultiSelect>` options that can run past one page | `useInfiniteSearchableResource` |
-| Full paginated table with search | `useSearchablePaginatedTable` |
-| Create / update / delete form | `useResourceForm` |
+| Situation                                                                   | Use                                                            |
+| --------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Any response                                                                | `axiosInstance` + `parseFromApi(schema, data.<wrapper_key>)`   |
+| Paginated list response                                                     | `parsePaginationFromApi(schema, data.<wrapper_key>)`           |
+| Any request with a body                                                     | `axiosInstance` + `serializeForApi(schema, data)`              |
+| Map whose object _keys_ are data                                            | type the field as `z.record(...)`; keys pass through untouched |
+| Any error from any of the above                                             | `httpErrorToHuman(err)` into a toast                           |
+| Simple one-off data fetch                                                   | `useResource`                                                  |
+| Data that must re-fetch on an interval                                      | `usePollingResource`                                           |
+| Searchable `<Select>` or `<MultiSelect>` options                            | `useSearchableResource`                                        |
+| Searchable `<Select>` or `<MultiSelect>` options that can run past one page | `useInfiniteSearchableResource`                                |
+| Full paginated table with search                                            | `useSearchablePaginatedTable`                                  |
+| Create / update / delete form                                               | `useResourceForm`                                              |

@@ -7,12 +7,12 @@ description: Replace Pterodactyl or Pelican Wings with Calagopus Wings on an exi
 
 Nodes that already run Pterodactyl or Pelican Wings don't need a fresh install. You replace Wings itself and point it at the new panel. Everything else stays where it is. The [Wings installation guide](../../wings/installation/index.md) is only for new nodes.
 
-| Stays the same | Changes |
-| --- | --- |
-| Config file. Wings finds `/etc/pterodactyl/config.yml` and `/etc/pelican/config.yml` on its own | The Wings binary or Docker image |
-| Server files and local backups, at the paths in that config | The service file, on a binary install |
-| The node's UUID and token, which the importer copies to the Panel | `remote:` in the config, if the panel's address changed |
-| The `pterodactyl` or `pelican` system user and Docker network | |
+| Stays the same                                                                                  | Changes                                                 |
+| ----------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| Config file. Wings finds `/etc/pterodactyl/config.yml` and `/etc/pelican/config.yml` on its own | The Wings binary or Docker image                        |
+| Server files and local backups, at the paths in that config                                     | The service file, on a binary install                   |
+| The node's UUID and token, which the importer copies to the Panel                               | `remote:` in the config, if the panel's address changed |
+| The `pterodactyl` or `pelican` system user and Docker network                                   |                                                         |
 
 ## Before You Start
 
@@ -49,6 +49,7 @@ sudo /usr/local/bin/wings service-install --override
 sudo systemctl status wings --no-pager
 sudo journalctl -u wings -n 50 --no-pager
 ```
+
 ```bash [Pelican]
 sudo systemctl stop wings
 sudo cp -a /usr/local/bin/wings /usr/local/bin/wings.bak
@@ -101,6 +102,7 @@ sudo docker compose up -d
 sudo docker compose ps
 sudo docker compose logs --tail 50 wings
 ```
+
 ```bash [Pelican]
 sudo cp -a /etc/pelican/config.yml /etc/pelican/config.yml.bak
 sudo sed -i 's|^remote: .*|remote: https://panel.example.com|' /etc/pelican/config.yml

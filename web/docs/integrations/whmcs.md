@@ -15,12 +15,12 @@ This module authenticates with an **admin API key** (entered as the server passw
 
 The module maps WHMCS's provisioning lifecycle onto the Calagopus admin API:
 
-| WHMCS action | Effect on the panel |
-| --- | --- |
-| Create | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). Refuses to run if a server already exists for the service. |
-| Suspend / Unsuspend | Toggles the server's suspended state. |
-| Change Package | Updates the server's resource limits, feature limits, and egg variables to match the new product configuration and the service's configurable options. |
-| Terminate | Deletes the server, including its backups. |
+| WHMCS action        | Effect on the panel                                                                                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Create              | Finds or creates a panel user for the client, then provisions a server (on a specific node, or auto-deployed across locations). Refuses to run if a server already exists for the service. |
+| Suspend / Unsuspend | Toggles the server's suspended state.                                                                                                                                                      |
+| Change Package      | Updates the server's resource limits, feature limits, and egg variables to match the new product configuration and the service's configurable options.                                     |
+| Terminate           | Deletes the server, including its backups.                                                                                                                                                 |
 
 ### How Clients and Servers Are Linked
 
@@ -74,11 +74,11 @@ On the client's **Products/Services** tab, the module replaces the WHMCS login l
 
 2. In the WHMCS admin area, go to **System Settings → Servers → Add New Server** and fill in:
 
-   | Field | Value |
-   | --- | --- |
-   | **Module** | Select **Calagopus**. |
+   | Field                      | Value                                                                                                                                                                            |
+   | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+   | **Module**                 | Select **Calagopus**.                                                                                                                                                            |
    | **Hostname or IP Address** | Your panel domain, e.g. `panel.example.com`. There is no separate port field; add the port to the hostname if your panel uses a non-standard one, e.g. `panel.example.com:8443`. |
-   | **Password** | Your Calagopus **admin API key**. |
+   | **Password**               | Your Calagopus **admin API key**.                                                                                                                                                |
 
    Leave **Username** and **Access Hash** empty. The module doesn't use them.
 
@@ -106,39 +106,39 @@ WHMCS enforces a hard limit of **24 module configuration options**. This module 
 
 ### Deployment Target
 
-| Field | Description |
-| --- | --- |
-| **Nest UUID** | UUID of the nest containing the egg. Required. |
-| **Egg UUID** | UUID of the egg to provision. Required. |
-| **Node UUID** | Deploy onto a specific node, using its first free allocation. Leave blank to use deploy mode. |
-| **Location UUIDs** | Comma-separated location UUIDs for auto-deploy. Used when **Node UUID** is blank. |
+| Field              | Description                                                                                   |
+| ------------------ | --------------------------------------------------------------------------------------------- |
+| **Nest UUID**      | UUID of the nest containing the egg. Required.                                                |
+| **Egg UUID**       | UUID of the egg to provision. Required.                                                       |
+| **Node UUID**      | Deploy onto a specific node, using its first free allocation. Leave blank to use deploy mode. |
+| **Location UUIDs** | Comma-separated location UUIDs for auto-deploy. Used when **Node UUID** is blank.             |
 
 At least one of **Node UUID** or **Location UUIDs** must be set. WHMCS checks the module settings when you save the product and lists anything missing or invalid, so a broken product can't be saved.
 
 ### Resources and Limits
 
-| Field | Notes |
-| --- | --- |
-| **Memory / Disk** | In MB. The module doesn't accept `0` here. |
-| **Swap** | In MB, `0` or higher. |
-| **CPU Limit** | Percentage; `100` = one thread, `0` = unlimited. |
-| **Memory Overhead** | Hidden memory added on top of the container's limit. |
-| **IO Weight** | `10`–`1000`; leave blank for the default. |
-| **Allocation / Database / Backup / Schedule Limit** | Standard feature limits. |
-| **Custom Feature Limits** | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. Numbers are sent as numbers and `true`/`false` as booleans; anything else is sent as text. |
+| Field                                               | Notes                                                                                                                                                               |
+| --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Memory / Disk**                                   | In MB. The module doesn't accept `0` here.                                                                                                                          |
+| **Swap**                                            | In MB, `0` or higher.                                                                                                                                               |
+| **CPU Limit**                                       | Percentage; `100` = one thread, `0` = unlimited.                                                                                                                    |
+| **Memory Overhead**                                 | Hidden memory added on top of the container's limit.                                                                                                                |
+| **IO Weight**                                       | `10`–`1000`; leave blank for the default.                                                                                                                           |
+| **Allocation / Database / Backup / Schedule Limit** | Standard feature limits.                                                                                                                                            |
+| **Custom Feature Limits**                           | Extension-added limits, as `key:value` pairs, e.g. `plugins:5,worlds:3`. Numbers are sent as numbers and `true`/`false` as booleans; anything else is sent as text. |
 
 ### Egg and Advanced Options
 
-| Field | Notes |
-| --- | --- |
-| **Docker Image** | Override the egg default. Blank uses the egg's first image. |
-| **Startup Command** | Override the egg default startup command. |
-| **Server Name Prefix** | Servers are named `<prefix><service id>`, e.g. `MC-12345`. Blank defaults to `Server-`. |
-| **Egg Variables** | One `VAR_NAME=value` per line. |
-| **Skip Installer** | Skips the egg's installation script. |
-| **Start on Completion** | Starts the server automatically once installation finishes (default: on). |
-| **Backup Configuration UUID** | Optional backup configuration to assign to the server. |
-| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container. |
+| Field                           | Notes                                                                                   |
+| ------------------------------- | --------------------------------------------------------------------------------------- |
+| **Docker Image**                | Override the egg default. Blank uses the egg's first image.                             |
+| **Startup Command**             | Override the egg default startup command.                                               |
+| **Server Name Prefix**          | Servers are named `<prefix><service id>`, e.g. `MC-12345`. Blank defaults to `Server-`. |
+| **Egg Variables**               | One `VAR_NAME=value` per line.                                                          |
+| **Skip Installer**              | Skips the egg's installation script.                                                    |
+| **Start on Completion**         | Starts the server automatically once installation finishes (default: on).               |
+| **Backup Configuration UUID**   | Optional backup configuration to assign to the server.                                  |
+| **Hugepages / KVM Passthrough** | Mount `/dev/hugepages` / allow `/dev/kvm` inside the container.                         |
 
 ## Overriding Settings with Configurable Options
 
@@ -157,32 +157,32 @@ WHMCS only passes the part of a name before the `|` to the module, for option na
 
 ### Overridable Settings
 
-| Key | Friendly name | Value |
-| --- | --- | --- |
-| `nest_uuid`, `egg_uuid` | Nest UUID, Egg UUID | UUID |
-| `node_uuid` | Node UUID (optional) | UUID |
-| `location_uuids` | Location UUIDs (deploy mode) | Comma-separated UUIDs |
-| `memory`, `swap`, `disk` | Memory (MB), Swap (MB), Disk (MB) | MiB |
-| `cpu` | CPU Limit (%) | Percentage, `100` = one thread |
-| `memory_overhead` | Memory Overhead (MB) | MiB |
-| `io_weight` | IO Weight (10-1000, blank=default) | `10`–`1000` |
-| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit` | Allocation Limit, Database Limit, Backup Limit, Schedule Limit | Count |
-| `custom_feature_limits` | Custom Feature Limits | `key:value,key:value` |
-| `docker_image` | Docker Image (optional) | Image reference |
-| `startup_command` | Startup Command (optional) | Command string |
-| `server_name_prefix` | Server Name Prefix | Text |
-| `variables` | Egg Variables | One `VAR_NAME=value` per line |
+| Key                                                                                 | Friendly name                                                               | Value                                                       |
+| ----------------------------------------------------------------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| `nest_uuid`, `egg_uuid`                                                             | Nest UUID, Egg UUID                                                         | UUID                                                        |
+| `node_uuid`                                                                         | Node UUID (optional)                                                        | UUID                                                        |
+| `location_uuids`                                                                    | Location UUIDs (deploy mode)                                                | Comma-separated UUIDs                                       |
+| `memory`, `swap`, `disk`                                                            | Memory (MB), Swap (MB), Disk (MB)                                           | MiB                                                         |
+| `cpu`                                                                               | CPU Limit (%)                                                               | Percentage, `100` = one thread                              |
+| `memory_overhead`                                                                   | Memory Overhead (MB)                                                        | MiB                                                         |
+| `io_weight`                                                                         | IO Weight (10-1000, blank=default)                                          | `10`–`1000`                                                 |
+| `allocations_limit`, `database_limit`, `backup_limit`, `schedule_limit`             | Allocation Limit, Database Limit, Backup Limit, Schedule Limit              | Count                                                       |
+| `custom_feature_limits`                                                             | Custom Feature Limits                                                       | `key:value,key:value`                                       |
+| `docker_image`                                                                      | Docker Image (optional)                                                     | Image reference                                             |
+| `startup_command`                                                                   | Startup Command (optional)                                                  | Command string                                              |
+| `server_name_prefix`                                                                | Server Name Prefix                                                          | Text                                                        |
+| `variables`                                                                         | Egg Variables                                                               | One `VAR_NAME=value` per line                               |
 | `skip_installer`, `start_on_completion`, `hugepages_passthrough`, `kvm_passthrough` | Skip Installer, Start on Completion, Hugepages Passthrough, KVM Passthrough | `on`, `1`, `yes`, or `true` enables; anything else disables |
-| `backup_configuration_uuid` | Backup Configuration UUID (optional) | UUID |
+| `backup_configuration_uuid`                                                         | Backup Configuration UUID (optional)                                        | UUID                                                        |
 
 Overrides skip the product page's validation, so an override value goes to the panel as-is.
 
 Two extra keys have no field on the product page but are honoured when supplied as a configurable option or custom field:
 
-| Key | Friendly name | Purpose |
-| --- | --- | --- |
-| `server_name` | Server Name | Full server name, replacing the `<prefix><service id>` pattern. |
-| `pinned_cpus` | - | Comma-separated core IDs, e.g. `0,1,2`. |
+| Key           | Friendly name | Purpose                                                         |
+| ------------- | ------------- | --------------------------------------------------------------- |
+| `server_name` | Server Name   | Full server name, replacing the `<prefix><service id>` pattern. |
+| `pinned_cpus` | -             | Comma-separated core IDs, e.g. `0,1,2`.                         |
 
 ### Egg Variables
 

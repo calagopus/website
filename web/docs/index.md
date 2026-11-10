@@ -1,6 +1,6 @@
 ---
 title: Documentation
-description: "Official Calagopus documentation: install the panel, deploy Wings on game server nodes, and build custom extensions."
+description: 'Official Calagopus documentation: install the panel, deploy Wings on game server nodes, and build custom extensions.'
 prev: false
 next: false
 ---

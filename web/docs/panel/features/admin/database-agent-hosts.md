@@ -29,15 +29,15 @@ Click **Create** in the top right.
 
 ![Create database agent host form](./images/database-agent-hosts/create-form.webp)
 
-| Field | Description |
-| ----- | ----------- |
-| **Name** | Display name for the host. |
-| **URL** | Where the panel reaches the agent, e.g. `https://agent.example.com:8090`. If you omit the port, a warning explains the panel will connect on the URL's default port while the agent listens on `8090` by default; an **Add :8090** button appends it for you. |
-| **Description** | Optional free text. |
-| **Memory** | "The total memory available for database instances on this host." New instances are only placed while the combined limits of the host's instances fit within it. Defaults to `0`, which means no limit. |
-| **Disk** | "The total disk available for database instances on this host." The same placement rule applies. Defaults to `0`, which means no limit. |
-| **Deployment Enabled** | Whether new instances may be placed on this host. On by default. |
-| **Maintenance Enabled** | Puts the host into maintenance mode, see below. Off by default. |
+| Field                   | Description                                                                                                                                                                                                                                                   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**                | Display name for the host.                                                                                                                                                                                                                                    |
+| **URL**                 | Where the panel reaches the agent, e.g. `https://agent.example.com:8090`. If you omit the port, a warning explains the panel will connect on the URL's default port while the agent listens on `8090` by default; an **Add :8090** button appends it for you. |
+| **Description**         | Optional free text.                                                                                                                                                                                                                                           |
+| **Memory**              | "The total memory available for database instances on this host." New instances are only placed while the combined limits of the host's instances fit within it. Defaults to `0`, which means no limit.                                                       |
+| **Disk**                | "The total disk available for database instances on this host." The same placement rule applies. Defaults to `0`, which means no limit.                                                                                                                       |
+| **Deployment Enabled**  | Whether new instances may be placed on this host. On by default.                                                                                                                                                                                              |
+| **Maintenance Enabled** | Puts the host into maintenance mode, see below. Off by default.                                                                                                                                                                                               |
 
 Below that is a section per database type (**PostgreSQL**, **MariaDB**, **MongoDB**, **Redis**), each with an **Enabled** switch and optional **Public Host** and **Public Port** overrides for the address users connect to (defaults `5432`, `3306`, `27017`, `6379`).
 

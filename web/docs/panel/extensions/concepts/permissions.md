@@ -13,11 +13,11 @@ Extensions declare permissions through the `ExtensionPermissionsBuilder` in thei
 
 There are three independent permission scopes:
 
-| Scope | Who it applies to | Where it's checked |
-| ----- | ----------------- | ------------------ |
-| **User permissions** | A user's own account scope (things they can do that aren't server-specific) | Client routes that aren't server-scoped |
-| **Server permissions** | Subusers on a specific server | Client-server routes |
-| **Admin permissions** | Admin roles | Admin routes |
+| Scope                  | Who it applies to                                                           | Where it's checked                      |
+| ---------------------- | --------------------------------------------------------------------------- | --------------------------------------- |
+| **User permissions**   | A user's own account scope (things they can do that aren't server-specific) | Client routes that aren't server-scoped |
+| **Server permissions** | Subusers on a specific server                                               | Client-server routes                    |
+| **Admin permissions**  | Admin roles                                                                 | Admin routes                            |
 
 These map 1:1 to the `has_user_permission(...)`, `has_server_permission(...)`, and `has_admin_permission(...)` methods you've already seen on `GetPermissionManager`. The scope you add a permission under has to match the scope of the route that checks it: an admin permission can't be checked by `has_server_permission`, and vice versa.
 
@@ -87,19 +87,16 @@ New groups show up in the permission picker without an icon. An icon is optional
 Icons are attached **from the frontend**, on the extension registry, not in the backend permission builder:
 
 ```tsx
-import { Extension, ExtensionContext } from 'shared';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCube } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
   public cardConfigurationPage: React.FC | null = null;
   public cardComponent: React.FC | null = null;
 
   public initialize(ctx: ExtensionContext): void {
-    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon(
-      'my-feature',
-      <FontAwesomeIcon icon={faCube} />,
-    );
+    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon('my-feature', <FontAwesomeIcon icon={faCube} />);
   }
 }
 
@@ -118,7 +115,7 @@ Each takes the **group name** (icons are per group, not per permission) and a `R
 Registering an icon for a group name that doesn't exist is harmless: the icon is never rendered. Normally you add the icon for the same group name you registered in `initialize_permissions` on the backend.
 :::
 
-It also works for core groups you've mutated. If you add a permission to the existing `settings` group (see the next section), you usually *don't* want to replace its core icon, but you can.
+It also works for core groups you've mutated. If you add a permission to the existing `settings` group (see the next section), you usually _don't_ want to replace its core icon, but you can.
 
 ## Mutating Core Permission Groups
 
@@ -150,7 +147,7 @@ The `settings` group is a common target, since many extensions add configuration
 ::: warning
 **You can also remove permissions from core groups.** The `ExtensionPermissionsBuilder` fields are `pub`, and `PermissionGroup.permissions` is a mutable `IndexMap`, which means nothing at the API level stops you from calling `.remove(...)` inside a `mutate_*` closure to strip permissions the core Panel defined.
 
-**Don't.** Removing a permission the Panel defined breaks core UI that depends on it, silently locks users out of features they should have, and makes other extensions' behavior depend on load order. It is possible only because the API is consistent, not because it is supported. If you think you need it, you probably want to *check* a different permission in your own code, or add an admin-level toggle your extension checks itself.
+**Don't.** Removing a permission the Panel defined breaks core UI that depends on it, silently locks users out of features they should have, and makes other extensions' behavior depend on load order. It is possible only because the API is consistent, not because it is supported. If you think you need it, you probably want to _check_ a different permission in your own code, or add an admin-level toggle your extension checks itself.
 
 Changing existing permissions, such as a description, is possible too, but it changes UI that the rest of the Panel and other extensions see. Do it rarely.
 :::
@@ -197,14 +194,14 @@ If the user has the permission, the children render. If they don't, the whole bl
 
 ### Props
 
-| Prop | Type | Purpose |
-| ---- | ---- | ------- |
-| `action` | `string \| string[]` | The permission node(s) to check. A single string requires that one permission; an array requires all of them by default. |
-| `matchAny` | `boolean` | When `action` is an array, require *any* of them instead of *all*. Defaults to `false`. |
-| `renderOnCant` | `ReactNode \| null` | What to render when the user lacks permission. Defaults to nothing (the children are simply hidden). |
-| `cantSave` | `boolean` | (`AdminCan` only) Render a disabled Save button with an explanatory tooltip when the user can't save. |
-| `cantDelete` | `boolean` | (`AdminCan` only) Render a disabled Delete button with an explanatory tooltip when the user can't delete. |
-| `children` | `ReactNode` | What to render when the user has permission. |
+| Prop           | Type                 | Purpose                                                                                                                  |
+| -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `action`       | `string \| string[]` | The permission node(s) to check. A single string requires that one permission; an array requires all of them by default. |
+| `matchAny`     | `boolean`            | When `action` is an array, require _any_ of them instead of _all_. Defaults to `false`.                                  |
+| `renderOnCant` | `ReactNode \| null`  | What to render when the user lacks permission. Defaults to nothing (the children are simply hidden).                     |
+| `cantSave`     | `boolean`            | (`AdminCan` only) Render a disabled Save button with an explanatory tooltip when the user can't save.                    |
+| `cantDelete`   | `boolean`            | (`AdminCan` only) Render a disabled Delete button with an explanatory tooltip when the user can't delete.                |
+| `children`     | `ReactNode`          | What to render when the user has permission.                                                                             |
 
 ### Choosing between "hide" and "show disabled"
 
@@ -223,7 +220,11 @@ For custom disabled states, pass your own `renderOnCant`:
 ```tsx
 <ServerCan
   action='settings.my-feature'
-  renderOnCant={<Tooltip label='Your admin has not granted you this permission.'><Button disabled>Apply</Button></Tooltip>}
+  renderOnCant={
+    <Tooltip label='Your admin has not granted you this permission.'>
+      <Button disabled>Apply</Button>
+    </Tooltip>
+  }
 >
   <Button onClick={doApply}>Apply</Button>
 </ServerCan>
@@ -234,19 +235,23 @@ For custom disabled states, pass your own `renderOnCant`:
 Pass an array to require multiple permissions. By default **all** must be present:
 
 ```tsx
-{/* User must have BOTH permissions */}
+{
+  /* User must have BOTH permissions */
+}
 <ServerCan action={['settings.my-feature', 'settings.advanced']}>
   <AdvancedControls />
-</ServerCan>
+</ServerCan>;
 ```
 
 Add `matchAny` to require just one of them:
 
 ```tsx
-{/* User must have EITHER permission */}
+{
+  /* User must have EITHER permission */
+}
 <ServerCan action={['files.read', 'files.write']} matchAny>
   <FileList />
-</ServerCan>
+</ServerCan>;
 ```
 
 ### Imperative checks
@@ -260,10 +265,7 @@ function MyComponent() {
   const canEditMatrix = useServerPermissions('settings.egg-changer');
   const canEdit = useCan(canEditMatrix, false);
 
-  const actions = [
-    { label: 'View', onClick: doView },
-    ...(canEdit ? [{ label: 'Edit', onClick: doEdit }] : []),
-  ];
+  const actions = [{ label: 'View', onClick: doView }, ...(canEdit ? [{ label: 'Edit', onClick: doEdit }] : [])];
 
   return <Dropdown actions={actions} />;
 }
@@ -274,14 +276,14 @@ The same module also exports `useServerCan(action, matchAny?)` and `useAdminCan(
 Prefer the `<Can>` components for rendering decisions and the hooks only for cases where the JSX wrapper is awkward.
 
 ::: warning
-Frontend permission checks are a UX layer, not a security layer. Never skip the backend check because the UI is wrapped in `<ServerCan>`; anyone can call your API with curl. The `<Can>` components decide what's *visible*; `has_server_permission(...)?` on the backend decides what's *allowed*. You need both.
+Frontend permission checks are a UX layer, not a security layer. Never skip the backend check because the UI is wrapped in `<ServerCan>`; anyone can call your API with curl. The `<Can>` components decide what's _visible_; `has_server_permission(...)?` on the backend decides what's _allowed_. You need both.
 :::
 
 ## Design Guidelines
 
-- **Prefer more granular permissions over fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to *look* at things without also being able to change them.
+- **Prefer more granular permissions over fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to _look_ at things without also being able to change them.
 
-- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission *lets someone do*. A name like `post-switch-endpoint` describes the route instead, and stops being accurate once you restructure your routes.
+- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission _lets someone do_. A name like `post-switch-endpoint` describes the route instead, and stops being accurate once you restructure your routes.
 
 - **Descriptions are shown to humans configuring permissions.** Write them as a full sentence, starting with "Allows ..." or similar, in terms a user understands without reading the code.
 

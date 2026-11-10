@@ -17,24 +17,24 @@ This page is written by the Calagopus project. Calagopus is a third option, and 
 
 ## Quick Summary
 
-|                             | Pterodactyl                     | Pelican                                   |
-| --------------------------- | ------------------------------- | ----------------------------------------- |
-| **Relationship**            | Original project                | Fork of Pterodactyl                       |
-| **First release**           | December 2015                   | March 2024                                |
-| **License**                 | MIT                             | AGPL-3.0                                  |
-| **Panel language**          | PHP (Laravel)                   | PHP (Laravel)                             |
-| **Admin and client UI**     | React client, Blade admin       | Both rebuilt with Filament                |
-| **Node daemon (Wings)**     | Go                              | Same Go daemon, inherited                 |
-| **Panel database**          | MySQL/MariaDB                   | MySQL, MariaDB (dedicated driver), PostgreSQL, SQLite |
-| **Game-server databases**   | MySQL/MariaDB                   | MySQL/MariaDB                             |
-| **Extension system**        | None (Blueprint is unofficial)  | First-party plugin system                 |
-| **Admin roles**             | No                              | Yes                                       |
-| **OAuth login**             | No                              | Yes                                       |
-| **Passkeys (WebAuthn)**     | No                              | Yes                                       |
-| **Webhooks**                | No                              | Yes                                       |
-| **Organization**            | Nests and locations             | Tags                                      |
-| **Bot protection**          | Google reCAPTCHA                | Cloudflare Turnstile                      |
-| **Egg format**              | Native                          | Compatible                                |
+|                           | Pterodactyl                    | Pelican                                               |
+| ------------------------- | ------------------------------ | ----------------------------------------------------- |
+| **Relationship**          | Original project               | Fork of Pterodactyl                                   |
+| **First release**         | December 2015                  | March 2024                                            |
+| **License**               | MIT                            | AGPL-3.0                                              |
+| **Panel language**        | PHP (Laravel)                  | PHP (Laravel)                                         |
+| **Admin and client UI**   | React client, Blade admin      | Both rebuilt with Filament                            |
+| **Node daemon (Wings)**   | Go                             | Same Go daemon, inherited                             |
+| **Panel database**        | MySQL/MariaDB                  | MySQL, MariaDB (dedicated driver), PostgreSQL, SQLite |
+| **Game-server databases** | MySQL/MariaDB                  | MySQL/MariaDB                                         |
+| **Extension system**      | None (Blueprint is unofficial) | First-party plugin system                             |
+| **Admin roles**           | No                             | Yes                                                   |
+| **OAuth login**           | No                             | Yes                                                   |
+| **Passkeys (WebAuthn)**   | No                             | Yes                                                   |
+| **Webhooks**              | No                             | Yes                                                   |
+| **Organization**          | Nests and locations            | Tags                                                  |
+| **Bot protection**        | Google reCAPTCHA               | Cloudflare Turnstile                                  |
+| **Egg format**            | Native                         | Compatible                                            |
 
 ## Which Should You Choose?
 

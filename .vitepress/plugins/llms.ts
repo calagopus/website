@@ -1,6 +1,6 @@
+import type { SiteConfig } from 'vitepress';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
-import type { SiteConfig } from 'vitepress';
 import { compareFaqs } from '../data/compare-faqs.ts';
 import { featureCategories } from '../data/features.ts';
 import { docsSidebar } from '../data/sidebar.ts';

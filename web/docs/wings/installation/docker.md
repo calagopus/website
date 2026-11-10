@@ -7,14 +7,13 @@ description: How to install Calagopus Wings using Docker. Wings is the node daem
 
 ## Docker Image Variants
 
-| Variant | Description |
-| ------- | ----------- |
-| `:latest` | The latest stable release. Recommended for production. |
+| Variant       | Description                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `:latest`     | The latest stable release. Recommended for production.                                                                |
 | `:latest-pre` | Latest pre-release. May contain new features not yet in `:latest`, but also new bugs. Not recommended for production. |
-| `:nightly` | Latest development build. Updated frequently, may be unstable. Not recommended for production. |
+| `:nightly`    | Latest development build. Updated frequently, may be unstable. Not recommended for production.                        |
 
 ## Install Docker
-
 
 ::: info Using Podman instead?
 Podman is supported as an alternative to Docker. If you'd prefer to use Podman, install Wings via the [Docker](./docker.md#configure-wings), [Binary](./binary.md#configure-wings), or [Package Manager](./pkgmanager.md) method and follow the [Running Wings with Podman](../advanced/running-wings-with-podman.md) guide. The Docker Compose method requires Docker.
@@ -57,7 +56,6 @@ sudo sed -i -e "s/calagopus\/wings:latest/calagopus\/wings:nightly/g" compose.ym
 ```
 :::
 
-
 ## Configure Wings
 
 For a fresh installation, leave the `config` directory empty and continue to [Start Wings](#start-wings). Wings waits for pairing and prints a code in its logs. In the Panel, use [Pair a Waiting Node](../next-steps/configure-node.md#pair-a-waiting-node) to connect it.
@@ -68,8 +66,8 @@ If you have already created the node entry, generate an enrollment command from 
 
 ```yaml
 environment:
-  WINGS_ENROLL_PANEL_URL: "https://panel.example.com"
-  WINGS_ENROLL_CODE: "CODE_FROM_PANEL"
+  WINGS_ENROLL_PANEL_URL: 'https://panel.example.com'
+  WINGS_ENROLL_CODE: 'CODE_FROM_PANEL'
 ```
 
 The code expires after 30 minutes and can be used once. These variables are read only when no configuration file exists. Wings saves the resulting configuration in `config/config.yml` and starts normally; if enrollment fails, it logs the error and waits for pairing instead. Remove the enrollment variables from Compose after success. Keep the `config/` volume so restarts retain the node identity.

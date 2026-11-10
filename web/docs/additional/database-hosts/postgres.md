@@ -40,7 +40,7 @@ services:
     volumes:
       - ./data:/var/lib/postgresql
     ports:
-      - "0.0.0.0:5432:5432"
+      - '0.0.0.0:5432:5432'
 ```
 
 Start the service, then open a `psql` shell inside the container to continue with user setup. The `ports` entry already exposes the port.
@@ -134,13 +134,13 @@ Each database the panel creates is owned by its own role, and the panel revokes 
 2. Change the Credential Type to **Details**.
 3. Fill in the form:
 
-| Field | Value |
-| --- | --- |
-| **Name** | A friendly label, e.g. `PostgreSQL` |
-| **Host** | IP address or hostname of the database server |
-| **Port** | `5432` |
-| **Username** | `calagopus` |
-| **Password** | The password you set above |
+| Field        | Value                                         |
+| ------------ | --------------------------------------------- |
+| **Name**     | A friendly label, e.g. `PostgreSQL`           |
+| **Host**     | IP address or hostname of the database server |
+| **Port**     | `5432`                                        |
+| **Username** | `calagopus`                                   |
+| **Password** | The password you set above                    |
 
 ![Create Database Host form with PostgreSQL type, username, password, host, and port fields](./files/postgres.webp)
 

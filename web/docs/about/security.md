@@ -173,15 +173,15 @@ with an empty environment and passes only an open handle to the directory that
 holds the database. Before opening the database, the helper applies these layers
 in order and skips any the host cannot provide:
 
-| Layer | Effect |
-| --- | --- |
-| Resource limits | 256 MiB data segment, 30 seconds of CPU, no core dumps, 32 open files. |
-| chroot | Makes the database directory the root, when the helper has `CAP_SYS_CHROOT`. |
-| User namespace | Performs the same chroot from a private user namespace when `CAP_SYS_CHROOT` is missing. |
-| Landlock | Limits filesystem access to the database directory. |
-| Capability bounding set | Emptied, when the helper has `CAP_SETPCAP`. |
-| Server user | When Wings runs as root, switches to the `system.user` uid and gid with no supplementary groups, and refuses to run if either is `0`. The user namespace layer makes the same switch before it unshares. |
-| Privilege lock | Clears every capability and sets `no_new_privs`. |
+| Layer                   | Effect                                                                                                                                                                                                   |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Resource limits         | 256 MiB data segment, 30 seconds of CPU, no core dumps, 32 open files.                                                                                                                                   |
+| chroot                  | Makes the database directory the root, when the helper has `CAP_SYS_CHROOT`.                                                                                                                             |
+| User namespace          | Performs the same chroot from a private user namespace when `CAP_SYS_CHROOT` is missing.                                                                                                                 |
+| Landlock                | Limits filesystem access to the database directory.                                                                                                                                                      |
+| Capability bounding set | Emptied, when the helper has `CAP_SETPCAP`.                                                                                                                                                              |
+| Server user             | When Wings runs as root, switches to the `system.user` uid and gid with no supplementary groups, and refuses to run if either is `0`. The user namespace layer makes the same switch before it unshares. |
+| Privilege lock          | Clears every capability and sets `no_new_privs`.                                                                                                                                                         |
 
 SQLite inside the helper runs in defensive mode with schemas untrusted,
 memory-mapped I/O off and temporary data kept in memory. The database is opened
@@ -215,13 +215,13 @@ an early space check; that check is not a reservation.
 volume directly, without passing through Wings' file writer. Choose a backend
 that covers those writes:
 
-| Mode | Mechanism |
-| ---- | --- |
-| `zfs_dataset` | Per-server ZFS dataset quota. |
-| `btrfs_subvolume` | Per-server Btrfs subvolume quota. |
-| `xfs_quota` | XFS project quota. |
-| `fuse_quota` | A separate FUSE process in the filesystem write path. |
-| `none` (default) | Wings accounting and usage checks, without a write-time backend. |
+| Mode              | Mechanism                                                        |
+| ----------------- | ---------------------------------------------------------------- |
+| `zfs_dataset`     | Per-server ZFS dataset quota.                                    |
+| `btrfs_subvolume` | Per-server Btrfs subvolume quota.                                |
+| `xfs_quota`       | XFS project quota.                                               |
+| `fuse_quota`      | A separate FUSE process in the filesystem write path.            |
+| `none` (default)  | Wings accounting and usage checks, without a write-time backend. |
 
 ZFS, Btrfs, and XFS enforce their configured quota in the filesystem. FUSE routes
 writes through its quota process. These cover writes from the game server as well
@@ -277,11 +277,11 @@ key when one was used. When something changes who may do what, the Panel tells
 every node (or only the server's node, for a subuser or owner change), and Wings
 re-checks the sessions it holds:
 
-| Change in the Panel | What happens on Wings |
-| --- | --- |
+| Change in the Panel                                                                                                                                                                                                                                                                    | What happens on Wings                                                                                                                                                            |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Subuser added, edited or removed; server owner changed; role permissions or **Require Two Factor** changed, or role deleted; user suspended or unsuspended, **Admin** toggled, or role reassigned; 2FA disabled by the user or an admin; security key deleted; any admin setting saved | Wings fetches the user's current permissions from the Panel. Open console and SFTP/SSH sessions carry on with the new permissions, and a session that has lost access is closed. |
-| Password changed, password login turned off, SSH key deleted, user deleted | Every console and SFTP/SSH session of the user is closed, and tokens issued to them before the change are refused. |
-| API key edited (permissions, allowed IPs, expiry, enabled state), disabled or deleted | Tokens issued through that key before the change are refused, and console connections opened with them are closed. Sessions started any other way are unaffected. |
+| Password changed, password login turned off, SSH key deleted, user deleted                                                                                                                                                                                                             | Every console and SFTP/SSH session of the user is closed, and tokens issued to them before the change are refused.                                                               |
+| API key edited (permissions, allowed IPs, expiry, enabled state), disabled or deleted                                                                                                                                                                                                  | Tokens issued through that key before the change are refused, and console connections opened with them are closed. Sessions started any other way are unaffected.                |
 
 A refetch that finds the account suspended, missing required two-factor
 authentication, or missing a required email verification removes the user's

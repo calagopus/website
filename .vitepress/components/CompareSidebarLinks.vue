@@ -48,7 +48,9 @@ const links = [
   font-weight: 500;
   line-height: 1.7142857;
   color: var(--vp-c-text-1);
-  transition: color 0.15s, background-color 0.15s;
+  transition:
+    color 0.15s,
+    background-color 0.15s;
 }
 
 .link:hover {

@@ -42,9 +42,9 @@ Fill in the required fields:
 - **Timezone**, your local timezone, used for scheduled tasks and logs
 - **Image Configuration**, choose the image variant
 
-| Variant | Use when |
-| --- | --- |
-| **AIO** | Standard install, Panel + Wings, no extensions |
+| Variant       | Use when                                                                                                       |
+| ------------- | -------------------------------------------------------------------------------------------------------------- |
+| **AIO**       | Standard install, Panel + Wings, no extensions                                                                 |
 | **AIO Heavy** | You plan to install [extensions](../../extensions/index.md), includes the build tooling needed to compile them |
 
 - **Encryption Key**, a random string of 32 characters. Generate one in the TrueNAS shell:
@@ -60,9 +60,9 @@ Fill in the required fields:
 
 The default ports are:
 
-| Port | Purpose |
-| --- | --- |
-| `30438` | Panel web UI and API |
+| Port    | Purpose                                    |
+| ------- | ------------------------------------------ |
+| `30438` | Panel web UI and API                       |
 | `30439` | SFTP access to game server files via Wings |
 
 Change these if they conflict with other services on your TrueNAS host. Note that your game servers will also need their own port allocations, configure those as additional host-network ports on the Wings node after setup.

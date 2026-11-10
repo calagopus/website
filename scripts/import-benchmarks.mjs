@@ -1,5 +1,5 @@
 import { execFile } from 'node:child_process';
-import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises';
 import { basename, join } from 'node:path';
 import { promisify } from 'node:util';
 
@@ -73,9 +73,7 @@ async function writeTarget(kind, target, system, report) {
 
 async function writeIndex(kind, target, order) {
   const dir = join(DATA, KINDS[kind], target);
-  const present = (await readdir(dir))
-    .filter((f) => f.endsWith('.ts') && f !== 'index.ts')
-    .map((f) => f.slice(0, -3));
+  const present = (await readdir(dir)).filter((f) => f.endsWith('.ts') && f !== 'index.ts').map((f) => f.slice(0, -3));
   const ordered = order.filter((id) => present.includes(id));
   const meta = TARGETS[`${kind}:${target}`];
 
