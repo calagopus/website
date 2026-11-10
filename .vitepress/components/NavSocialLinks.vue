@@ -7,9 +7,6 @@ import { data as guild } from '../data/discord-guild.data.mts';
 import { data as github } from '../data/github-stars.data.mts';
 import { formatCount } from '../lib/format.ts';
 
-// Stands in for the default theme's VPNavSocialLinks, which renders in the nav bar and, with
-// `screen`, in the mobile nav screen. The bar copy joins the nav overflow engine so it collapses
-// into the `⋯` menu instead of overflowing.
 const props = defineProps<{ screen?: boolean }>();
 
 const { theme } = useData();
@@ -18,8 +15,6 @@ const isCollapsed = computed(() => !!overflow && !overflow.state.socialLinks);
 const setClusterEl = (el: Element | ComponentPublicInstance | null) =>
   overflow?.setClusterEl('socialLinks', el instanceof HTMLElement ? el : null);
 
-// The build only emits CSS for icons registered during SSR. This component draws its own SVGs,
-// so without this the plain icons in the `⋯` menu, which only renders on the client, are blank.
 for (const { icon } of theme.value.socialLinks ?? []) {
   if (typeof icon === 'string') useIcon(icon.includes(':') ? icon : `simple-icons:${icon}`);
 }
