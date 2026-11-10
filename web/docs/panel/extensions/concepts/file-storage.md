@@ -3,6 +3,7 @@ prev: true
 next: false
 description: How Calagopus extensions store and serve files through the Panel's Storage abstraction, which targets the local filesystem or an S3-compatible bucket.
 ---
+
 # File Storage
 
 Some extensions need to store files - user-uploaded avatars, generated reports, exported backups, cached external assets, anything that doesn't fit into a database row. The Panel handles this through a `Storage` abstraction available at `state.storage`, which routes file operations to either the local filesystem or an S3-compatible bucket depending on what the operator has configured.
@@ -84,12 +85,12 @@ The path **must not** contain `..`, start with `/`, or be empty. The store metho
 
 Storage paths are global - whatever you write to `foo/bar.txt` is reachable as `foo/bar.txt` to everyone using the same backend. To keep extensions, the core Panel, and admin operations from stepping on each other, there's a convention around top-level directories.
 
-| Prefix | Public? | What it's for |
-| --- | --- | --- |
-| `assets/` | Yes | Admin assets - logos, branding images, anything the admin panel needs publicly available. |
-| `avatars/` | Yes | User avatar images. Structure is `avatars/{user_uuid}/{identifier}.webp`, where the identifier is random for an uploaded avatar, and for one imported from an OAuth provider is a digest of the source URL followed by a digest of the stored image. An avatar path never gets new content, so browsers can cache it forever. **Don't write here directly** unless you're confident; the core Panel manages this and a botched write can leave a user with a missing or corrupted avatar. |
-| `publicdata/` | Yes | Currently unused by the base Panel; available for extension use. Suggested structure: `publicdata/extensions/{your.package.identifier}/...`. |
-| `privatedata/` | No | Not publicly accessible. Same suggested structure as `publicdata/`: `privatedata/extensions/{your.package.identifier}/...`. |
+| Prefix         | Public? | What it's for                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| -------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `assets/`      | Yes     | Admin assets - logos, branding images, anything the admin panel needs publicly available.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `avatars/`     | Yes     | User avatar images. Structure is `avatars/{user_uuid}/{identifier}.webp`, where the identifier is random for an uploaded avatar, and for one imported from an OAuth provider is a digest of the source URL followed by a digest of the stored image. An avatar path never gets new content, so browsers can cache it forever. **Don't write here directly** unless you're confident; the core Panel manages this and a botched write can leave a user with a missing or corrupted avatar. |
+| `publicdata/`  | Yes     | Currently unused by the base Panel; available for extension use. Suggested structure: `publicdata/extensions/{your.package.identifier}/...`.                                                                                                                                                                                                                                                                                                                                              |
+| `privatedata/` | No      | Not publicly accessible. Same suggested structure as `publicdata/`: `privatedata/extensions/{your.package.identifier}/...`.                                                                                                                                                                                                                                                                                                                                                               |
 
 The "publicly accessible" distinction is enforced by the Panel's HTTP layer, not by `Storage` itself, and only on the filesystem driver: the Panel serves `assets/`, `avatars/` and `publicdata/` from disk and answers 404 for everything else, so a `privatedata/` URL is dead there. On S3 the Panel serves nothing at all and `get_url` is plain string concatenation onto the configured public URL, which means whether `privatedata/...` is reachable depends entirely on the bucket or CDN policy the operator set up. Treat `privatedata/` as a convention you enforce yourself: keep the bucket private, and have your extension's own routes authenticate and stream those files.
 
@@ -118,7 +119,7 @@ let avatar_url = urls.get_url("publicdata/extensions/dev.yourname.my-feature/som
 
 The format depends on the configured driver: filesystem-backed installs serve through the Panel itself (URL prefixed with `app.url`), S3-backed installs serve from the configured `public_url` (typically a CDN). Either way, your extension code doesn't care - you get a URL string, you hand it to the frontend.
 
-For paths under `privatedata/`, `get_url(...)` will still return *a* URL. On the filesystem driver hitting it is a 404; on S3 it is whatever the bucket policy says. Treat the returned value as a path identifier for your own routes' use, not as something to expose to clients.
+For paths under `privatedata/`, `get_url(...)` will still return _a_ URL. On the filesystem driver hitting it is a 404; on S3 it is whatever the bucket policy says. Treat the returned value as a path identifier for your own routes' use, not as something to expose to clients.
 
 The retriever holds a read guard on the settings for as long as it lives. Since Panel 1.2.9 that guard is a snapshot: holding one no longer blocks settings writes, and the retriever keeps using the settings it started with, missing later storage changes. Before 1.2.9 the guard blocked the next settings write. Either way, it is fine for the lifetime of a request handler, but don't park one in a long-running task.
 
@@ -126,10 +127,10 @@ The retriever holds a read guard on the settings for as long as it lives. Since 
 
 How long browsers keep a public file depends on its prefix. On the filesystem driver the Panel sets the headers itself when it serves the file:
 
-| Prefix | `Cache-Control` | Why |
-| --- | --- | --- |
-| `avatars/` | `public, max-age=31536000, immutable` | Every avatar path is unique to its content, so a browser never needs to ask again. |
-| `assets/`, `publicdata/` | `no-cache` | Paths can be overwritten with new content. Browsers revalidate with `If-Modified-Since` against the file's `Last-Modified` time and get a `304` when nothing changed. |
+| Prefix                   | `Cache-Control`                       | Why                                                                                                                                                                   |
+| ------------------------ | ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `avatars/`               | `public, max-age=31536000, immutable` | Every avatar path is unique to its content, so a browser never needs to ask again.                                                                                    |
+| `assets/`, `publicdata/` | `no-cache`                            | Paths can be overwritten with new content. Browsers revalidate with `If-Modified-Since` against the file's `Last-Modified` time and get a `304` when nothing changed. |
 
 You can't change this policy for filesystem storage, so an extension writing to `publicdata/` gets `no-cache`. If a file under your prefix is replaced, clients see the new version on their next request.
 
@@ -219,7 +220,7 @@ Two differences from `list` worth internalising:
 ::: warning Searching is O(subtree), and on S3 that's network
 Neither backend can do substring matching itself. On filesystem the Panel walks the directory tree; on S3 it issues `ListObjectsV2` **without a delimiter** across the whole prefix and filters the keys client-side, pulling up to 1000 keys per round trip. A search over a prefix holding tens of thousands of objects is many sequential API calls, and the cost falls on every keystroke if you wire it to a live-updating input.
 
-An internal scan cap bounds this at 10,000 entries walked per call. Past that the walk stops and you get whatever matched so far - silently, with no indication the results were cut short. So on a large bucket, a broad search is not just slow, it's *incomplete*.
+An internal scan cap bounds this at 10,000 entries walked per call. Past that the walk stops and you get whatever matched so far - silently, with no indication the results were cut short. So on a large bucket, a broad search is not just slow, it's _incomplete_.
 
 Debounce anything user-driven, scope the search to the narrowest `directory` you can, and treat the result as a browse aid rather than an authoritative answer to "does this file exist".
 :::
@@ -263,12 +264,13 @@ let cap_fs = match settings.storage_driver.get_cap_filesystem("publicdata/extens
 ```
 
 ::: warning Path traversal is a real risk here
-**The path you pass to `get_cap_filesystem` must not contain user input.** That argument is the *root* of the resulting cap filesystem, and a `..` or absolute-path injection at that point would let the user escape the storage area entirely. The whole reason cap-std exists is to safely contain user-controlled paths *inside* an opened filesystem, not when opening it.
+**The path you pass to `get_cap_filesystem` must not contain user input.** That argument is the _root_ of the resulting cap filesystem, and a `..` or absolute-path injection at that point would let the user escape the storage area entirely. The whole reason cap-std exists is to safely contain user-controlled paths _inside_ an opened filesystem, not when opening it.
 
 The pattern is:
+
 - Hardcode the root (or build it from values you fully control, like your own extension identifier)
 - Open the cap filesystem rooted there
-- *Then* let user input flow into operations on the opened filesystem - those operations are sandboxed to the root and `..` segments can't escape
+- _Then_ let user input flow into operations on the opened filesystem - those operations are sandboxed to the root and `..` segments can't escape
 
 If you put user input in the call to `get_cap_filesystem` itself, you've defeated the protection.
 :::
@@ -277,6 +279,6 @@ A few more reasons most extensions shouldn't reach for this:
 
 - It only works on filesystem deployments. If you ship an extension that requires it, operators on S3 can't use your extension.
 - The high-level `store` / `remove` / `retrieve_urls` API does what most code needs and is portable across both backends.
-- For temporary scratch space (which is the most common reason people *think* they need raw filesystem access), the [tempfile](https://docs.rs/tempfile) crate is what you actually want.
+- For temporary scratch space (which is the most common reason people _think_ they need raw filesystem access), the [tempfile](https://docs.rs/tempfile) crate is what you actually want.
 
 If you have a specific, justifiable reason to need cap-filesystem access - large directory operations, things the high-level API doesn't expose - this is the supported path. But default to the high-level API and only reach for this when you've established you actually need it.

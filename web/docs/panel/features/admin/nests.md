@@ -59,9 +59,9 @@ Unsaved edits on **General** and **Installation Script** are kept while you swit
 
 The top of the form covers identity and repository linkage:
 
-| Field | What it does |
-|---|---|
-| **Author** / **Name** / **Description** | Basic metadata. |
+| Field                                       | What it does                                                                                                         |
+| ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Author** / **Name** / **Description**     | Basic metadata.                                                                                                      |
 | **Egg Repository** / **Egg Repository Egg** | Links this egg to an egg from a synced [egg repository](./egg-repositories.md), enabling **Update from Repository**. |
 
 ![Paper egg General tab with startup, stop, config file, startup command, and Docker image settings filled in](./images/nests/egg-general.webp)
@@ -78,19 +78,18 @@ Below that, three configuration cards:
 
 The rest of the form:
 
-| Field | What it does |
-|---|---|
-| **Startup Commands** | Named startup command presets as key/value pairs. Users pick between them on the server's [Startup page](../server/startup.md). An egg needs at least one, and none may be empty or whitespace-only or repeat another. |
-| **Force Outgoing IP** | Forces the server's outgoing traffic through its allocation IP. |
-| **Separate IP and Port** | Shows the primary IP and port separately on the Console page instead of joining them with `:`. |
-| **Features** | Feature tags for this egg. |
-| **File Deny List** | File patterns users cannot touch in the file manager. |
-| **Docker Images** | Named Docker images as key/value pairs (label to image). Users switch between them on the Startup page. No image may be empty or whitespace-only, and the same image can't be listed twice. |
+| Field                    | What it does                                                                                                                                                                                                           |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Startup Commands**     | Named startup command presets as key/value pairs. Users pick between them on the server's [Startup page](../server/startup.md). An egg needs at least one, and none may be empty or whitespace-only or repeat another. |
+| **Force Outgoing IP**    | Forces the server's outgoing traffic through its allocation IP.                                                                                                                                                        |
+| **Separate IP and Port** | Shows the primary IP and port separately on the Console page instead of joining them with `:`.                                                                                                                         |
+| **Features**             | Feature tags for this egg.                                                                                                                                                                                             |
+| **File Deny List**       | File patterns users cannot touch in the file manager.                                                                                                                                                                  |
+| **Docker Images**        | Named Docker images as key/value pairs (label to image). Users switch between them on the Startup page. No image may be empty or whitespace-only, and the same image can't be listed twice.                            |
 
 The tag-style inputs (Startup Done, Features, File Deny List) share a clipboard menu with **Copy All** and **Paste (Replace)** for carrying lists between eggs.
 
 The startup command and Docker image rules apply wherever an egg is written: saving this form, creating an egg, importing one from a file or URL, and installing one from a repository. An egg that breaks them is rejected with "at least one startup command is required", "startup commands cannot be empty", "docker images cannot be empty", or a "duplicate startup command" / "duplicate docker image" error naming the value. When you install several repository eggs at once, an egg that fails these checks is skipped and left out of the installed count. Updating an existing egg from its repository, with **Update from Repository** here or **Update** in the [Egg Library](./egg-library.md#installed), does not re-check them, so a repository egg that breaks the rules can still overwrite one of yours.
-
 
 At the bottom, next to **Save**:
 
@@ -131,14 +130,14 @@ Each variable is a card in a grid; drag a card by the grip handle in its top-rig
 
 ![Paper egg Variables tab showing four egg variable cards with environment names, defaults, and rules](./images/nests/egg-variables.webp)
 
-| Field | What it does |
-|---|---|
-| **Name** / **Description** | Shown to users. Both are translatable per language, and the description supports Markdown. |
-| **Environment Variable** | The `ENV_VAR` passed to the container. Typed input is uppercased automatically, with spaces and hyphens converted to underscores. Wings sets `TZ`, `STARTUP`, `SERVER_MEMORY`, `SERVER_IP` and `SERVER_PORT` itself; from Wings 1.2.5 a variable with one of those names replaces Wings' value, while older versions overwrite it. |
-| **Default Value** | Value used when the user hasn't set one. |
-| **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page. |
-| **Secret** | Hides the value like a password. |
-| **Rules** | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/docs/12.x/validation#available-validation-rules) syntax. |
+| Field                                 | What it does                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name** / **Description**            | Shown to users. Both are translatable per language, and the description supports Markdown.                                                                                                                                                                                                                                         |
+| **Environment Variable**              | The `ENV_VAR` passed to the container. Typed input is uppercased automatically, with spaces and hyphens converted to underscores. Wings sets `TZ`, `STARTUP`, `SERVER_MEMORY`, `SERVER_IP` and `SERVER_PORT` itself; from Wings 1.2.5 a variable with one of those names replaces Wings' value, while older versions overwrite it. |
+| **Default Value**                     | Value used when the user hasn't set one.                                                                                                                                                                                                                                                                                           |
+| **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page.                                                                                                                                                                                                                                                                 |
+| **Secret**                            | Hides the value like a password.                                                                                                                                                                                                                                                                                                   |
+| **Rules**                             | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/docs/12.x/validation#available-validation-rules) syntax.                                                                                                                                                                               |
 
 Each card has its own **Save**, **Duplicate**, and **Remove** buttons.
 

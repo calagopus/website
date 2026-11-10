@@ -27,11 +27,11 @@ Click **Open** next to the newly added **Calagopus** store.
 
 The store offers three apps, pick the one that matches your needs and click **Install**:
 
-| App | Use when |
-| --- | --- |
-| **Calagopus AIO** | Standard install, Panel + Wings, no extensions. The best choice for most people. |
-| **Calagopus Heavy AIO** | You plan to install [extensions](../../extensions/index.md), includes the build tooling needed to compile them |
-| **Calagopus** | Panel only, you connect one or more separate [Wings](../../../wings/installation/index.md) nodes to run game servers |
+| App                     | Use when                                                                                                             |
+| ----------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| **Calagopus AIO**       | Standard install, Panel + Wings, no extensions. The best choice for most people.                                     |
+| **Calagopus Heavy AIO** | You plan to install [extensions](../../extensions/index.md), includes the build tooling needed to compile them       |
+| **Calagopus**           | Panel only, you connect one or more separate [Wings](../../../wings/installation/index.md) nodes to run game servers |
 
 ::: warning Install only one variant
 All three apps publish the panel on port `8000` and SFTP on port `2022`, so only one of them can run on the same Umbrel at a time.
@@ -53,9 +53,9 @@ You will see the OOBE (Out Of Box Experience) setup screen where you create your
 
 The ports used are:
 
-| Port | Purpose |
-| --- | --- |
-| `8000` | Panel web UI and API |
+| Port   | Purpose                                                        |
+| ------ | -------------------------------------------------------------- |
+| `8000` | Panel web UI and API                                           |
 | `2022` | SFTP access to game server files via Wings (AIO variants only) |
 
 Your game servers will also need their own port allocations, configure those on the Wings node after setup.

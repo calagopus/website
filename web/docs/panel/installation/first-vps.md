@@ -47,13 +47,13 @@ The examples use `203.0.113.10` for the VPS address, `ubuntu` for its SSH user, 
 
 No. The Panel works at `http://203.0.113.10:8000` without one, and players connect to the game by IP either way. A domain is what makes HTTPS possible, and HTTPS is what protects your Panel password and session on the way to the VPS.
 
-| | With a domain | Without a domain |
-| --- | --- | --- |
-| Panel address | `https://panel.example.com` | `http://203.0.113.10:8000` |
-| Encryption to the Panel | Yes, Caddy obtains a certificate | No, everything including your login password crosses the internet in plain text |
-| Extra ports | 80 and 443 | 8000 |
-| Passkeys and security keys | Available | Unavailable; use an authenticator app for two-factor authentication |
-| Minecraft on port 25565 | Same | Same |
+|                            | With a domain                    | Without a domain                                                                |
+| -------------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
+| Panel address              | `https://panel.example.com`      | `http://203.0.113.10:8000`                                                      |
+| Encryption to the Panel    | Yes, Caddy obtains a certificate | No, everything including your login password crosses the internet in plain text |
+| Extra ports                | 80 and 443                       | 8000                                                                            |
+| Passkeys and security keys | Available                        | Unavailable; use an authenticator app for two-factor authentication             |
+| Minecraft on port 25565    | Same                             | Same                                                                            |
 
 Pick one and stick to it. Steps 2 and 6 differ by path; every other step is the same. The **With a domain** and **Without a domain** tabs in those steps switch together, so select yours once. Running without a domain is a reasonable choice for one administrator on a hobby server. If you get a domain later, follow the [reverse-proxy guide](../../additional/reverse-proxies/panel.md) to add HTTPS.
 
@@ -90,21 +90,21 @@ df -h /
 
 In the DNS settings for your domain, create an `A` record:
 
-| Type | Name | Value |
-| --- | --- | --- |
-| A | `panel` | Your VPS's public IPv4 address |
+| Type | Name    | Value                          |
+| ---- | ------- | ------------------------------ |
+| A    | `panel` | Your VPS's public IPv4 address |
 
 For `example.com`, that creates `panel.example.com`. If you use Cloudflare, set the record to **DNS only** (grey cloud). Don't add an `AAAA` record unless the VPS also has working IPv6, and remove any old one that points elsewhere.
 
 In your provider's firewall (sometimes called a security group), allow these inbound connections:
 
-| Port | Protocol | Source | Purpose |
-| --- | --- | --- | --- |
-| `22` | TCP | Your IP where practical | SSH; use your provider's port if it differs |
-| `80` | TCP | Internet | Caddy certificate validation and HTTP redirects |
-| `443` | TCP | Internet | The Panel over HTTPS |
-| `25565` | TCP | Your players | The Paper server in this guide |
-| `2022` | TCP | Your IP, optional | SFTP access to game files through Wings |
+| Port    | Protocol | Source                  | Purpose                                         |
+| ------- | -------- | ----------------------- | ----------------------------------------------- |
+| `22`    | TCP      | Your IP where practical | SSH; use your provider's port if it differs     |
+| `80`    | TCP      | Internet                | Caddy certificate validation and HTTP redirects |
+| `443`   | TCP      | Internet                | The Panel over HTTPS                            |
+| `25565` | TCP      | Your players            | The Paper server in this guide                  |
+| `2022`  | TCP      | Your IP, optional       | SFTP access to game files through Wings         |
 
 Keep other ports closed; nothing in this setup needs public access to `8000`, `8080`, PostgreSQL, or Valkey.
 
@@ -123,12 +123,12 @@ Docker's published ports [bypass UFW rules](https://docs.docker.com/engine/netwo
 
 There is no DNS to set up. In your provider's firewall (sometimes called a security group), allow these inbound connections:
 
-| Port | Protocol | Source | Purpose |
-| --- | --- | --- | --- |
-| `22` | TCP | Your IP where practical | SSH; use your provider's port if it differs |
-| `8000` | TCP | Your IP where practical | The Panel over HTTP; **add this rule in step 6**, not now |
-| `25565` | TCP | Your players | The Paper server in this guide |
-| `2022` | TCP | Your IP, optional | SFTP access to game files through Wings |
+| Port    | Protocol | Source                  | Purpose                                                   |
+| ------- | -------- | ----------------------- | --------------------------------------------------------- |
+| `22`    | TCP      | Your IP where practical | SSH; use your provider's port if it differs               |
+| `8000`  | TCP      | Your IP where practical | The Panel over HTTP; **add this rule in step 6**, not now |
+| `25565` | TCP      | Your players            | The Paper server in this guide                            |
+| `2022`  | TCP      | Your IP, optional       | SFTP access to game files through Wings                   |
 
 Port `8000` stays closed until your administrator account exists, so nobody else can claim it first. Limiting the source to your own IP is the best protection you have without HTTPS; if your IP changes often, allow the internet and rely on a strong password and two-factor authentication. Keep other ports closed; nothing in this setup needs public access to `8080`, PostgreSQL, or Valkey.
 
@@ -143,7 +143,7 @@ Docker's published ports [bypass UFW rules](https://docs.docker.com/engine/netwo
 
 ::::
 
-On **Oracle Cloud**, ports have to be opened in two places: the subnet's security list in the Cloud Console, and the instance's own `iptables` rules, which Oracle's images ship with and `ufw status` doesn't show. [Opening Up Ports on Oracle Cloud](https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)) walks through both.
+On **Oracle Cloud**, ports have to be opened in two places: the subnet's security list in the Cloud Console, and the instance's own `iptables` rules, which Oracle's images ship with and `ufw status` doesn't show. [Opening Up Ports on Oracle Cloud](<https://github.com/mochman/Bypass_CGNAT/wiki/Oracle-Cloud--(Opening-Up-Ports)>) walks through both.
 
 ## 3. Install Docker
 
@@ -196,7 +196,7 @@ Run this once. `compose.yml` now contains the key needed to read stored secrets,
 Open the file with `nano compose.yml`. In the `ports:` section under `web`, change `8000:8000` to:
 
 ```yaml
-      - 127.0.0.1:8000:8000
+- 127.0.0.1:8000:8000
 ```
 
 Keep the indentation and the `2022:2022` line below it. Binding to `127.0.0.1` keeps the Panel port private to this VPS while you create your administrator account, whether or not your provider's firewall is already blocking it. This edit is temporary on the no-domain path: step 6 changes the line back to `8000:8000` once your account exists. With a domain it stays, and Caddy connects through the loopback address. Leave the image as `calagopus/panel:aio`. Press `Ctrl+O`, `Enter`, then `Ctrl+X` to save and exit.
@@ -266,7 +266,7 @@ docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}
 Add it to the `environment:` list under `web` in `compose.yml`, using the address your command printed:
 
 ```yaml
-      - APP_TRUSTED_PROXIES=172.18.0.1
+- APP_TRUSTED_PROXIES=172.18.0.1
 ```
 
 This lets the Panel read the real visitor IP from Caddy's forwarded headers. Don't use `*` or `0.0.0.0/0`. Apply the change:
@@ -321,7 +321,7 @@ Don't click through a certificate warning; fix the error first. The [reverse-pro
 The Panel is served directly on port `8000`. Open `compose.yml` with `nano compose.yml` and change the `127.0.0.1:8000:8000` line from step 4 back to:
 
 ```yaml
-      - 8000:8000
+- 8000:8000
 ```
 
 Save, then apply the change:
@@ -364,11 +364,11 @@ AIO proxies browser traffic to Wings through the Panel, so it needs no extra hos
 
 An allocation is an IP and port the Panel can assign to a game server. In the node's **Allocations** tab, click **Create**:
 
-| Field | Value |
-| --- | --- |
-| IP | `0.0.0.0` |
-| IP Alias | Your VPS's public IPv4 address |
-| Port Ranges | `25565`, then click **Add** |
+| Field       | Value                          |
+| ----------- | ------------------------------ |
+| IP          | `0.0.0.0`                      |
+| IP Alias    | Your VPS's public IPv4 address |
+| Port Ranges | `25565`, then click **Add**    |
 
 Click **Create 1**.
 
@@ -393,17 +393,17 @@ An **egg** describes how a game server is installed and run; a **nest** is a cat
 
 Go to **Admin → Servers → Create** with **Advanced mode** off and fill in:
 
-| Field | Example |
-| --- | --- |
-| Server Name | `Example` |
-| Node | `Integrated Node` |
-| Owner | Your administrator account |
-| Nest | `Minecraft` |
-| Egg | `Paper` |
-| CPU Limit | `200` on the example 2-vCPU VPS |
-| Memory | `2 GiB` |
-| Disk Space | `10 GiB` |
-| Docker Image | `Java 25` for this example |
+| Field              | Example                                                   |
+| ------------------ | --------------------------------------------------------- |
+| Server Name        | `Example`                                                 |
+| Node               | `Integrated Node`                                         |
+| Owner              | Your administrator account                                |
+| Nest               | `Minecraft`                                               |
+| Egg                | `Paper`                                                   |
+| CPU Limit          | `200` on the example 2-vCPU VPS                           |
+| Memory             | `2 GiB`                                                   |
+| Disk Space         | `10 GiB`                                                  |
+| Docker Image       | `Java 25` for this example                                |
 | Primary Allocation | The allocation with your public IP alias and port `25565` |
 
 ![Server creation form with Paper, Java 25, and the example resource limits](./images/first-vps/create-server.webp)
@@ -456,14 +456,14 @@ A backup stored on the same VPS disappears with it, so keep the downloaded copy 
 
 The Panel database holds users, nodes, server definitions, and settings; a game backup doesn't include it. Keep these together, from the same date:
 
-| What | Where it lives in this installation |
-| --- | --- |
-| Panel database | PostgreSQL in the `db` service; export it with `pg_dump` |
-| Compose settings and encryption key | `/opt/calagopus-panel/compose.yml` |
-| AIO base Wings configuration | `/opt/calagopus-panel/wings-config.yml` |
-| Panel files | `/opt/calagopus-panel/data/` |
-| Wings configuration and game data | `/etc/calagopus-wings/` and `/var/lib/calagopus-wings/` |
-| Caddy hostname configuration, with a domain | `/etc/caddy/Caddyfile` |
+| What                                        | Where it lives in this installation                      |
+| ------------------------------------------- | -------------------------------------------------------- |
+| Panel database                              | PostgreSQL in the `db` service; export it with `pg_dump` |
+| Compose settings and encryption key         | `/opt/calagopus-panel/compose.yml`                       |
+| AIO base Wings configuration                | `/opt/calagopus-panel/wings-config.yml`                  |
+| Panel files                                 | `/opt/calagopus-panel/data/`                             |
+| Wings configuration and game data           | `/etc/calagopus-wings/` and `/var/lib/calagopus-wings/`  |
+| Caddy hostname configuration, with a domain | `/etc/caddy/Caddyfile`                                   |
 
 The simplest full copy is a provider **VPS snapshot**: stop your games in the Panel, run `docker compose stop`, take the snapshot, then run `docker compose start`. Check that the snapshot covers every attached disk and survives deleting the VPS.
 

@@ -7,11 +7,11 @@ description: How to install Calagopus DB Agent using Docker. DB Agent is the dat
 
 ## Docker Image Variants
 
-| Variant | Description |
-| ------- | ----------- |
-| `:latest` | The latest stable release. Recommended for production. |
+| Variant       | Description                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `:latest`     | The latest stable release. Recommended for production.                                                                |
 | `:latest-pre` | Latest pre-release. May contain new features not yet in `:latest`, but also new bugs. Not recommended for production. |
-| `:nightly` | Latest development build. Updated frequently, may be unstable. Not recommended for production. |
+| `:nightly`    | Latest development build. Updated frequently, may be unstable. Not recommended for production.                        |
 
 ## Install Docker
 

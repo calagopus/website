@@ -15,14 +15,14 @@ The list shows each mount's **ID**, **Name**, **Source** (the path on the host, 
 
 Click **Create** in the top right.
 
-| Field | Meaning |
-| --- | --- |
-| **Name** | Display name shown to admins and users. |
-| **Description** | Optional, shown on the user-facing mounts table. |
-| **Source** | Directory on the host machine. |
-| **Target** | Path inside the container where the source appears. |
-| **Read Only** | Mounts the directory read-only inside the container. |
-| **User Mountable** | Lets users attach and detach the mount themselves. |
+| Field              | Meaning                                              |
+| ------------------ | ---------------------------------------------------- |
+| **Name**           | Display name shown to admins and users.              |
+| **Description**    | Optional, shown on the user-facing mounts table.     |
+| **Source**         | Directory on the host machine.                       |
+| **Target**         | Path inside the container where the source appears.  |
+| **Read Only**      | Mounts the directory read-only inside the container. |
+| **User Mountable** | Lets users attach and detach the mount themselves.   |
 
 ::: warning
 Mounts are a powerful and potentially dangerous feature. A badly chosen source path can lead to data loss or security vulnerabilities, including container escapes. Make sure you understand the implications before creating one.
@@ -42,7 +42,7 @@ Opening a mount shows four tabs: **General** (the edit form, plus **Duplicate** 
 
 ![Mount general tab](./images/mounts/general.webp)
 
-**Eggs** and **Nodes** control eligibility: use **Add** to assign the mount to an egg or node, and right-click a row for **Remove**; both lists are searchable. A mount can only be attached to a server whose node *and* egg are both assigned here.
+**Eggs** and **Nodes** control eligibility: use **Add** to assign the mount to an egg or node, and right-click a row for **Remove**; both lists are searchable. A mount can only be attached to a server whose node _and_ egg are both assigned here.
 
 ![Mount eggs tab](./images/mounts/eggs.webp)
 

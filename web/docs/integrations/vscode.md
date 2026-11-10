@@ -64,21 +64,21 @@ The first time you connect to a panel, the extension signs you in through your b
 
 You can also drive everything from the editor using the Command Palette (`Ctrl`/`Cmd` + `Shift` + `P`). The extension contributes the following commands, all under the **Calagopus** category:
 
-| Command | Description |
-| --- | --- |
-| `Calagopus: Sign In` | Authenticate with your Calagopus panel. |
-| `Calagopus: Sign Out` | Clear stored credentials for one or all panels. |
-| `Calagopus: Update API Key Permissions` | Re-approve the stored API key with the permissions the current version of the extension needs (see [Updating key permissions](#updating-key-permissions)). |
-| `Calagopus: Open Server Files` | Pick a server and mount its files as a workspace folder. |
-| `Calagopus: Open Server Console` | Pick a server and attach to its console. |
-| `Calagopus: Server Power Action` | Start, stop, restart, or kill the active server. |
-| `Calagopus: Run Command Snippet...` | Pick one of your saved snippets and send it to the server console. |
-| `Calagopus: Create Command Snippet` | Save a new command snippet (see [Command snippets](#command-snippets)). |
-| `Calagopus: Refresh Command Snippets` | Reload the snippet list from the panel. |
-| `Calagopus: Refresh File History` | Reload the revision list for the active file. |
-| `Calagopus: Revert File to Version on Disk` | Discard the collaborative editing session's contents and reload the file from the server. |
-| `Calagopus: Enable File Collaboration` | Turn on real-time collaborative editing (see [Real-time collaboration](#real-time-collaboration)). |
-| `Calagopus: Disable File Collaboration` | Turn off real-time collaborative editing. |
+| Command                                     | Description                                                                                                                                                |
+| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Calagopus: Sign In`                        | Authenticate with your Calagopus panel.                                                                                                                    |
+| `Calagopus: Sign Out`                       | Clear stored credentials for one or all panels.                                                                                                            |
+| `Calagopus: Update API Key Permissions`     | Re-approve the stored API key with the permissions the current version of the extension needs (see [Updating key permissions](#updating-key-permissions)). |
+| `Calagopus: Open Server Files`              | Pick a server and mount its files as a workspace folder.                                                                                                   |
+| `Calagopus: Open Server Console`            | Pick a server and attach to its console.                                                                                                                   |
+| `Calagopus: Server Power Action`            | Start, stop, restart, or kill the active server.                                                                                                           |
+| `Calagopus: Run Command Snippet...`         | Pick one of your saved snippets and send it to the server console.                                                                                         |
+| `Calagopus: Create Command Snippet`         | Save a new command snippet (see [Command snippets](#command-snippets)).                                                                                    |
+| `Calagopus: Refresh Command Snippets`       | Reload the snippet list from the panel.                                                                                                                    |
+| `Calagopus: Refresh File History`           | Reload the revision list for the active file.                                                                                                              |
+| `Calagopus: Revert File to Version on Disk` | Discard the collaborative editing session's contents and reload the file from the server.                                                                  |
+| `Calagopus: Enable File Collaboration`      | Turn on real-time collaborative editing (see [Real-time collaboration](#real-time-collaboration)).                                                         |
+| `Calagopus: Disable File Collaboration`     | Turn off real-time collaborative editing.                                                                                                                  |
 
 ![VS Code command palette listing Calagopus commands such as Open Server Files, Sign In, and Server Power Action](./images/vscode/command-palette.webp)
 
@@ -104,7 +104,7 @@ Right-clicking server files and folders in the Explorer adds Calagopus entries f
 - **Extract Archive Here** - unpack an archive into the folder it sits in. This entry only appears on files with a recognized archive extension, and you can select several archives at once.
 - **Change Permissions...** - set the octal mode (for example `755`) on the selection. When a folder is included, you are asked whether to apply it recursively to its contents.
 
-Compression, extraction, and other long-running file operations report progress in a notification that you can cancel, which cancels the operation on the server. Operations someone else started on the same server show up too, marked *started elsewhere*, and the affected folders refresh in the Explorer once they finish.
+Compression, extraction, and other long-running file operations report progress in a notification that you can cancel, which cancels the operation on the server. Operations someone else started on the same server show up too, marked _started elsewhere_, and the affected folders refresh in the Explorer once they finish.
 
 ### Live console
 
@@ -190,13 +190,13 @@ The extension registers a `calagopus` URI handler. This is the mechanism the pan
 vscode://calagopus.calagopus/open?origin=<panel-url>&server=<server-uuid>
 ```
 
-| Parameter | Required | Description |
-| --- | --- | --- |
-| `origin` | Yes | Panel base URL, e.g. `https://panel.example.com`. |
-| `server` | Yes | The server's UUID. |
-| `console` | No | When truthy (`1`/`true`), also attach to the server console. |
-| `file` | No | Path (relative to the server root) to open in the editor after mounting. |
-| `apiKey` | No | An API key for an ephemeral, non-persisted session (credentials are not saved). |
+| Parameter | Required | Description                                                                     |
+| --------- | -------- | ------------------------------------------------------------------------------- |
+| `origin`  | Yes      | Panel base URL, e.g. `https://panel.example.com`.                               |
+| `server`  | Yes      | The server's UUID.                                                              |
+| `console` | No       | When truthy (`1`/`true`), also attach to the server console.                    |
+| `file`    | No       | Path (relative to the server root) to open in the editor after mounting.        |
+| `apiKey`  | No       | An API key for an ephemeral, non-persisted session (credentials are not saved). |
 
 ::: warning
 A `vscode://` link is the canonical scheme for Visual Studio Code. Some forks register a different scheme (for example, `vscodium://` or `codium://`) - if a link does not open in your editor, click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme.
@@ -238,12 +238,12 @@ Deep links that include an `apiKey` parameter open an **ephemeral** session - th
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| The deep link does not open my editor | Your editor may register a URI scheme other than `vscode://`. Click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme (for example, `vscodium://` or `codium://`). ![Files tab settings popover with a VSCode URI Scheme field set to vscode](./images/vscode/uri-scheme-setting.webp) |
-| File search returns no results | Search relies on proposed editor APIs that are not enabled in every build. File **editing** still works without them, only name/content search across server files is affected. |
-| I don't see other people's cursors | Real-time collaboration must be enabled on both ends (it's on by default). Check that `calagopus.collaboration.enabled` is set to `true`, or run **Calagopus: Enable File Collaboration**. Presence and cursors only appear once more than one person has the same file open. |
-| The File History view is empty | The **File History** view only appears when a server is mounted, and it tracks the file that's currently active in the editor, so open a server file to populate it. A file that has never been changed through the panel will not have any revisions yet. |
-| The Command Snippets view is empty | The view only lists snippets that apply to a mounted server, so a snippet scoped to a specific egg is hidden unless a server running that egg is mounted. If you have no snippets yet, create one from the view's `+` button. If the view stays empty despite matching snippets existing in the panel, your API key is likely missing the `command-snippets` permissions; run **Calagopus: Update API Key Permissions**. |
-| A file action fails with a permissions error | Archiving, extracting, changing permissions, and managing snippets each need their own permission on the extension's API key. Keys provisioned by an older version of the extension do not have the newer ones; run **Calagopus: Update API Key Permissions** and approve the updated set in your browser. |
-| "Malformed open link" error | A deep link is missing the required `origin` or `server` parameter. Both must be present, and `origin` must be the full panel base URL (including `https://`). |
+| Symptom                                      | Fix                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| The deep link does not open my editor        | Your editor may register a URI scheme other than `vscode://`. Click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme (for example, `vscodium://` or `codium://`). ![Files tab settings popover with a VSCode URI Scheme field set to vscode](./images/vscode/uri-scheme-setting.webp)                                                    |
+| File search returns no results               | Search relies on proposed editor APIs that are not enabled in every build. File **editing** still works without them, only name/content search across server files is affected.                                                                                                                                                                                                                                          |
+| I don't see other people's cursors           | Real-time collaboration must be enabled on both ends (it's on by default). Check that `calagopus.collaboration.enabled` is set to `true`, or run **Calagopus: Enable File Collaboration**. Presence and cursors only appear once more than one person has the same file open.                                                                                                                                            |
+| The File History view is empty               | The **File History** view only appears when a server is mounted, and it tracks the file that's currently active in the editor, so open a server file to populate it. A file that has never been changed through the panel will not have any revisions yet.                                                                                                                                                               |
+| The Command Snippets view is empty           | The view only lists snippets that apply to a mounted server, so a snippet scoped to a specific egg is hidden unless a server running that egg is mounted. If you have no snippets yet, create one from the view's `+` button. If the view stays empty despite matching snippets existing in the panel, your API key is likely missing the `command-snippets` permissions; run **Calagopus: Update API Key Permissions**. |
+| A file action fails with a permissions error | Archiving, extracting, changing permissions, and managing snippets each need their own permission on the extension's API key. Keys provisioned by an older version of the extension do not have the newer ones; run **Calagopus: Update API Key Permissions** and approve the updated set in your browser.                                                                                                               |
+| "Malformed open link" error                  | A deep link is missing the required `origin` or `server` parameter. Both must be present, and `origin` must be the full panel base URL (including `https://`).                                                                                                                                                                                                                                                           |

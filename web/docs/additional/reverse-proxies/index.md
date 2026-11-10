@@ -40,7 +40,7 @@ Three things happen at the proxy on every request:
 2. It adds headers that tell the Panel or Wings who the real visitor is (`X-Forwarded-For`, `X-Real-IP`).
 3. It forwards the request over plain HTTP to the service on the loopback address, and streams the response back.
 
-Because every request now arrives *from the proxy*, the Panel or Wings has to be told which address the proxy uses. Otherwise every visitor looks like they come from the same IP, which breaks per-IP rate limiting and fills the activity log with the proxy's address. Both guides start with that, along with closing off the port the service used to answer on directly.
+Because every request now arrives _from the proxy_, the Panel or Wings has to be told which address the proxy uses. Otherwise every visitor looks like they come from the same IP, which breaks per-IP rate limiting and fills the activity log with the proxy's address. Both guides start with that, along with closing off the port the service used to answer on directly.
 
 ::: info All-in-One image
 On the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one-recommended-for-single-node-setups), the bundled Wings is reached through the Panel, so the Panel guide covers both; see [All-in-One and Wings Proxy Mode](./panel.md#all-in-one-and-wings-proxy-mode). Only SFTP (port `2022`) stays direct, because it is not HTTP.
@@ -48,9 +48,9 @@ On the [All-in-One image](../../panel/installation/docker.md#option-a-all-in-one
 
 ## Pick a Guide
 
-| Guide | Set up | Covers |
-| --- | --- | --- |
-| [Panel](./panel.md) | Once | The login page, dashboard and admin area, and on the All-in-One image the bundled Wings |
+| Guide               | Set up              | Covers                                                                                     |
+| ------------------- | ------------------- | ------------------------------------------------------------------------------------------ |
+| [Panel](./panel.md) | Once                | The login page, dashboard and admin area, and on the All-in-One image the bundled Wings    |
 | [Wings](./wings.md) | Per standalone node | The browser's direct connections to the node: console, file manager, uploads and downloads |
 
 ## Keeping the Configuration Current

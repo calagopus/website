@@ -15,15 +15,15 @@ The list shows each announcement's **ID**, **Type**, **Title**, **Enabled**, and
 
 Click **Create**.
 
-| Field | Meaning |
-| --- | --- |
-| **Type** | **Info**, **Success**, **Warning**, or **Error**; sets the banner color and icon. |
-| **Title** | Banner heading. Localizable: provide per-language variants alongside the default. |
-| **Content** | Banner body, rendered as Markdown. Localizable like the title. |
-| **Enabled** | Master switch; disabled announcements never show. |
-| **Enabled Start** / **Enabled End** | Optional schedule window. Outside it, the announcement is hidden even while enabled. |
-| **Dismissible** | Lets users close the banner. Dismissals are stored in the user's browser. |
-| **Dismissible End** | Optional date after which dismissals expire: the banner comes back for everyone and can no longer be closed. |
+| Field                               | Meaning                                                                                                      |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Type**                            | **Info**, **Success**, **Warning**, or **Error**; sets the banner color and icon.                            |
+| **Title**                           | Banner heading. Localizable: provide per-language variants alongside the default.                            |
+| **Content**                         | Banner body, rendered as Markdown. Localizable like the title.                                               |
+| **Enabled**                         | Master switch; disabled announcements never show.                                                            |
+| **Enabled Start** / **Enabled End** | Optional schedule window. Outside it, the announcement is hidden even while enabled.                         |
+| **Dismissible**                     | Lets users close the banner. Dismissals are stored in the user's browser.                                    |
+| **Dismissible End**                 | Optional date after which dismissals expire: the banner comes back for everyone and can no longer be closed. |
 
 ![Create announcement form](./images/announcements/create-form.webp)
 

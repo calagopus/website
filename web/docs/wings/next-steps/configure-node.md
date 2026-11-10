@@ -18,12 +18,12 @@ Locations group nodes together and control backup configuration inheritance. You
 - **OOBE**: shown automatically before you create your first node.
 - **Existing panel**: go to **Admin → Locations → Create**.
 
-| Field | Description |
-|---|---|
-| Name | A label to distinguish this location (e.g. `Germany`). |
-| Backup Configuration Name | The backup storage configuration used by nodes in this location. |
-| Backup Disk | Where backups are stored. `Local` stores them on the Wings host; keep a copy elsewhere in case that host is lost. *(OOBE only)* |
-| Description | Optional notes about this location. *(Admin panel only)* |
+| Field                     | Description                                                                                                                     |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Name                      | A label to distinguish this location (e.g. `Germany`).                                                                          |
+| Backup Configuration Name | The backup storage configuration used by nodes in this location.                                                                |
+| Backup Disk               | Where backups are stored. `Local` stores them on the Wings host; keep a copy elsewhere in case that host is lost. _(OOBE only)_ |
+| Description               | Optional notes about this location. _(Admin panel only)_                                                                        |
 
 ![Setup wizard Location step with Location Name, Backup Configuration Name, and Backup Disk fields](./images/configure-node/location-oobe.webp)
 ![Locations page with the Locations sidebar entry and Create button highlighted](./images/configure-node/create-location.webp)
@@ -33,11 +33,11 @@ Locations group nodes together and control backup configuration inheritance. You
 
 Install Wings using the [Docker](../installation/docker.md), [Binary](../installation/binary.md), or [Package Manager](../installation/pkgmanager.md) guide, then start it without creating a `config.yml`. Wings listens for setup over HTTP on port `8080` by default and prints a pairing code in its logs.
 
-| Installation | Where to read the code |
-| --- | --- |
-| Docker Compose | `docker compose logs wings` from the Compose directory |
-| systemd service | `journalctl -u wings -n 50 --no-pager` |
-| Foreground process | The terminal running `wings` or `calagopus-wings` |
+| Installation       | Where to read the code                                 |
+| ------------------ | ------------------------------------------------------ |
+| Docker Compose     | `docker compose logs wings` from the Compose directory |
+| systemd service    | `journalctl -u wings -n 50 --no-pager`                 |
+| Foreground process | The terminal running `wings` or `calagopus-wings`      |
 
 1. Open **Admin → Nodes → Create** and select **Pair a Waiting Node**.
 2. Enter the **Node Address**, including the port, and the **Pairing Code** from the logs. Use an address the Panel can reach, such as `http://192.0.2.10:8080`; replace that example IP with your node's address.
@@ -59,18 +59,18 @@ Setup mode only starts when no configuration file is found. An invalid existing 
 - **OOBE**: continues automatically after the location step.
 - **Existing panel**: go to **Admin → Nodes → Create** and select **Set Up Manually**.
 
-| Field | Description |
-|---|---|
-| Name | A short, identifiable name for the node. |
-| Location | The location to assign this node to. *(Admin panel only which is set automatically in the OOBE)* |
-| URL | The address the panel itself uses to reach Wings, including its port (default `8080`). |
-| Public URL | The address browsers use to reach Wings directly, for websocket connections and downloads. Leave empty to reuse **URL**. |
-| SFTP Host | Custom SFTP hostname shown in the dashboard. Leave empty to reuse the hostname from URL. |
-| SFTP Port | Port for the SFTP/SSH server. Leave default unless you know you need to change it. |
-| Memory | RAM budget for planning and automatic placement; reserve memory for the OS and other services. Manual server creation can exceed it. |
-| Disk | Disk budget for planning and automatic placement; leave space for images, logs, and backups. This is not a filesystem quota. |
-| Backup Configuration | The backup configuration servers on this node will use. *(Admin panel only)* |
-| Description | Optional description. *(Admin panel only)* |
+| Field                | Description                                                                                                                          |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Name                 | A short, identifiable name for the node.                                                                                             |
+| Location             | The location to assign this node to. _(Admin panel only which is set automatically in the OOBE)_                                     |
+| URL                  | The address the panel itself uses to reach Wings, including its port (default `8080`).                                               |
+| Public URL           | The address browsers use to reach Wings directly, for websocket connections and downloads. Leave empty to reuse **URL**.             |
+| SFTP Host            | Custom SFTP hostname shown in the dashboard. Leave empty to reuse the hostname from URL.                                             |
+| SFTP Port            | Port for the SFTP/SSH server. Leave default unless you know you need to change it.                                                   |
+| Memory               | RAM budget for planning and automatic placement; reserve memory for the OS and other services. Manual server creation can exceed it. |
+| Disk                 | Disk budget for planning and automatic placement; leave space for images, logs, and backups. This is not a filesystem quota.         |
+| Backup Configuration | The backup configuration servers on this node will use. _(Admin panel only)_                                                         |
+| Description          | Optional description. _(Admin panel only)_                                                                                           |
 
 **URL vs. Public URL:** **URL** is what the panel itself uses to reach Wings, so it can be a reachable internal address such as a LAN IP. With a Panel running in Docker, `localhost` refers to that container, not the host or a separate Wings container. Use an address reachable from the Panel's network. The AIO image is an exception: its bundled Wings shares the Panel's container and is configured automatically.
 

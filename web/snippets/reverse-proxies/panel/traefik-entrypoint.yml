@@ -1,6 +1,6 @@
 entryPoints:
   websecure:
-    address: ":443"
+    address: ':443'
     transport:
       respondingTimeouts:
         readTimeout: 3600s

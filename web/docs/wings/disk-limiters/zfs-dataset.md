@@ -51,12 +51,12 @@ The Wings daemon and all running servers **must** be stopped before running the 
 
 The command pulls the server list and per-server disk limits from the panel, so the node must be configured and able to reach it.
 
-| Flag | Description |
-| --- | --- |
-| `--mode <btrfs-subvolume\|zfs-dataset>` | Target limiter to migrate to. Defaults to the configured `disk_limiter_mode`. |
-| `--server <uuid>` | Only migrate the given server. May be passed multiple times. Defaults to all servers. |
-| `--dry-run` | Report what would be migrated without making any changes. |
-| `-y`, `--yes` | Skip the confirmation prompt (only the daemon-stopped check; you are still responsible for stopping it). |
+| Flag                                    | Description                                                                                              |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `--mode <btrfs-subvolume\|zfs-dataset>` | Target limiter to migrate to. Defaults to the configured `disk_limiter_mode`.                            |
+| `--server <uuid>`                       | Only migrate the given server. May be passed multiple times. Defaults to all servers.                    |
+| `--dry-run`                             | Report what would be migrated without making any changes.                                                |
+| `-y`, `--yes`                           | Skip the confirmation prompt (only the daemon-stopped check; you are still responsible for stopping it). |
 
 If a migration fails partway through, the command rolls back automatically: it destroys the partial dataset and restores the original directory, leaving the server exactly as it was.
 

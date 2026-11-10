@@ -36,10 +36,12 @@ Run the command for your package manager:
 apt update
 apt upgrade -y
 ```
+
 ```bash [RPM]
 dnf check-update
 dnf upgrade -y
 ```
+
 ```bash [APK]
 apk update
 apk upgrade
@@ -78,6 +80,7 @@ chmod +x /usr/local/bin/calagopus-db-agent
 ```bash
 calagopus-db-agent version
 ```
+
 Check the output against the [latest release](https://github.com/calagopus/db-agent/releases/latest) to confirm the update actually applied before starting it back up.
 
 #### 4. Start the service

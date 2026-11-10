@@ -28,9 +28,7 @@
     }
   ],
   "triggers": {
-    "crons": [
-      "0 * * * *"
-    ]
+    "crons": ["0 * * * *"]
   },
   "ai_search_namespaces": [
     {
@@ -44,12 +42,7 @@
     "CLICKHOUSE_DATABASE": "telemetry"
   },
   "secrets": {
-    "required": [
-      "GITHUB_TOKEN",
-      "CLICKHOUSE_URL",
-      "CLICKHOUSE_USER",
-      "CLICKHOUSE_PASSWORD"
-    ]
+    "required": ["GITHUB_TOKEN", "CLICKHOUSE_URL", "CLICKHOUSE_USER", "CLICKHOUSE_PASSWORD"]
   },
   "version_metadata": {
     "binding": "CF_VERSION_METADATA"

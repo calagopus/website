@@ -18,7 +18,9 @@ const slugify = (s: string) =>
   <template v-if="faqs.length">
     <h2 id="frequently-asked-questions" tabindex="-1">
       Frequently Asked Questions
-      <a class="header-anchor" href="#frequently-asked-questions" aria-label="Permalink to &quot;Frequently Asked Questions&quot;">&#8203;</a>
+      <a class="header-anchor" href="#frequently-asked-questions" aria-label='Permalink to "Frequently Asked Questions"'
+        >&#8203;</a
+      >
     </h2>
     <template v-for="f in faqs" :key="f.q">
       <h3 :id="slugify(f.q)" tabindex="-1">

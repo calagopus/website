@@ -6,7 +6,7 @@ date: 2026-09-06
 
 # Calagopus 1.2.0 released
 
-*6 September 2026*
+_6 September 2026_
 
 Calagopus Panel 1.2.0 is out. Most of this release is about networking: servers can now reach each other
 over an encrypted private network instead of the public internet, and every server gets its own firewall.
@@ -60,12 +60,12 @@ page-specific operations.
 
 Prefixes filter the results by type:
 
-| Prefix | Result |
-| --- | --- |
-| `=` | Calculator; type an expression and get the answer inline |
-| `#` | Servers only |
-| `/` | Pages only |
-| `@` | Users only (in the admin area) |
+| Prefix | Result                                                   |
+| ------ | -------------------------------------------------------- |
+| `=`    | Calculator; type an expression and get the answer inline |
+| `#`    | Servers only                                             |
+| `/`    | Pages only                                               |
+| `@`    | Users only (in the admin area)                           |
 
 ![The Quick Actions palette evaluating a math expression after the = prefix](./images/release-1.2/quick-actions-calculator.png)
 

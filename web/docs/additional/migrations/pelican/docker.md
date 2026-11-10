@@ -195,7 +195,7 @@ DB_CONNECTION=sqlite
 DB_DATABASE=/database.sqlite
 ```
 
-The path matters. `/database.sqlite` is where the SQLite file will sit *inside* the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, override it with this absolute in-container path.
+The path matters. `/database.sqlite` is where the SQLite file will sit _inside_ the Calagopus container. If Pelican's original `.env` has a relative path like `database/database.sqlite`, override it with this absolute in-container path.
 
 #### Assembling the File
 

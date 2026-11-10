@@ -29,17 +29,17 @@ If you're not sure which setup you're using, run `docker compose ps` in your Pel
 
 The importer reads the source, validates an import plan, and reports problems before writing records. Start with `--dry-run --on-invalid=abort` to inspect that plan. Add the options below to the import command in your installation guide; keep its `--environment` path and Docker prefix where applicable.
 
-| Option | Behavior |
-| --- | --- |
-| `--dry-run` | Validates and reports without writing imported records or applying the imported Panel settings. |
-| `--on-invalid=ask` | Default. Prompts for decisions in a terminal; aborts on unresolved problems when no terminal is attached. |
-| `--on-invalid=abort` | Reports validation problems and stops without importing if any are found. |
-| `--on-invalid=fix` | Applies suggested repairs where available and skips rows that cannot be repaired. Review the report and planned counts before writing. |
-| `--on-invalid=skip` | Skips rows with validation problems. Dependent records may also need to be skipped. |
-| `--report /path/report.json` | Writes problems, fixes, and skipped rows to a JSON file on the machine or container running the command. |
-| `--unlimited-as 100` | Converts unlimited source database, allocation, and backup limits to this value. Defaults to `100`. |
-| `--force` | Allows an occupied target and checks imported rows against its existing records. It does not clear the target or overwrite conflicting records automatically. |
-| `--yes` / `-y` | Skips the final confirmation before writing. It does not choose a policy for invalid rows. |
+| Option                       | Behavior                                                                                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `--dry-run`                  | Validates and reports without writing imported records or applying the imported Panel settings.                                                               |
+| `--on-invalid=ask`           | Default. Prompts for decisions in a terminal; aborts on unresolved problems when no terminal is attached.                                                     |
+| `--on-invalid=abort`         | Reports validation problems and stops without importing if any are found.                                                                                     |
+| `--on-invalid=fix`           | Applies suggested repairs where available and skips rows that cannot be repaired. Review the report and planned counts before writing.                        |
+| `--on-invalid=skip`          | Skips rows with validation problems. Dependent records may also need to be skipped.                                                                           |
+| `--report /path/report.json` | Writes problems, fixes, and skipped rows to a JSON file on the machine or container running the command.                                                      |
+| `--unlimited-as 100`         | Converts unlimited source database, allocation, and backup limits to this value. Defaults to `100`.                                                           |
+| `--force`                    | Allows an occupied target and checks imported rows against its existing records. It does not clear the target or overwrite conflicting records automatically. |
+| `--yes` / `-y`               | Skips the final confirmation before writing. It does not choose a policy for invalid rows.                                                                    |
 
 For example, after reviewing an initial report, `--dry-run --on-invalid=fix` previews the proposed repairs and skipped rows. Remove `--dry-run` only when that result is acceptable. For unattended imports, choose an explicit invalid-row policy instead of relying on interactive prompts.
 
@@ -49,7 +49,7 @@ A failed data write rolls back the import. Panel settings are saved after the da
 
 The importer shares its code with the Pterodactyl one, so connection and data errors are covered under [Troubleshooting the Import](./pterodactyl.md#troubleshooting-the-import) on that page. Two things are specific to Pelican.
 
-| Symptom | Fix |
-| --- | --- |
-| Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect | The `remote:` URL in the Wings config still points at the Pelican panel. Set it to the Calagopus panel's address and restart Wings. |
+| Symptom                                                                                                                                                                       | Fix                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect                                                                      | The `remote:` URL in the Wings config still points at the Pelican panel. Set it to the Calagopus panel's address and restart Wings.                                                                                    |
 | Config file replacements such as `{{server.environment.SERVER_NAME}}` are written literally, and the Wings log says `unknown server variable: server.environment.SERVER_NAME` | Calagopus Wings exposes the environment as `server.env`. Wings from 1.1.4 on accepts `server.environment` as an alias. On older versions, edit the egg's config file replacements to use `{{server.env.SERVER_NAME}}`. |

@@ -9,13 +9,13 @@ description: Let users log in to the panel through external OAuth2 providers, wi
 
 The list shows ID, Name, Enabled, Login Only, Link Viewable, User Manageable (all Yes/No), and Created. The four flags, and a fifth that is not a column, come straight from the provider form:
 
-| Flag | Meaning |
-| --- | --- |
-| **Enabled** | Whether the provider can be used at all. |
-| **Login Only** (**Only allow Login**) | Users with an existing link can sign in, but signing in never registers a new panel account from the provider's profile. |
-| **Link Viewable** (**Link Viewable to User**) | "Allows the user to see the connection and its identifier in the client UI." |
-| **User Manageable** (**Link Manageable by User**) | "Allows the user to connect and disconnect with this provider." |
-| **Viewable on Login** | Since Panel 1.2.8. Whether the provider gets a button on the login page. On by default. Turned off, the provider stays enabled, and users can still connect it from their [OAuth Links](../dashboard/oauth-links.md) page when **Link Manageable by User** is on. A login can still start from `<panel URL>/api/auth/oauth/redirect/<uuid>`, so a billing site or another page can still offer it by linking to that URL. |
+| Flag                                              | Meaning                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Enabled**                                       | Whether the provider can be used at all.                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Login Only** (**Only allow Login**)             | Users with an existing link can sign in, but signing in never registers a new panel account from the provider's profile.                                                                                                                                                                                                                                                                                                  |
+| **Link Viewable** (**Link Viewable to User**)     | "Allows the user to see the connection and its identifier in the client UI."                                                                                                                                                                                                                                                                                                                                              |
+| **User Manageable** (**Link Manageable by User**) | "Allows the user to connect and disconnect with this provider."                                                                                                                                                                                                                                                                                                                                                           |
+| **Viewable on Login**                             | Since Panel 1.2.8. Whether the provider gets a button on the login page. On by default. Turned off, the provider stays enabled, and users can still connect it from their [OAuth Links](../dashboard/oauth-links.md) page when **Link Manageable by User** is on. A login can still start from `<panel URL>/api/auth/oauth/redirect/<uuid>`, so a billing site or another page can still offer it by linking to that URL. |
 
 **Link Viewable** and **User Manageable** control what users see on their own [OAuth Links](../dashboard/oauth-links.md) page.
 
@@ -27,19 +27,19 @@ The list shows ID, Name, Enabled, Login Only, Link Viewable, User Manageable (al
 
 ![Create OAuth Provider form with the icon button next to Name, the Redirect URL card, and the client, URL, and mapping fields](./images/oauth-providers/create-form.webp)
 
-| Field | Notes |
-| --- | --- |
-| **Client Id** | Required. The client id from the external provider's app registration. |
-| **Client Secret** | The client secret from the same registration. Leave it empty for a public client that only authenticates with PKCE. |
-| **Auth URL** / **Token URL** / **Info URL** | Required. The provider's authorization, token, and user-info endpoints. |
-| **Additional Info URLs** | Optional. Extra endpoints, each under a key, fetched with the user's access token on every login so [mapping matchers](#matchers) can read them. See [Additional Info URLs](#additional-info-urls). |
-| **Basic Auth** | "Uses HTTP Basic Authentication to transmit the client id and secret, not common anymore." |
-| **PKCE** | "Sends a Proof Key for Code Exchange (S256) with every login, supported by most modern providers." Off by default. Turn it on when the provider supports it. Public clients without a client secret usually need it. |
-| **Scopes** | "The OAuth2 scopes to request, make sure to include scopes for email and profile info when needed." |
-| **Identifier Path** | Required. Extracts the unique user identifier from the Info URL response. |
-| **Email Path** / **Username Path** / **First Name Path** / **Last Name Path** | Optional paths for profile fields, used to fill in accounts registered through this provider. |
-| **Avatar URL Template** / **Overwrite Existing Avatars** | Optional. Import the user's profile picture from the provider, see [Avatars](#avatars). |
-| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Linkable with API Keys** / **Link Manageable by User** / **Viewable on Login** / **Enabled** | The behavior switches; **Only allow Login**, **Link Viewable to User**, **Link Manageable by User**, **Viewable on Login** and **Enabled** are [explained above](#oauth-providers). |
+| Field                                                                                                                                                                       | Notes                                                                                                                                                                                                                |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Client Id**                                                                                                                                                               | Required. The client id from the external provider's app registration.                                                                                                                                               |
+| **Client Secret**                                                                                                                                                           | The client secret from the same registration. Leave it empty for a public client that only authenticates with PKCE.                                                                                                  |
+| **Auth URL** / **Token URL** / **Info URL**                                                                                                                                 | Required. The provider's authorization, token, and user-info endpoints.                                                                                                                                              |
+| **Additional Info URLs**                                                                                                                                                    | Optional. Extra endpoints, each under a key, fetched with the user's access token on every login so [mapping matchers](#matchers) can read them. See [Additional Info URLs](#additional-info-urls).                  |
+| **Basic Auth**                                                                                                                                                              | "Uses HTTP Basic Authentication to transmit the client id and secret, not common anymore."                                                                                                                           |
+| **PKCE**                                                                                                                                                                    | "Sends a Proof Key for Code Exchange (S256) with every login, supported by most modern providers." Off by default. Turn it on when the provider supports it. Public clients without a client secret usually need it. |
+| **Scopes**                                                                                                                                                                  | "The OAuth2 scopes to request, make sure to include scopes for email and profile info when needed."                                                                                                                  |
+| **Identifier Path**                                                                                                                                                         | Required. Extracts the unique user identifier from the Info URL response.                                                                                                                                            |
+| **Email Path** / **Username Path** / **First Name Path** / **Last Name Path**                                                                                               | Optional paths for profile fields, used to fill in accounts registered through this provider.                                                                                                                        |
+| **Avatar URL Template** / **Overwrite Existing Avatars**                                                                                                                    | Optional. Import the user's profile picture from the provider, see [Avatars](#avatars).                                                                                                                              |
+| **Only allow Login** / **Bypass 2FA on Login** / **Link Viewable to User** / **Linkable with API Keys** / **Link Manageable by User** / **Viewable on Login** / **Enabled** | The behavior switches; **Only allow Login**, **Link Viewable to User**, **Link Manageable by User**, **Viewable on Login** and **Enabled** are [explained above](#oauth-providers).                                  |
 
 The path fields use JSONPath syntax (see [serdejsonpath.live](https://serdejsonpath.live)) evaluated against the Info URL response. They never read the additional info URLs.
 
@@ -56,7 +56,6 @@ Finish with **Save** (or **Save & Stay** when creating). An existing provider al
 While **Enable Password Login** is off in [Settings](./settings.md#application), the panel refuses to delete or disable the last enabled provider, since nobody without a security key would be able to sign in afterwards. The check doesn't look at **Viewable on Login**, so with every provider hidden the login page shows no OAuth buttons at all. Turn password login back on first if that is what you want.
 
 ![Configured provider with censored credentials](./images/oauth-providers/general.webp)
-
 
 ### Additional Info URLs
 
@@ -86,7 +85,7 @@ Discovery requests follow [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked
 
 The template is a URL with `{...}` placeholders, each holding a JSONPath into the Info URL response. What happens to a resolved value depends on where its placeholder sits:
 
-- A template that is *only* a placeholder, such as `{$.picture}`, is used verbatim. This is what most OIDC providers need, because the profile response already carries the full image URL.
+- A template that is _only_ a placeholder, such as `{$.picture}`, is used verbatim. This is what most OIDC providers need, because the profile response already carries the full image URL.
 - Anywhere else the placeholder stands for one path or query component and its value is percent-encoded, so a provider cannot smuggle a different URL into the rest of the template. Discord, which hands back an id and an avatar hash instead of a URL, needs `https://cdn.discordapp.com/avatars/{$.id}/{$.avatar}.png`.
 
 That second rule catches people out when they try to tack something onto a whole-URL placeholder. `{$.picture}?size=512` is no longer a lone placeholder, so the entire picture URL gets percent-encoded into the path of a URL that goes nowhere. Either use the placeholder alone, or spell the whole URL out around the pieces the provider gives you.
@@ -98,7 +97,6 @@ The download goes through [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked
 The download accepts the same formats as an upload, PNG, JPEG, WebP, or GIF, and ends up as the same 512x512 WebP, but the limits around it are its own: at most 8 MB and 2048 pixels on either side, with no minimum size.
 
 **Overwrite Existing Avatars** decides who gets one. Off, the import only runs for users who have no avatar at all, leaving anything they uploaded themselves alone. On, it runs every time and replaces theirs, though a picture whose URL has not changed since the last import is recognised and not downloaded again. [Frozen](./users.md) accounts are skipped either way.
-
 
 ## Import
 
@@ -133,19 +131,19 @@ Since Panel 1.2.7, some changes need a root admin signed in to the panel; an API
 
 The **Matcher** decides whether the mapping applies to a login. Pick a **Matcher Type**:
 
-| Matcher Type | Applies when | Fields |
-| --- | --- | --- |
-| **None (Always applies)** | Every login through this provider | none |
-| **Never (Applies to nothing)** | No login at all | none |
-| **AND (All must match)** | Every nested matcher applies | nested matchers |
-| **OR (Any must match)** | At least one nested matcher applies | nested matchers |
-| **NOT (Must not match)** | Its nested matcher does not apply | one nested matcher |
-| **Granted Scopes** | The login granted the listed OAuth scopes | **Scopes** |
-| **Field Exists** | The profile response contains the field | **Source**, **Field Path** |
-| **Field Equals** | The field equals the value | **Source**, **Field Path**, value |
-| **Field Contains** | The field contains the value | **Source**, **Field Path**, value |
-| **Field Starts With** | The field starts with the value | **Source**, **Field Path**, value |
-| **Field Ends With** | The field ends with the value | **Source**, **Field Path**, value |
+| Matcher Type                   | Applies when                              | Fields                            |
+| ------------------------------ | ----------------------------------------- | --------------------------------- |
+| **None (Always applies)**      | Every login through this provider         | none                              |
+| **Never (Applies to nothing)** | No login at all                           | none                              |
+| **AND (All must match)**       | Every nested matcher applies              | nested matchers                   |
+| **OR (Any must match)**        | At least one nested matcher applies       | nested matchers                   |
+| **NOT (Must not match)**       | Its nested matcher does not apply         | one nested matcher                |
+| **Granted Scopes**             | The login granted the listed OAuth scopes | **Scopes**                        |
+| **Field Exists**               | The profile response contains the field   | **Source**, **Field Path**        |
+| **Field Equals**               | The field equals the value                | **Source**, **Field Path**, value |
+| **Field Contains**             | The field contains the value              | **Source**, **Field Path**, value |
+| **Field Starts With**          | The field starts with the value           | **Source**, **Field Path**, value |
+| **Field Ends With**            | The field ends with the value             | **Source**, **Field Path**, value |
 
 **AND**, **OR**, and **NOT** nest further matchers, so conditions can be combined freely. Field paths use the same JSONPath syntax as the provider's profile paths.
 
@@ -156,4 +154,3 @@ The **Source** select only shows up once the provider has [Additional Info URLs]
 The **Users** tab (requires `oauth-providers.read`) lists every account linked to this provider: ID, User, Identifier, Last Used, and Created. **Find by Identifier** looks up which panel user owns a given provider-side identifier, useful when all you have is, for example, a Discord user ID.
 
 ![GitHub OAuth provider Users tab listing a linked user with its identifier](./images/oauth-providers/users.webp)
-

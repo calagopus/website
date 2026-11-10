@@ -204,7 +204,7 @@ async fn load_api_key(state: &State) -> Result<String, anyhow::Error> {
 }
 ```
 
-Two calls. `state.settings.get().await?` gives you a snapshot of the current settings store. `.find_extension_settings::<T>()?` walks every extension's settings and returns the first one that downcasts to your struct type. From there it's just a reference - read fields as normal. `get_extension_settings("dev.yourname.test")` is the by-identifier variant, which is what you want when reading *another* extension's settings. Both fail for a disabled extension, since its deserializer is never registered.
+Two calls. `state.settings.get().await?` gives you a snapshot of the current settings store. `.find_extension_settings::<T>()?` walks every extension's settings and returns the first one that downcasts to your struct type. From there it's just a reference - read fields as normal. `get_extension_settings("dev.yourname.test")` is the by-identifier variant, which is what you want when reading _another_ extension's settings. Both fail for a disabled extension, since its deserializer is never registered.
 
 The type parameter on `find_extension_settings` is usually inferred from the annotation on the left-hand side (`let ext_settings: &ExtensionSettingsData = ...`), but you can also call it as `.find_extension_settings::<ExtensionSettingsData>()?` if the surrounding code doesn't disambiguate.
 
@@ -340,11 +340,7 @@ export default function ConfigurationPage() {
     <TitleCard title='Extension Settings'>
       <form onSubmit={form.onSubmit(doSave)}>
         <Stack>
-          <TextInput
-            label='API Key'
-            placeholder='sk_...'
-            {...form.getInputProps('apiKey')}
-          />
+          <TextInput label='API Key' placeholder='sk_...' {...form.getInputProps('apiKey')} />
 
           <Switch
             label='Collect secret government telemetry'

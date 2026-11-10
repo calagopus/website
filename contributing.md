@@ -69,10 +69,10 @@ Keep `.vitepress/config.mts` straightforward, minimal, and easy to navigate.
 
 Name a file after its sidebar entry, not its H1. The two don't have to match.
 
-| Filename | Sidebar entry | H1 |
-| --- | --- | --- |
-| `ssl-certificates.md` | `SSL Certificates` | Generating SSL Certificates |
-| `reverse-proxies/panel.md` | `Panel` | Putting the Panel Behind a Reverse Proxy |
+| Filename                   | Sidebar entry      | H1                                       |
+| -------------------------- | ------------------ | ---------------------------------------- |
+| `ssl-certificates.md`      | `SSL Certificates` | Generating SSL Certificates              |
+| `reverse-proxies/panel.md` | `Panel`            | Putting the Panel Behind a Reverse Proxy |
 
 Keeping filenames aligned with sidebar entries keeps `link:` paths predictable.
 
@@ -88,8 +88,8 @@ Adding a new plugin, package, or dependency? Say what it does and why it's neede
 
 Currently installed:
 
-| Plugin | Purpose | Docs |
-| ------ | ------- | ---- |
+| Plugin                                | Purpose                                      | Docs                                                               |
+| ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------ |
 | `vite-plugin-image-optimizer`         | Optimizes images at build time               | [npm](https://www.npmjs.com/package/vite-plugin-image-optimizer)   |
 | `vitepress-plugin-mermaid`            | Mermaid diagram support                      | [Docs](https://emersonbottero.github.io/vitepress-plugin-mermaid/) |
 | `vitepress-plugin-tabs`               | Powers the `:::: tabs` syntax                | [Docs](https://vitepress-plugins.sapphi.red/tabs/)                 |
@@ -106,7 +106,7 @@ pnpm exec biome check
 pnpm run typecheck
 ```
 
-If `biome check` reports dozens of unrelated files needing reformatting, it's almost certainly CRLF line endings from a Windows checkout, not a real issue. A `.gitattributes` in the repo root forces LF on checkout, but it only applies to files checked out *after* it's in place. If you cloned before it existed, run `git add --renormalize .` once (and `git config core.autocrlf false` if you have it set globally), then re-run the check.
+If `biome check` reports dozens of unrelated files needing reformatting, it's almost certainly CRLF line endings from a Windows checkout, not a real issue. A `.gitattributes` in the repo root forces LF on checkout, but it only applies to files checked out _after_ it's in place. If you cloned before it existed, run `git add --renormalize .` once (and `git config core.autocrlf false` if you have it set globally), then re-run the check.
 
 Then confirm in the dev server:
 

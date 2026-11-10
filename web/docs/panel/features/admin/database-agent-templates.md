@@ -23,17 +23,17 @@ The form's fields, briefly (see the [field reference](../../../db-agent/template
 
 ![Create template form](./images/database-agent-templates/create-form.webp)
 
-| Field | Description |
-| ----- | ----------- |
-| **Name**, **Description** | What users see when picking a template. |
-| **Type** | **PostgreSQL**, **MariaDB**, **MongoDB**, or **Redis**. Locked after creation. |
-| **Docker Images** | Display name to image mappings. With more than one entry, users choose an image when creating an instance. |
-| **Environment Variables** | Passed into the database container. |
-| **Volumes** | Additional volume mounts. |
-| **Socket Path** | The unix socket file path inside the database container; must match where the configured image actually creates its socket. |
-| **Image UID** / **Image GID** | The user and group the container runs as. |
-| **Memory**, **Swap**, **Disk**, **CPU Limit (%)** | Resource limits every instance created from this template gets (`0` means no limit, `-1` for swap). |
-| **Deployment Enabled** | Whether users can create new instances from this template. On by default; templates with it off stay usable by existing instances but disappear from the create dialog. |
+| Field                                             | Description                                                                                                                                                             |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**, **Description**                         | What users see when picking a template.                                                                                                                                 |
+| **Type**                                          | **PostgreSQL**, **MariaDB**, **MongoDB**, or **Redis**. Locked after creation.                                                                                          |
+| **Docker Images**                                 | Display name to image mappings. With more than one entry, users choose an image when creating an instance.                                                              |
+| **Environment Variables**                         | Passed into the database container.                                                                                                                                     |
+| **Volumes**                                       | Additional volume mounts.                                                                                                                                               |
+| **Socket Path**                                   | The unix socket file path inside the database container; must match where the configured image actually creates its socket.                                             |
+| **Image UID** / **Image GID**                     | The user and group the container runs as.                                                                                                                               |
+| **Memory**, **Swap**, **Disk**, **CPU Limit (%)** | Resource limits every instance created from this template gets (`0` means no limit, `-1` for swap).                                                                     |
+| **Deployment Enabled**                            | Whether users can create new instances from this template. On by default; templates with it off stay usable by existing instances but disappear from the create dialog. |
 
 **Command** and **IO Weight** only appear with the **Advanced** toggle enabled.
 
@@ -56,7 +56,6 @@ Applying updates restarts the affected databases to pick up the new configuratio
 ## Export, Duplicate, and Delete
 
 On a template's **General** tab: **Export** downloads the template **as JSON** or **as YAML**, in the same format **Import** accepts, which makes it easy to move templates between panels. **Duplicate** creates a copy under a **New Name**, and **Delete** removes the template after confirmation.
-
 
 ::: info
 The buttons on these pages follow the `database-agent-templates.*` admin permission keys (`create`, `read`, `update`, `delete`). See the [Permissions Reference](../dashboard/permissions.md).

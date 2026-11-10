@@ -24,7 +24,7 @@ export default {
       'layout-bottom': () => h(ImageViewer),
     });
   },
-  enhanceApp({ app, router, siteData }) {
+  enhanceApp({ app }) {
     enhanceAppWithTabs(app);
     app.use(createHead());
     app.component('CompareFaq', CompareFaq);

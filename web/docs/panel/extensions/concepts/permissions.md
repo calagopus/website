@@ -5,7 +5,7 @@ description: Gate your extension routes and UI behind the Panel permission syste
 
 # Permissions
 
-Every mutating route in your extension should be gated on a permission check - something like `permissions.has_server_permission("settings.egg-changer")?` at the top of the handler. The routing docs already covered *how* to do that check; this page is about the other side, which is **where those permission strings come from** and how you register them so admins can actually grant or revoke them in the UI.
+Every mutating route in your extension should be gated on a permission check - something like `permissions.has_server_permission("settings.egg-changer")?` at the top of the handler. The routing docs already covered _how_ to do that check; this page is about the other side, which is **where those permission strings come from** and how you register them so admins can actually grant or revoke them in the UI.
 
 The short version: extensions declare their permissions through the `ExtensionPermissionsBuilder` in their `initialize_permissions` method, exactly like routes are declared through `ExtensionRouteBuilder` in `initialize_router`. The Panel then exposes those permissions in the permission-picker UI, so users assigning subusers to a server or admins configuring roles can toggle each one individually.
 
@@ -13,11 +13,11 @@ The short version: extensions declare their permissions through the `ExtensionPe
 
 There are three independent permission surfaces, one per "who's being permissioned":
 
-| Scope | Who it applies to | Where it's checked |
-| ----- | ----------------- | ------------------ |
-| **User permissions** | A user's own account scope (things they can do that aren't server-specific) | Client routes that aren't server-scoped |
-| **Server permissions** | Subusers on a specific server | Client-server routes |
-| **Admin permissions** | Admin roles | Admin routes |
+| Scope                  | Who it applies to                                                           | Where it's checked                      |
+| ---------------------- | --------------------------------------------------------------------------- | --------------------------------------- |
+| **User permissions**   | A user's own account scope (things they can do that aren't server-specific) | Client routes that aren't server-scoped |
+| **Server permissions** | Subusers on a specific server                                               | Client-server routes                    |
+| **Admin permissions**  | Admin roles                                                                 | Admin routes                            |
 
 These map 1:1 to the `has_user_permission(...)`, `has_server_permission(...)`, and `has_admin_permission(...)` methods you've already seen on `GetPermissionManager`. The scope you add a permission under has to match the scope of the route that checks it - an admin permission can't be checked by `has_server_permission` and vice versa.
 
@@ -96,10 +96,7 @@ class MyExtension extends Extension {
   public cardComponent: React.FC | null = null;
 
   public initialize(ctx: ExtensionContext): void {
-    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon(
-      'my-feature',
-      <FontAwesomeIcon icon={faCube} />,
-    );
+    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon('my-feature', <FontAwesomeIcon icon={faCube} />);
   }
 }
 
@@ -115,10 +112,10 @@ The registry exposes one method per scope, matching the three on the backend bui
 Each takes the **group name** (not a permission node - icons are per-group, not per-permission) and a `ReactNode`. The `ReactNode` is usually a `<FontAwesomeIcon>` to match the rest of the Panel's visual style, but technically any React element works.
 
 ::: info
-Registering an icon for a group name that doesn't exist is harmless - the icon is simply never rendered. This means you can safely register icons for groups you've only *mutated* rather than created, and it means adding icons before you've finalized the group name won't crash anything. But in the typical case, add the icon for the same group name you registered in `initialize_permissions` on the backend.
+Registering an icon for a group name that doesn't exist is harmless - the icon is simply never rendered. This means you can safely register icons for groups you've only _mutated_ rather than created, and it means adding icons before you've finalized the group name won't crash anything. But in the typical case, add the icon for the same group name you registered in `initialize_permissions` on the backend.
 :::
 
-This also works for core groups you've mutated - if you add a new permission to the existing `settings` group on the backend (see the next section), you usually *don't* want to also replace the core icon, but the capability exists if you really need to.
+This also works for core groups you've mutated - if you add a new permission to the existing `settings` group on the backend (see the next section), you usually _don't_ want to also replace the core icon, but the capability exists if you really need to.
 
 ## Mutating Core Permission Groups
 
@@ -150,7 +147,7 @@ Most extensions end up doing at least some of the second pattern - the `settings
 ::: warning
 **You can also remove permissions from core groups.** The `ExtensionPermissionsBuilder` fields are `pub`, and `PermissionGroup.permissions` is a mutable `IndexMap`, which means nothing at the API level stops you from calling `.remove(...)` inside a `mutate_*` closure to strip permissions the core Panel defined.
 
-**Don't.** Removing permissions the Panel defined will break core UI that depends on them, silently lock users out of functionality they're supposed to have, and if another extension is registered after yours, its behavior becomes load-order-dependent in ways that are genuinely hard to debug. The capability exists because the API is consistent, not because it's a supported workflow. If you think you need to remove a core permission, what you probably actually want is to *check* a different permission in your own code, or to introduce an admin-level toggle that your extension can gate on itself.
+**Don't.** Removing permissions the Panel defined will break core UI that depends on them, silently lock users out of functionality they're supposed to have, and if another extension is registered after yours, its behavior becomes load-order-dependent in ways that are genuinely hard to debug. The capability exists because the API is consistent, not because it's a supported workflow. If you think you need to remove a core permission, what you probably actually want is to _check_ a different permission in your own code, or to introduce an admin-level toggle that your extension can gate on itself.
 
 Mutating existing permissions (e.g. changing a description) is a similarly sharp tool - possible, but you're modifying UI that other parts of the Panel and other extensions see. Do it rarely and deliberately.
 :::
@@ -197,20 +194,20 @@ If the user has the permission, the children render. If they don't, nothing rend
 
 ### Props
 
-| Prop | Type | Purpose |
-| ---- | ---- | ------- |
-| `action` | `string \| string[]` | The permission node(s) to check. A single string requires that one permission; an array requires all of them by default. |
-| `matchAny` | `boolean` | When `action` is an array, require *any* of them instead of *all*. Defaults to `false`. |
-| `renderOnCant` | `ReactNode \| null` | What to render when the user lacks permission. Defaults to nothing (the children are simply hidden). |
-| `cantSave` | `boolean` | (`AdminCan` only) Render a disabled Save button with an explanatory tooltip when the user can't save. |
-| `cantDelete` | `boolean` | (`AdminCan` only) Render a disabled Delete button with an explanatory tooltip when the user can't delete. |
-| `children` | `ReactNode` | What to render when the user has permission. |
+| Prop           | Type                 | Purpose                                                                                                                  |
+| -------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `action`       | `string \| string[]` | The permission node(s) to check. A single string requires that one permission; an array requires all of them by default. |
+| `matchAny`     | `boolean`            | When `action` is an array, require _any_ of them instead of _all_. Defaults to `false`.                                  |
+| `renderOnCant` | `ReactNode \| null`  | What to render when the user lacks permission. Defaults to nothing (the children are simply hidden).                     |
+| `cantSave`     | `boolean`            | (`AdminCan` only) Render a disabled Save button with an explanatory tooltip when the user can't save.                    |
+| `cantDelete`   | `boolean`            | (`AdminCan` only) Render a disabled Delete button with an explanatory tooltip when the user can't delete.                |
+| `children`     | `ReactNode`          | What to render when the user has permission.                                                                             |
 
 ### Choosing between "hide" and "show disabled"
 
 The default behavior (hide everything) is usually right for **whole features** - if a subuser can't use your egg-changer at all, showing them an empty card that's grayed out is just noise. Hide the card.
 
-But for **inline actions inside a feature they *can* otherwise see**, a disabled button with a tooltip is often better UX. The user sees what they *would* be able to do, gets a clear signal they can't, and can ask their admin for the right permission if they need it. That's what `cantSave` and `cantDelete` are for on `AdminCan` - they render a stock disabled button with a "you don't have permission to save" tooltip:
+But for **inline actions inside a feature they _can_ otherwise see**, a disabled button with a tooltip is often better UX. The user sees what they _would_ be able to do, gets a clear signal they can't, and can ask their admin for the right permission if they need it. That's what `cantSave` and `cantDelete` are for on `AdminCan` - they render a stock disabled button with a "you don't have permission to save" tooltip:
 
 ```tsx
 <AdminCan action='extensions.manage' cantSave>
@@ -223,7 +220,11 @@ For custom disabled states, pass your own `renderOnCant`:
 ```tsx
 <ServerCan
   action='settings.my-feature'
-  renderOnCant={<Tooltip label='Your admin has not granted you this permission.'><Button disabled>Apply</Button></Tooltip>}
+  renderOnCant={
+    <Tooltip label='Your admin has not granted you this permission.'>
+      <Button disabled>Apply</Button>
+    </Tooltip>
+  }
 >
   <Button onClick={doApply}>Apply</Button>
 </ServerCan>
@@ -234,19 +235,23 @@ For custom disabled states, pass your own `renderOnCant`:
 Pass an array to require multiple permissions. By default **all** must be present:
 
 ```tsx
-{/* User must have BOTH permissions */}
+{
+  /* User must have BOTH permissions */
+}
 <ServerCan action={['settings.my-feature', 'settings.advanced']}>
   <AdvancedControls />
-</ServerCan>
+</ServerCan>;
 ```
 
 Add `matchAny` to require just one of them:
 
 ```tsx
-{/* User must have EITHER permission */}
+{
+  /* User must have EITHER permission */
+}
 <ServerCan action={['files.read', 'files.write']} matchAny>
   <FileList />
-</ServerCan>
+</ServerCan>;
 ```
 
 ### Imperative checks
@@ -260,10 +265,7 @@ function MyComponent() {
   const canEditMatrix = useServerPermissions('settings.egg-changer');
   const canEdit = useCan(canEditMatrix, false);
 
-  const actions = [
-    { label: 'View', onClick: doView },
-    ...(canEdit ? [{ label: 'Edit', onClick: doEdit }] : []),
-  ];
+  const actions = [{ label: 'View', onClick: doView }, ...(canEdit ? [{ label: 'Edit', onClick: doEdit }] : [])];
 
   return <Dropdown actions={actions} />;
 }
@@ -274,16 +276,16 @@ The same module also exports `useServerCan(action, matchAny?)` and `useAdminCan(
 Prefer the `<Can>` components for rendering decisions and the hooks only for cases where the JSX wrapper is awkward.
 
 ::: warning
-Frontend permission checks are a UX layer, not a security layer. Never skip the backend check just because you wrapped the UI in `<ServerCan>` - a user can trivially hit your API with curl or by editing the frontend bundle. The `<Can>` components decide what's *visible*; `has_server_permission(...)?` on the backend decides what's *allowed*. Both are needed for correct behavior.
+Frontend permission checks are a UX layer, not a security layer. Never skip the backend check just because you wrapped the UI in `<ServerCan>` - a user can trivially hit your API with curl or by editing the frontend bundle. The `<Can>` components decide what's _visible_; `has_server_permission(...)?` on the backend decides what's _allowed_. Both are needed for correct behavior.
 :::
 
 ## Design Guidelines
 
 A few things to keep in mind when designing your permission surface:
 
-- **Err on the side of more granular permissions, not fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to *look* at things without also being able to change them.
+- **Err on the side of more granular permissions, not fewer.** If your extension has both a read-only view and a mutation, that's two permissions (`read` and `update`), not one. Operators want to grant subusers the ability to _look_ at things without also being able to change them.
 
-- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission *lets someone do*. A name like `post-switch-endpoint` would be bad because it describes the route, not the capability - if you ever restructure your routes, the permission name becomes a lie.
+- **Permission names should describe capabilities, not implementation details.** `egg-changer` is good because it tells the user what granting this permission _lets someone do_. A name like `post-switch-endpoint` would be bad because it describes the route, not the capability - if you ever restructure your routes, the permission name becomes a lie.
 
 - **Descriptions are shown to humans configuring permissions.** Write them as a full sentence, starting with "Allows ..." or similar, describing what the permission lets someone do in user-facing terms. Avoid jargon that only makes sense if you've read the code.
 

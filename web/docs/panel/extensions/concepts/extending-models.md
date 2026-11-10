@@ -5,7 +5,7 @@ description: Attach your extension data to the Panel models and API objects.
 
 # Extending Models
 
-So you've read the rest of the docs and you're feeling pretty good - you can add routes, register settings, ship a UI, the whole nine yards. But everything you've built so far has been *next to* the Panel's existing data model, never *part* of it. You can store a setting that says "the subdomain limit for server X is 5", but you can't put a column directly on the `servers` table that everyone else who queries servers will see. And you can't get that column to appear in API responses, or get the existing admin "create server" form to know about it, without a lot of glue code.
+So you've read the rest of the docs and you're feeling pretty good - you can add routes, register settings, ship a UI, the whole nine yards. But everything you've built so far has been _next to_ the Panel's existing data model, never _part_ of it. You can store a setting that says "the subdomain limit for server X is 5", but you can't put a column directly on the `servers` table that everyone else who queries servers will see. And you can't get that column to appear in API responses, or get the existing admin "create server" form to know about it, without a lot of glue code.
 
 Calagopus has a system for exactly this: **model extensions**. Your extension can register itself against a core model (like `Server`, `Node`, `User`, etc.), declare extra columns it owns, hook into the existing create / update / delete flows, and even extend the API structs that get sent over the wire. To core code and other extensions, your data looks like part of the model. To you, it's clearly your domain.
 
@@ -21,9 +21,9 @@ This page walks through the pattern end-to-end using a worked example - one that
 
 Before we get into the code, it's worth understanding the divide. Calagopus has two related but distinct concepts that both get extended by this system:
 
-**Models** are the database-backed types - `Server`, `Node`, `User`, `NestEgg`, `ServerSchedule`, and so on. They're what the rest of the codebase deals with internally, and they're *your* extension's interface to the database. When you add a column to the `servers` table and want code that queries `Server` to know about it, you're extending the model.
+**Models** are the database-backed types - `Server`, `Node`, `User`, `NestEgg`, `ServerSchedule`, and so on. They're what the rest of the codebase deals with internally, and they're _your_ extension's interface to the database. When you add a column to the `servers` table and want code that queries `Server` to know about it, you're extending the model.
 
-**API structs** are the over-the-wire types - `ApiServer`, `AdminApiServer`, `ApiServerFeatureLimits`, etc. These are what get serialized into JSON for HTTP responses and deserialized from JSON in request bodies. They're documented in the OpenAPI spec, they're consumed by the frontend, and they're often a *projection* of a model rather than a 1:1 mirror (e.g. `ApiServer` hides internal columns like deletion timestamps, exposes derived fields, and so on). When you want your extra column to appear in the JSON, you're extending the API struct.
+**API structs** are the over-the-wire types - `ApiServer`, `AdminApiServer`, `ApiServerFeatureLimits`, etc. These are what get serialized into JSON for HTTP responses and deserialized from JSON in request bodies. They're documented in the OpenAPI spec, they're consumed by the frontend, and they're often a _projection_ of a model rather than a 1:1 mirror (e.g. `ApiServer` hides internal columns like deletion timestamps, exposes derived fields, and so on). When you want your extra column to appear in the JSON, you're extending the API struct.
 
 The two extension surfaces are independent. You can extend a model without extending its API struct (your column exists in the database but doesn't appear in JSON). You can extend an API struct without extending the model (you compute and expose a derived value). Most extensions do both.
 
@@ -33,7 +33,7 @@ The full list of extendable API structs is at [cratedocs - Extendible implemento
 
 The example we'll walk through is a per-server subdomain limit. Imagine your Panel deployment runs a service that gives each server one or more subdomains pointing at it - `myserver.yourpanel.example` and so on. You want admins to be able to cap the number of subdomains each server is allowed, the way they can already cap Databases, Backups and more. That's exactly the shape of a feature limit, so we'll extend `ApiServerFeatureLimits`.
 
-The plan: add a `subdomains` column to `servers`, plumb it through the model layer so it loads with every `Server`, hook into the create and update flows so admins can set it via the existing endpoints, extend `ApiServerFeatureLimits` so the value appears in the API response, register frontend form components for the admin create-server and edit-server pages, and finally show how to *read* the limit from both your backend routes and your frontend components.
+The plan: add a `subdomains` column to `servers`, plumb it through the model layer so it loads with every `Server`, hook into the create and update flows so admins can set it via the existing endpoints, extend `ApiServerFeatureLimits` so the value appears in the API response, register frontend form components for the admin create-server and edit-server pages, and finally show how to _read_ the limit from both your backend routes and your frontend components.
 
 ::: info
 Note that we're naming the field just `subdomains`, not `max_subdomains`. The `ApiServerFeatureLimits` struct is the cap-defining surface by definition - every field in it represents a maximum. Prefixing with `max_` is redundant; just like the core fields `databases`, `backups`, ... aren't prefixed, your extension fields shouldn't be either. The "max" is implicit.
@@ -53,7 +53,7 @@ ALTER TABLE "servers" ADD COLUMN "subdomains" integer NOT NULL DEFAULT 0;
 ALTER TABLE "servers" DROP COLUMN "subdomains";
 ```
 
-Defaults on `NOT NULL` columns are basically required, since rows already exist when your extension is installed and they need *some* value for the new column. `0` is a sensible default for a limit field - if you read it as "no subdomains allowed by default" rather than "unlimited," operators get safe defaults out of the box.
+Defaults on `NOT NULL` columns are basically required, since rows already exist when your extension is installed and they need _some_ value for the new column. `0` is a sensible default for a limit field - if you read it as "no subdomains allowed by default" rather than "unlimited," operators get safe defaults out of the box.
 
 ::: warning
 **Always provide both `up.sql` and `down.sql`.** The down migration should drop your columns in reverse order. If an operator uninstalls your extension or rolls back a release, leaving orphan columns on a core table is a recipe for a broken Panel.
@@ -222,7 +222,7 @@ Four calls, four different surfaces. Let's go through each.
 
 The `register_create_handler` and `register_update_handler` calls are part of the `CreatableModel` / `UpdatableModel` lifecycle handler systems, which are documented fully on the [Events](./events.md) page along with `register_delete_handler`. This page won't rehash that documentation - go read the events page if you haven't already, the parameter list for the closure is over there.
 
-What's worth pointing out *here* is how the lifecycle handlers interact with model extensions. Both closures receive an `options` argument carrying the incoming payload - the same payload the core create/update logic uses. When that payload includes an extended struct (here, `feature_limits`), you call `parse_extended::<YourExtensionStruct>()` to pull out *your* extension's slice of it as a typed Rust struct.
+What's worth pointing out _here_ is how the lifecycle handlers interact with model extensions. Both closures receive an `options` argument carrying the incoming payload - the same payload the core create/update logic uses. When that payload includes an extended struct (here, `feature_limits`), you call `parse_extended::<YourExtensionStruct>()` to pull out _your_ extension's slice of it as a typed Rust struct.
 
 ### Create
 
@@ -379,7 +379,7 @@ The `zodShape` and `initialValues` here are doing more than just validation and 
 
 ## Reading Your Extension's Data
 
-The whole point of this exercise is so your extension can *use* the data it stores. The access pattern is pleasingly symmetric on the two sides: wherever a model is loaded, you parse your typed slice back out of it - `parse_model_extension` on the backend, your own Zod schema on the frontend.
+The whole point of this exercise is so your extension can _use_ the data it stores. The access pattern is pleasingly symmetric on the two sides: wherever a model is loaded, you parse your typed slice back out of it - `parse_model_extension` on the backend, your own Zod schema on the frontend.
 
 ### From Backend Routes
 
@@ -435,7 +435,7 @@ pub async fn route(
 A couple of things worth pointing out:
 
 - **The same access pattern works in any context that has a loaded `Server`** - route handlers, lifecycle handlers, background tasks, CLI commands, anywhere. If you've got the model, you've got the extension data.
-- **The data is read-only via `parse_model_extension`.** To *change* the value, go through the normal update flow - submit a PATCH to the admin update endpoint with the new `feature_limits.subdomains`, and your update handler from earlier in this page will write it.
+- **The data is read-only via `parse_model_extension`.** To _change_ the value, go through the normal update flow - submit a PATCH to the admin update endpoint with the new `feature_limits.subdomains`, and your update handler from earlier in this page will write it.
 
 #### Writing via Direct Calls to `Server::update`
 
@@ -447,7 +447,7 @@ The `Extendible` trait gives you a method for exactly this:
 fn insert_extension<E: Serialize>(&mut self, ext_value: E) -> Result<(), anyhow::Error>;
 ```
 
-You cannot write an extendible struct as a plain literal: the `#[extendible]` derive adds a hidden overlay field that holds every extension's slice, so `ApiServerFeatureLimits { backups: 5, .. }` does not compile. Start from the server's current limits instead, which the model hands you fully initialised, change the core fields you care about, then call `insert_extension` with your extended struct *before* passing the whole thing to `update`:
+You cannot write an extendible struct as a plain literal: the `#[extendible]` derive adds a hidden overlay field that holds every extension's slice, so `ApiServerFeatureLimits { backups: 5, .. }` does not compile. Start from the server's current limits instead, which the model hands you fully initialised, change the core fields you care about, then call `insert_extension` with your extended struct _before_ passing the whole thing to `update`:
 
 ```rs
 use shared::{Extendible, models::{UpdatableModel, server::UpdateServerOptions}};
@@ -496,7 +496,9 @@ export default function SubdomainsCard() {
 
   return (
     <div>
-      <p>You can create up to {limit} subdomain{limit === 1 ? '' : 's'} on this server.</p>
+      <p>
+        You can create up to {limit} subdomain{limit === 1 ? '' : 's'} on this server.
+      </p>
     </div>
   );
 }
@@ -511,7 +513,7 @@ Two things to keep in mind:
 
 ## Rewriting Variable Rules
 
-`ServerVariable::register_rules_handler` is a different kind of model hook: it lets you rewrite a variable's validation rules just before they are handed to the client. It is also the only way to make an egg variable's input *dynamic*.
+`ServerVariable::register_rules_handler` is a different kind of model hook: it lets you rewrite a variable's validation rules just before they are handed to the client. It is also the only way to make an egg variable's input _dynamic_.
 
 ```rs
 use shared::models::server_variable::ServerVariable;
@@ -531,7 +533,7 @@ ServerVariable::register_rules_handler(ListenerPriority::Normal, |server, env_va
 
 The rules do more than validate. They also decide **which input widget the panel renders**: `boolean` (or an `in:` of `1,0` / `true,false`) becomes a switch, any other `in:a,b,c` becomes a dropdown built from that list, `numeric` or `integer` becomes a number input, and so on. Rewriting `in:` at request time is therefore how you build something like a version selector whose options come from an upstream API rather than being baked into the egg.
 
-Two caveats. The handler only runs on the client startup endpoints, meaning reading and updating a server's variables. It does not run on admin variable routes, server creation, or the remote endpoint Wings uses, so it shapes what the user sees rather than what ends up stored. You also cannot invent new rule *types*: the rule set is fixed, so your handler composes existing rules rather than adding a validator of its own. Like the other lifecycle registrations, this one returns nothing, so a registered rules handler cannot be unregistered.
+Two caveats. The handler only runs on the client startup endpoints, meaning reading and updating a server's variables. It does not run on admin variable routes, server creation, or the remote endpoint Wings uses, so it shapes what the user sees rather than what ends up stored. You also cannot invent new rule _types_: the rule set is fixed, so your handler composes existing rules rather than adding a validator of its own. Like the other lifecycle registrations, this one returns nothing, so a registered rules handler cannot be unregistered.
 
 ## Where to Go From Here
 

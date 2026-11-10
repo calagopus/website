@@ -11,16 +11,16 @@ There are two kinds of backup: a **Server** backup is an archive of the server's
 
 ![Backups page with a Daily Backups group showing retention badges and an Ungrouped section of server and database backups](./images/backups/list.webp)
 
-| Column | Shows |
-| --- | --- |
-| **Name** | The backup's name. |
-| **Kind** | **Server** or **Database**. |
-| **Source** | **Server Files**, or the managed database the dump was taken from, with its engine next to it. If that database has since been deleted, this reads "Example (deleted)". |
-| **Checksum** | e.g. `sha256:...`. |
-| **Size** | The backup's size. |
-| **Files** | File count. Always 0 for a database backup. |
-| **Created** | When the backup was taken. |
-| **Locked?** | A green closed lock when locked, a red open one when not. |
+| Column       | Shows                                                                                                                                                                   |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**     | The backup's name.                                                                                                                                                      |
+| **Kind**     | **Server** or **Database**.                                                                                                                                             |
+| **Source**   | **Server Files**, or the managed database the dump was taken from, with its engine next to it. If that database has since been deleted, this reads "Example (deleted)". |
+| **Checksum** | e.g. `sha256:...`.                                                                                                                                                      |
+| **Size**     | The backup's size.                                                                                                                                                      |
+| **Files**    | File count. Always 0 for a database backup.                                                                                                                             |
+| **Created**  | When the backup was taken.                                                                                                                                              |
+| **Locked?**  | A green closed lock when locked, a red open one when not.                                                                                                               |
 
 A backup that's still running shows a progress bar instead of these columns; a failed one shows a **Failed** badge. Deletion is asynchronous: the row dims under a **Deleting...** badge, which turns into **Deletion failed** if it goes wrong.
 
@@ -32,12 +32,12 @@ Click **Create** in the top right. If backup groups are available, the button op
 
 The form has four fields:
 
-| Field | Notes |
-| --- | --- |
-| **Name** | Pre-filled with a generated timestamp name; change it if you like. |
-| **Source** | **Server Files** (the default) or **Managed Database**. Only shown when you can see the server's managed databases; picking **Managed Database** adds a picker for which one to dump. |
-| **Backup Group** | Only shown when the server has groups. Defaults to **No group**. |
-| **Ignored Files** | Patterns for files to exclude, one pattern per line. Server backups only. |
+| Field             | Notes                                                                                                                                                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**          | Pre-filled with a generated timestamp name; change it if you like.                                                                                                                    |
+| **Source**        | **Server Files** (the default) or **Managed Database**. Only shown when you can see the server's managed databases; picking **Managed Database** adds a picker for which one to dump. |
+| **Backup Group**  | Only shown when the server has groups. Defaults to **No group**.                                                                                                                      |
+| **Ignored Files** | Patterns for files to exclude, one pattern per line. Server backups only.                                                                                                             |
 
 The **Ignored Files** field uses the same `.gitignore` rules as [subuser ignored files](./subusers.md#ignored-files), `!` exceptions below an ignored directory included. It shows a live match count next to each pattern, counted by the node (see [subuser ignored files](./subusers.md#ignored-files) for what the gutter shows), and has a **Preview ignored files** toggle that opens a file browser showing exactly what would be skipped.
 
@@ -64,12 +64,12 @@ Groups organize backups, and their retention rules decide which ones the panel k
 
 The group header shows:
 
-| Badge | Meaning |
-| --- | --- |
-| `N Backups` | How many backups the group holds. |
-| **Retention** | The group has retention rules. Hover it to see them. |
-| **No retention rules** | Nothing is set, so the group is only a label. |
-| **All locked** | Every backup in the group is locked, so nothing can be deleted automatically. |
+| Badge                  | Meaning                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| `N Backups`            | How many backups the group holds.                                             |
+| **Retention**          | The group has retention rules. Hover it to see them.                          |
+| **No retention rules** | Nothing is set, so the group is only a label.                                 |
+| **All locked**         | Every backup in the group is locked, so nothing can be deleted automatically. |
 
 ![The Retention badge hovered, showing "Keep latest: 5, Keep daily: 7"](./images/backups/group-retention-tooltip.webp)
 
@@ -79,26 +79,26 @@ Each backup row inside a group has a **Retention** column: a badge for the rule 
 
 The deletion time is a forecast. The panel takes the cron triggers of the enabled [schedules](./schedules.md) that create backups into the group and works out at which run the backup falls out of its last rule, so it assumes every run succeeds and that nobody changes the rules in between. **Keep all within days** is the exception: it expires on its own, so its date is exact. Without such a schedule the column reads "No deletion forecast" for every other rule, and it says the same on a server at its backup limit, where the limit decides what goes rather than the rules.
 
-| Badge | Meaning |
-| --- | --- |
+| Badge                                                                  | Meaning                                                              |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------- |
 | **Latest**, **Recent**, **Daily**, **Weekly**, **Monthly**, **Yearly** | The rule keeping this backup the longest, with its configured value. |
-| **Locked** | Locked backups are never removed by retention. |
-| **Kept indefinitely** | The group has no rules. |
-| **Pending removal** | No rule keeps this backup any more; the hourly check removes it. |
-| **Cleanup** | A failed backup, with the time its 24 hour grace period ends. |
+| **Locked**                                                             | Locked backups are never removed by retention.                       |
+| **Kept indefinitely**                                                  | The group has no rules.                                              |
+| **Pending removal**                                                    | No rule keeps this backup any more; the hourly check removes it.     |
+| **Cleanup**                                                            | A failed backup, with the time its 24 hour grace period ends.        |
 
 ### Retention Rules
 
 A group has six rules, each off when you leave it empty or set it to 0.
 
-| Rule | Keeps |
-| --- | --- |
-| **Keep latest** | The newest N backups. |
-| **Keep all within days** | Every backup taken in the last N days. |
-| **Keep daily** | The newest backup from each of the last N days that has one. |
-| **Keep weekly** | The newest backup from each of the last N weeks that has one. |
-| **Keep monthly** | The newest backup from each of the last N months that has one. |
-| **Keep yearly** | The newest backup from each of the last N years that has one. |
+| Rule                     | Keeps                                                          |
+| ------------------------ | -------------------------------------------------------------- |
+| **Keep latest**          | The newest N backups.                                          |
+| **Keep all within days** | Every backup taken in the last N days.                         |
+| **Keep daily**           | The newest backup from each of the last N days that has one.   |
+| **Keep weekly**          | The newest backup from each of the last N weeks that has one.  |
+| **Keep monthly**         | The newest backup from each of the last N months that has one. |
+| **Keep yearly**          | The newest backup from each of the last N years that has one.  |
 
 A backup is kept when any one rule selects it, so the rules stack, and how they interact is worth spelling out:
 
@@ -152,11 +152,11 @@ Select rows with their checkboxes, by dragging across them, by `Shift`-clicking 
 
 ![Two backups selected, with the action bar showing Move to Group, Lock, Unlock and Delete](./images/backups/bulk-actions.webp)
 
-| Action | Notes |
-| --- | --- |
-| **Move to Group** | Pick a group from the menu, or **Remove from Group** to make them ungrouped. Needs `backups.update` and `backup-groups.read`, and is disabled while the server has no groups. |
-| **Lock** / **Unlock** | Each only touches the backups not already in that state. |
-| **Delete** | Asks for confirmation. Locked backups, backups that have not finished, and backups already being deleted are skipped, and the dialog says how many. |
+| Action                | Notes                                                                                                                                                                         |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Move to Group**     | Pick a group from the menu, or **Remove from Group** to make them ungrouped. Needs `backups.update` and `backup-groups.read`, and is disabled while the server has no groups. |
+| **Lock** / **Unlock** | Each only touches the backups not already in that state.                                                                                                                      |
+| **Delete**            | Asks for confirmation. Locked backups, backups that have not finished, and backups already being deleted are skipped, and the dialog says how many.                           |
 
 Selecting needs `backups.update` or `backups.delete`. Each action reports how many items it changed, skipped or failed in a toast.
 

@@ -1,5 +1,5 @@
 ---
-description: "Extend the Calagopus panel with native Rust extensions: installing, developing, and publishing extensions plus core concept guides."
+description: 'Extend the Calagopus panel with native Rust extensions: installing, developing, and publishing extensions plus core concept guides.'
 ---
 
 # Extensions

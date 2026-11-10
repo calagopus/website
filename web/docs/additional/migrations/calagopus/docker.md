@@ -96,7 +96,7 @@ services:
       - APP_LOG_DIRECTORY=/var/log/calagopus
       - APP_PRIMARY=true
       - APP_ENABLE_WINGS_PROXY=true
-      - APP_ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY  # paste your key from above
+      - APP_ENCRYPTION_KEY=YOUR_ENCRYPTION_KEY # paste your key from above
       - APP_USE_DECRYPTION_CACHE=true
       - APP_USE_INTERNAL_CACHE=true
     volumes:
@@ -105,7 +105,7 @@ services:
     ports:
       - 8000:8000
     extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - 'host.docker.internal:host-gateway'
     depends_on:
       - db
       - cache
@@ -116,7 +116,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - POSTGRES_USER=panel
-      - POSTGRES_PASSWORD=YOUR_DB_PASSWORD  # use the same password as above
+      - POSTGRES_PASSWORD=YOUR_DB_PASSWORD # use the same password as above
       - POSTGRES_DB=panel
       - PGDATA=/data
     volumes:
@@ -205,7 +205,7 @@ Once the stack is up, open Calagopus in your browser and check:
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| Setup wizard (OOBE) appears after starting | The database was not imported correctly, or the wrong database was targeted. Stop the stack, double-check the import command used the right container name (`calagopus-db-1`), re-run the import, then restart with `docker compose restart web`. |
-| Login fails, or encrypted data appears corrupted | Your `APP_ENCRYPTION_KEY` in `docker-compose.yml` probably doesn't match the one from your original installation. Stop the stack, correct the key and run `docker compose up -d` again. |
+| Symptom                                          | Fix                                                                                                                                                                                                                                               |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Setup wizard (OOBE) appears after starting       | The database was not imported correctly, or the wrong database was targeted. Stop the stack, double-check the import command used the right container name (`calagopus-db-1`), re-run the import, then restart with `docker compose restart web`. |
+| Login fails, or encrypted data appears corrupted | Your `APP_ENCRYPTION_KEY` in `docker-compose.yml` probably doesn't match the one from your original installation. Stop the stack, correct the key and run `docker compose up -d` again.                                                           |

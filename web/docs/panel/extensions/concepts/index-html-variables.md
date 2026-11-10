@@ -79,9 +79,7 @@ The values are rendered into a `<script type="application/json" id="extension-va
 If your extension provides [`src/boot.html`](../file-structure.md#src-boot-html), the boot screen can use your variables too, before any JavaScript has loaded:
 
 ```html
-<div class="my-boot-screen" style="color: {{ variables.accent_color }}">
-  Loading...
-</div>
+<div class="my-boot-screen" style="color: {{ variables.accent_color }}">Loading...</div>
 ```
 
 `boot.html` is rendered as a [MiniJinja](https://docs.rs/minijinja) template. The only thing it can see is `variables`, which holds your own extension's variables, and values are HTML-escaped. If the template fails to render, for example because of a syntax error, the Panel logs the error and shows the default spinner.

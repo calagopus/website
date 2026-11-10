@@ -77,29 +77,16 @@ const features = [
 </script>
 
 <template>
-  <section
-    class="custom-features-wrapper"
-    aria-labelledby="features-heading"
-  >
+  <section class="custom-features-wrapper" aria-labelledby="features-heading">
     <h2 id="features-heading" class="section-heading">Why Calagopus?</h2>
     <div class="custom-features-grid">
-      <Card
-        v-for="feature in features"
-        :key="feature.title"
-        component="article"
-        class="feature-card"
-        padding="lg"
-      >
+      <Card v-for="feature in features" :key="feature.title" component="article" class="feature-card" padding="lg">
         <ThemeIcon size="xl" variant="light" class="feature-icon" aria-hidden="true">
           <FontAwesomeIcon :icon="feature.icon" class="fa-icon" />
         </ThemeIcon>
         <h3 class="title">{{ feature.title }}</h3>
         <p class="details">{{ feature.details }}</p>
-        <a
-          v-if="feature.link"
-          :href="feature.link.href"
-          class="link"
-        >
+        <a v-if="feature.link" :href="feature.link.href" class="link">
           <FontAwesomeIcon :icon="faCircleInfo" class="fa-icon" aria-hidden="true" />
           {{ feature.link.label }}
         </a>

@@ -1,5 +1,5 @@
 ---
-description: "What to do after installing the Calagopus panel: use your existing node or connect Wings, then add game server templates."
+description: 'What to do after installing the Calagopus panel: use your existing node or connect Wings, then add game server templates.'
 ---
 
 # Next Steps

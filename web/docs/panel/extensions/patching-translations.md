@@ -8,7 +8,7 @@ description: Patch the Panel translations or add whole languages from the heavy 
 The heavy image lets you patch the Panel's own translations - reword a label, fix a phrasing you don't like, or fill in keys for a language - without forking the Panel or rebuilding the image yourself. You drop small JSON override files into a directory, trigger a rebuild, and the heavy image deep-merges your changes on top of the base translations the Panel ships.
 
 ::: info This is the operator-level mechanism, not the extension one
-This page is about overriding the **base Panel's** translations as an operator running the heavy image. If you're an extension author and want to ship translations *with your extension*, that's a different (and simpler) workflow - see [Concepts → Translations](./concepts/translations.md). The two don't conflict: extensions declare their own keys, and this override mechanism patches whatever ends up in the final translation files.
+This page is about overriding the **base Panel's** translations as an operator running the heavy image. If you're an extension author and want to ship translations _with your extension_, that's a different (and simpler) workflow - see [Concepts → Translations](./concepts/translations.md). The two don't conflict: extensions declare their own keys, and this override mechanism patches whatever ends up in the final translation files.
 
 This only works on the **heavy image**. If you're still on the regular image, start with [Switching to the Heavy Image](./switching-to-the-heavy-image.md).
 :::
@@ -24,7 +24,7 @@ volumes:
 
 The heavy image's entrypoint does three things:
 
-1. **Copies the Panel's base translation files** into `/app/translations/` - one flat JSON file per language (`en.json`, `de.json`, `es.json`, `fr.json` and so on). This runs on every boot and after every rebuild, so these top-level files are *regenerated from the shipped Panel* each time. They are there for you to read, as the reference for what keys exist.
+1. **Copies the Panel's base translation files** into `/app/translations/` - one flat JSON file per language (`en.json`, `de.json`, `es.json`, `fr.json` and so on). This runs on every boot and after every rebuild, so these top-level files are _regenerated from the shipped Panel_ each time. They are there for you to read, as the reference for what keys exist.
 2. **Stages your changes, before the frontend is built.** Any top-level `<lang>.json` that isn't one of the shipped filenames is staged as a new language, and every `*.json` in `/app/translations/overrides/` is deep-merged onto the base language with the **same filename**. So `overrides/en.json` merges into `en.json`, `overrides/de.json` into `de.json`, and so on.
 3. **Builds the frontend from that staged set.** The result is compiled into the Panel binary, which is where the Panel serves translations from - so your changes only take effect through a rebuild (see [Applying Your Changes](#applying-your-changes)).
 
@@ -131,14 +131,14 @@ cp ./build/translations/en.json ./build/translations/eo.json
 # then translate the values in eo.json
 ```
 
-On the next rebuild this file is compiled into the Panel binary alongside the shipped languages, so the new language is **served** at `/translations/<lang>.json` *and* listed by `/api/languages`, which is what populates the language picker in account settings. The picker labels it using the browser's own locale data, so a valid language code shows up under its proper name with nothing further to register. (The boot-time copy of the shipped defaults only writes over their own filenames - it leaves your extra file alone.)
+On the next rebuild this file is compiled into the Panel binary alongside the shipped languages, so the new language is **served** at `/translations/<lang>.json` _and_ listed by `/api/languages`, which is what populates the language picker in account settings. The picker labels it using the browser's own locale data, so a valid language code shows up under its proper name with nothing further to register. (The boot-time copy of the shipped defaults only writes over their own filenames - it leaves your extra file alone.)
 
 Pick a filename the Panel doesn't already ship. A top-level file whose name matches a shipped language is treated as the regenerated base copy and ignored - to change a shipped language, use `overrides/` instead. The supervisor keeps the list of shipped names in `./build/translations/.shipped.json`, and the list only grows, so a language the Panel once shipped stays reserved even if a later release drops it.
 
 You don't have to translate everything up front. Any key you leave out falls back to its **English** value, so a partial file is perfectly usable - users on that language just see English for whatever you haven't translated yet, and you can fill more in over time. Where your language uses extra plural forms, fill in the CLDR categories that apply (`zero`, `one`, `two`, `few`, `many`, `other`); the [Unicode CLDR plural rules table](https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html) is the reference.
 
 ::: info overrides/ vs. a top-level file
-A file in `overrides/` *patches* a language - merged on top, so it can be a tiny partial. A file directly in `./build/translations/` *is* a language - it stands on its own (with English filling any gaps). Use the first to tweak a shipped language, the second to introduce a new one.
+A file in `overrides/` _patches_ a language - merged on top, so it can be a tiny partial. A file directly in `./build/translations/` _is_ a language - it stands on its own (with English filling any gaps). Use the first to tweak a shipped language, the second to introduce a new one.
 :::
 
 ## Applying Your Changes
@@ -149,7 +149,7 @@ Translations are compiled into the binary, so they take effect **through a rebui
 - It also runs automatically as part of any extension install/uninstall rebuild.
 - A `docker compose restart` picks the change up too - the entrypoint notices the translations differ from whatever the cached binary was built with and rebuilds on boot.
 
-Rebuilds are cached by the combination of your installed extensions *and* your translation files, so a translations-only edit is enough to invalidate the cache and produce a real build. Once it finishes, reload the Panel and your strings are live.
+Rebuilds are cached by the combination of your installed extensions _and_ your translation files, so a translations-only edit is enough to invalidate the cache and produce a real build. Once it finishes, reload the Panel and your strings are live.
 
 ::: info The rebuild takes a while, and the Panel stays up
 A rebuild compiles the frontend and the binary. The Panel keeps serving on the previous binary while that happens and switches over when it finishes, so this isn't downtime - but your strings won't change until it completes. Watch the extension build log if you want to follow along.
@@ -161,7 +161,7 @@ Removing a language file or an override doesn't take effect until the next rebui
 
 ## Caveats
 
-- **Override existing keys, don't invent new ones.** The override is merged into the base file, but the Panel's frontend only *reads* keys it knows about. Adding a key the Panel never references does nothing; patch keys that already exist.
+- **Override existing keys, don't invent new ones.** The override is merged into the base file, but the Panel's frontend only _reads_ keys it knows about. Adding a key the Panel never references does nothing; patch keys that already exist.
 - **Keep interpolation variables intact.** If the original string is `Showing {start} to {end} of {total} results.`, your override has to keep `{start}`, `{end}`, and `{total}` - dropping or renaming them breaks the rendered string.
 - **Patches follow the base, not the other way around.** Because the base is regenerated every rebuild, if a Panel upgrade renames or removes a key, your override for the old key simply has nothing to merge into and silently stops applying. After a major upgrade, skim the diff in `./build/translations/en.json` if a patched string reverts.
 - **Valid JSON only.** A malformed override file is logged and skipped during the rebuild rather than applied - check the extension build log if a change doesn't take.

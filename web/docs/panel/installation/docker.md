@@ -31,25 +31,25 @@ The Calagopus Panel Docker image comes in several variants:
 
 Use these if you are running the Panel on its own and Wings on separate hosts.
 
-| Variant | Description |
-| --- | --- |
-| `:latest` | The latest stable release of the Calagopus Panel. Optimized for production use and does not include development tools. |
-| `:latest-pre` | The latest pre-release version. May contain new features and bug fixes not yet in `:latest`, but also potentially new bugs. Not recommended for production. |
-| `:nightly` | The latest development build. Updated frequently, may contain new features and bug fixes not yet in `:latest` or `:latest-pre`. Not recommended for production. |
-| `:heavy` | The official image for installing [extensions](../extensions/index.md) in Docker deployments. Includes the build tools and dependencies needed to compile and run them. |
-| `:heavy-pre` | Pre-release variant of `:heavy`. Same trade-offs as `:latest-pre`. |
-| `:nightly-heavy` | Development-build variant of `:heavy`. Same trade-offs as `:nightly`. |
+| Variant          | Description                                                                                                                                                             |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `:latest`        | The latest stable release of the Calagopus Panel. Optimized for production use and does not include development tools.                                                  |
+| `:latest-pre`    | The latest pre-release version. May contain new features and bug fixes not yet in `:latest`, but also potentially new bugs. Not recommended for production.             |
+| `:nightly`       | The latest development build. Updated frequently, may contain new features and bug fixes not yet in `:latest` or `:latest-pre`. Not recommended for production.         |
+| `:heavy`         | The official image for installing [extensions](../extensions/index.md) in Docker deployments. Includes the build tools and dependencies needed to compile and run them. |
+| `:heavy-pre`     | Pre-release variant of `:heavy`. Same trade-offs as `:latest-pre`.                                                                                                      |
+| `:nightly-heavy` | Development-build variant of `:heavy`. Same trade-offs as `:nightly`.                                                                                                   |
 
 ### All-in-One (AIO) images
 
 These bundle the Panel and Wings in a single container. Pick one of these if you only need a single node.
 
-| Variant | Description |
-| --- | --- |
-| `:aio` | The latest stable release of the Panel and Wings bundled together. Recommended for single-node setups. |
-| `:heavy-aio` | AIO variant with the development tools needed for extensions. Use if you plan to install extensions on a single-node setup. |
-| `:nightly-aio` | Development-build AIO variant. Same trade-offs as `:nightly`. |
-| `:nightly-heavy-aio` | Development-build AIO variant with extension support. |
+| Variant              | Description                                                                                                                 |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `:aio`               | The latest stable release of the Panel and Wings bundled together. Recommended for single-node setups.                      |
+| `:heavy-aio`         | AIO variant with the development tools needed for extensions. Use if you plan to install extensions on a single-node setup. |
+| `:nightly-aio`       | Development-build AIO variant. Same trade-offs as `:nightly`.                                                               |
+| `:nightly-heavy-aio` | Development-build AIO variant with extension support.                                                                       |
 
 ## Getting Started
 

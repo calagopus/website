@@ -13,25 +13,24 @@ Two icons next to the username tell you the account's state at a glance: a crown
 
 Next to **Create** (requires `users.create`) sits **Find by External ID** (requires `users.read`): enter the external identifier, for example one set by your billing system, hit **Search**, and a **User Found** card shows the matching username, email, and role with a **View User** button. If nothing matches, you get "No user found with that external ID."
 
-
 ## Creating a User
 
 Click **Create** (or go to `/admin/users/new`) and fill in the form:
 
 ![Create User form with username, email, names, language, role, password, and Admin, Frozen, and Suspended toggles](./images/users/create-form.webp)
 
-| Field | Notes |
-| --- | --- |
-| **Username** | Required. 3 to 15 characters of letters, numbers, and underscores. |
-| **Email** | Required. |
-| **First Name** / **Last Name** | Optional. |
-| **Language** | Required. The user's panel language. |
-| **Role** | Optional; only shown to root admins. See [Roles](./roles.md). |
-| **External ID** | Optional identifier for linking external systems. |
-| **Password** | Required when creating. When updating, leave it empty to keep the current one. |
-| **Admin** | Only shown to root admins. "Admin users have full, unrestricted access to everything on the panel." Saving with this on asks for confirmation first ("Are you sure you want to grant **name** admin access?"). |
-| **Frozen** | "Frozen users cannot make any changes to their account information." |
-| **Suspended** | "Suspended users cannot access the panel in any meaningful way." |
+| Field                          | Notes                                                                                                                                                                                                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Username**                   | Required. 3 to 15 characters of letters, numbers, and underscores.                                                                                                                                             |
+| **Email**                      | Required.                                                                                                                                                                                                      |
+| **First Name** / **Last Name** | Optional.                                                                                                                                                                                                      |
+| **Language**                   | Required. The user's panel language.                                                                                                                                                                           |
+| **Role**                       | Optional; only shown to root admins. See [Roles](./roles.md).                                                                                                                                                  |
+| **External ID**                | Optional identifier for linking external systems.                                                                                                                                                              |
+| **Password**                   | Required when creating. When updating, leave it empty to keep the current one.                                                                                                                                 |
+| **Admin**                      | Only shown to root admins. "Admin users have full, unrestricted access to everything on the panel." Saving with this on asks for confirmation first ("Are you sure you want to grant **name** admin access?"). |
+| **Frozen**                     | "Frozen users cannot make any changes to their account information."                                                                                                                                           |
+| **Suspended**                  | "Suspended users cannot access the panel in any meaningful way."                                                                                                                                               |
 
 Finish with **Save** (returns to the list) or **Save & Stay**.
 
@@ -43,12 +42,12 @@ Role-based admins are limited here: only root admins (accounts with the **Admin*
 
 Clicking a user opens their view. Tabs appear based on your [admin permissions](../dashboard/permissions.md#admin-permissions):
 
-| Tab | Requires |
-| --- | --- |
-| General | - |
-| Servers | `servers.read` |
+| Tab         | Requires            |
+| ----------- | ------------------- |
+| General     | -                   |
+| Servers     | `servers.read`      |
 | OAuth Links | `users.oauth-links` |
-| Activity | `users.activity` |
+| Activity    | `users.activity`    |
 
 ### General
 
@@ -56,13 +55,13 @@ The **Update User** form, the same fields as [creating a user](#creating-a-user)
 
 ![Update User form with admin actions](./images/users/general.webp)
 
-| Button | Requires | What it does |
-| --- | --- | --- |
-| **Disable Two Factor** | `users.disable-two-factor` | Clears the user's authenticator app and email two-factor, along with their recovery codes, after a confirmation. Only enabled when the user actually has one of those on. It does **not** remove their security keys. |
-| **Send Password Reset Email** | `users.email` | Emails the user a password reset link after a confirmation. |
-| **Verify Email** | `users.email` | Marks the user's email address as verified without them having to open the emailed link. Disabled once the address is already verified. |
-| **Impersonate** | `users.impersonate` | Switches your session to this user, see [below](#impersonation). |
-| **Delete** | `users.delete` | Deletes the user after a confirmation. |
+| Button                        | Requires                   | What it does                                                                                                                                                                                                          |
+| ----------------------------- | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Disable Two Factor**        | `users.disable-two-factor` | Clears the user's authenticator app and email two-factor, along with their recovery codes, after a confirmation. Only enabled when the user actually has one of those on. It does **not** remove their security keys. |
+| **Send Password Reset Email** | `users.email`              | Emails the user a password reset link after a confirmation.                                                                                                                                                           |
+| **Verify Email**              | `users.email`              | Marks the user's email address as verified without them having to open the emailed link. Disabled once the address is already verified.                                                                               |
+| **Impersonate**               | `users.impersonate`        | Switches your session to this user, see [below](#impersonation).                                                                                                                                                      |
+| **Delete**                    | `users.delete`             | Deletes the user after a confirmation.                                                                                                                                                                                |
 
 These changes also reach the user's open console and SFTP/SSH sessions on every node. Suspending them, toggling **Admin**, changing their role or disabling their two-factor makes Wings fetch their permissions again, and whatever access they lost ends there and then; a suspended user is disconnected everywhere. Setting a new password or deleting the user closes all of their sessions outright. See [When access changes](../../../about/security.md#when-access-changes).
 
@@ -91,8 +90,6 @@ The user's account audit log, the same one they see on their own [Activity](../d
 ![Servers page showing the impersonation warning banner while viewing as the impersonated user](./images/users/impersonation-banner.webp)
 
 <img src="./images/users/stop-impersonating.webp" width="200" alt="User menu open with the Stop Impersonating option" />
-
-
 
 Everything you do while impersonating is written to the activity logs with an "Impersonated by ..." marker next to the actor, so the audit trail always shows who really acted.
 

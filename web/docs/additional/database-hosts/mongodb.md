@@ -36,7 +36,7 @@ services:
     volumes:
       - ./data:/data/db
     ports:
-      - "0.0.0.0:27017:27017"
+      - '0.0.0.0:27017:27017'
 ```
 
 Start the service:
@@ -106,7 +106,7 @@ db.createUser({
 Exit the shell:
 
 ```js
-exit
+exit;
 ```
 
 ## Enabling Authentication
@@ -123,11 +123,11 @@ services:
   mongodb:
     image: mongo:8
     restart: unless-stopped
-    command: ["--auth"]
+    command: ['--auth']
     volumes:
       - ./data:/data/db
     ports:
-      - "0.0.0.0:27017:27017"
+      - '0.0.0.0:27017:27017'
 ```
 
 Restart the service:

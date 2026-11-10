@@ -67,12 +67,12 @@ A function that receives the form's current field definitions and returns a new 
 import { insertFieldsAfter, insertFieldsBefore, removeField, updateField } from '@/elements/form-engine/index.ts';
 ```
 
-| Helper | Description |
-| ------ | ----------- |
+| Helper                                        | Description                                                  |
+| --------------------------------------------- | ------------------------------------------------------------ |
 | `insertFieldsBefore(fields, name, ...insert)` | Insert one or more fields immediately before the named field |
-| `insertFieldsAfter(fields, name, ...insert)` | Insert one or more fields immediately after the named field |
-| `updateField(fields, name, (field) => field)` | Replace the named field with the result of the callback |
-| `removeField(fields, name)` | Drop the named field from the list |
+| `insertFieldsAfter(fields, name, ...insert)`  | Insert one or more fields immediately after the named field  |
+| `updateField(fields, name, (field) => field)` | Replace the named field with the result of the callback      |
+| `removeField(fields, name)`                   | Drop the named field from the list                           |
 
 The insert helpers return the field list **unchanged** when the anchor field isn't present. That's deliberate: some form IDs render their fields in multiple sections (server create/update, for example), and your transform runs against each section - the no-op behavior means your field only lands in the section that actually contains your anchor. To unconditionally add a field at the start or end, spread the array yourself: `(fields) => [...fields, myField]` appends, `(fields) => [myField, ...fields]` prepends.
 
@@ -125,16 +125,16 @@ The fields inside a form (and the ones your `transform` produces) are `FieldDef`
 
 **Base properties (all field types except `divider`, `section` and `custom`):**
 
-| Property | Type | Description |
-| -------- | ---- | ----------- |
-| `name` | `string` | Field name, must match the form value key (Mantine paths, so dots address nested values) |
-| `label` | `LazyString` | Label shown above the input |
-| `description` | `LazyString?` | Helper text shown below the label |
-| `tooltip` | `ReactNode?` | Tooltip content shown on an info icon next to the label |
-| `required` | `boolean?` | Shows an asterisk on the label (not on `switch` and `checkbox`). It enforces nothing on its own, so pair it with a Zod rule such as `.min(1)` |
-| `advanced` | `boolean?` | Hidden unless the user has enabled Advanced Mode |
-| `colSpan` | `'full' \| 1` | `'full'` stretches across both columns; omit for the default half-width |
-| `when` | `(values) => boolean` | Receives the current form values; field is hidden when this returns `false` |
+| Property      | Type                  | Description                                                                                                                                   |
+| ------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `name`        | `string`              | Field name, must match the form value key (Mantine paths, so dots address nested values)                                                      |
+| `label`       | `LazyString`          | Label shown above the input                                                                                                                   |
+| `description` | `LazyString?`         | Helper text shown below the label                                                                                                             |
+| `tooltip`     | `ReactNode?`          | Tooltip content shown on an info icon next to the label                                                                                       |
+| `required`    | `boolean?`            | Shows an asterisk on the label (not on `switch` and `checkbox`). It enforces nothing on its own, so pair it with a Zod rule such as `.min(1)` |
+| `advanced`    | `boolean?`            | Hidden unless the user has enabled Advanced Mode                                                                                              |
+| `colSpan`     | `'full' \| 1`         | `'full'` stretches across both columns; omit for the default half-width                                                                       |
+| `when`        | `(values) => boolean` | Receives the current form values; field is hidden when this returns `false`                                                                   |
 
 `LazyString` is `string | (() => string)`. The function form is resolved at render time, which is what lets you pass translation getters from module scope (your `initialize` runs long before any form renders): `label: () => t('myext.fields.customIdentifier')`.
 

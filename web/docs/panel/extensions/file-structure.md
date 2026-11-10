@@ -68,7 +68,7 @@ The Panel shows a small loading spinner while the page loads, before any extensi
 
 ```html
 <div class="my-boot-screen">
-  <img src="/my-logo.svg" alt="" width="64" height="64"/>
+  <img src="/my-logo.svg" alt="" width="64" height="64" />
 </div>
 ```
 
@@ -113,7 +113,7 @@ class Dev0x7d8TestExtension extends Extension {
   public processCall(ctx: ExtensionContext, name: string, args: object): unknown {
     return ctx.skip();
   }
-  
+
   // https://typedocs.calagopus.com/classes/extensions_shared_src_extension.Extension
 }
 
@@ -161,7 +161,7 @@ license_text = "..." # optional licence text shown to the operator
 `extensions init` fills `panel_version` with the version of the Panel you generated the extension on, so a fresh extension declares `>=<current version>` rather than `>=1.1.0`.
 
 ::: warning
-`panel_version` is checked when the extension is installed, by `panel-rs extensions add`, `panel-rs extensions update` and the admin upload, and again by the heavy image on every rebuild, since a rebuild re-adds every archive. The requirement must rule out panel versions older than `1.1.0` - a requirement like `>=1.0.0` (which would *admit* pre-1.1.0 panels) is declined outright - and it has to match the panel version doing the install. On the heavy image that means an extension pinned below the version you just pulled fails the whole rebuild, with the failure reason naming it, and the Panel keeps running the previous binary until you remove or update that extension. Heavy images before 1.2.3 skipped the compatibility half of the check and only enforced the `1.1.0` floor.
+`panel_version` is checked when the extension is installed, by `panel-rs extensions add`, `panel-rs extensions update` and the admin upload, and again by the heavy image on every rebuild, since a rebuild re-adds every archive. The requirement must rule out panel versions older than `1.1.0` - a requirement like `>=1.0.0` (which would _admit_ pre-1.1.0 panels) is declined outright - and it has to match the panel version doing the install. On the heavy image that means an extension pinned below the version you just pulled fails the whole rebuild, with the failure reason naming it, and the Panel keeps running the previous binary until you remove or update that extension. Heavy images before 1.2.3 skipped the compatibility half of the check and only enforced the `1.1.0` floor.
 :::
 
 ### src/lib.rs
@@ -177,7 +177,7 @@ impl Extension for ExtensionStruct {
     async fn initialize(&mut self, _state: State) {
         tracing::info!("dev_0x7d8_test extension initialize called");
     }
-    
+
     // https://cratedocs.calagopus.com/shared/extensions/trait.Extension
 }
 ```

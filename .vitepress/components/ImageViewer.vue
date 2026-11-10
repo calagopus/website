@@ -331,7 +331,15 @@ onUnmounted(() => {
               <button type="button" class="action" aria-label="Rotate right" @click="rotate(90)">
                 <FontAwesomeIcon :icon="faRotateRight" />
               </button>
-              <button type="button" class="action" aria-label="Reset" @click="rotation = 0; fit()">
+              <button
+                type="button"
+                class="action"
+                aria-label="Reset"
+                @click="
+                  rotation = 0;
+                  fit();
+                "
+              >
                 <FontAwesomeIcon :icon="faArrowsRotate" />
               </button>
               <button ref="closeButton" type="button" class="close" aria-label="Close" @click="close">

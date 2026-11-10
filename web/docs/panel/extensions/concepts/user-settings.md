@@ -5,7 +5,7 @@ description: Store per-user preferences that sync across devices, without writin
 
 # User Settings
 
-The [Settings](/docs/panel/extensions/concepts/settings) page covers configuration the *operator* manages - one value for the whole installation, guarded behind the admin area. But plenty of things aren't the operator's call at all: which view mode a user prefers, a collapsed sidebar section, a per-user toggle your extension renders in its UI. Historically that kind of thing ended up in `localStorage`, which means it silently resets the moment the user opens the Panel on another device.
+The [Settings](/docs/panel/extensions/concepts/settings) page covers configuration the _operator_ manages - one value for the whole installation, guarded behind the admin area. But plenty of things aren't the operator's call at all: which view mode a user prefers, a collapsed sidebar section, a per-user toggle your extension renders in its UI. Historically that kind of thing ended up in `localStorage`, which means it silently resets the moment the user opens the Panel on another device.
 
 User settings fix that. They are a per-user key-value store on the Panel: values are arbitrary JSON, they sync across every device the user logs in on, and - unlike global settings - you don't declare a struct, register a deserializer, or write any backend code to add one. Pick a key, write a value, done.
 
@@ -69,11 +69,11 @@ Users can also pin any synced setting to one device themselves, through the scop
 
 Three functions back that menu:
 
-| Function | What it does |
-| --- | --- |
-| `overrideUserSettingLocally(key, value)` | Pins a value to this device. No-op for keys in `DEVICE_ONLY_SETTING_KEYS`. |
-| `clearUserSettingOverride(key)` | Drops the device override, so the account value applies again. |
-| `pushUserSettingToAccount(key)` | Sends the current device value up as the new account value and clears the override. Async, and a no-op when there is no override or while impersonating. |
+| Function                                 | What it does                                                                                                                                             |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `overrideUserSettingLocally(key, value)` | Pins a value to this device. No-op for keys in `DEVICE_ONLY_SETTING_KEYS`.                                                                               |
+| `clearUserSettingOverride(key)`          | Drops the device override, so the account value applies again.                                                                                           |
+| `pushUserSettingToAccount(key)`          | Sends the current device value up as the new account value and clears the override. Async, and a no-op when there is no override or while impersonating. |
 
 ## Backend Access
 

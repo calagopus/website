@@ -17,16 +17,16 @@ Calagopus takes the opposite approach when it comes to licensing: it's MIT-licen
 
 ## Quick Summary
 
-|                           | Calagopus            | AMP                                      |
-| ------------------------- | -------------------- | ---------------------------------------- |
-| **Language**              | Rust                 | C# (.NET)                                |
-| **First release**         | June 2025            | 2014                                     |
-| **License**               | MIT (open source)    | Proprietary (closed source)              |
-| **Price**                 | Free                 | Paid, per-instance                       |
-| **Commercial Use**        | Allowed              | Requires Enterprise Edition              |
-| **Extension System**      | ✅                   | ✅                                       |
-| **Windows Panel Support** | ✅                   | ✅                                       |
-| **ARM64 Support**         | ✅                   | ✅                                       |
+|                           | Calagopus         | AMP                         |
+| ------------------------- | ----------------- | --------------------------- |
+| **Language**              | Rust              | C# (.NET)                   |
+| **First release**         | June 2025         | 2014                        |
+| **License**               | MIT (open source) | Proprietary (closed source) |
+| **Price**                 | Free              | Paid, per-instance          |
+| **Commercial Use**        | Allowed           | Requires Enterprise Edition |
+| **Extension System**      | ✅                | ✅                          |
+| **Windows Panel Support** | ✅                | ✅                          |
+| **ARM64 Support**         | ✅                | ✅                          |
 
 ## Architecture
 
@@ -42,23 +42,23 @@ The table below is based on the [full feature reference](/docs/about/features) a
 
 | Feature                       | Calagopus | AMP |
 | ----------------------------- | --------- | --- |
-| Free & Open Source            | ✅         | ❌   |
-| Live Console                  | ✅         | ✅   |
-| File Manager                  | ✅         | ✅   |
-| Backup Browsing Support       | ✅         | ✅   |
-| Database Management           | ✅         | ✅   |
-| Redis Server-Database Support | ✅         | ❌   |
-| Backups                       | ✅         | ✅   |
-| Schedule Tasks                | ✅         | ✅   |
-| Advanced Schedule Triggers    | ✅         | ✅   |
-| Extra Allocations             | ✅         | ✅   |
-| SFTP Support                  | ✅         | ✅   |
-| Collaborative File Editing    | ✅         | ❌   |
-| Subuser Management            | ✅         | ✅   |
-| WebAuthn Authentication       | ✅         | ✅   |
-| OAuth Support                 | ✅         | ✅   |
-| User Management               | ✅         | ✅   |
-| Support for Multiple Nodes    | ✅         | ✅   |
+| Free & Open Source            | ✅        | ❌  |
+| Live Console                  | ✅        | ✅  |
+| File Manager                  | ✅        | ✅  |
+| Backup Browsing Support       | ✅        | ✅  |
+| Database Management           | ✅        | ✅  |
+| Redis Server-Database Support | ✅        | ❌  |
+| Backups                       | ✅        | ✅  |
+| Schedule Tasks                | ✅        | ✅  |
+| Advanced Schedule Triggers    | ✅        | ✅  |
+| Extra Allocations             | ✅        | ✅  |
+| SFTP Support                  | ✅        | ✅  |
+| Collaborative File Editing    | ✅        | ❌  |
+| Subuser Management            | ✅        | ✅  |
+| WebAuthn Authentication       | ✅        | ✅  |
+| OAuth Support                 | ✅        | ✅  |
+| User Management               | ✅        | ✅  |
+| Support for Multiple Nodes    | ✅        | ✅  |
 
 AMP is particularly strong when it comes to server management. It integrates heavily with the games it supports, while Calagopus offers a more generic approach out of the box.
 

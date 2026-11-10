@@ -3,25 +3,26 @@ prev: true
 next: false
 description: Official Calagopus logos, icons and banners as SVG downloads, for referencing the project in your own materials.
 ---
+
 # Branding
 
 ## Images
 
 ### Logos
 
-|     |     |
-| --- | --- |
-| ![Calagopus Icon SVG](/logos/icon.svg) | ![Standing Calagopus SVG](/logos/standing.svg) |
-| ![Sleepy Calagopus SVG](/logos/sleepy.svg) | ![Sleepy Calagopus with ZZZ SVG](/logos/sleepy-zzz.svg) |
-| ![Stretching Calagopus SVG](/logos/stretching.svg) | ![Facing Calagopus SVG](/logos/facing.svg) |
+|                                                    |                                                         |
+| -------------------------------------------------- | ------------------------------------------------------- |
+| ![Calagopus Icon SVG](/logos/icon.svg)             | ![Standing Calagopus SVG](/logos/standing.svg)          |
+| ![Sleepy Calagopus SVG](/logos/sleepy.svg)         | ![Sleepy Calagopus with ZZZ SVG](/logos/sleepy-zzz.svg) |
+| ![Stretching Calagopus SVG](/logos/stretching.svg) | ![Facing Calagopus SVG](/logos/facing.svg)              |
 
 ### Banners
 
-|     |     |
-| --- | --- |
-| ![Full Logo SVG](/banners/fulllogo.svg) | ![Full Logo Vertical SVG](/banners/fulllogo-vertical.svg) |
-| ![Simple Full Logo SVG](/banners/simple-fulllogo.svg) | ![Simple Full Logo Vertical SVG](/banners/simple-fulllogo-vertical.svg) |
-| ![Simple Standing Full Logo SVG](/banners/simple-standing-fulllogo.svg) | ![Simple Standing Full Logo Vertical SVG](/banners/simple-standing-fulllogo-vertical.svg) |
+|                                                                             |                                                                                               |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| ![Full Logo SVG](/banners/fulllogo.svg)                                     | ![Full Logo Vertical SVG](/banners/fulllogo-vertical.svg)                                     |
+| ![Simple Full Logo SVG](/banners/simple-fulllogo.svg)                       | ![Simple Full Logo Vertical SVG](/banners/simple-fulllogo-vertical.svg)                       |
+| ![Simple Standing Full Logo SVG](/banners/simple-standing-fulllogo.svg)     | ![Simple Standing Full Logo Vertical SVG](/banners/simple-standing-fulllogo-vertical.svg)     |
 | ![Simple Stretching Full Logo SVG](/banners/simple-stretching-fulllogo.svg) | ![Simple Stretching Full Logo Vertical SVG](/banners/simple-stretching-fulllogo-vertical.svg) |
 
 ### Badges
@@ -32,10 +33,10 @@ description: Official Calagopus logos, icons and banners as SVG downloads, for r
 
 ## Colors
 
-| Usecase | HEX | Example |
-| --- | --- | --- |
-| Fox White | #ffffff | ![Fox White](./colors/fox_white.svg) |
-| Fox Accent | #b4b4b4 | ![Fox Accent](./colors/fox_accent.svg) |
-| Text Primary | #74c0fc | ![Text Primary](./colors/text_primary.svg) |
-| Background | #222222 | ![Background](./colors/background.svg) |
+| Usecase           | HEX     | Example                                              |
+| ----------------- | ------- | ---------------------------------------------------- |
+| Fox White         | #ffffff | ![Fox White](./colors/fox_white.svg)                 |
+| Fox Accent        | #b4b4b4 | ![Fox Accent](./colors/fox_accent.svg)               |
+| Text Primary      | #74c0fc | ![Text Primary](./colors/text_primary.svg)           |
+| Background        | #222222 | ![Background](./colors/background.svg)               |
 | Background Accent | #2e2e2e | ![Background Accent](./colors/background_accent.svg) |

@@ -7,18 +7,18 @@ description: A tour of the Calagopus user dashboard, the part of the Panel every
 
 The Dashboard is what every user lands on after logging in. It covers your own account (password, email, two-factor, avatar), your servers, and account-level self-service like API keys, SSH keys, and security keys. It's separate from the **Admin** area, which is only visible to users with admin permissions and covers instance-wide management like nodes, locations, and other users.
 
-| Page | Description |
-| --- | --- |
-| [Servers](./servers.md) | Your server list, server groups, and bulk power actions |
-| [Account](./account.md) | Password, email, two-factor authentication, and avatar |
-| [Security Keys](./security-keys.md) | Passkeys and hardware security keys for login |
-| [API Keys](./api-keys.md) | Personal access tokens for the API, with granular permissions |
-| [SSH Keys](./ssh-keys.md) | Public keys used for SFTP and SSH access to Wings |
-| [Command Snippets](./command-snippets.md) | Shortcuts for commands you use often in the server console |
-| [OAuth Links](./oauth-links.md) | Linking third-party accounts for faster login |
-| [Sessions](./sessions.md) | Devices currently logged into your account |
-| [Keyboard Shortcuts](./keyboard-shortcuts.md) | Rebindable shortcuts for navigating the panel |
-| [Activity](./activity.md) | A log of everything that's happened on your account |
+| Page                                          | Description                                                   |
+| --------------------------------------------- | ------------------------------------------------------------- |
+| [Servers](./servers.md)                       | Your server list, server groups, and bulk power actions       |
+| [Account](./account.md)                       | Password, email, two-factor authentication, and avatar        |
+| [Security Keys](./security-keys.md)           | Passkeys and hardware security keys for login                 |
+| [API Keys](./api-keys.md)                     | Personal access tokens for the API, with granular permissions |
+| [SSH Keys](./ssh-keys.md)                     | Public keys used for SFTP and SSH access to Wings             |
+| [Command Snippets](./command-snippets.md)     | Shortcuts for commands you use often in the server console    |
+| [OAuth Links](./oauth-links.md)               | Linking third-party accounts for faster login                 |
+| [Sessions](./sessions.md)                     | Devices currently logged into your account                    |
+| [Keyboard Shortcuts](./keyboard-shortcuts.md) | Rebindable shortcuts for navigating the panel                 |
+| [Activity](./activity.md)                     | A log of everything that's happened on your account           |
 
 ## Navigating the Dashboard
 
@@ -62,12 +62,12 @@ A **Logout** action is available everywhere, under **Account**; it asks for conf
 
 Typing one of four characters first switches the palette into a different mode. The palette shows these as hints along its footer, so you don't have to remember them.
 
-| Prefix | Mode |
-| --- | --- |
-| `=` | Evaluate a math expression, with the result shown as you type. **Enter** copies it. |
-| `#` | Search servers by name. In the admin area this searches every server on the panel, not just yours. |
-| `@` | Search users. Admin area only, and only with user permissions. |
-| `/` | Filter to pages only, showing each one's path. |
+| Prefix | Mode                                                                                               |
+| ------ | -------------------------------------------------------------------------------------------------- |
+| `=`    | Evaluate a math expression, with the result shown as you type. **Enter** copies it.                |
+| `#`    | Search servers by name. In the admin area this searches every server on the panel, not just yours. |
+| `@`    | Search users. Admin area only, and only with user permissions.                                     |
+| `/`    | Filter to pages only, showing each one's path.                                                     |
 
 The three dots next to your name open a small menu to jump to your **Account** page, switch to the **Admin** area (admins only), pick a **Theme**, toggle **Hide Addresses** (see [Preferences](./account.md#preferences)), reset your device overrides (see [Settings Sync](#settings-sync); the entry only appears when you have some), or log out. **Auto** follows your browser's theme, **Dark** and **Light** force one; the panel starts on **Dark** until you pick.
 
@@ -79,12 +79,12 @@ Most preferences follow your account rather than your browser: change the consol
 
 Every synced setting has a small icon next to its label that opens a scope menu:
 
-| Option | What it does |
-| --- | --- |
-| **Sync With Account** | The default. The value lives on your account and applies everywhere. |
-| **Only This Device** | Breaks the link and keeps a separate value on this device. The label then reads **This Device**. |
-| **Use the Account Value** | Drops the device override and goes back to the account's value. |
-| **Save This Value to My Account** | Pushes the current device value up as the new account value. |
+| Option                            | What it does                                                                                     |
+| --------------------------------- | ------------------------------------------------------------------------------------------------ |
+| **Sync With Account**             | The default. The value lives on your account and applies everywhere.                             |
+| **Only This Device**              | Breaks the link and keeps a separate value on this device. The label then reads **This Device**. |
+| **Use the Account Value**         | Drops the device override and goes back to the account's value.                                  |
+| **Save This Value to My Account** | Pushes the current device value up as the new account value.                                     |
 
 A few settings are inherently per-device and never sync: the editor engine, line-overflow wrapping, the VS Code URI scheme, and the audio player's volume.
 

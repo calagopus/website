@@ -7,14 +7,13 @@ description: How to install Calagopus Wings using Docker. Wings is the node daem
 
 ## Docker Image Variants
 
-| Variant | Description |
-| ------- | ----------- |
-| `:latest` | The latest stable release. Recommended for production. |
+| Variant       | Description                                                                                                           |
+| ------------- | --------------------------------------------------------------------------------------------------------------------- |
+| `:latest`     | The latest stable release. Recommended for production.                                                                |
 | `:latest-pre` | Latest pre-release. May contain new features not yet in `:latest`, but also new bugs. Not recommended for production. |
-| `:nightly` | Latest development build. Updated frequently, may be unstable. Not recommended for production. |
+| `:nightly`    | Latest development build. Updated frequently, may be unstable. Not recommended for production.                        |
 
 ## Install Docker
-
 
 ::: info Using Podman instead?
 Podman is supported as an alternative to Docker. If you'd prefer to use Podman, install Wings via the [Docker](../../wings/installation/docker.md#configure-wings), [Binary](../../wings/installation/binary.md#configure-wings), or [Package Manager](../../wings/installation/pkgmanager.md#configure-wings) method and follow the [Running Wings with Podman](../../wings/advanced/running-wings-with-podman.md) guide. The Docker Compose method requires Docker.
@@ -55,7 +54,6 @@ sed -i -e "s/calagopus\/wings:latest/calagopus\/wings:nightly/g" compose.yml
 ```
 :::
 
-
 ## Configure Wings
 
 For a fresh installation, create the configuration directory and leave it empty:
@@ -72,8 +70,8 @@ If you have already created the node entry, generate an enrollment command from 
 
 ```yaml
 environment:
-  WINGS_ENROLL_PANEL_URL: "https://panel.example.com"
-  WINGS_ENROLL_CODE: "CODE_FROM_PANEL"
+  WINGS_ENROLL_PANEL_URL: 'https://panel.example.com'
+  WINGS_ENROLL_CODE: 'CODE_FROM_PANEL'
 ```
 
 The code expires after 30 minutes and can be used once. These variables are read only when no configuration file exists. Wings saves the resulting configuration in `config/config.yml` and starts normally; if enrollment fails, it logs the error and waits for pairing instead. Remove the enrollment variables from Compose after success. Keep the `config/` volume so restarts retain the node identity.
@@ -111,15 +109,15 @@ docker compose logs -f wings
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
+| Symptom                                                                                     | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `failed to load config from /etc/calagopus-wings/config.yml: ... No such file or directory` | On current Wings, a missing config normally starts pairing mode. This error can indicate an older build or `--no-setup`; update Wings or write the file manually as described above. If you changed the compose file to bind-mount the config file itself rather than the `config/` directory, you can also see `Is a directory (os error 21)`, because Docker created a directory at the file's path; delete it and write the real file. |
-| `failed to load SSL certificate and key ... No such file or directory` | The certificate lives on the host but isn't mounted into the container. Add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it. |
-| The panel can't connect even though Wings logs look fine | Compare three numbers: `api.port` in `config/config.yml`, the container side of the `ports:` mapping in `compose.yml`, and the port in the node URL on the panel. They must agree, or the host port must map to `api.port`. A compose line of `7777:8080` with a node URL ending in `:8080` connects to nothing. |
-| `localhost` doesn't work in `remote:` | Inside the container `localhost` is the container. When the panel runs on the same host, use the host's LAN IP, or `network_mode: host` on the `wings` service. |
-| `system.data_directory '...' is not covered by any mount of the wings container` at startup | A directory from `config/config.yml` isn't inside any volume of the `wings` service. Add a volume for it, see the warning above. `bind source path does not exist` during a server install means the same thing on Wings older than 1.1.0, which didn't translate paths yet; update Wings. |
-| `Permission denied (os error 13)` on the config or data directory | `docker compose up` was run as different users at different times. Run it consistently as one user and fix the ownership of the directory. |
-| A config edit isn't picked up | `docker compose up -d` doesn't restart a container whose definition hasn't changed. Run `docker compose restart wings` after editing `config/config.yml`. |
+| `failed to load SSL certificate and key ... No such file or directory`                      | The certificate lives on the host but isn't mounted into the container. Add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it.                                                                                                                                                                                                                                                              |
+| The panel can't connect even though Wings logs look fine                                    | Compare three numbers: `api.port` in `config/config.yml`, the container side of the `ports:` mapping in `compose.yml`, and the port in the node URL on the panel. They must agree, or the host port must map to `api.port`. A compose line of `7777:8080` with a node URL ending in `:8080` connects to nothing.                                                                                                                          |
+| `localhost` doesn't work in `remote:`                                                       | Inside the container `localhost` is the container. When the panel runs on the same host, use the host's LAN IP, or `network_mode: host` on the `wings` service.                                                                                                                                                                                                                                                                           |
+| `system.data_directory '...' is not covered by any mount of the wings container` at startup | A directory from `config/config.yml` isn't inside any volume of the `wings` service. Add a volume for it, see the warning above. `bind source path does not exist` during a server install means the same thing on Wings older than 1.1.0, which didn't translate paths yet; update Wings.                                                                                                                                                |
+| `Permission denied (os error 13)` on the config or data directory                           | `docker compose up` was run as different users at different times. Run it consistently as one user and fix the ownership of the directory.                                                                                                                                                                                                                                                                                                |
+| A config edit isn't picked up                                                               | `docker compose up -d` doesn't restart a container whose definition hasn't changed. Run `docker compose restart wings` after editing `config/config.yml`.                                                                                                                                                                                                                                                                                 |
 
 Other node problems, such as the panel and the browser reaching Wings on different URLs, are collected on the [Troubleshooting](../../additional/troubleshooting.md#the-panel-can-t-reach-the-node) page.
 

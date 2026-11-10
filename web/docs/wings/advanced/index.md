@@ -1,8 +1,9 @@
 ---
-description: "Advanced Wings setups: local backup configurations, exposing Wings from a homelab network, the private network between servers, and running Wings with Podman."
+description: 'Advanced Wings setups: local backup configurations, exposing Wings from a homelab network, the private network between servers, and running Wings with Podman.'
 ---
 
 # Advanced
+
 A few setup tasks for less common situations: keeping local backups, exposing Wings from behind a home network, and running it under Podman instead of Docker.
 
 ::::tabs

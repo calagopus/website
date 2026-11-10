@@ -61,7 +61,7 @@ builder
 
 **Errors don't kill the task.** If your loop function returns `Err(...)`, the error is logged and sent to Sentry, and then the loop function is called again on the next iteration. This is the right default for background work - you want a transient network failure to be logged and retried, not to silently stop the task for the rest of the process's lifetime. If you want to give up after N consecutive failures, track that yourself inside the closure.
 
-**Panics don't kill the task either.** The Panel catches panics via `catch_unwind`, logs them, and records the panic message as the task's last error. Unlike errors, though, a panic *does* terminate the loop - the task won't run again until the process restarts. Panics indicate programmer bugs rather than operational failures, so this is reasonable behavior, but be aware of it if you're writing defensive code.
+**Panics don't kill the task either.** The Panel catches panics via `catch_unwind`, logs them, and records the panic message as the task's last error. Unlike errors, though, a panic _does_ terminate the loop - the task won't run again until the process restarts. Panics indicate programmer bugs rather than operational failures, so this is reasonable behavior, but be aware of it if you're writing defensive code.
 
 ### Scheduled Tasks (Cron)
 
@@ -83,7 +83,7 @@ builder
 
 ```
 
-**The Panel handles the pacing.** Unlike `add_task`, you do *not* need to sleep at the end of a cron task. When your function returns, the Panel automatically calculates the time until the next matching cron tick and sleeps for you before calling your function again.
+**The Panel handles the pacing.** Unlike `add_task`, you do _not_ need to sleep at the end of a cron task. When your function returns, the Panel automatically calculates the time until the next matching cron tick and sleeps for you before calling your function again.
 
 Everything else behaves exactly like `add_task`: errors are logged and retried at the next scheduled tick, and panics permanently park the task until a restart. The schedule is evaluated in UTC, and if one run overruns the next tick, the ticks it missed are skipped rather than run back to back.
 
@@ -96,7 +96,7 @@ Everything else behaves exactly like `add_task`: errors are logged and retried a
 
 This prevents the obvious "every instance runs the same cron, so the job runs N times" problem. But it means you cannot rely on your background task to run if the operator hasn't designated a primary - in practice every deployment has one, but extension authors occasionally forget and wonder why their job never fires in dev setups with `app_primary = false`.
 
-If you need work to run *on every instance* rather than just the primary - for example, flushing per-instance caches - a background task is the wrong tool. Consider a shutdown handler (which runs everywhere) or a short-lived spawned task inside a request handler.
+If you need work to run _on every instance_ rather than just the primary - for example, flushing per-instance caches - a background task is the wrong tool. Consider a shutdown handler (which runs everywhere) or a short-lived spawned task inside a request handler.
 :::
 
 ### Naming
@@ -135,10 +135,10 @@ impl Extension for ExtensionStruct {
 
 The handler gets called once during graceful shutdown, before the process exits. The Panel awaits it - if you take ten seconds to flush, the process waits ten seconds. Handlers run one after another, in no particular order across extensions. This is the right place for:
 
-* Flushing in-memory buffers to the database
-* Committing pending work that can't be safely restarted
-* Closing external connections cleanly (telling an upstream service "I'm going away", logging out of a session, etc.)
-* Writing final metrics or a "shutdown complete" log line
+- Flushing in-memory buffers to the database
+- Committing pending work that can't be safely restarted
+- Closing external connections cleanly (telling an upstream service "I'm going away", logging out of a session, etc.)
+- Writing final metrics or a "shutdown complete" log line
 
 ### Shutdown Handlers Run Everywhere
 
@@ -163,9 +163,9 @@ builder
 
 When shutdown starts, **nothing tells a background task about it.** The Panel runs the shutdown handlers and then returns from `main`; the task loops keep running alongside the handlers the whole time, may even start a fresh iteration, and die wherever they happen to be when the runtime is torn down at process exit. This means:
 
-* Anything your background task writes needs to be atomic from the database's perspective. Don't use background tasks for "start a multi-step transaction, commit at the end" workflows where being cut off at exit leaves data half-written.
-* If your background task has persistent state that needs flushing, **do the flushing in a shutdown handler, not in the task's own cleanup code**. A shutdown handler is the only hook that's guaranteed to run during shutdown; a task has no cleanup phase of its own.
-* Expect the two to overlap. A handler that flushes a buffer the task is still appending to should take whatever lock the task takes, or accept that a few late samples are lost.
+- Anything your background task writes needs to be atomic from the database's perspective. Don't use background tasks for "start a multi-step transaction, commit at the end" workflows where being cut off at exit leaves data half-written.
+- If your background task has persistent state that needs flushing, **do the flushing in a shutdown handler, not in the task's own cleanup code**. A shutdown handler is the only hook that's guaranteed to run during shutdown; a task has no cleanup phase of its own.
+- Expect the two to overlap. A handler that flushes a buffer the task is still appending to should take whatever lock the task takes, or accept that a few late samples are lost.
 
 The typical pairing is a background task that accumulates work in memory and a shutdown handler that flushes whatever's accumulated:
 
@@ -213,4 +213,4 @@ That said, design your handlers to succeed. A handler that panics loses whatever
 
 ### Not Every Shutdown Runs Handlers
 
-Shutdown handlers only run on **graceful** shutdown - the Panel receiving a `SIGTERM` or `Ctrl+C` and cleanly winding down. If the process is killed with `SIGKILL`, crashes from an unrecoverable error, is terminated by the OS out-of-memory killer, or exits because the HTTP server itself stopped, handlers don't get a chance to run. In-flight HTTP requests are not drained either; the process exits once the handlers return. Don't rely on shutdown handlers for correctness - they're a best-effort cleanup pass, not a durability guarantee. Anything that *must* be persisted should be persisted at the point of the state change, not deferred until shutdown.
+Shutdown handlers only run on **graceful** shutdown - the Panel receiving a `SIGTERM` or `Ctrl+C` and cleanly winding down. If the process is killed with `SIGKILL`, crashes from an unrecoverable error, is terminated by the OS out-of-memory killer, or exits because the HTTP server itself stopped, handlers don't get a chance to run. In-flight HTTP requests are not drained either; the process exits once the handlers return. Don't rely on shutdown handlers for correctness - they're a best-effort cleanup pass, not a durability guarantee. Anything that _must_ be persisted should be persisted at the point of the state change, not deferred until shutdown.

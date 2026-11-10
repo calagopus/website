@@ -38,6 +38,7 @@ On identical hardware and under the same CPU limits, the difference in runtime a
 How much that matters depends heavily on scale. A homelab running four servers for friends probably won't notice much difference in panel request latency. A hosting provider managing hundreds of nodes, on the other hand, sees it in CPU and memory: the panel holds its resting footprint under load where PHP-FPM grows into it, and on the daemon side the file manager's metadata work, directory listings, stat calls costs several times less CPU per operation. Streaming large file transfers is where Wings currently uses less memory than the Calagopus daemon; the [daemon benchmarks](/docs/about/daemon-benchmarks) chart both.
 
 ## Feature Comparison
+
 The table below is based on the [full feature reference](/docs/about/features) and focuses specifically on Calagopus and Pterodactyl.
 
 | Feature                            | Calagopus | Pterodactyl |

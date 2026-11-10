@@ -27,15 +27,15 @@ Click **Create** in the top right.
 
 ![Create policy form](./images/system-backup-policies/create-form.webp)
 
-| Field | Description |
-| ----- | ----------- |
-| **Name** / **Description** | Display name and optional free text. |
-| **Backup Kind** | **Server** archives the files of each covered server. **Database** dumps each covered [database instance](../server/databases/managed.md). The choice is locked once the policy exists, because it decides which scopes apply. |
-| **Backup Configuration** | Which [backup configuration](./backup-configurations.md) the policy's backups are written to. Defaults to **Inherit from Server**, the same resolution a manual backup would use. |
-| **Schedule** | "Cron expression (with seconds) that determines when backups are taken, in UTC." The field has a helper popover for building the expression segment by segment, describes the current expression in plain English underneath, and previews when the next run would be. |
-| **Retention** | Six rules deciding which of the policy's backups survive: **Keep latest**, **Keep all within days**, **Keep daily**, **Keep weekly**, **Keep monthly**, and **Keep yearly**, each off when empty or 0. They work as they do for [backup groups](../server/backups.md#retention-rules), and the field has a helper popover describing them. The rules apply per server, and for a database policy separately to each database instance. |
-| **Parallelism** | "Maximum number of backups this policy runs at the same time on a single node." Database policies apply the same number per database agent host instead, since the dump is read from the host rather than the node. |
-| **Enabled** | "Disabled policies keep their backups but do not take new ones." |
+| Field                      | Description                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name** / **Description** | Display name and optional free text.                                                                                                                                                                                                                                                                                                                                                                                                   |
+| **Backup Kind**            | **Server** archives the files of each covered server. **Database** dumps each covered [database instance](../server/databases/managed.md). The choice is locked once the policy exists, because it decides which scopes apply.                                                                                                                                                                                                         |
+| **Backup Configuration**   | Which [backup configuration](./backup-configurations.md) the policy's backups are written to. Defaults to **Inherit from Server**, the same resolution a manual backup would use.                                                                                                                                                                                                                                                      |
+| **Schedule**               | "Cron expression (with seconds) that determines when backups are taken, in UTC." The field has a helper popover for building the expression segment by segment, describes the current expression in plain English underneath, and previews when the next run would be.                                                                                                                                                                 |
+| **Retention**              | Six rules deciding which of the policy's backups survive: **Keep latest**, **Keep all within days**, **Keep daily**, **Keep weekly**, **Keep monthly**, and **Keep yearly**, each off when empty or 0. They work as they do for [backup groups](../server/backups.md#retention-rules), and the field has a helper popover describing them. The rules apply per server, and for a database policy separately to each database instance. |
+| **Parallelism**            | "Maximum number of backups this policy runs at the same time on a single node." Database policies apply the same number per database agent host instead, since the dump is read from the host rather than the node.                                                                                                                                                                                                                    |
+| **Enabled**                | "Disabled policies keep their backups but do not take new ones."                                                                                                                                                                                                                                                                                                                                                                       |
 
 An existing policy also offers **Run Now** (after a **Confirm Manual Run** dialog) and **Delete**. **Run Now** starts a manual [run](#runs) covering every target that has no backup from this policy in progress. The button shows a spinner while the latest run still has targets waiting, and the panel refuses **Run Now** while any open run of the policy still has targets waiting ("a run of this system backup policy is still in progress"). It also works on a disabled policy.
 
@@ -73,15 +73,15 @@ Since Panel 1.2.9, every time the schedule fires the panel starts a run for the 
 
 ![Policy Runs tab with a cancelled and a succeeded manual run, each with its progress bar and completion time](./images/system-backup-policies/runs.webp)
 
-| Status | Meaning |
-| ------ | ------- |
-| **Running** | The run still has targets waiting or backups in progress. |
-| **Cancelling** | The run was cancelled, and backups it already started are still finishing. |
-| **Cancelled** | The run was cancelled and has finished. |
-| **Succeeded** | Every target got a successful backup. |
-| **Partially Succeeded** | Some targets got a successful backup, others failed or were skipped. |
-| **Failed** | No target got a successful backup. |
-| **Nothing to Back Up** | The run had no targets. |
+| Status                  | Meaning                                                                    |
+| ----------------------- | -------------------------------------------------------------------------- |
+| **Running**             | The run still has targets waiting or backups in progress.                  |
+| **Cancelling**          | The run was cancelled, and backups it already started are still finishing. |
+| **Cancelled**           | The run was cancelled and has finished.                                    |
+| **Succeeded**           | Every target got a successful backup.                                      |
+| **Partially Succeeded** | Some targets got a successful backup, others failed or were skipped.       |
+| **Failed**              | No target got a successful backup.                                         |
+| **Nothing to Back Up**  | The run had no targets.                                                    |
 
 **Progress** is a bar split into successful, failed, skipped, and running targets (hover a segment for its count), with the number of finished targets out of the total next to it.
 
@@ -91,21 +91,21 @@ Right-click a run, or use its menu, for **View Targets** and **Cancel Run**. **V
 
 The reasons a target shows are:
 
-| Reason | When |
-| ------ | ---- |
-| Server busy (installing, restoring or transferring) | The server, or the database instance, had a status that blocks backups. |
-| Node in maintenance | The server's node is in maintenance mode. |
-| Database agent host in maintenance | The instance's host is in maintenance mode. |
-| Backup configuration in maintenance | The backup configuration is in maintenance mode. |
-| Database instance not running | The instance's container was not running, or its database agent could not be reached. |
-| Could not collect backup metadata | The panel could not gather the server's backup metadata. |
-| No backup configuration | No backup configuration applies to the server. |
-| Backup configuration does not support database backups | A database policy resolved to a btrfs or zfs configuration. |
-| Removed before it was backed up | The server or instance was deleted while the run was open. |
-| Backup could not be created | Creating the backup failed. The target counts as failed. |
-| Policy disabled | The policy was disabled while a scheduled run still had targets waiting. |
-| Next scheduled run started first | The next run started before this target got its turn. |
-| Run cancelled | The run was cancelled before this target got its turn. |
+| Reason                                                 | When                                                                                  |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------------- |
+| Server busy (installing, restoring or transferring)    | The server, or the database instance, had a status that blocks backups.               |
+| Node in maintenance                                    | The server's node is in maintenance mode.                                             |
+| Database agent host in maintenance                     | The instance's host is in maintenance mode.                                           |
+| Backup configuration in maintenance                    | The backup configuration is in maintenance mode.                                      |
+| Database instance not running                          | The instance's container was not running, or its database agent could not be reached. |
+| Could not collect backup metadata                      | The panel could not gather the server's backup metadata.                              |
+| No backup configuration                                | No backup configuration applies to the server.                                        |
+| Backup configuration does not support database backups | A database policy resolved to a btrfs or zfs configuration.                           |
+| Removed before it was backed up                        | The server or instance was deleted while the run was open.                            |
+| Backup could not be created                            | Creating the backup failed. The target counts as failed.                              |
+| Policy disabled                                        | The policy was disabled while a scheduled run still had targets waiting.              |
+| Next scheduled run started first                       | The next run started before this target got its turn.                                 |
+| Run cancelled                                          | The run was cancelled before this target got its turn.                                |
 
 When the next scheduled run supersedes a target that was held back, the target keeps the reason it was last held back, so a target that waited out a whole run on a node in maintenance reads "Node in maintenance" rather than "Next scheduled run started first". Cancelling the run sets "Run cancelled" and disabling the policy sets "Policy disabled" in its place.
 

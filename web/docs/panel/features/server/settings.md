@@ -25,11 +25,11 @@ Sometimes a server refuses to shut down cleanly. With **Enabled** on, a server t
 
 **Behavior** controls whether the node starts the server again on its own:
 
-| Behavior | Meaning |
-| --- | --- |
-| **Always** | Always bring the server back up. |
+| Behavior           | Meaning                                                           |
+| ------------------ | ----------------------------------------------------------------- |
+| **Always**         | Always bring the server back up.                                  |
 | **Unless Stopped** | Bring it back up unless it was deliberately stopped. The default. |
-| **Never** | Never start it automatically. |
+| **Never**          | Never start it automatically.                                     |
 
 ## Timezone
 
@@ -39,9 +39,9 @@ Sets the timezone inside the server's container, which is what timestamps in you
 
 Controls how long files deleted in the [file manager](./files.md#trash) stay in the trash. By default the server uses the panel-wide values, shown under the switch as "Panel default: 7 days, cleared at 90% disk usage". Turn on **Use custom trash settings for this server** to set its own:
 
-| Field | Meaning |
-| --- | --- |
-| **Retention** | How long deleted files stay in the trash, in days (up to 365, decimals allowed). 0 turns the trash off. |
+| Field                   | Meaning                                                                                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Retention**           | How long deleted files stay in the trash, in days (up to 365, decimals allowed). 0 turns the trash off.                                                                |
 | **Clear at Disk Usage** | Once disk usage reaches this percentage of the server's limit, the oldest entries are removed. 0 means the trash is only cleared when a write would go over the limit. |
 
 Switching custom settings off again returns the server to the panel defaults. Files already in the trash stay there when you turn it off, until they are restored or deleted, or Wings needs the space.
@@ -59,6 +59,5 @@ Runs the egg's install script again, as if the server were being set up fresh.
 Clicking **Reinstall Server** opens a confirmation. Its first switch reads "Do you want to delete all files of this server before performing this action? This cannot be undone." Leave it off to keep your files (the install script may still touch some of them), or turn it on to wipe the server first, which also empties its [trash](./files.md#trash). The second, **Start the server after the reinstall has finished**, boots the server once the install script completes successfully; it is off by default and only shown to users with the `control.start` permission. Confirm with **Reinstall**; the server switches into an installing state and you're returned to the console.
 
 <img src="./images/settings/reinstall-modal.webp" width="220" alt="Reinstall Server dialog with delete-all-files and start-after-reinstall toggles" />
-
 
 Each card maps to its own subuser permission (`settings.rename`, `settings.auto-kill`, `settings.auto-start`, `settings.timezone`, `settings.trash`, `settings.install`), and `settings.cancel-install` separately gates the **Cancel** button on the installing banner. See the [Permissions Reference](../dashboard/permissions.md).

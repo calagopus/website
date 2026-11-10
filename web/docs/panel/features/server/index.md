@@ -25,20 +25,20 @@ Some states replace the whole server view rather than sitting above it, and two 
 
 Suspension, node maintenance and an in-progress transfer block the view the same way, but those clear on their own; there's nothing to acknowledge.
 
-| Page | Description |
-| --- | --- |
-| [Console](./console.md) | Live terminal, power controls, resource stats, and graphs |
-| [Files](./files.md) | Browse, edit, and manage the server's files, plus SFTP access |
-| [Databases](./databases/) | Classic and managed databases for the server |
-| [Schedules](./schedules.md) | Automated action steps with triggers and conditions |
-| [Subusers](./subusers.md) | Give other users scoped access to the server |
-| [Backups](./backups.md) | Server backups, with groups and automatic retention |
+| Page                          | Description                                                           |
+| ----------------------------- | --------------------------------------------------------------------- |
+| [Console](./console.md)       | Live terminal, power controls, resource stats, and graphs             |
+| [Files](./files.md)           | Browse, edit, and manage the server's files, plus SFTP access         |
+| [Databases](./databases/)     | Classic and managed databases for the server                          |
+| [Schedules](./schedules.md)   | Automated action steps with triggers and conditions                   |
+| [Subusers](./subusers.md)     | Give other users scoped access to the server                          |
+| [Backups](./backups.md)       | Server backups, with groups and automatic retention                   |
 | [Network](./network/index.md) | Allocations, firewall rules, and private connections to other servers |
-| [Startup](./startup.md) | Startup command, Docker image, and egg variables |
-| [Mounts](./mounts.md) | Toggle extra directories mounted into the server |
-| [Devices](./devices.md) | Attach host devices from the Devices tab under Mounts |
-| [Settings](./settings.md) | Rename, reinstall, auto-kill, auto-start, and timezone |
-| [Activity](./activity.md) | A log of everything that's happened on the server |
+| [Startup](./startup.md)       | Startup command, Docker image, and egg variables                      |
+| [Mounts](./mounts.md)         | Toggle extra directories mounted into the server                      |
+| [Devices](./devices.md)       | Attach host devices from the Devices tab under Mounts                 |
+| [Settings](./settings.md)     | Rename, reinstall, auto-kill, auto-start, and timezone                |
+| [Activity](./activity.md)     | A log of everything that's happened on the server                     |
 
 ## Server Header
 

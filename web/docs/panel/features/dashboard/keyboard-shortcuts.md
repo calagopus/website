@@ -13,50 +13,50 @@ The panel detects whether you're on Windows/Linux or macOS and shows the matchin
 
 ## Default Bindings
 
-| General | Binding |
-| --- | --- |
-| Undo the last action | `Ctrl+Z` |
-| Open quick actions | `Ctrl+Space` |
-| Save the current form | `Ctrl+S` |
+| General               | Binding      |
+| --------------------- | ------------ |
+| Undo the last action  | `Ctrl+Z`     |
+| Open quick actions    | `Ctrl+Space` |
+| Save the current form | `Ctrl+S`     |
 
-| File Manager | Binding |
-| --- | --- |
-| Select all files | `Ctrl+A` |
-| Cut selected files | `Ctrl+X` |
-| Copy selected files | `Ctrl+C` |
-| Paste files | `Ctrl+V` |
-| Duplicate selected file | `Ctrl+D` |
-| Search files | `Ctrl+K` |
-| Move Up a directory | `Alt+↑` |
-| Move Up the selection | `↑` |
-| Move Down the selection | `↓` |
-| Rename file | `F2` |
-| Deselect all files | `Esc` |
-| Delete selected files | `Del` |
-| Close the active editor tab | `Ctrl+W` |
-| Next editor tab | `Ctrl+Tab` |
-| Previous editor tab | `Ctrl+Shift+Tab` |
-| Increase the editor font size | `Ctrl+=` |
-| Decrease the editor font size | `Ctrl+-` |
-| Reset the editor font size | `Ctrl+0` |
+| File Manager                  | Binding          |
+| ----------------------------- | ---------------- |
+| Select all files              | `Ctrl+A`         |
+| Cut selected files            | `Ctrl+X`         |
+| Copy selected files           | `Ctrl+C`         |
+| Paste files                   | `Ctrl+V`         |
+| Duplicate selected file       | `Ctrl+D`         |
+| Search files                  | `Ctrl+K`         |
+| Move Up a directory           | `Alt+↑`          |
+| Move Up the selection         | `↑`              |
+| Move Down the selection       | `↓`              |
+| Rename file                   | `F2`             |
+| Deselect all files            | `Esc`            |
+| Delete selected files         | `Del`            |
+| Close the active editor tab   | `Ctrl+W`         |
+| Next editor tab               | `Ctrl+Tab`       |
+| Previous editor tab           | `Ctrl+Shift+Tab` |
+| Increase the editor font size | `Ctrl+=`         |
+| Decrease the editor font size | `Ctrl+-`         |
+| Reset the editor font size    | `Ctrl+0`         |
 
-| Server Console | Binding |
-| --- | --- |
-| Search in console output | `Ctrl+F` |
-| Previous command in history | `↑` |
-| Next command in history | `↓` |
+| Server Console                 | Binding  |
+| ------------------------------ | -------- |
+| Search in console output       | `Ctrl+F` |
+| Previous command in history    | `↑`      |
+| Next command in history        | `↓`      |
 | Increase the console font size | `Ctrl+=` |
 | Decrease the console font size | `Ctrl+-` |
-| Reset the console font size | `Ctrl+0` |
+| Reset the console font size    | `Ctrl+0` |
 
-| Table Navigation | Binding |
-| --- | --- |
-| Previous page | `←` |
-| Next page | `→` |
-| First page | `Shift+←` |
-| Last page | `Shift+→` |
-| Select all rows | `Ctrl+A` |
-| Deselect all rows | `Esc` |
+| Table Navigation  | Binding   |
+| ----------------- | --------- |
+| Previous page     | `←`       |
+| Next page         | `→`       |
+| First page        | `Shift+←` |
+| Last page         | `Shift+→` |
+| Select all rows   | `Ctrl+A`  |
+| Deselect all rows | `Esc`     |
 
 (`Ctrl` shows as `Cmd` on macOS.)
 
@@ -82,7 +82,7 @@ The toolbar at the top shows which layout was detected ("Windows/Linux detected"
 - **Paste** applies a previously copied (and optionally edited) set of bindings.
 - **Reset All** restores every shortcut to its default at once.
 
-The button at the end reads **Account** or **This Device** and controls where your rebinds live. By default they are saved to your account and follow you to every browser you log into - see [Settings Sync](./index.md#settings-sync). Copy and paste are still how you move bindings to a *different* panel.
+The button at the end reads **Account** or **This Device** and controls where your rebinds live. By default they are saved to your account and follow you to every browser you log into - see [Settings Sync](./index.md#settings-sync). Copy and paste are still how you move bindings to a _different_ panel.
 
 ```txt
 # Calagopus keyboard shortcuts

@@ -21,12 +21,12 @@ The list shows each location's ID, Name (with its flag, if set), Backup Configur
 
 Click **Create** in the top right (requires `locations.create`).
 
-| Field | Description |
-|---|---|
-| **Name** | Required. A label to distinguish this location. |
+| Field                    | Description                                                                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**                 | Required. A label to distinguish this location.                                                                                                                         |
 | **Backup Configuration** | Optional. Used by nodes in this location that don't set their own. Defaults to **None**. See [Backup Configurations](../../../wings/advanced/backup-configurations.md). |
-| **Description** | Optional notes. |
-| **Flag** | Optional country flag shown next to the name across the admin area. |
+| **Description**          | Optional notes.                                                                                                                                                         |
+| **Flag**                 | Optional country flag shown next to the name across the admin area.                                                                                                     |
 
 <img src="./images/locations/flags.webp" width="399" alt="Flag dropdown open with Germany selected and a scrollable list of country flags" />
 

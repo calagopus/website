@@ -21,14 +21,14 @@ Click **Create** in the top right.
 
 ![Create database host form](./images/database-hosts/create-form.webp)
 
-| Field | Description |
-| ----- | ----------- |
-| **Name** | Display name for the host. |
-| **Type** | **MySQL**, **PostgreSQL**, or **MongoDB**. Locked after creation. |
-| **Public Host** / **Public Port** | Optional. If set, users see this address in their database connection details instead of the address from the credentials. Useful when users reach the database through a different address than the panel does. |
-| **Connection Credentials** | How the panel connects. Pick a **Credential Type**: **Connection String** (a single URL like `mysql://username:password@host:port`) or **Details** with separate **Username**, **Password**, **Host**, and **Port** fields. |
-| **Deployment Enabled** | Whether new databases may be placed on this host. On by default. |
-| **Maintenance Enabled** | Puts the host into maintenance mode, see below. Off by default. |
+| Field                             | Description                                                                                                                                                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**                          | Display name for the host.                                                                                                                                                                                                  |
+| **Type**                          | **MySQL**, **PostgreSQL**, or **MongoDB**. Locked after creation.                                                                                                                                                           |
+| **Public Host** / **Public Port** | Optional. If set, users see this address in their database connection details instead of the address from the credentials. Useful when users reach the database through a different address than the panel does.            |
+| **Connection Credentials**        | How the panel connects. Pick a **Credential Type**: **Connection String** (a single URL like `mysql://username:password@host:port`) or **Details** with separate **Username**, **Password**, **Host**, and **Port** fields. |
+| **Deployment Enabled**            | Whether new databases may be placed on this host. On by default.                                                                                                                                                            |
+| **Maintenance Enabled**           | Puts the host into maintenance mode, see below. Off by default.                                                                                                                                                             |
 
 ![Details credential fields](./images/database-hosts/connection-credentials.webp)
 

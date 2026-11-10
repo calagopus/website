@@ -10,13 +10,7 @@ import {
   sponsorProviderLabel,
 } from '../lib/sponsor-display.ts';
 
-export type {
-  Sponsor,
-  SponsorProfile,
-  SponsorProvider,
-  SponsorStatus,
-  SponsorsData,
-} from '../lib/sponsor-display.ts';
+export type { Sponsor, SponsorProfile, SponsorProvider, SponsorStatus, SponsorsData } from '../lib/sponsor-display.ts';
 
 const API_URL = 'https://calagopus.com/api/sponsors';
 

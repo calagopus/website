@@ -241,9 +241,13 @@ try {
   assert.equal(head.filter((r) => newcomers.includes(r.uuid)).length, 25);
   assert.ok(queue.some((r) => r.uuid === flood));
   assert.equal(await replayIdentity(config, flood), true);
-  const [flooded] = await queryRows(config, 'SELECT count() AS count FROM telemetry_decisions WHERE uuid = {uuid:UUID}', {
-    uuid: flood,
-  });
+  const [flooded] = await queryRows(
+    config,
+    'SELECT count() AS count FROM telemetry_decisions WHERE uuid = {uuid:UUID}',
+    {
+      uuid: flood,
+    },
+  );
   assert.equal(Number(flooded.count), 24);
   await refreshTelemetryStats({
     CLICKHOUSE_URL: config.url,

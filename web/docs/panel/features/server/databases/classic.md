@@ -29,12 +29,12 @@ The password is only visible with the `databases.read-password` permission. From
 
 The rest of the right-click menu:
 
-| Action | What it does |
-| --- | --- |
-| **Explore Data** | Opens the [Data Explorer](./index.md#data-explorer). |
-| **Edit** | Toggle **Locked**. A locked database can't be recreated or deleted, and its password can't be rotated. |
-| **Recreate** | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
-| **Delete** | Permanently deletes the database and all data. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
+| Action           | What it does                                                                                                                                                                              |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Explore Data** | Opens the [Data Explorer](./index.md#data-explorer).                                                                                                                                      |
+| **Edit**         | Toggle **Locked**. A locked database can't be recreated or deleted, and its password can't be rotated.                                                                                    |
+| **Recreate**     | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
+| **Delete**       | Permanently deletes the database and all data. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first.                                       |
 
 With `databases.delete`, you can also select several databases (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and **Delete** them together after one confirmation. Locked databases are skipped. Each action reports how many items it changed, skipped or failed in a toast.
 

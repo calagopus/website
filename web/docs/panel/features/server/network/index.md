@@ -7,11 +7,11 @@ description: The server's networking tab, covering its public allocations, the f
 
 Everything about how a server can be reached lives under Network, at `/server/<id>/network`. It splits into three tabs, each of which only appears if you hold the permission for it. Firewall and Connections are also hidden when an [egg configuration](../../admin/egg-configurations.md#feature-configuration) switches that feature off for the server. When you can see only one, the tab bar is hidden and you land straight on that page.
 
-| Tab | What it covers | Permission |
-| --- | --- | --- |
+| Tab                             | What it covers                                                                                  | Permission         |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- | ------------------ |
 | [Allocations](./allocations.md) | The IP and port combinations the server is publicly reachable on, and which of them is primary. | `allocations.read` |
-| [Firewall](./firewall.md) | Ordered allow and deny rules deciding who may reach those allocations. | `firewall.read` |
-| [Connections](./connections.md) | Private links to other servers, carried node to node instead of over the public internet. | `connections.read` |
+| [Firewall](./firewall.md)       | Ordered allow and deny rules deciding who may reach those allocations.                          | `firewall.read`    |
+| [Connections](./connections.md) | Private links to other servers, carried node to node instead of over the public internet.       | `connections.read` |
 
 The three do different jobs. An allocation is the public way in and the firewall narrows who may use it, while a private connection is neither: it needs no allocation and no firewall rule, because the connection itself is the grant.
 

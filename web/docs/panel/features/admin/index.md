@@ -11,54 +11,54 @@ The sidebar starts with **Back** (returns to the dashboard) and **Home**, follow
 
 ## System
 
-| Page | Description |
-| --- | --- |
-| [Settings](./settings.md) | Panel-wide configuration, from branding to rate limits |
-| [Announcements](./announcements.md) | Panel-wide announcement banners |
-| [Assets](./assets.md) | Public file hosting for the panel, e.g. custom icons and banners |
-| [Extensions](./extensions.md) | Install and manage panel extensions |
+| Page                                | Description                                                      |
+| ----------------------------------- | ---------------------------------------------------------------- |
+| [Settings](./settings.md)           | Panel-wide configuration, from branding to rate limits           |
+| [Announcements](./announcements.md) | Panel-wide announcement banners                                  |
+| [Assets](./assets.md)               | Public file hosting for the panel, e.g. custom icons and banners |
+| [Extensions](./extensions.md)       | Install and manage panel extensions                              |
 
 ## Infrastructure
 
-| Page | Description |
-| --- | --- |
-| [Locations](./locations.md) | Group nodes by physical or logical location |
-| [Nodes](./nodes.md) | The Wings machines your servers run on |
-| [Servers](./servers.md) | Every server on the panel, from creation to transfers |
+| Page                        | Description                                           |
+| --------------------------- | ----------------------------------------------------- |
+| [Locations](./locations.md) | Group nodes by physical or logical location           |
+| [Nodes](./nodes.md)         | The Wings machines your servers run on                |
+| [Servers](./servers.md)     | Every server on the panel, from creation to transfers |
 
 ## Users & Access
 
-| Page | Description |
-| --- | --- |
-| [Users](./users.md) | All user accounts on the panel |
-| [Roles](./roles.md) | Named sets of admin and server permissions |
-| [OAuth Providers](./oauth-providers.md) | Third-party login and account linking |
-| [Activity](./activity.md) | Audit log of admin-side actions |
+| Page                                    | Description                                |
+| --------------------------------------- | ------------------------------------------ |
+| [Users](./users.md)                     | All user accounts on the panel             |
+| [Roles](./roles.md)                     | Named sets of admin and server permissions |
+| [OAuth Providers](./oauth-providers.md) | Third-party login and account linking      |
+| [Activity](./activity.md)               | Audit log of admin-side actions            |
 
 ## Nests & Eggs
 
-| Page | Description |
-| --- | --- |
-| [Nests](./nests.md) | Collections of eggs, the server type definitions |
-| [Egg Library](./egg-library.md) | Installed eggs and every egg your repositories offer, with installs and updates |
+| Page                                          | Description                                                                                                                      |
+| --------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| [Nests](./nests.md)                           | Collections of eggs, the server type definitions                                                                                 |
+| [Egg Library](./egg-library.md)               | Installed eggs and every egg your repositories offer, with installs and updates                                                  |
 | [Egg Configurations](./egg-configurations.md) | Allocation, startup, sidebar and feature settings (firewall, private network), applied to servers by egg, nest, node or location |
-| [Egg Repositories](./egg-repositories.md) | Git repositories to import eggs from, with optional daily sync |
+| [Egg Repositories](./egg-repositories.md)     | Git repositories to import eggs from, with optional daily sync                                                                   |
 
 ## Databases
 
-| Page | Description |
-| --- | --- |
-| [Database Hosts](./database-hosts.md) | MySQL and PostgreSQL hosts for user-created databases |
-| [Database Agent Hosts](./database-agent-hosts.md) | Hosts running the [database agent](../../../db-agent/index.md) for managed database instances |
-| [Database Agent Templates](./database-agent-templates.md) | Templates defining managed database images and resource limits |
+| Page                                                      | Description                                                                                   |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| [Database Hosts](./database-hosts.md)                     | MySQL and PostgreSQL hosts for user-created databases                                         |
+| [Database Agent Hosts](./database-agent-hosts.md)         | Hosts running the [database agent](../../../db-agent/index.md) for managed database instances |
+| [Database Agent Templates](./database-agent-templates.md) | Templates defining managed database images and resource limits                                |
 
 ## Storage
 
-| Page | Description |
-| --- | --- |
-| [Mounts](./mounts.md) | Host directories that can be mounted into server containers |
-| [Devices](./devices.md) | Host devices available to eligible servers |
-| [Backup Configurations](./backup-configurations.md) | Where server backups are stored |
+| Page                                                  | Description                                                                               |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [Mounts](./mounts.md)                                 | Host directories that can be mounted into server containers                               |
+| [Devices](./devices.md)                               | Host devices available to eligible servers                                                |
+| [Backup Configurations](./backup-configurations.md)   | Where server backups are stored                                                           |
 | [System Backup Policies](./system-backup-policies.md) | Scheduled automatic server backups with retention, scoped to locations, nodes, or servers |
 
 ## Home
@@ -81,12 +81,12 @@ The System Overview card reports the cache version, **Cache Calls** (total, with
 
 Under those sits a **Call Breakdown** table giving **Calls** and **Avg. Latency** for each way a lookup can resolve:
 
-| Row | What it counts |
-| --- | --- |
-| **Memory hit** | Served from the panel process's own in-memory cache, the cheapest outcome. |
-| **Redis hit** | Missed memory but found in Redis, so it cost a network round trip. |
+| Row                        | What it counts                                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Memory hit**             | Served from the panel process's own in-memory cache, the cheapest outcome.                                   |
+| **Redis hit**              | Missed memory but found in Redis, so it cost a network round trip.                                           |
 | **Waited on another call** | An identical lookup was already in flight, so this one waited for that result instead of repeating the work. |
-| **Computed** | A real miss: the value had to be built from the database and written back to the cache. |
+| **Computed**               | A real miss: the value had to be built from the database and written back to the cache.                      |
 
 A healthy panel is mostly **Memory hit**. A large **Computed** share means values are being evicted or expiring faster than they are used.
 

@@ -5,7 +5,7 @@ description: Make HTTP requests from your extension React components to its back
 
 # Frontend API Calls
 
-So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually *talk* to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.
+So you've got a backend route registered, it runs, it returns data, beautiful. Now you need your React components to actually _talk_ to it. This page covers how extensions make HTTP requests to their own backend routes (or any Panel route, really) from the frontend - the axios instance, how keys get transformed between the Rust backend's `snake_case` and the frontend's `camelCase`, how to structure your API files, and a few gotchas around data shapes that'll save you pain later.
 
 ## The Axios Instance
 
@@ -46,11 +46,11 @@ export const itemSchema = z.object({
 - **`parsePaginationFromApi(schema, raw)`** - for paginated list responses. Pass it the raw paginated object (`{ total, per_page, page, data }`) and it returns a `Pagination<T>` with each entry run through `parseFromApi`.
 - **`serializeForApi(schema, data, extraSchemas?)`** - for outgoing request bodies. The reverse direction: camelCase keys in your typed object become snake_case on the wire. Fields that are `undefined` are skipped entirely. The optional third argument is an array of additional schemas whose serialized output is deep-merged into the result - this is how the core endpoints for extensible forms include extension-registered fields: they pass `formExtensionSchemas(formId)`, which returns the `zodShape`s extensions registered for that form (see [Forms](./forms.md)).
 
-Fields a backend extension added to a *core* response need no special helper: the top-level entity schemas are `z.looseObject`, so any key they don't declare is camelCased and kept on the parsed object alongside the core fields. Some nested sub-schemas are still plain `z.object` and drop undeclared keys, so check the schema of the node you extended under `@/lib/schemas/` before relying on this. Run your own Zod schema over that node to get typed values back - see [Extending Models](./extending-models.md#from-frontend-components) for the full pattern.
+Fields a backend extension added to a _core_ response need no special helper: the top-level entity schemas are `z.looseObject`, so any key they don't declare is camelCased and kept on the parsed object alongside the core fields. Some nested sub-schemas are still plain `z.object` and drop undeclared keys, so check the schema of the node you extended under `@/lib/schemas/` before relying on this. Run your own Zod schema over that node to get typed values back - see [Extending Models](./extending-models.md#from-frontend-components) for the full pattern.
 
 Two properties of the transform worth knowing:
 
-- **It's schema-guided, not blind.** Only keys that appear in the schema (or in one of the `extraSchemas`) are transformed - and, for `serializeForApi`, only those keys are *sent*; anything else in the object is dropped. A field typed as `z.record(...)` has its keys passed through verbatim in both directions, so maps whose keys are data (user-provided names, UUIDs, enum constants) survive untouched. The old "auto-transform mangled my map keys" trap no longer exists.
+- **It's schema-guided, not blind.** Only keys that appear in the schema (or in one of the `extraSchemas`) are transformed - and, for `serializeForApi`, only those keys are _sent_; anything else in the object is dropped. A field typed as `z.record(...)` has its keys passed through verbatim in both directions, so maps whose keys are data (user-provided names, UUIDs, enum constants) survive untouched. The old "auto-transform mangled my map keys" trap no longer exists.
 - **Requests and responses are symmetric.** Define the schema once and use it on both sides; there's no separate "remember to snake_case your request body by hand" step anymore.
 
 ## One File Per Endpoint
@@ -66,9 +66,7 @@ import { parseFromApi } from '@/lib/serialization/api-transform.ts';
 import { itemSchema } from '../lib/schemas.ts';
 
 export default async (serverUuid: string, itemType: string): Promise<z.infer<typeof itemSchema>[]> => {
-  const { data } = await axiosInstance.get(
-    `/api/client/servers/${serverUuid}/my-feature/items/${itemType}`,
-  );
+  const { data } = await axiosInstance.get(`/api/client/servers/${serverUuid}/my-feature/items/${itemType}`);
   return data.items.map((item: unknown) => parseFromApi(itemSchema, item));
 };
 ```
@@ -150,12 +148,12 @@ export default function EditItemForm({ serverUuid, itemId }: Props) {
 This three-callback shape (`.then` success toast → `.catch` error toast → `.finally` loading reset) is what you'll see across the Panel's own codebase, and matching it keeps behavior consistent for users across the UI. `httpErrorToHuman` already knows how to unpack the standard error shape your backend returns (see [Response Types and Errors](./routing.md#response-types-and-errors) in the routing docs), so you almost never need to inspect the raw error yourself.
 
 ::: info
-If you need to branch on *what* went wrong - e.g. show a different message for a conflict vs a not-found - you can check `err.response?.status` before calling `httpErrorToHuman`. But for the overwhelmingly common case of "something went wrong, show the user a readable explanation", just pass the whole error to the helper.
+If you need to branch on _what_ went wrong - e.g. show a different message for a conflict vs a not-found - you can check `err.response?.status` before calling `httpErrorToHuman`. But for the overwhelmingly common case of "something went wrong, show the user a readable explanation", just pass the whole error to the helper.
 :::
 
 ## Designing API Shapes
 
-A few principles that will save you headaches down the line. These are about the *shape* of the JSON your backend returns, not the frontend code that consumes it - but since the frontend is where you feel the pain, it makes sense to cover them here.
+A few principles that will save you headaches down the line. These are about the _shape_ of the JSON your backend returns, not the frontend code that consumes it - but since the frontend is where you feel the pain, it makes sense to cover them here.
 
 ### Maps keyed by user input: use `z.record`
 
@@ -171,7 +169,7 @@ Consider a route that returns categories keyed by their (user-provided) names:
 }
 ```
 
-Those keys are *data* - they come from the user, a database, or an external API, and you don't control their casing. Type the field as a record and the transform leaves the keys alone while still transforming the field names *inside* the values:
+Those keys are _data_ - they come from the user, a database, or an external API, and you don't control their casing. Type the field as a record and the transform leaves the keys alone while still transforming the field names _inside_ the values:
 
 ```ts
 const responseSchema = z.object({
@@ -190,7 +188,7 @@ That said, arrays of objects are still usually the better shape - they preserve 
 }
 ```
 
-**Rule of thumb:** if the keys of an object are something a human or another system *typed in*, prefer making them values in an array. If you do want a keyed structure, `z.record` handles it correctly - the keys round-trip untouched.
+**Rule of thumb:** if the keys of an object are something a human or another system _typed in_, prefer making them values in an array. If you do want a keyed structure, `z.record` handles it correctly - the keys round-trip untouched.
 
 ## Data-Fetching Hooks
 
@@ -214,8 +212,8 @@ TanStack Query identifies cached data by a query key - an array compared structu
 The Panel's own code builds keys using `@/lib/queryKeys.ts`. **Extensions must not import from that file.** Those keys are Panel internals, and sharing a prefix with a Panel query means invalidation can flush Panel caches or vice versa. Define your own inline arrays instead, namespaced under `'extensions'` and your extension ID:
 
 ```ts
-queryKey: ['extensions', 'dev.yourname.test', 'items']
-queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid]
+queryKey: ['extensions', 'dev.yourname.test', 'items'];
+queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid];
 ```
 
 Because of prefix matching, invalidating `['extensions', 'dev.yourname.test', 'items']` also invalidates `['extensions', 'dev.yourname.test', 'items', serverUuid]` and any deeper keys. Use narrow keys when you only want one server's cache to re-fetch; use the shorter prefix when you want everything under that namespace to re-fetch.
@@ -374,7 +372,7 @@ const items = useSearchableResource<Item>({
 });
 ```
 
-**`canRequest`** is an additional gate on top of `deps`. The query runs only when `canRequest` is true *and* every element of `deps` is truthy (or `deps` is empty). Default is `true`. Use it for conditions that aren't naturally part of the fetcher's argument list - permission flags, parent-component readiness, modal-open state.
+**`canRequest`** is an additional gate on top of `deps`. The query runs only when `canRequest` is true _and_ every element of `deps` is truthy (or `deps` is empty). Default is `true`. Use it for conditions that aren't naturally part of the fetcher's argument list - permission flags, parent-component readiness, modal-open state.
 
 **`defaultSearchValue`** sets the initial value for both `search` and the internal debounced state on mount. This is useful in edit forms where you already know the currently selected item's name and want it to appear in the input without the user having to open and search the dropdown:
 
@@ -444,11 +442,7 @@ export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
 
   return (
     <Table
-      columns={[
-        t('common.table.columns.name'),
-        t('common.table.columns.created'),
-        ''
-      ]}
+      columns={[t('common.table.columns.name'), t('common.table.columns.created'), '']}
       loading={loading}
       pagination={items}
       onPageSelect={setPage}
@@ -465,7 +459,7 @@ The fetcher signature is `(page: number, search: string) => Promise<T>`. The hoo
 
 **URL params:** On mount, the hook initialises `search` from `?search=` and `page` from `?page=` in the URL (the page param is parsed and ignored unless it's a finite integer `>= 1`). Whenever either changes, the hook rewrites just those two params and leaves any others in the URL alone; `page` is dropped from the URL while it equals `initialPage` and `search` while it is empty, so a table at rest has a clean address. The immediate `search` value (not debounced) is written to the URL on every keystroke; the debounced copy is what drives the query. Clearing the search field bypasses the debounce entirely and immediately resets both the debounced state and the query.
 
-**Pagination auto-correction:** When a fetch returns, the hook inspects `total`, `perPage`, and `page` on the response (or on `response[paginationKey]` if `paginationKey` is set) *before* calling `setStoreData`. If the current page exceeds the last valid page, it calls `setPage(totalPages)` and skips the store update for this fetch - the resulting re-fetch will populate the store. If the total is zero and the current page isn't 1, it resets to page 1 the same way. Only when the page is already valid does `setStoreData` get called with the response. This handles the common case of deleting the last item on a page.
+**Pagination auto-correction:** When a fetch returns, the hook inspects `total`, `perPage`, and `page` on the response (or on `response[paginationKey]` if `paginationKey` is set) _before_ calling `setStoreData`. If the current page exceeds the last valid page, it calls `setPage(totalPages)` and skips the store update for this fetch - the resulting re-fetch will populate the store. If the total is zero and the current page isn't 1, it resets to page 1 the same way. Only when the page is already valid does `setStoreData` get called with the response. This handles the common case of deleting the last item on a page.
 
 **`paginationKey`** handles responses where the paginated shape is nested under a key. Without it, the hook looks for `total`, `perPage`, and `page` at the root of the fetcher's return value. With it, it looks at `response[paginationKey]` for those fields, while still passing the full response to `setStoreData`:
 
@@ -528,14 +522,18 @@ export default function ItemCreateOrUpdate({ existing }: { existing?: Item }) {
       <TextInput label='Name' {...form.getInputProps('name')} />
       <Switch label='Enabled' {...form.getInputProps('enabled', { type: 'checkbox' })} />
       <Group>
-        <Button type='submit' loading={loading}>Save</Button>
+        <Button type='submit' loading={loading}>
+          Save
+        </Button>
         {!existing && (
           <Button onClick={() => doCreateOrUpdate(true)} loading={loading}>
             Save & Stay
           </Button>
         )}
         {existing && (
-          <Button color='red' onClick={doDelete} loading={loading}>Delete</Button>
+          <Button color='red' onClick={doDelete} loading={loading}>
+            Delete
+          </Button>
         )}
       </Group>
     </form>
@@ -567,18 +565,18 @@ useResourceForm({
 
 ## Summary
 
-| Situation | Use |
-| --------- | --- |
-| Any response | `axiosInstance` + `parseFromApi(schema, data.<wrapper_key>)` |
-| Paginated list response | `parsePaginationFromApi(schema, data.<wrapper_key>)` |
-| Any request with a body | `axiosInstance` + `serializeForApi(schema, data)` |
-| Map whose object *keys* are data | type the field as `z.record(...)` - keys pass through untouched |
-| Any error from any of the above | `httpErrorToHuman(err)` into a toast |
-| Simple one-off data fetch | `useResource` |
-| Data that must re-fetch on an interval | `usePollingResource` |
-| Searchable `<Select>` or `<MultiSelect>` options | `useSearchableResource` |
-| Searchable `<Select>` or `<MultiSelect>` options that can run past one page | `useInfiniteSearchableResource` |
-| Full paginated table with search | `useSearchablePaginatedTable` |
-| Create / update / delete form | `useResourceForm` |
+| Situation                                                                   | Use                                                             |
+| --------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| Any response                                                                | `axiosInstance` + `parseFromApi(schema, data.<wrapper_key>)`    |
+| Paginated list response                                                     | `parsePaginationFromApi(schema, data.<wrapper_key>)`            |
+| Any request with a body                                                     | `axiosInstance` + `serializeForApi(schema, data)`               |
+| Map whose object _keys_ are data                                            | type the field as `z.record(...)` - keys pass through untouched |
+| Any error from any of the above                                             | `httpErrorToHuman(err)` into a toast                            |
+| Simple one-off data fetch                                                   | `useResource`                                                   |
+| Data that must re-fetch on an interval                                      | `usePollingResource`                                            |
+| Searchable `<Select>` or `<MultiSelect>` options                            | `useSearchableResource`                                         |
+| Searchable `<Select>` or `<MultiSelect>` options that can run past one page | `useInfiniteSearchableResource`                                 |
+| Full paginated table with search                                            | `useSearchablePaginatedTable`                                   |
+| Create / update / delete form                                               | `useResourceForm`                                               |
 
 Keep your API files one-endpoint-per-file with a default export, define one Zod schema per resource and run every request and response through the `api-transform` helpers, and match the three-callback success/error/loading pattern for any call triggered by user action. Define query keys inline as extension-namespaced arrays - never import from `@/lib/queryKeys.ts`.

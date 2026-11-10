@@ -34,7 +34,7 @@ services:
     volumes:
       - ./data:/var/lib/mysql
     ports:
-      - "0.0.0.0:3306:3306"
+      - '0.0.0.0:3306:3306'
 ```
 
 Start the service:
@@ -155,13 +155,13 @@ FLUSH PRIVILEGES;
 2. Change the Credential Type to **Details**.
 3. Fill in the form:
 
-| Field | Value |
-| --- | --- |
-| **Name** | A friendly label, e.g. `MariaDB` |
-| **Host** | IP address or hostname of the database server |
-| **Port** | `3306` |
-| **Username** | `calagopus` |
-| **Password** | The password you set above |
+| Field        | Value                                         |
+| ------------ | --------------------------------------------- |
+| **Name**     | A friendly label, e.g. `MariaDB`              |
+| **Host**     | IP address or hostname of the database server |
+| **Port**     | `3306`                                        |
+| **Username** | `calagopus`                                   |
+| **Password** | The password you set above                    |
 
 ![Create Database Host form with MySQL type, username, password, host, and port 3306 fields](./files/mysql.webp)
 

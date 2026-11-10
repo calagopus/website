@@ -13,11 +13,11 @@ These configurations target current releases of each proxy and of Wings. After u
 
 You have three ways to secure a standalone node, and most setups only need the first:
 
-| Approach | When to use it |
-| --- | --- |
-| [Wings' built-in SSL](../../wings/configuration.md#ssl-configuration) | The node runs nothing else on ports 443/8080. Point Wings at the certificate files and you're done. No proxy involved. |
-| Reverse proxy in front of Wings (this guide) | A proxy already runs on the node, you want Wings on port 443, or you want one place to manage certificates. |
-| [Wings Proxy Mode](../../wings/advanced/exposing-wings-in-a-homelab.md) | The node can't be reached from the internet at all. The Panel relays browser traffic to it. |
+| Approach                                                                | When to use it                                                                                                         |
+| ----------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| [Wings' built-in SSL](../../wings/configuration.md#ssl-configuration)   | The node runs nothing else on ports 443/8080. Point Wings at the certificate files and you're done. No proxy involved. |
+| Reverse proxy in front of Wings (this guide)                            | A proxy already runs on the node, you want Wings on port 443, or you want one place to manage certificates.            |
+| [Wings Proxy Mode](../../wings/advanced/exposing-wings-in-a-homelab.md) | The node can't be reached from the internet at all. The Panel relays browser traffic to it.                            |
 
 With the first two options, browsers connect to Wings directly for the console, file uploads and downloads, so the node's public URL must be reachable from your users' machines. Only Wings Proxy Mode routes that traffic through the Panel instead.
 
@@ -59,6 +59,7 @@ api:
   host: 127.0.0.1
   port: 8080
 ```
+
 ```yaml [Wings in Docker]
 # In compose.yml, not config.yml. api.host stays 0.0.0.0 inside the container.
 services:
@@ -81,11 +82,11 @@ api:
 
 Create the directory first, with permissions the proxy's user can traverse, then point the proxy at the socket:
 
-| Proxy | Target |
-| --- | --- |
-| Nginx | `server unix:/run/calagopus-wings/api.sock;` in the `upstream` block, in place of `server 127.0.0.1:8080;` |
-| Apache | `ProxyPass / unix:/run/calagopus-wings/api.sock\|http://localhost/ retry=0 upgrade=websocket` |
-| Caddy | `reverse_proxy unix//run/calagopus-wings/api.sock` |
+| Proxy  | Target                                                                                                     |
+| ------ | ---------------------------------------------------------------------------------------------------------- |
+| Nginx  | `server unix:/run/calagopus-wings/api.sock;` in the `upstream` block, in place of `server 127.0.0.1:8080;` |
+| Apache | `ProxyPass / unix:/run/calagopus-wings/api.sock\|http://localhost/ retry=0 upgrade=websocket`              |
+| Caddy  | `reverse_proxy unix//run/calagopus-wings/api.sock`                                                         |
 :::
 
 ### Trust the Proxy's Address
@@ -101,6 +102,7 @@ api:
   trusted_proxies:
     - 127.0.0.1
 ```
+
 ```yaml [Wings in Docker]
 # Print the gateway address inside the Wings compose directory:
 #   docker inspect -f '{{range .NetworkSettings.Networks}}{{println .Gateway}}{{end}}' $(docker compose ps -q wings)
@@ -118,8 +120,8 @@ You don't need to trust the Panel here. It only relays consoles and uploads in [
 Any configuration key can also be set with a `CALAGOPUS_`-prefixed environment variable, which Wings re-applies after every configuration push from the Panel. On the `wings` service in `compose.yml`:
 
 ```yaml
-    environment:
-      CALAGOPUS_API_TRUSTED_PROXIES: '["172.20.0.1"]'
+environment:
+  CALAGOPUS_API_TRUSTED_PROXIES: '["172.20.0.1"]'
 ```
 :::
 
@@ -129,6 +131,7 @@ Any configuration key can also be set with a `CALAGOPUS_`-prefixed environment v
 ```bash [Binary or package]
 sudo systemctl restart wings
 ```
+
 ```bash [Docker]
 docker compose up -d
 ```
@@ -146,18 +149,18 @@ A `401` is the expected answer, since the request carries no token. It proves Wi
 
 Every configuration below does the same things. If you use a proxy that isn't listed, these are the settings to replicate:
 
-| Setting | Why Wings needs it |
-| --- | --- |
-| Forward to `http://127.0.0.1:8080` | The address Wings listens on after Step 1 |
-| Pass `Upgrade` and `Connection` through | The console, live statistics, transfers and the node's system log use WebSockets |
-| Allow `HEAD`, `PATCH` and `DELETE` | Resumable uploads need all three: `HEAD` reads the current offset, `PATCH` appends a chunk, `DELETE` discards a cancelled upload |
-| No request body limit | Server transfers and file copies from another node arrive as one chunked request per stream, carrying the whole server. Wings lifts its own limit for them, and caps uploads with `api.upload_limit` itself (no limit by default from Wings 1.2.6) |
-| Request buffering off | With it on, the proxy reads a whole upload chunk or transfer to disk before Wings sees a byte of it |
-| Response buffering off | Backups and file archives stream from disk and can be many gigabytes. With buffering on, the proxy keeps reading ahead of the client and writing the excess to temporary files |
-| Read and write timeouts above 60s | A slow client moving a multi-gigabyte file, or another node transferring a server, holds one connection open far longer than the defaults allow |
-| `X-Forwarded-For` or `X-Real-IP` | The client IPs from Step 1 |
-| No CORS headers | Wings sets `Access-Control-Allow-Origin` from the Panel URL it was configured with, and exposes `Upload-Offset` for resumable uploads. A second copy from the proxy makes the browser reject every response |
-| No `X-Robots-Tag` | Every endpoint answers `401` without a token, so there is nothing to crawl |
+| Setting                                 | Why Wings needs it                                                                                                                                                                                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Forward to `http://127.0.0.1:8080`      | The address Wings listens on after Step 1                                                                                                                                                                                                          |
+| Pass `Upgrade` and `Connection` through | The console, live statistics, transfers and the node's system log use WebSockets                                                                                                                                                                   |
+| Allow `HEAD`, `PATCH` and `DELETE`      | Resumable uploads need all three: `HEAD` reads the current offset, `PATCH` appends a chunk, `DELETE` discards a cancelled upload                                                                                                                   |
+| No request body limit                   | Server transfers and file copies from another node arrive as one chunked request per stream, carrying the whole server. Wings lifts its own limit for them, and caps uploads with `api.upload_limit` itself (no limit by default from Wings 1.2.6) |
+| Request buffering off                   | With it on, the proxy reads a whole upload chunk or transfer to disk before Wings sees a byte of it                                                                                                                                                |
+| Response buffering off                  | Backups and file archives stream from disk and can be many gigabytes. With buffering on, the proxy keeps reading ahead of the client and writing the excess to temporary files                                                                     |
+| Read and write timeouts above 60s       | A slow client moving a multi-gigabyte file, or another node transferring a server, holds one connection open far longer than the defaults allow                                                                                                    |
+| `X-Forwarded-For` or `X-Real-IP`        | The client IPs from Step 1                                                                                                                                                                                                                         |
+| No CORS headers                         | Wings sets `Access-Control-Allow-Origin` from the Panel URL it was configured with, and exposes `Upload-Offset` for resumable uploads. A second copy from the proxy makes the browser reject every response                                        |
+| No `X-Robots-Tag`                       | Every endpoint answers `401` without a token, so there is nothing to crawl                                                                                                                                                                         |
 
 Other nodes use this proxy too: a server transfer or file copy to this node is POSTed by the source node's Wings to `/api/transfers` on this node's URL.
 
@@ -295,18 +298,18 @@ Cloudflare is a poor fit for a node hostname either way: its per-plan request si
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach Wings. Check that it's running with `systemctl status wings` or `docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl). If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
-| The console stays on "connecting" and live statistics never appear | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**. |
-| Uploads, server transfers or file copies to this node fail with `413 Request Entity Too Large` | The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or Nginx Proxy Manager, `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy. |
-| Uploads fail with `417 Expectation Failed` and a message about the file size | That one is Wings, not the proxy: the file is larger than [`api.upload_limit`](../../wings/configuration.md#api-upload-limit). Raise it in `config.yml`, or set it to `0` for no limit, and restart Wings. The proxy's body limit does not need to change with it. |
-| Large uploads, downloads or server transfers die partway through, always after about the same time | A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache. On Traefik, set `respondingTimeouts.readTimeout` to `0`, since it counts the whole request rather than the gap between reads. |
-| Downloads fill the proxy's disk with temporary files | Response buffering is on. Set `proxy_buffering off` on Nginx, or add it to **Custom Nginx Configuration** on Nginx Proxy Manager. Caddy and Traefik stream by default. |
-| An upload resumes from `0` every time, or the browser console complains about a missing `Upload-Offset` header | The proxy is dropping the response header Wings exposes for resumable uploads, or answering the `HEAD` and `PATCH` requests itself. Remove any CORS or method restrictions you added; Wings sets `Access-Control-Expose-Headers: Upload-Offset` itself. |
-| Every request fails with a CORS error in the browser console | Either the proxy adds its own `Access-Control-Allow-Origin` next to Wings', which browsers reject, or the Panel URL under **Admin → Settings → Application** no longer matches the address the browser is using. Wings allows exactly the origin the Panel told it about. |
-| Rate limits or connection limits trigger for everyone at once, as if every user shares one budget | `api.trusted_proxies` doesn't contain the address the proxy connects from. Re-check [Step 1](#trust-the-proxy-s-address); the address can change if the compose network was recreated. |
-| "Frontend to Wings" fails while "Backend to Wings" passes | The Panel can reach the node but your browser can't. Usually the node's certificate isn't valid for the hostname, the hostname doesn't resolve publicly, or port 443 is blocked between you and the node. |
-| Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../ssl-certificates.md#troubleshooting) for renewal problems. |
+| Symptom                                                                                                        | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| -------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 502 Bad Gateway, or the proxy's own error page                                                                 | The proxy can't reach Wings. Check that it's running with `systemctl status wings` or `docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl). If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. |
+| The console stays on "connecting" and live statistics never appear                                             | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**.                                                                                                                                                                                                                                   |
+| Uploads, server transfers or file copies to this node fail with `413 Request Entity Too Large`                 | The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or Nginx Proxy Manager, `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy.                                                                                                                                                                                                                                                                                                              |
+| Uploads fail with `417 Expectation Failed` and a message about the file size                                   | That one is Wings, not the proxy: the file is larger than [`api.upload_limit`](../../wings/configuration.md#api-upload-limit). Raise it in `config.yml`, or set it to `0` for no limit, and restart Wings. The proxy's body limit does not need to change with it.                                                                                                                                                                                                                         |
+| Large uploads, downloads or server transfers die partway through, always after about the same time             | A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache. On Traefik, set `respondingTimeouts.readTimeout` to `0`, since it counts the whole request rather than the gap between reads.                                                                                                                                                                                                                                  |
+| Downloads fill the proxy's disk with temporary files                                                           | Response buffering is on. Set `proxy_buffering off` on Nginx, or add it to **Custom Nginx Configuration** on Nginx Proxy Manager. Caddy and Traefik stream by default.                                                                                                                                                                                                                                                                                                                     |
+| An upload resumes from `0` every time, or the browser console complains about a missing `Upload-Offset` header | The proxy is dropping the response header Wings exposes for resumable uploads, or answering the `HEAD` and `PATCH` requests itself. Remove any CORS or method restrictions you added; Wings sets `Access-Control-Expose-Headers: Upload-Offset` itself.                                                                                                                                                                                                                                    |
+| Every request fails with a CORS error in the browser console                                                   | Either the proxy adds its own `Access-Control-Allow-Origin` next to Wings', which browsers reject, or the Panel URL under **Admin → Settings → Application** no longer matches the address the browser is using. Wings allows exactly the origin the Panel told it about.                                                                                                                                                                                                                  |
+| Rate limits or connection limits trigger for everyone at once, as if every user shares one budget              | `api.trusted_proxies` doesn't contain the address the proxy connects from. Re-check [Step 1](#trust-the-proxy-s-address); the address can change if the compose network was recreated.                                                                                                                                                                                                                                                                                                     |
+| "Frontend to Wings" fails while "Backend to Wings" passes                                                      | The Panel can reach the node but your browser can't. Usually the node's certificate isn't valid for the hostname, the hostname doesn't resolve publicly, or port 443 is blocked between you and the node.                                                                                                                                                                                                                                                                                  |
+| Browser shows a certificate warning                                                                            | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../ssl-certificates.md#troubleshooting) for renewal problems.                                                                                                                                                                                                                                                                                                                            |
 
 Problems that aren't caused by the proxy, such as the node URL, tokens or clock skew, are collected on the [Troubleshooting](../troubleshooting.md) page.

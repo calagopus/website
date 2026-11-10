@@ -42,9 +42,11 @@ Run the command for your package manager:
 apt update
 apt install --only-upgrade calagopus-wings
 ```
+
 ```bash [RPM]
 dnf upgrade calagopus-wings
 ```
+
 ```bash [APK]
 apk update
 apk upgrade calagopus-wings
@@ -61,6 +63,7 @@ Restart the service to load the updated binary:
 ```bash [systemd]
 systemctl restart wings
 ```
+
 ```bash [OpenRC (Alpine)]
 rc-service wings restart
 ```
@@ -90,6 +93,7 @@ chmod +x /usr/local/bin/wings
 ```bash
 wings version
 ```
+
 Check the output against the [latest release](https://github.com/calagopus/wings/releases/latest) to confirm the update applied.
 
 #### 4. Start the service

@@ -43,13 +43,13 @@ See the [Permissions Reference](../dashboard/permissions.md#server-permissions) 
 
 The patterns follow `.gitignore` rules, which the panel and Wings both apply the same way:
 
-| Pattern | Hides |
-| --- | --- |
-| `secrets` | Anything named `secrets` at any depth, and everything inside it if it's a directory. Not `secrets.txt`. |
+| Pattern       | Hides                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `secrets`     | Anything named `secrets` at any depth, and everything inside it if it's a directory. Not `secrets.txt`.            |
 | `/config.yml` | Only `config.yml` at the server root. A leading `/`, or a `/` anywhere but the end, anchors a pattern to the root. |
-| `logs/` | Directories named `logs`, with their contents, but not a file of that name. |
-| `*.env` | Everything ending in `.env`, at any depth. |
-| `!pattern` | Nothing: it un-hides whatever matches, even below a directory an earlier line hid. |
+| `logs/`       | Directories named `logs`, with their contents, but not a file of that name.                                        |
+| `*.env`       | Everything ending in `.env`, at any depth.                                                                         |
+| `!pattern`    | Nothing: it un-hides whatever matches, even below a directory an earlier line hid.                                 |
 
 Lines starting with `#` are comments. Later lines win over earlier ones, so an exception has to come after the pattern it carves into. That makes an allowlist possible:
 

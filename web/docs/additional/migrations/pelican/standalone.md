@@ -92,6 +92,7 @@ nssm start "Calagopus Panel"
 ```
 
 ::::
+
 :::
 :::
 
@@ -184,7 +185,7 @@ docker compose exec web calagopus-panel import pelican --environment /.env
 The importer walks through users, servers, nodes, allocations, eggs, and everything else. Small installs finish in seconds, larger ones can take a few minutes. The terminal shows validation findings and the planned record counts before the import writes data.
 
 ::: warning If the import errors out with a connection or auth error
-If it fails immediately with something like *"Host 'X' is not allowed to connect"* or *"Access denied for user"*, that's MySQL/MariaDB's host-based access control blocking the connection. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
+If it fails immediately with something like _"Host 'X' is not allowed to connect"_ or _"Access denied for user"_, that's MySQL/MariaDB's host-based access control blocking the connection. See [Allowing the Database User to Connect from Docker](#allowing-the-database-user-to-connect-from-docker) below.
 
 Validation errors stop the import before it writes data. If the write phase fails, the importer rolls back the imported records; fix the reported problem and retry. If it says the data was imported but Panel settings could not be saved, keep the imported data and set the URL, name, and mail settings in the admin area. Do not rerun a successful data import just to repair settings.
 :::

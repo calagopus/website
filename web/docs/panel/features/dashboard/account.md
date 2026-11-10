@@ -31,7 +31,7 @@ Changing your password does not sign anyone out of the panel on its own, so a **
 
 Same idea: enter your new email and your current password, then **Update**.
 
-When email verification is required, the change doesn't apply straight away. The panel mails a confirmation link to the *new* address and tells you "Confirmation link sent to {email}. Your address changes once you open it." Until you open that link, your old address stays in place. Confirming it also invalidates any outstanding password reset.
+When email verification is required, the change doesn't apply straight away. The panel mails a confirmation link to the _new_ address and tells you "Confirmation link sent to {email}. Your address changes once you open it." Until you open that link, your old address stays in place. Confirming it also invalidates any outstanding password reset.
 
 ## Two-Factor Authentication
 

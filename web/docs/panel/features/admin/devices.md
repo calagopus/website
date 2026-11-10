@@ -13,14 +13,14 @@ description: Make host devices available to server containers, with per-node and
 
 Click **Create**, fill in the form, then **Save**.
 
-| Field | Meaning |
-| --- | --- |
-| **Name** | Display name shown to admins and users. |
-| **Description** | Optional explanation of what the device is for. |
-| **Source** | Absolute device path on the Wings host, for example `/dev/dri/renderD128`. |
-| **Target** | Absolute path where the device appears inside the server container. |
-| **Permissions** | A nonempty combination of `r` (read), `w` (write), and `m` (create device nodes). Defaults to `rwm`; use only the access the application needs. |
-| **User Attachable** | Lets users attach and detach this device themselves. Off by default. |
+| Field               | Meaning                                                                                                                                         |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**            | Display name shown to admins and users.                                                                                                         |
+| **Description**     | Optional explanation of what the device is for.                                                                                                 |
+| **Source**          | Absolute device path on the Wings host, for example `/dev/dri/renderD128`.                                                                      |
+| **Target**          | Absolute path where the device appears inside the server container.                                                                             |
+| **Permissions**     | A nonempty combination of `r` (read), `w` (write), and `m` (create device nodes). Defaults to `rwm`; use only the access the application needs. |
+| **User Attachable** | Lets users attach and detach this device themselves. Off by default.                                                                            |
 
 ![Device creation form with an example render device](./images/devices/create.webp)
 

@@ -25,18 +25,16 @@ Groups are personal and only affect how servers are organized for you, they don'
 
 Switch to the **Grouped Servers** tab and click **Create Group** at the bottom. Give the group a name.
 
-
 ### The Group Header
 
 Each group's header holds a search box that filters the servers inside it, alongside selection and group controls:
 
-| Control | Does |
-| --- | --- |
-| **Group Actions** (the three dots) | **Start**, **Restart**, or **Stop** every server in the group at once |
-| **Add Servers to Group** (plus) | Search for and select several servers to add together; existing members are excluded |
-| **Edit** (pencil) | Rename the group via the **Edit Server Group** modal |
-| **Delete** (trash) | Remove the group after a **Confirm Server Group Deletion** prompt |
-
+| Control                            | Does                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
+| **Group Actions** (the three dots) | **Start**, **Restart**, or **Stop** every server in the group at once                |
+| **Add Servers to Group** (plus)    | Search for and select several servers to add together; existing members are excluded |
+| **Edit** (pencil)                  | Rename the group via the **Edit Server Group** modal                                 |
+| **Delete** (trash)                 | Remove the group after a **Confirm Server Group Deletion** prompt                    |
 
 Deleting a group never deletes the servers inside it, it just ungroups them.
 
@@ -48,7 +46,7 @@ The add-server picker lets administrators include other users' servers with its 
 
 Groups are collapsible; click the chevron to expand or collapse one, and drag servers to reorder them within the group. Groups themselves reorder by their grip handle, and each header carries a server-count badge. While a server is stopping, its card's context menu offers **Kill** (with a Force Stop confirmation).
 
-Dragging also works *between* groups: drop a server onto another group to move it there, and a "Server moved to {group}." toast confirms it. Two things block a drop, and the target group tells you which as you hover it: **Already in this group**, or **Group is full**, since a group cannot hold more than 100 servers. A collapsed group won't accept a drop either; expand it first.
+Dragging also works _between_ groups: drop a server onto another group to move it there, and a "Server moved to {group}." toast confirms it. Two things block a drop, and the target group tells you which as you hover it: **Already in this group**, or **Group is full**, since a group cannot hold more than 100 servers. A collapsed group won't accept a drop either; expand it first.
 
 ![Game Servers group expanded showing its Minecraft and Fabric Modpack servers](./images/servers/group-expanded.webp)
 ![Game Servers group collapsed to a single header row](./images/servers/group-collapsed.webp)

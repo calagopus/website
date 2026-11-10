@@ -17,11 +17,11 @@ Every egg on the panel, whichever nest it's in, sorted by name. The search match
 
 Each card shows the egg's name, author, and up to three lines of its description, plus these badges:
 
-| Badge | Meaning |
-|---|---|
-| Nest name (blue) | The nest the egg lives in. |
-| **Update Available** (yellow) | The egg was installed or last updated from a repository, and the repository's copy has changed since. |
-| **Manual** (gray) | The egg isn't linked to a repository egg, for example because it was created by hand or imported from a file or URL. |
+| Badge                         | Meaning                                                                                                              |
+| ----------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Nest name (blue)              | The nest the egg lives in.                                                                                           |
+| **Update Available** (yellow) | The egg was installed or last updated from a repository, and the repository's copy has changed since.                |
+| **Manual** (gray)             | The egg isn't linked to a repository egg, for example because it was created by hand or imported from a file or URL. |
 
 Hovering a card with the mouse for a moment opens a larger preview over it with the full description, the **Repository** a linked egg comes from, its **Created** date, its **Features**, and its **Docker Images** by name and image. The badges and buttons are repeated at the bottom of the preview. **Open** goes to the egg in its nest. **Update** appears only when an update is available and you have `eggs.update`. It re-imports the egg from its repository, the same as **Update** > **from Repository** on the [egg itself](./nests.md#general), and confirms with "Paper updated from its repository." or similar.
 

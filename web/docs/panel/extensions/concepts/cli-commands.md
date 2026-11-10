@@ -317,11 +317,11 @@ A few patterns worth pulling out of this:
 The `env: Option<Arc<Env>>` your executor receives reflects whether the Panel's environment file was loaded successfully:
 
 - **`Some(env)`** - the env file was parsed. The Panel has config, a valid database connection is constructable, and everything the runtime expects is in place.
-- **`None`** - the env file couldn't be read or parsed. This happens during install/setup commands that need to run *before* the Panel is properly configured - think a `generate-env` or `first-time-setup` helper.
+- **`None`** - the env file couldn't be read or parsed. This happens during install/setup commands that need to run _before_ the Panel is properly configured - think a `generate-env` or `first-time-setup` helper.
 
 For most commands you want `Some(env)` and you'll bail out on `None`. `AppState::new_cli(env)` handles that case itself: with `None` it prints "please setup the new panel environment before using this command." and exits the process with code 1 on the spot. It never returns an `Err` for a missing env, so nothing you wrote after it runs in that case; if you need your own message or cleanup, check `env.is_some()` before calling it.
 
-If your command specifically needs to work *without* the env (e.g. it's the command that generates the env file in the first place), branch on `env.is_some()` and handle the cases explicitly - you've seen this pattern in the core Panel's `service install` command, which optionally starts the service with `systemctl enable --now` if the env is present, but registers the service for later startup if not.
+If your command specifically needs to work _without_ the env (e.g. it's the command that generates the env file in the first place), branch on `env.is_some()` and handle the cases explicitly - you've seen this pattern in the core Panel's `service install` command, which optionally starts the service with `systemctl enable --now` if the env is present, but registers the service for later startup if not.
 
 ## Exit Codes
 

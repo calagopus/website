@@ -16,10 +16,10 @@ You need this before you:
 
 Whichever method you pick, the result is a pair of files:
 
-| File | What it is | Who needs it |
-| --- | --- | --- |
+| File            | What it is                                                              | Who needs it                           |
+| --------------- | ----------------------------------------------------------------------- | -------------------------------------- |
 | `fullchain.pem` | Your certificate plus the intermediate chain browsers need to verify it | The `cert` side of every configuration |
-| `privkey.pem` | The private key. Never share it or commit it anywhere | The `key` side of every configuration |
+| `privkey.pem`   | The private key. Never share it or commit it anywhere                   | The `key` side of every configuration  |
 
 Certbot stores them under `/etc/letsencrypt/live/<domain>/`; acme.sh copies them wherever you tell it. Let's Encrypt certificates are valid for **90 days**, so the renewal step at the end of each method is not optional. Both tools set up automatic renewal for you; the guide shows how to check that it actually works.
 
@@ -106,10 +106,10 @@ systemctl list-timers certbot.timer
 
 ### Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
+| Symptom                                                      | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Browser shows "Insecure Connection" or another SSL/TLS error | Almost always means the certificate has expired. If `certbot renew` fails with something like `Error: Attempting to renew cert (domain) from /etc/letsencrypt/renew/domain.conf produced an unexpected error`, it's usually because port 80 is already in use; using the `--nginx` / `--apache` plugin flags (as above) avoids this. Otherwise, stop the webserver, renew, then start it again: `sudo systemctl stop nginx`, `sudo certbot renew`, `sudo systemctl start nginx`. |
-| Wings doesn't pick up the renewed certificate within a day | Restart it manually: `sudo systemctl restart wings`. |
+| Wings doesn't pick up the renewed certificate within a day   | Restart it manually: `sudo systemctl restart wings`.                                                                                                                                                                                                                                                                                                                                                                                                                             |
 
 === Method 2: Certbot (DNS Challenge)
 
@@ -196,6 +196,7 @@ This manual flow **does not auto-renew**. You'd need to repeat the process and u
 `acme.sh` is a lightweight, dependency-free alternative to certbot. It's useful if you'd rather avoid a Python toolchain. It defaults to ZeroSSL as the certificate authority; the commands below pass `--server letsencrypt` to stay on Let's Encrypt. This example uses Cloudflare's DNS API; see [acme.sh's DNS API docs](https://github.com/acmesh-official/acme.sh/wiki/dnsapi) for other providers.
 
 ### 1. Install acme.sh
+
 ```bash
 curl https://get.acme.sh | sh -s email=you@example.com
 source ~/.bashrc
@@ -268,6 +269,7 @@ export CLOUDFLARE_DNS_API_TOKEN="your_cloudflare_api_token"
 sudo -E lego --path /etc/lego --email you@example.com --accept-tos \
   --dns cloudflare -d example.com run
 ```
+
 ```bash [HTTP challenge]
 # Needs port 80 free while it runs.
 sudo lego --path /etc/lego --email you@example.com --accept-tos \
@@ -295,16 +297,16 @@ Drop the token and swap `--dns cloudflare` for `--http` if you issued with the H
 
 ## Which Method Should I Use?
 
-| Situation | Recommended method |
-| --- | --- |
-| Public webserver, port 80 open | Certbot (HTTP Challenge) |
-| Internal/NAT'd node, using a provider with a certbot DNS plugin | Certbot (DNS Challenge) |
-| One wildcard certificate for every node | Certbot (DNS Challenge) or lego |
-| Want a lighter tool without Python | acme.sh (shell script) or lego (single binary) |
-| DNS provider without a certbot plugin | lego, which supports far more providers, or acme.sh |
-| Using Caddy, Traefik or Nginx Proxy Manager as your reverse proxy | None of the above. The proxy issues and renews its own certificate; see [below](#certificates-issued-by-the-reverse-proxy). |
-| Domain proxied through Cloudflare | Let's Encrypt still works. A [Cloudflare Origin certificate](#cloudflare-origin-ca) is an alternative that never needs renewing. |
-| Panel and nodes only reachable on your LAN | A [private CA](#private-ca-for-lan-only-setups). Let's Encrypt cannot verify a name that does not resolve publicly. |
+| Situation                                                         | Recommended method                                                                                                               |
+| ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| Public webserver, port 80 open                                    | Certbot (HTTP Challenge)                                                                                                         |
+| Internal/NAT'd node, using a provider with a certbot DNS plugin   | Certbot (DNS Challenge)                                                                                                          |
+| One wildcard certificate for every node                           | Certbot (DNS Challenge) or lego                                                                                                  |
+| Want a lighter tool without Python                                | acme.sh (shell script) or lego (single binary)                                                                                   |
+| DNS provider without a certbot plugin                             | lego, which supports far more providers, or acme.sh                                                                              |
+| Using Caddy, Traefik or Nginx Proxy Manager as your reverse proxy | None of the above. The proxy issues and renews its own certificate; see [below](#certificates-issued-by-the-reverse-proxy).      |
+| Domain proxied through Cloudflare                                 | Let's Encrypt still works. A [Cloudflare Origin certificate](#cloudflare-origin-ca) is an alternative that never needs renewing. |
+| Panel and nodes only reachable on your LAN                        | A [private CA](#private-ca-for-lan-only-setups). Let's Encrypt cannot verify a name that does not resolve publicly.              |
 
 ## Other Sources of Certificates
 

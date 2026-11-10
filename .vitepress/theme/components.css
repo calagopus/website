@@ -66,7 +66,7 @@
 
 .m-collapsible > summary::after,
 .vp-doc .custom-block.details > summary::after {
-  content: "";
+  content: '';
   flex-shrink: 0;
   width: 0.75em;
   height: 0.75em;
@@ -298,7 +298,7 @@
   transition: none;
 }
 
-.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected="true"]::after,
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected='true']::after,
 .vp-doc .vp-code-group .tabs input:checked + label::after {
   background-color: var(--mantine-primary-color-filled);
 }
@@ -310,7 +310,7 @@
     color: var(--mantine-color-text);
   }
 
-  .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected="true"]):hover::after,
+  .vp-doc .plugin-tabs .plugin-tabs--tab:not([aria-selected='true']):hover::after,
   .vp-doc .vp-code-group .tabs input:not(:checked) + label:hover::after {
     background-color: var(--tab-border-color);
   }
@@ -336,9 +336,9 @@
 /* The plugin repaints light-mode code blocks in its tabs with the page background, which is grey here. */
 :root:not(.dark)
   .vp-doc
-  .plugin-tabs:not([data-variant="code"])
+  .plugin-tabs:not([data-variant='code'])
   .plugin-tabs--content.plugin-tabs--content
-  div[class*="language-"] {
+  div[class*='language-'] {
   background-color: var(--vp-code-block-bg);
 }
 

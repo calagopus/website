@@ -19,6 +19,7 @@ Install Calagopus Panel directly from the APT, RPM or APK repository, or from th
 This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
 
 Add the PostgreSQL APT repository following [this guide](https://wiki.postgresql.org/wiki/Apt), then install:
+
 ```bash
 sudo apt update
 sudo apt install postgresql-18
@@ -26,6 +27,7 @@ sudo systemctl enable --now postgresql
 ```
 
 Install Valkey:
+
 ```bash
 sudo apt update
 sudo apt install -y valkey
@@ -58,9 +60,11 @@ apt install -y calagopus-panel-aio
 #### Database Configuration
 
 Connect to PostgreSQL and create the user and database:
+
 ```bash
 sudo -u postgres psql
 ```
+
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -71,6 +75,7 @@ exit
 #### Configure Environment Variables
 
 Download the example `.env` file:
+
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -88,6 +93,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
 Set `APP_ENCRYPTION_KEY` to a random value:
+
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
@@ -108,6 +114,7 @@ calagopus-panel service-install
 ```
 
 This creates and enables a systemd service that starts on boot. Check its status with:
+
 ```bash
 systemctl status calagopus-panel
 ```
@@ -123,6 +130,7 @@ The panel is now available at `http://<your-server-ip>:8000` and will show the O
 This guide assumes you have PostgreSQL and Valkey installed.
 
 Add the PostgreSQL RPM repository following [this guide](https://www.postgresql.org/download/linux/redhat/). For example on Fedora 43 (x86_64):
+
 ```bash
 sudo dnf install -y https://download.postgresql.org/pub/repos/yum/reporpms/F-43-x86_64/pgdg-fedora-repo-latest.noarch.rpm
 sudo dnf install -y postgresql18-server
@@ -132,6 +140,7 @@ sudo systemctl start postgresql-18
 ```
 
 Install Valkey:
+
 ```bash
 sudo yum install valkey
 sudo systemctl enable valkey-server
@@ -169,9 +178,11 @@ dnf install calagopus-panel-aio
 #### Database Configuration
 
 Connect to PostgreSQL and create the user and database:
+
 ```bash
 sudo -u postgres psql
 ```
+
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -182,6 +193,7 @@ exit
 #### Configure Environment Variables
 
 Download the example `.env` file:
+
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -199,6 +211,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
 Set `APP_ENCRYPTION_KEY` to a random value:
+
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
@@ -219,6 +232,7 @@ calagopus-panel service-install
 ```
 
 This creates and enables a systemd service that starts on boot. Check its status with:
+
 ```bash
 systemctl status calagopus-panel
 ```
@@ -234,6 +248,7 @@ The panel is now available at `http://<your-server-ip>:8000` and will show the O
 This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
 
 Install PostgreSQL:
+
 ```bash
 apk add postgresql postgresql-contrib
 rc-update add postgresql
@@ -241,6 +256,7 @@ rc-service postgresql start
 ```
 
 Install Valkey:
+
 ```bash
 apk add valkey
 rc-update add valkey
@@ -272,9 +288,11 @@ apk add calagopus-panel-aio
 #### Database Configuration
 
 Connect to PostgreSQL and create the user and database:
+
 ```bash
 su postgres -c psql
 ```
+
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -285,6 +303,7 @@ exit
 #### Configure Environment Variables
 
 Download the example `.env` file:
+
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -302,6 +321,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
 Set `APP_ENCRYPTION_KEY` to a random value:
+
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
@@ -322,6 +342,7 @@ calagopus-panel service-install
 ```
 
 This creates and enables a service that starts on boot. Check its status with:
+
 ```bash
 rc-service calagopus-panel status
 ```
@@ -337,6 +358,7 @@ The panel is now available at `http://<your-server-ip>:8000` and will show the O
 This guide assumes you have PostgreSQL and Valkey installed. You can substitute Redis for Valkey, though Valkey is notably faster.
 
 Install PostgreSQL:
+
 ```bash
 sudo pacman -S postgresql
 sudo -u postgres initdb -D /var/lib/postgres/data
@@ -344,6 +366,7 @@ sudo systemctl enable --now postgresql
 ```
 
 Install Valkey:
+
 ```bash
 sudo pacman -S valkey
 sudo systemctl enable --now valkey
@@ -368,9 +391,11 @@ yay -S calagopus-panel-aio-bin
 #### Database Configuration
 
 Connect to PostgreSQL and create the user and database:
+
 ```bash
 sudo -u postgres psql
 ```
+
 ```sql
 CREATE USER calagopus WITH PASSWORD 'yourPassword';
 CREATE DATABASE panel OWNER calagopus;
@@ -381,6 +406,7 @@ exit
 #### Configure Environment Variables
 
 Download the example `.env` file:
+
 ```bash
 mkdir -p /etc/calagopus
 cd /etc/calagopus
@@ -398,6 +424,7 @@ DATABASE_URL="postgresql://calagopus:yourPassword@localhost:5432/panel"
 `REDIS_URL` defaults to `redis://localhost` and can stay as-is unless Valkey/Redis is on another host.
 
 Set `APP_ENCRYPTION_KEY` to a random value:
+
 ```bash
 RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
 sed -i -e "s/CHANGEME/$RANDOM_STRING/g" .env
@@ -418,6 +445,7 @@ calagopus-panel service-install
 ```
 
 This creates and enables a systemd service that starts on boot. Check its status with:
+
 ```bash
 systemctl status calagopus-panel
 ```

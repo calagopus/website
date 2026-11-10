@@ -18,9 +18,7 @@ export async function loadGitHubStars(): Promise<GitHubStarsData> {
   if (process.env.CALAGOPUS_STARS_OFFLINE) return { repo: REPO, link, stars: null };
 
   const token = process.env.GITHUB_TOKEN;
-  const api = await fetchJson<ApiRepo>(API_URL, `stars for "${REPO}"`, 'CALAGOPUS_STARS_OFFLINE', {
-    ...(token ? { authorization: `Bearer ${token}` } : {}),
-  });
+  const api = await fetchJson<ApiRepo>(API_URL, `stars for "${REPO}"`, 'CALAGOPUS_STARS_OFFLINE', (token ? { authorization: `Bearer ${token}` } : {}));
 
   return { repo: REPO, link, stars: api.stargazers_count };
 }

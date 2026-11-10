@@ -42,11 +42,11 @@ Open `compose.yml` and make two changes to the `web` service.
 
 **Change 1: Update the image tag.** Match your current tag to the heavy equivalent:
 
-| You're on | Switch to |
-| --- | --- |
-| `:latest` | `:heavy` |
-| `:nightly` | `:nightly-heavy` |
-| `:aio` | `:heavy-aio` |
+| You're on      | Switch to            |
+| -------------- | -------------------- |
+| `:latest`      | `:heavy`             |
+| `:nightly`     | `:nightly-heavy`     |
+| `:aio`         | `:heavy-aio`         |
 | `:nightly-aio` | `:nightly-heavy-aio` |
 
 ::: warning AIO operators: stay on the AIO track
