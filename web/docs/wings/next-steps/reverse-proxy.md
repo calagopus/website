@@ -388,19 +388,54 @@ Cloudflare is a poor fit for a node hostname either way: its per-plan request si
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach Wings. Check that it's running with `sudo systemctl status wings` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl). If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in [Step 2](#step-2-configure-the-proxy). |
-| Wings exits on startup with `duplicate mapping key: api` | `config.yml` contains `api:` more than once. Merge the settings from Step 1 into a single block. |
-| The console stays on "connecting" and live statistics never appear | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**. |
-| Uploads, server transfers or file copies to this node fail with `413 Request Entity Too Large` | The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or Nginx Proxy Manager, `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy. |
-| Uploads fail with `417 Expectation Failed` and a message about the file size | That one is Wings, not the proxy: the file is larger than [`api.upload_limit`](../configuration.md#api-upload-limit). Raise it in `config.yml`, or set it to `0` for no limit, and restart Wings. The proxy's body limit does not need to change with it. |
-| Large uploads, downloads or server transfers die partway through, always after about the same time | A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache. On Traefik, set `respondingTimeouts.readTimeout` to `0`, since it counts the whole request rather than the gap between reads. |
-| Downloads fill the proxy's disk with temporary files | Response buffering is on. Set `proxy_buffering off` on Nginx, or add it to **Custom Nginx Configuration** on Nginx Proxy Manager. Caddy and Traefik stream by default. |
-| An upload resumes from `0` every time, or the browser console complains about a missing `Upload-Offset` header | The proxy is dropping the response header Wings exposes for resumable uploads, or answering the `HEAD` and `PATCH` requests itself. Remove any CORS or method restrictions you added; Wings sets `Access-Control-Expose-Headers: Upload-Offset` itself. |
-| Every request fails with a CORS error in the browser console | Either the proxy adds its own `Access-Control-Allow-Origin` next to Wings', which browsers reject, or the Panel URL under **Admin → Settings → Application** no longer matches the address the browser is using. Wings allows exactly the origin the Panel told it about. |
-| Rate limits or connection limits trigger for everyone at once, as if every user shares one budget | `api.trusted_proxies` doesn't contain the address the proxy connects from. Re-check [Step 1](#trust-the-proxy-s-address); the address can change if the compose network was recreated. |
-| "Frontend to Wings" fails while "Backend to Wings" passes | The Panel can reach the node but your browser can't. Usually the node's certificate isn't valid for the hostname, the hostname doesn't resolve publicly, or port 443 is blocked between you and the node. |
-| Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems. |
+::: details 502 Bad Gateway, or the proxy's own error page
+The proxy can't reach Wings. Check that it's running with `sudo systemctl status wings` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8080/api/system` answers on the node. If every request fails immediately, `api.ssl.enabled` is probably still `true` while the proxy forwards plain HTTP; see [Step 1](#turn-off-wings-own-ssl).
+
+If the proxy runs in Docker, make sure both containers are on the same network and the forward target is the service name, not `127.0.0.1`. `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in [Step 2](#step-2-configure-the-proxy).
+:::
+
+::: details Wings exits on startup with `duplicate mapping key: api`
+`config.yml` contains `api:` more than once. Merge the settings from Step 1 into a single block.
+:::
+
+::: details The console stays on "connecting" and live statistics never appear
+WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. On Nginx Proxy Manager, enable **Websockets Support**.
+:::
+
+::: details Uploads, server transfers or file copies to this node fail with `413 Request Entity Too Large`
+The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or Nginx Proxy Manager, `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy.
+:::
+
+::: details Uploads fail with `417 Expectation Failed` and a message about the file size
+That one is Wings, not the proxy: the file is larger than [`api.upload_limit`](../configuration.md#api-upload-limit). Raise it in `config.yml`, or set it to `0` for no limit, and restart Wings. The proxy's body limit does not need to change with it.
+:::
+
+::: details Large uploads, downloads or server transfers die partway through, always after about the same time
+A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache. On Traefik, set `respondingTimeouts.readTimeout` to `0`, since it counts the whole request rather than the gap between reads.
+:::
+
+::: details Downloads fill the proxy's disk with temporary files
+Response buffering is on. Set `proxy_buffering off` on Nginx, or add it to **Custom Nginx Configuration** on Nginx Proxy Manager. Caddy and Traefik stream by default.
+:::
+
+::: details An upload resumes from `0` every time, or the browser console complains about a missing `Upload-Offset` header
+The proxy is dropping the response header Wings exposes for resumable uploads, or answering the `HEAD` and `PATCH` requests itself. Remove any CORS or method restrictions you added; Wings sets `Access-Control-Expose-Headers: Upload-Offset` itself.
+:::
+
+::: details Every request fails with a CORS error in the browser console
+Either the proxy adds its own `Access-Control-Allow-Origin` next to Wings', which browsers reject, or the Panel URL under **Admin → Settings → Application** no longer matches the address the browser is using. Wings allows exactly the origin the Panel told it about.
+:::
+
+::: details Rate limits or connection limits trigger for everyone at once, as if every user shares one budget
+`api.trusted_proxies` doesn't contain the address the proxy connects from. Re-check [Step 1](#trust-the-proxy-s-address); the address can change if the compose network was recreated.
+:::
+
+::: details "Frontend to Wings" fails while "Backend to Wings" passes
+The Panel can reach the node but your browser can't. Usually the node's certificate isn't valid for the hostname, the hostname doesn't resolve publicly, or port 443 is blocked between you and the node.
+:::
+
+::: details Browser shows a certificate warning
+The certificate has expired or was issued for a different name. See [Generating SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems.
+:::
 
 Problems that aren't caused by the proxy, such as the node URL, tokens or clock skew, are collected on the [Troubleshooting](../../additional/troubleshooting.md) page.

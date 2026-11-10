@@ -176,13 +176,34 @@ sudo docker rm -f calagopus-wings-tundra
 
 ## Troubleshooting
 
-| Symptom | What to check |
-| --- | --- |
-| The tab says the node **cannot run the private network** | `tundra.enabled` is still `false`, or Wings was not restarted after changing it. |
-| The tab says the node **has not reported a certificate** | The daemon never enrolled. Read `sudo docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `calagopus/tundra` never gets a binary. |
-| `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log | Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself. |
-| **Peers Connected** stays at zero | The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy. |
-| A peer's `.tunnel` hostname does not resolve inside a server | The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on. |
-| The hostname resolves but every connection is refused | The peer offers no ports, or offers the wrong ones. Ports are opened by the *destination* under **Offered Ports**. |
-| `EADDRINUSE` in the daemon log, or a game server that fails to bind its port | A port collision: the server listens on a port, with the same protocol, that a peer it reaches offers. This can happen even when the panel allowed the connection, if the port is not one of the server's allocations (RCON, query, a plugin's web server). Give one of them a different port. |
-| **Daemon** shows **Disconnected** while the container is running | The daemon's link to Wings dropped, which happens briefly after **Rotate Identity** and after a Wings restart. If it stays down, check that the tunnel data directory is the same path on the host and inside the Wings container, and that it is mounted as a directory. |
+::: details The tab says the node **cannot run the private network**
+`tundra.enabled` is still `false`, or Wings was not restarted after changing it.
+:::
+
+::: details The tab says the node **has not reported a certificate**
+The daemon never enrolled. Read `sudo docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `calagopus/tundra` never gets a binary.
+:::
+
+::: details `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log
+Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself.
+:::
+
+::: details **Peers Connected** stays at zero
+The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy.
+:::
+
+::: details A peer's `.tunnel` hostname does not resolve inside a server
+The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on.
+:::
+
+::: details The hostname resolves but every connection is refused
+The peer offers no ports, or offers the wrong ones. Ports are opened by the *destination* under **Offered Ports**.
+:::
+
+::: details `EADDRINUSE` in the daemon log, or a game server that fails to bind its port
+A port collision: the server listens on a port, with the same protocol, that a peer it reaches offers. This can happen even when the panel allowed the connection, if the port is not one of the server's allocations (RCON, query, a plugin's web server). Give one of them a different port.
+:::
+
+::: details **Daemon** shows **Disconnected** while the container is running
+The daemon's link to Wings dropped, which happens briefly after **Rotate Identity** and after a Wings restart. If it stays down, check that the tunnel data directory is the same path on the host and inside the Wings container, and that it is mounted as a directory.
+:::

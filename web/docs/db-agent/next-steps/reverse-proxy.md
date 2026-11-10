@@ -296,11 +296,28 @@ It sets `api.bind` back to `0.0.0.0:8090`, which undoes Step 1 on a standalone i
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| 502 Bad Gateway, or the proxy's own error page | The proxy can't reach DB Agent. Check that it's running with `sudo systemctl status db-agent` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8090/api/status` answers on the machine. If every request fails immediately, `api.tls.enabled` is probably still `true` while the proxy forwards plain HTTP. `Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in Step 2. |
-| DB Agent exits on startup with `duplicate mapping key: api` | `config.yml` contains `api:` more than once. Merge the settings from Step 1 into a single block. |
-| Instance logs and statistics in the Panel stay empty | WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. If **Verify Connection** passes, check the certificate: the Panel's WebSocket client only trusts public CAs. |
-| A database import fails with `413 Request Entity Too Large` | The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy. |
-| Large imports or exports die partway through, always after about the same time | A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache. |
-| **Verify Connection** fails | The URL still has `:8090` or `http://`, the certificate isn't valid for the hostname, or port `443` is blocked between the Panel and the agent. |
+::: details 502 Bad Gateway, or the proxy's own error page
+The proxy can't reach DB Agent. Check that it's running with `sudo systemctl status db-agent` or `sudo docker compose ps`, and that `curl -I http://127.0.0.1:8090/api/status` answers on the machine. If every request fails immediately, `api.tls.enabled` is probably still `true` while the proxy forwards plain HTTP.
+
+`Permission denied` in the proxy's error log means SELinux is blocking it; see the RHEL tab in Step 2.
+:::
+
+::: details DB Agent exits on startup with `duplicate mapping key: api`
+`config.yml` contains `api:` more than once. Merge the settings from Step 1 into a single block.
+:::
+
+::: details Instance logs and statistics in the Panel stay empty
+WebSocket upgrades aren't getting through. On Nginx, confirm the `map` block exists in `nginx.conf` and both `Upgrade` and `Connection` headers are set. On Apache, check the version note above. If **Verify Connection** passes, check the certificate: the Panel's WebSocket client only trusts public CAs.
+:::
+
+::: details A database import fails with `413 Request Entity Too Large`
+The proxy still has a body limit. Set `client_max_body_size 0` on Nginx or `LimitRequestBody 0` on Apache, and remove any `request_body` block on Caddy.
+:::
+
+::: details Large imports or exports die partway through, always after about the same time
+A proxy timeout. Raise `proxy_read_timeout`, `proxy_send_timeout` and `send_timeout` on Nginx, or `ProxyTimeout` on Apache.
+:::
+
+::: details **Verify Connection** fails
+The URL still has `:8090` or `http://`, the certificate isn't valid for the hostname, or port `443` is blocked between the Panel and the agent.
+:::

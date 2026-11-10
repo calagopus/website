@@ -78,7 +78,10 @@ Then delete `panel.backup`, or store it somewhere safe. It holds everything in y
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| Setup wizard (OOBE) appears after starting | The database was not imported correctly. Run the import block again and check its output for errors. |
-| Login fails, or encrypted data appears corrupted | The `APP_ENCRYPTION_KEY` in `/etc/calagopus/.env` does not match the one from your Docker installation. Stop the panel, correct the key, and start it again. |
+::: details Setup wizard (OOBE) appears after starting
+The database was not imported correctly. Run the import block again and check its output for errors.
+:::
+
+::: details Login fails, or encrypted data appears corrupted
+The `APP_ENCRYPTION_KEY` in `/etc/calagopus/.env` does not match the one from your Docker installation. Stop the panel, correct the key, and start it again.
+:::

@@ -176,10 +176,22 @@ With TLS on a database proxy, clients turn it on in their own connection setting
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| DB Agent exits on startup with `failed to load TLS certificate and key` | The paths in `api.tls` don't exist from DB Agent's point of view. On Docker, the certificate has to be inside `/etc/ssl/certs/db-agent/`; see the Docker tab under [Enable TLS in DB Agent](#enable-tls-in-db-agent). |
-| **Verify Connection** fails after turning on TLS | The host's URL in the Panel still starts with `http://`, the certificate isn't valid for the hostname in the URL, or port `8090` is blocked between the Panel and the agent. |
-| A database client rejects the certificate | The client connects through a name the certificate doesn't cover, usually the **Public Host**. Issue a certificate that includes that name. |
-| DB Agent doesn't pick up the renewed certificate within a day | Restart it manually: `sudo systemctl restart db-agent`, or `sudo docker compose restart db-agent` in the DB Agent compose directory. |
-| Every request through a reverse proxy fails | `api.tls` is still enabled while the proxy forwards plain HTTP. Turn it off as described in the [reverse proxy guide](./reverse-proxy.md#step-1-prepare-db-agent). |
+::: details DB Agent exits on startup with `failed to load TLS certificate and key`
+The paths in `api.tls` don't exist from DB Agent's point of view. On Docker, the certificate has to be inside `/etc/ssl/certs/db-agent/`; see the Docker tab under [Enable TLS in DB Agent](#enable-tls-in-db-agent).
+:::
+
+::: details **Verify Connection** fails after turning on TLS
+The host's URL in the Panel still starts with `http://`, the certificate isn't valid for the hostname in the URL, or port `8090` is blocked between the Panel and the agent.
+:::
+
+::: details A database client rejects the certificate
+The client connects through a name the certificate doesn't cover, usually the **Public Host**. Issue a certificate that includes that name.
+:::
+
+::: details DB Agent doesn't pick up the renewed certificate within a day
+Restart it manually: `sudo systemctl restart db-agent`, or `sudo docker compose restart db-agent` in the DB Agent compose directory.
+:::
+
+::: details Every request through a reverse proxy fails
+`api.tls` is still enabled while the proxy forwards plain HTTP. Turn it off as described in the [reverse proxy guide](./reverse-proxy.md#step-1-prepare-db-agent).
+:::

@@ -147,13 +147,28 @@ In **Admin → Nodes → (your node) → General**, change **URL** to `https://<
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| `failed to load SSL certificate and key ... No such file or directory` | The paths in `api.ssl` don't exist from Wings' point of view. On Docker, the certificate has to be inside `/etc/ssl/certs/wings/`; see the Docker tab under [Enable SSL in Wings](#enable-ssl-in-wings). Alternatively, add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it, so the `live/` symlinks resolve inside the container. |
-| Wings doesn't pick up the renewed certificate within a day | Restart it manually: `sudo systemctl restart wings`, or `sudo docker compose restart wings` in the Wings compose directory. |
-| "Frontend to Wings" fails while "Backend to Wings" passes | The Panel can reach the node but your browser can't. Usually the certificate isn't valid for the hostname in the node's URL, the hostname doesn't resolve publicly, or port `8080` is blocked between you and the node. |
-| The console spins forever, or the browser console shows `Mixed Content` | The node's URL in the Panel still starts with `http://`. Change it as described in [Point the Panel at HTTPS](#point-the-panel-at-https). |
-| Every request through a reverse proxy fails with `502` | `api.ssl` is still enabled while the proxy forwards plain HTTP. Turn it off as described in the [reverse proxy guide](./reverse-proxy.md#turn-off-wings-own-ssl). |
-| Browser shows a certificate warning | The certificate has expired or was issued for a different name. See [SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems. |
+::: details `failed to load SSL certificate and key ... No such file or directory`
+The paths in `api.ssl` don't exist from Wings' point of view. On Docker, the certificate has to be inside `/etc/ssl/certs/wings/`; see the Docker tab under [Enable SSL in Wings](#enable-ssl-in-wings). Alternatively, add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it, so the `live/` symlinks resolve inside the container.
+:::
+
+::: details Wings doesn't pick up the renewed certificate within a day
+Restart it manually: `sudo systemctl restart wings`, or `sudo docker compose restart wings` in the Wings compose directory.
+:::
+
+::: details "Frontend to Wings" fails while "Backend to Wings" passes
+The Panel can reach the node but your browser can't. Usually the certificate isn't valid for the hostname in the node's URL, the hostname doesn't resolve publicly, or port `8080` is blocked between you and the node.
+:::
+
+::: details The console spins forever, or the browser console shows `Mixed Content`
+The node's URL in the Panel still starts with `http://`. Change it as described in [Point the Panel at HTTPS](#point-the-panel-at-https).
+:::
+
+::: details Every request through a reverse proxy fails with `502`
+`api.ssl` is still enabled while the proxy forwards plain HTTP. Turn it off as described in the [reverse proxy guide](./reverse-proxy.md#turn-off-wings-own-ssl).
+:::
+
+::: details Browser shows a certificate warning
+The certificate has expired or was issued for a different name. See [SSL Certificates](../../additional/ssl-certificates.md#troubleshooting) for renewal problems.
+:::
 
 Other node problems, such as tokens or clock skew, are collected on the [Troubleshooting](../../additional/troubleshooting.md) page.

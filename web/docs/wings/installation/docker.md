@@ -103,15 +103,33 @@ A fresh installation waits for pairing and prints its code here; an enrolled or 
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| `failed to load config from /etc/calagopus-wings/config.yml: ... No such file or directory` | On current Wings, a missing config normally starts pairing mode. This error can indicate an older build or `--no-setup`; update Wings or write the file manually as described above. If you changed the compose file to bind-mount the config file itself rather than the `config/` directory, you can also see `Is a directory (os error 21)`, because Docker created a directory at the file's path; delete it and write the real file. |
-| `failed to load SSL certificate and key ... No such file or directory` | The certificate lives on the host but isn't mounted into the container. Copy it into `/etc/ssl/certs/wings/` as described in the Docker tab of [Securing Wings with SSL](../next-steps/ssl.md#enable-ssl-in-wings), or add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it. |
-| The panel can't connect even though Wings logs look fine | Compare three numbers: `api.port` in `config/config.yml`, the container side of the `ports:` mapping in `compose.yml`, and the port in the node URL on the panel. They must agree, or the host port must map to `api.port`. A compose line of `7777:8080` with a node URL ending in `:8080` connects to nothing. |
-| `localhost` doesn't work in `remote:` | Inside the container `localhost` is the container. When the panel runs on the same host, use the host's LAN IP, or `network_mode: host` on the `wings` service. |
-| `system.data_directory '...' is not covered by any mount of the wings container` at startup | A directory from `config/config.yml` isn't inside any volume of the `wings` service. Add a volume for it, see the warning above. `bind source path does not exist` during a server install means the same thing on Wings older than 1.1.0, which didn't translate paths yet; update Wings. |
-| `Permission denied (os error 13)` on the config or data directory | `docker compose up` was run as different users at different times. Run it consistently as one user and fix the ownership of the directory. |
-| A config edit isn't picked up | `sudo docker compose up -d` doesn't restart a container whose definition hasn't changed. Run `sudo docker compose restart wings` after editing `config/config.yml`. |
+::: details `failed to load config from /etc/calagopus-wings/config.yml: ... No such file or directory`
+On current Wings, a missing config normally starts pairing mode. This error can indicate an older build or `--no-setup`; update Wings or write the file manually as described above. If you changed the compose file to bind-mount the config file itself rather than the `config/` directory, you can also see `Is a directory (os error 21)`, because Docker created a directory at the file's path; delete it and write the real file.
+:::
+
+::: details `failed to load SSL certificate and key ... No such file or directory`
+The certificate lives on the host but isn't mounted into the container. Copy it into `/etc/ssl/certs/wings/` as described in the Docker tab of [Securing Wings with SSL](../next-steps/ssl.md#enable-ssl-in-wings), or add `- /etc/letsencrypt:/etc/letsencrypt:ro` under the `wings` service's `volumes:` and recreate it.
+:::
+
+::: details The panel can't connect even though Wings logs look fine
+Compare three numbers: `api.port` in `config/config.yml`, the container side of the `ports:` mapping in `compose.yml`, and the port in the node URL on the panel. They must agree, or the host port must map to `api.port`. A compose line of `7777:8080` with a node URL ending in `:8080` connects to nothing.
+:::
+
+::: details `localhost` doesn't work in `remote:`
+Inside the container `localhost` is the container. When the panel runs on the same host, use the host's LAN IP, or `network_mode: host` on the `wings` service.
+:::
+
+::: details `system.data_directory '...' is not covered by any mount of the wings container` at startup
+A directory from `config/config.yml` isn't inside any volume of the `wings` service. Add a volume for it, see the warning above. `bind source path does not exist` during a server install means the same thing on Wings older than 1.1.0, which didn't translate paths yet; update Wings.
+:::
+
+::: details `Permission denied (os error 13)` on the config or data directory
+`docker compose up` was run as different users at different times. Run it consistently as one user and fix the ownership of the directory.
+:::
+
+::: details A config edit isn't picked up
+`sudo docker compose up -d` doesn't restart a container whose definition hasn't changed. Run `sudo docker compose restart wings` after editing `config/config.yml`.
+:::
 
 Other node problems, such as the panel and the browser reaching Wings on different URLs, are collected on the [Troubleshooting](../../additional/troubleshooting.md#the-panel-can-t-reach-the-node) page.
 

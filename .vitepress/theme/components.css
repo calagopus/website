@@ -82,6 +82,20 @@
   transform: rotate(0deg);
 }
 
+/* Let `::: details` titles wrap as one line of text, so inline code doesn't split them into columns. */
+.vp-doc .custom-block.details > summary {
+  display: block;
+  position: relative;
+  padding-inline-end: calc(14px + 0.75em + 10px);
+}
+
+.vp-doc .custom-block.details > summary::after {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  margin-top: -0.375em;
+}
+
 .m-collapsible-icon {
   display: flex;
   flex-shrink: 0;

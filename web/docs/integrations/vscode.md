@@ -238,12 +238,32 @@ Deep links that include an `apiKey` parameter open an **ephemeral** session: tha
 
 ## Troubleshooting
 
-| Symptom | Fix |
-| --- | --- |
-| The deep link does not open my editor | Your editor may register a URI scheme other than `vscode://`. Click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme (for example, `vscodium://` or `codium://`). ![Files tab settings popover with a VSCode URI Scheme field set to vscode](./images/vscode/uri-scheme-setting.webp) |
-| File search returns no results | Search relies on proposed editor APIs that are not enabled in every build. File **editing** still works without them, only name/content search across server files is affected. |
-| I don't see other people's cursors | Real-time collaboration must be enabled on both ends (it's on by default). Check that `calagopus.collaboration.enabled` is set to `true`, or run **Calagopus: Enable File Collaboration**. Presence and cursors only appear once more than one person has the same file open. |
-| The File History view is empty | The **File History** view only appears when a server is mounted, and it tracks the file that's currently active in the editor, so open a server file to populate it. A file that has never been changed through the panel will not have any revisions yet. |
-| The Command Snippets view is empty | The view only lists snippets that apply to a mounted server, so a snippet scoped to a specific egg is hidden unless a server running that egg is mounted. If you have no snippets yet, create one from the view's `+` button. If the view stays empty despite matching snippets existing in the panel, your API key is likely missing the `command-snippets` permissions; run **Calagopus: Update API Key Permissions**. |
-| A file action fails with a permissions error | Archiving, extracting, changing permissions, and managing snippets each need their own permission on the extension's API key. Keys provisioned by an older version of the extension do not have the newer ones; run **Calagopus: Update API Key Permissions** and approve the updated set in your browser. |
-| "Malformed open link" error | A deep link is missing the required `origin` or `server` parameter. Both must be present, and `origin` must be the full panel base URL (including `https://`). |
+::: details The deep link does not open my editor
+Your editor may register a URI scheme other than `vscode://`. Click the settings icon in the top left of the file manager and change the VS Code URI scheme to match your editor's registered scheme (for example, `vscodium://` or `codium://`). ![Files tab settings popover with a VSCode URI Scheme field set to vscode](./images/vscode/uri-scheme-setting.webp)
+:::
+
+::: details File search returns no results
+Search relies on proposed editor APIs that are not enabled in every build. File **editing** still works without them, only name/content search across server files is affected.
+:::
+
+::: details I don't see other people's cursors
+Real-time collaboration must be enabled on both ends (it's on by default). Check that `calagopus.collaboration.enabled` is set to `true`, or run **Calagopus: Enable File Collaboration**. Presence and cursors only appear once more than one person has the same file open.
+:::
+
+::: details The File History view is empty
+The **File History** view only appears when a server is mounted, and it tracks the file that's currently active in the editor, so open a server file to populate it. A file that has never been changed through the panel will not have any revisions yet.
+:::
+
+::: details The Command Snippets view is empty
+The view only lists snippets that apply to a mounted server, so a snippet scoped to a specific egg is hidden unless a server running that egg is mounted. If you have no snippets yet, create one from the view's `+` button.
+
+If the view stays empty despite matching snippets existing in the panel, your API key is likely missing the `command-snippets` permissions; run **Calagopus: Update API Key Permissions**.
+:::
+
+::: details A file action fails with a permissions error
+Archiving, extracting, changing permissions, and managing snippets each need their own permission on the extension's API key. Keys provisioned by an older version of the extension do not have the newer ones; run **Calagopus: Update API Key Permissions** and approve the updated set in your browser.
+:::
+
+::: details "Malformed open link" error
+A deep link is missing the required `origin` or `server` parameter. Both must be present, and `origin` must be the full panel base URL (including `https://`).
+:::
