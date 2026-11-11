@@ -450,6 +450,36 @@
   outline-offset: -2px;
 }
 
+/* Sliding underline, placed by theme/tabs.ts. */
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator]::after,
+.vp-doc .vp-code-group .tabs[data-indicator]::after {
+  content: '';
+  position: absolute;
+  display: block;
+  z-index: 1;
+  right: auto;
+  bottom: 0;
+  left: var(--indicator-left);
+  width: var(--indicator-width);
+  height: 2px;
+  background-color: var(--mantine-primary-color-filled);
+  transition:
+    left 200ms ease,
+    width 200ms ease;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator] .plugin-tabs--tab[aria-selected='true']::after,
+.vp-doc .vp-code-group .tabs[data-indicator] input:checked + label::after {
+  background-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator]::after,
+  .vp-doc .vp-code-group .tabs[data-indicator]::after {
+    transition: none;
+  }
+}
+
 .vp-doc .vp-code-group .tabs {
   padding: 0;
   box-shadow: inset 0 -2px var(--tab-border-color);

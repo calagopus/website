@@ -13,6 +13,8 @@ import ImageViewer from '../components/ImageViewer.vue';
 import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
 import { setupDetailsToggle } from './details-toggle.ts';
+import { setupPageTransition } from './page-transition.ts';
+import { setupTabIndicator } from './tabs.ts';
 import { registerWebMcpTools } from './webmcp.ts';
 import './colors.css';
 import './mantine.css';
@@ -28,7 +30,7 @@ export default {
       'sidebar-nav-after': () => h(CompareSidebarLinks),
     });
   },
-  enhanceApp({ app }) {
+  enhanceApp({ app, router }) {
     enhanceAppWithTabs(app);
     app.use(createHead());
     app.component('CompareFaq', CompareFaq);
@@ -39,6 +41,8 @@ export default {
       app.provide('toggle-appearance', createAppearanceToggle(app.runWithContext(() => useData().isDark)));
       void registerWebMcpTools();
       setupDetailsToggle();
+      setupTabIndicator();
+      setupPageTransition(router);
     }
   },
 } satisfies Theme;
