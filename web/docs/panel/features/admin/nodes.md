@@ -1,13 +1,13 @@
 ---
 title: Nodes
-description: Create and manage Calagopus nodes, from the connection settings and wings configuration to allocations, backups, mass power actions, and server transfers.
+description: Create and manage Calagopus nodes, from the connection settings and Wings configuration to allocations, backups, mass power actions, and server transfers.
 ---
 
 # Nodes
 
-A node is a machine running wings that hosts servers. This page covers the admin UI surface; for the step-by-step setup of a new node, follow [Configuring a New Node](../../../wings/next-steps/configure-node.md).
+A node is a machine running Wings that hosts servers. This page covers the admin UI surface; for the step-by-step setup of a new node, follow [Configuring a New Node](../../../wings/next-steps/configure-node.md).
 
-The list shows a health indicator, ID, Name, Location, **Servers** (how many servers it hosts), and Created timestamp for each node. The heart is green when the panel can reach wings, yellow and pulsing when a wings update is available, grey when the latest version could not be determined, and broken red when the node is unreachable.
+The list shows a health indicator, ID, Name, Location, **Servers** (how many servers it hosts), and Created timestamp for each node. The heart is green when the panel can reach Wings, yellow and pulsing when a Wings update is available, grey when the latest version could not be determined, and broken red when the node is unreachable.
 
 Next to the name, a badge shows whether the node can still take new servers:
 
@@ -18,7 +18,7 @@ Next to the name, a badge shows whether the node can still take new servers:
 | **No Capacity** (orange)       | Allocated memory or disk has hit the node's limit.     |
 | **Deployment Disabled** (red)  | Deployment is turned off for this node.                |
 
-Hovering the badge shows allocated memory and disk against the node's limits, or "no node limit" where a limit is `0`. A red **Under Maintenance** badge sits alongside it while the node is in maintenance, and an All-in-One node (wings built into the panel container) gets a purple heart after its badges, separate from the health heart in the first column.
+Hovering the badge shows allocated memory and disk against the node's limits, or "no node limit" where a limit is `0`. A red **Under Maintenance** badge sits alongside it while the node is in maintenance, and an All-in-One node (Wings built into the panel container) gets a purple heart after its badges, separate from the health heart in the first column.
 
 ::: info
 The capacity states compare allocated memory (including reserved container overhead) and allocated disk against the node's configured limits, whichever of the two is worse: **Nearly Full** from 90%, **No Capacity** at 100% or over. A limit of `0` is unlimited and never counts toward either.
@@ -52,7 +52,7 @@ Click **Create** in the top right (requires `nodes.create`). If no location exis
 
 | Field          | Description                                                                                                                                                                                                                                                                   |
 | -------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **URL**        | Required. "Used for internal communication with the node.", e.g. `https://node.example.com:8080`. If you leave the port off, a warning explains the panel will connect on the URL's implicit port instead of the wings default `8080`, with a one-click **Add :8080** button. |
+| **URL**        | Required. "Used for internal communication with the node.", e.g. `https://node.example.com:8080`. If you leave the port off, a warning explains the panel will connect on the URL's implicit port instead of the Wings default `8080`, with a one-click **Add :8080** button. |
 | **Public URL** | Optional. "Used for websocket connections and downloads." by users' browsers. When editing, the globe button fills in a `wings-proxy` URL that routes browser traffic through the panel.                                                                                      |
 | **SFTP Host**  | Optional. Custom SFTP hostname shown to users; defaults to the URL's hostname.                                                                                                                                                                                                |
 | **SFTP Port**  | Required, default `2022`.                                                                                                                                                                                                                                                     |
@@ -78,7 +78,7 @@ Two status badges up top: **Deployment Enabled** / **Deployment Disabled** and *
 ![Node Overview tab with node details, system information with an Upgrade button next to the Wings version, allocated memory, disk, and CPU gauges, and the Allocation Breakdown bars](./images/nodes/overview.webp)
 
 - **Node Details**: Location, Internal URL, Public URL, SFTP Address, Backup Configuration (shows **Inherited from Location** when the node has none of its own), Description, and Created.
-- **System Information**: live data from wings - Wings Version (with an **Update Available** badge when outdated, **Latest Version Unknown** when the check failed, and an **Upgrade** button where wings can [upgrade itself](#upgrading-wings)), CPU model and core count, Memory, Servers (online / total), Kernel Version, and Architecture. Shows **Unavailable** when the node can't be reached.
+- **System Information**: live data from Wings: Wings Version (with an **Update Available** badge when outdated, **Latest Version Unknown** when the check failed, and an **Upgrade** button where Wings can [upgrade itself](#upgrading-wings)), CPU model and core count, Memory, Servers (online / total), Kernel Version, and Architecture. Shows **Unavailable** when the node can't be reached.
 - **Allocated Resources**: what servers on this node have been promised, with a **Servers** count. Memory and Disk show allocated / limit gauges with the free remainder (the gauge turns red at 90% and caps at 100% even when over-allocated); a limit of `0` shows **No node limit**. CPU is always uncapped and shows the total allocated percentage as "cores allocated". Reserved container memory overhead is listed separately.
 - **Allocation Breakdown**: a stacked bar each for Memory, Disk and CPU showing which servers take up the allocation, largest first. Up to ten servers get their own colour and link to the server; with more, the top nine do and the rest are grouped as **Other**, suspended servers are striped, and **Memory Overhead** is its own segment. Servers with no limit for a resource are counted below its bar instead. The button next to each bar's total changes what it is measured against: **Configured Limit** (the default for memory and disk; CPU has no limit and defaults to **Allocated Total**), **Live Capacity** (what Wings reports for the machine, 100% per thread for CPU), **Allocated Total**, or a **Custom** value. The choice is saved to your account per node. A bar past its total shows how far it is **Overallocated**.
 
@@ -100,7 +100,7 @@ Where Wings can upgrade itself, the update check asks Wings about its own releas
 
 The same form as [creating a node](#creating-a-node), plus three extra buttons:
 
-- **Reset Token** (requires `nodes.reset-token`): issues a new connection token. The wings config contains this token, so re-apply the configuration afterwards or the node loses contact.
+- **Reset Token** (requires `nodes.reset-token`): issues a new connection token. The Wings config contains this token, so re-apply the configuration afterwards or the node loses contact.
 - **Duplicate**: copies the node's settings under a new name.
 - **Delete**: removes the node after confirmation.
 
@@ -119,18 +119,18 @@ Below that are the manual configuration tools needed to connect Wings to this no
 **Initial Setup** walks through three steps:
 
 1. **Settings**: Panel URL ("The URL wings uses to reach this panel."), API Port ("The port wings listens on."), and SFTP Port. These generate the config below; a warning appears if the node URL's port doesn't match the API port.
-2. **Apply Configuration**: the generated YAML to place into `/etc/calagopus-wings/config.yml`, or a copyable `calagopus-wings configure --join-data <...>` one-liner that does it for you.
+2. **Apply Configuration**: the generated YAML to place into `/etc/calagopus-wings/config.yml`, or a copyable `sudo calagopus-wings configure --join-data <...>` one-liner that does it for you.
 3. **Verify Connection**: checks **Backend to Wings** (panel reaches the node) and **Frontend to Wings** (your browser reaches it; the console, downloads, and uploads depend on this one).
 
 ![Verify Connection step with backend and frontend connection checks to Wings both succeeding](./images/nodes/verify-connection.webp)
 
-**Live Configuration** below edits the full `config.yml` of the running wings instance in a YAML editor. **Save Configuration** (or `Ctrl+S`) pushes it to the node. The editor lists options that cannot be changed from the web UI, and reports changes to those paths as ignored. Edit them on the Wings host instead; this includes `allowed_mounts` and `allowed_devices`. See the [Wings configuration reference](../../../wings/configuration.md) for every option. Leaving the page with unsaved edits in the editor asks you to confirm first. Without `nodes.read-token`, secrets in the config (the token, `remote_headers`, registry passwords, log driver options and restic environment variables) are shown censored. Since Panel 1.2.7 saving leaves censored values as they are on the node instead of overwriting them with the placeholder, and the `node:update-config` activity entry stores them censored.
+**Live Configuration** below edits the full `config.yml` of the running Wings instance in a YAML editor. **Save Configuration** (or `Ctrl+S`) pushes it to the node. The editor lists options that cannot be changed from the web UI, and reports changes to those paths as ignored. Edit them on the Wings host instead; this includes `allowed_mounts` and `allowed_devices`. See the [Wings configuration reference](../../../wings/configuration.md) for every option. Leaving the page with unsaved edits in the editor asks you to confirm first. Without `nodes.read-token`, secrets in the config (the token, `remote_headers`, registry passwords, log driver options and restic environment variables) are shown censored. Since Panel 1.2.7 saving leaves censored values as they are on the node instead of overwriting them with the placeholder, and the `node:update-config` activity entry stores them censored.
 
 ![Live Configuration YAML editor for Wings with a Save Configuration button](./images/nodes/live-configuration.webp)
 
 ## Statistics
 
-Live host metrics streamed from wings: CPU (model and threads), Memory (including how much wings itself uses), Disk, and Network gauges, followed by rolling **Graphs** for CPU Load, Memory Usage, Disk I/O (read/write), and Network Traffic (inbound/outbound).
+Live host metrics streamed from Wings: CPU (model and threads), Memory (including how much Wings itself uses), Disk, and Network gauges, followed by rolling **Graphs** for CPU Load, Memory Usage, Disk I/O (read/write), and Network Traffic (inbound/outbound).
 
 ![Node Statistics tab with CPU, memory, disk, and network gauges above usage graphs](./images/nodes/statistics.webp)
 
@@ -270,7 +270,7 @@ The tunnel daemon has to be turned on for the node first, and it is off by defau
 | Field    | Description                                                                                                                                |
 | -------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Host** | "The hostname or IP other nodes dial this one on. Resolved at connection time." Defaults to the hostname from the node's URL.              |
-| **Port** | "The UDP port the node listens on for other nodes. Must be reachable from them." Default `7100`. It is a UDP port, not the wings API port. |
+| **Port** | "The UDP port the node listens on for other nodes. Must be reachable from them." Default `7100`. It is a UDP port, not the Wings API port. |
 
 **Node State** below reports whether the daemon is **Connected**, the state version it is on, and the certificate fingerprint it enrolled with.
 

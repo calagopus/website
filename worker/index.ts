@@ -1,5 +1,6 @@
 import { withSentry } from '@sentry/cloudflare';
 import { markdownCandidates } from '../.vitepress/lib/markdown-candidates.ts';
+import { movedPageLocation } from '../.vitepress/lib/redirects.ts';
 import { API_PREFIX, apiHandler } from './api/index.ts';
 import { refreshReleases } from './api/releases.ts';
 import { refreshTelemetryStats } from './api/telemetry-stats.ts';
@@ -17,6 +18,9 @@ export default withSentry(sentryOptions, {
     if (url.pathname.startsWith(API_PREFIX)) return apiHandler(request, env, ctx);
 
     if (request.method !== 'GET' && request.method !== 'HEAD') return env.ASSETS.fetch(request);
+
+    const moved = movedPageLocation(url.pathname, url.search);
+    if (moved !== null) return Response.redirect(new URL(moved, url.origin).toString(), 301);
 
     const asset = await imageAsset(env, url.pathname);
     if (asset !== null) return Response.redirect(new URL(asset, url.origin).toString(), 302);

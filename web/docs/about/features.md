@@ -11,18 +11,18 @@ Pterodactyl and Pelican are compared against the current state of their public m
 
 ## Highlights
 
-- **Fast**: Both the node daemon and panel backend are written in Rust, designed to use as few resources as possible while delivering a responsive experience.
-- **Secure**: Security is a first-class concern in the architecture, with hardening built in by default.
-- **Easy to use**: The panel is designed to be approachable without requiring a background in server administration.
+- **Fast**: The panel backend and the node daemon are written in Rust. See the [benchmarks](./benchmarks.md).
+- **Secure**: Game servers run in isolated containers, and Wings keeps file operations inside each server's directory. See [Security](./security.md).
+- **Easy to use**: A first-run wizard sets up the panel, and advanced options stay hidden until you turn on Advanced Mode.
 - **Open Source**: The code is on GitHub and contributions are welcome.
-- **Cross-Platform**: The panel runs on essentially any operating system.
+- **Cross-Platform**: The panel runs on Linux and Windows.
 - **Extensible**: A built-in extension system lets you add custom backend logic, routes, UI elements, and more.
-- **Scalable**: The architecture scales horizontally - add more backend instances, read replicas, and Wings nodes as load grows.
+- **Scalable**: The architecture scales horizontally: add backend instances, read replicas and Wings nodes as load grows.
 - **WebAuthn**: Users can authenticate with passkeys, biometrics, or hardware security keys.
 - **Schedule Tasks**: Automate server management with time- and event-based scheduling.
 - **Subuser Management**: Grant other users scoped access to a server without full admin rights.
 - **File Manager**: Browse, upload, download, and edit server files directly from the panel, including archive and backup browsing.
-- **API**: A comprehensive API covers everything the panel UI does. See the [API Reference](https://demo.calagopus.com/api) for details.
+- **API**: Everything the panel UI does is available through the API. See the [API Reference](https://demo.calagopus.com/api) for details.
 
 ## Core & Extensibility
 

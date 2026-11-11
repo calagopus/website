@@ -51,7 +51,7 @@ Copy the Redirect URL provided by the panel and proceed to the next step.
 
 #### Select or create a Google Cloud project
 
-Go to [Google Cloud console](http://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
+Go to [Google Cloud console](https://console.cloud.google.com), for example, by clicking Console on [Google Cloud landing page](https://cloud.google.com/).
 ![Google Cloud landing page with the Console link highlighted in the top navigation](./files/images/google/image-1.webp)
 
 Once there, select a project that you want to use for the Google OAuth app.
@@ -138,9 +138,18 @@ If everything works correctly, you should now be able to see your Google account
 
 ### Troubleshooting
 
-| Symptom                                                                                      | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| -------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Error: "Redirect URI Mismatch" or "Invalid Redirect URI"                                     | The redirect URL in Google Cloud doesn't match the one provided by Calagopus Panel. Go back to your Calagopus Panel OAuth provider configuration page and copy the exact Redirect URL shown, then go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → Credentials, click your OAuth 2.0 Client ID, and under "Authorized redirect URIs" make sure the URL matches exactly (including `https://`, trailing slashes, etc.) before clicking **Save**. |
-| Error: "Invalid Client" or "Unauthorized Client"                                             | The Client ID or Client Secret is incorrect. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → Credentials, click your OAuth 2.0 Client ID, copy your Client ID, create a new Client Secret by clicking **Add Secret** under "Client secrets", then update both values in your Calagopus Panel OAuth provider configuration and save.                                                                                                            |
-| Error: "Access Blocked: Authorization Error" with a message about the app not being verified | Your Google OAuth app is in testing mode or not published. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → OAuth consent screen, go to the **Audience** tab, click **Publish App**, and confirm the publishing action.                                                                                                                                                                                                                         |
-| Error: "Invalid Domain" or other domain-related errors                                       | Your panel's domain is not added to the authorized domains list. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → OAuth consent screen, go to the **Branding** tab, scroll to "Authorized domains", add your top-level domain (e.g. `example.com` if your panel is at `panel.example.com`), and click **Save**.                                                                                                                                 |
+::: details Error: "Redirect URI Mismatch" or "Invalid Redirect URI" {open}
+The redirect URL in Google Cloud doesn't match the one provided by Calagopus Panel. Go back to your Calagopus Panel OAuth provider configuration page and copy the exact Redirect URL shown, then go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → Credentials, click your OAuth 2.0 Client ID, and under "Authorized redirect URIs" make sure the URL matches exactly (including `https://`, trailing slashes, etc.) before clicking **Save**.
+:::
+
+::: details Error: "Invalid Client" or "Unauthorized Client" {open}
+The Client ID or Client Secret is incorrect. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → Credentials, click your OAuth 2.0 Client ID, copy your Client ID, create a new Client Secret by clicking **Add Secret** under "Client secrets", then update both values in your Calagopus Panel OAuth provider configuration and save.
+:::
+
+::: details Error: "Access Blocked: Authorization Error" with a message about the app not being verified {open}
+Your Google OAuth app is in testing mode or not published. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → OAuth consent screen, go to the **Audience** tab, click **Publish App**, and confirm the publishing action.
+:::
+
+::: details Error: "Invalid Domain" or other domain-related errors {open}
+Your panel's domain is not added to the authorized domains list. Go to the [Google Cloud Console](https://console.cloud.google.com), navigate to APIs & Services → OAuth consent screen, go to the **Branding** tab, scroll to "Authorized domains", add your top-level domain (e.g. `example.com` if your panel is at `panel.example.com`), and click **Save**.
+:::

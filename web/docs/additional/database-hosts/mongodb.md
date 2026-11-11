@@ -12,21 +12,23 @@ The panel connects using a connection string and a privileged account to provisi
 :::
 
 ::: warning
-MongoDB starts **without authentication enabled** by default. This guide walks you through creating a superuser first and then enabling authentication - do not skip this step.
+MongoDB starts **without authentication enabled** by default. This guide creates a superuser first and then enables authentication. Don't skip this step.
 :::
 
 ## Installation
 
-::::tabs
+Pick how you want to run it:
+
+::::tabs key:dbhost
 === Docker Compose
 
 Create a directory for the service and enter it:
 
 ```bash
-mkdir mongodb && cd mongodb
+sudo mkdir mongodb && cd mongodb
 ```
 
-Create a `compose.yaml` with the following content. Authentication is intentionally disabled at first so you can create the initial superuser:
+Create a `compose.yaml` with `sudo nano compose.yaml` and the following content. Authentication is intentionally disabled at first so you can create the initial superuser:
 
 ```yaml
 services:
@@ -39,54 +41,17 @@ services:
       - '0.0.0.0:27017:27017'
 ```
 
-Start the service:
+Start the service and open a `mongosh` shell inside the container:
 
 ```bash
-docker compose up -d
+sudo docker compose up -d
+sudo docker compose exec mongodb mongosh
 ```
 
-Open a `mongosh` shell inside the container:
-
-```bash
-docker compose exec mongodb mongosh
-```
-
-=== APT (Debian / Ubuntu)
-
-Follow the [official MongoDB installation guide for Debian/Ubuntu](https://www.mongodb.com/docs/manual/administration/install-community/?linux-distribution=ubuntu&linux-package=default&operating-system=linux&search-linux=with-search-linux) to add the MongoDB repository and install the package, then enable and start the service:
-
-```bash
-sudo systemctl enable --now mongod
-```
-
-Connect with `mongosh`:
-
-```bash
-mongosh
-```
-
-=== RPM (RHEL / Fedora / Rocky / Alma)
-
-Follow the [official MongoDB installation guide for RHEL/Fedora](https://www.mongodb.com/docs/manual/administration/install-community/?linux-distribution=red-hat&linux-package=default&operating-system=linux&search-linux=with-search-linux) to add the MongoDB repository and install the package, then enable and start the service:
-
-```bash
-sudo systemctl enable --now mongod
-```
-
-Connect with `mongosh`:
-
-```bash
-mongosh
-```
-
-::::
-
-## Creating the Superuser
-
-Before enabling authentication, you must create an admin account. Inside the `mongosh` shell:
+### Create the Superuser
 
 ::: danger
-This account can connect from **any IP address**. Use a long, randomly generated password - a weak password on an exposed port is a critical security risk.
+This account can connect from **any IP address**. Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
 :::
 
 ```js
@@ -109,14 +74,9 @@ Exit the shell:
 exit;
 ```
 
-## Enabling Authentication
+### Enable Authentication
 
-With the superuser created, restart MongoDB with authentication enforced.
-
-::::tabs
-=== Docker Compose
-
-Update your `compose.yaml` to pass the `--auth` flag:
+Update your `compose.yaml` to pass the `--auth` flag. The `ports` entry already handles exposure, so this is the only change you need:
 
 ```yaml
 services:
@@ -130,55 +90,120 @@ services:
       - '0.0.0.0:27017:27017'
 ```
 
-Restart the service:
+Restart the service and verify that authentication is working:
 
 ```bash
-docker compose up -d
+sudo docker compose up -d
+sudo docker compose exec mongodb mongosh --username calagopus --password --authenticationDatabase admin
 ```
 
-=== APT / RPM
+=== APT (Debian / Ubuntu)
 
-Edit `/etc/mongod.conf` and update the security section:
+Follow the [official MongoDB installation guide for Debian/Ubuntu](https://www.mongodb.com/docs/manual/administration/install-community/?linux-distribution=ubuntu&linux-package=default&operating-system=linux&search-linux=with-search-linux) to add the MongoDB repository and install the package, then enable and start the service and connect with `mongosh`:
+
+```bash
+sudo systemctl enable --now mongod
+mongosh
+```
+
+### Create the Superuser
+
+::: danger
+This account can connect from **any IP address**. Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
+:::
+
+```js
+use admin
+
+db.createUser({
+  user: "calagopus",
+  pwd: "<strong-password>",
+  roles: [
+    { role: "userAdminAnyDatabase", db: "admin" },
+    { role: "dbAdminAnyDatabase", db: "admin" },
+    { role: "readWriteAnyDatabase", db: "admin" }
+  ]
+})
+```
+
+Exit the shell:
+
+```js
+exit;
+```
+
+### Enable Authentication and Remote Access
+
+By default, MongoDB only listens on `127.0.0.1`. To enforce authentication and accept connections from the panel and Wings nodes, edit `/etc/mongod.conf`:
 
 ```yaml
 security:
   authorization: enabled
-```
-
-Restart MongoDB:
-
-```bash
-sudo systemctl restart mongod
-```
-
-::::
-
-Verify that authentication is working:
-
-```bash
-mongosh --username calagopus --password --authenticationDatabase admin
-```
-
-## Configuring Remote Access
-
-By default, MongoDB only listens on `127.0.0.1`. To accept connections from the panel and Wings nodes, update the bind address.
-
-::: info
-If you used Docker Compose, the `ports` entry already handles exposure - skip this section.
-:::
-
-Edit `/etc/mongod.conf`:
-
-```yaml
 net:
   bindIp: 0.0.0.0
 ```
 
-Restart MongoDB:
+Restart MongoDB and verify that authentication is working:
 
 ```bash
 sudo systemctl restart mongod
+mongosh --username calagopus --password --authenticationDatabase admin
 ```
+
+=== RPM (RHEL / Fedora / Rocky / Alma)
+
+Follow the [official MongoDB installation guide for RHEL/Fedora](https://www.mongodb.com/docs/manual/administration/install-community/?linux-distribution=red-hat&linux-package=default&operating-system=linux&search-linux=with-search-linux) to add the MongoDB repository and install the package, then enable and start the service and connect with `mongosh`:
+
+```bash
+sudo systemctl enable --now mongod
+mongosh
+```
+
+### Create the Superuser
+
+::: danger
+This account can connect from **any IP address**. Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
+:::
+
+```js
+use admin
+
+db.createUser({
+  user: "calagopus",
+  pwd: "<strong-password>",
+  roles: [
+    { role: "userAdminAnyDatabase", db: "admin" },
+    { role: "dbAdminAnyDatabase", db: "admin" },
+    { role: "readWriteAnyDatabase", db: "admin" }
+  ]
+})
+```
+
+Exit the shell:
+
+```js
+exit;
+```
+
+### Enable Authentication and Remote Access
+
+By default, MongoDB only listens on `127.0.0.1`. To enforce authentication and accept connections from the panel and Wings nodes, edit `/etc/mongod.conf`:
+
+```yaml
+security:
+  authorization: enabled
+net:
+  bindIp: 0.0.0.0
+```
+
+Restart MongoDB and verify that authentication is working:
+
+```bash
+sudo systemctl restart mongod
+mongosh --username calagopus --password --authenticationDatabase admin
+```
+
+::::
 
 ## Adding the Host to the Panel
 

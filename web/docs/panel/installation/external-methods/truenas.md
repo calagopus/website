@@ -1,6 +1,6 @@
 ---
 title: TrueNAS SCALE Panel Installation
-description: How to install Calagopus on TrueNAS SCALE using the built-in Apps system. Calagopus is available in the Community train and includes both the Panel and Wings in a single app.
+description: Install Calagopus on TrueNAS SCALE with the built-in Apps system. It's in the Community train and includes the Panel and Wings in a single app.
 ---
 
 # TrueNAS SCALE Panel Installation

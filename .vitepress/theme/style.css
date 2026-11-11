@@ -145,6 +145,61 @@ body * {
   border-color: var(--mantine-primary-color-filled);
 }
 
+.VPLocalSearchBox > .backdrop {
+  animation: search-fade-in 200ms ease;
+}
+
+.VPLocalSearchBox > .shell {
+  animation: search-in 200ms ease;
+}
+
+.VPLocalSearchBox.closing {
+  pointer-events: none;
+}
+
+.VPLocalSearchBox.closing > .backdrop {
+  animation: search-fade-out 200ms ease forwards;
+}
+
+.VPLocalSearchBox.closing > .shell {
+  animation: search-out 200ms ease forwards;
+}
+
+@keyframes search-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes search-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes search-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@keyframes search-out {
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .VPLocalSearchBox > .backdrop,
+  .VPLocalSearchBox > .shell,
+  .VPLocalSearchBox.closing > .backdrop,
+  .VPLocalSearchBox.closing > .shell {
+    animation: none;
+  }
+}
+
 .label .nodeLabel {
   color: #37373b !important;
 }

@@ -46,7 +46,7 @@ Everything an extension owns lives under `backend-extensions/<package_identifier
 
 ### package.json
 
-Add dependencies for your frontend extension code to this `package.json`, or leave it as-is - the required extension code and all dependencies of the base panel are already available.
+Add dependencies for your frontend extension code to this `package.json`, or leave it as it is; the required extension code and all dependencies of the base panel are already available.
 
 ```json
 {
@@ -161,7 +161,7 @@ license_text = "..." # optional licence text shown to the operator
 `extensions init` fills `panel_version` with the version of the Panel you generated the extension on, so a fresh extension declares `>=<current version>` rather than `>=1.1.0`.
 
 ::: warning
-`panel_version` is checked when the extension is installed, by `panel-rs extensions add`, `panel-rs extensions update` and the admin upload, and again by the heavy image on every rebuild, since a rebuild re-adds every archive. The requirement must rule out panel versions older than `1.1.0` - a requirement like `>=1.0.0` (which would _admit_ pre-1.1.0 panels) is declined outright - and it has to match the panel version doing the install. On the heavy image that means an extension pinned below the version you just pulled fails the whole rebuild, with the failure reason naming it, and the Panel keeps running the previous binary until you remove or update that extension. Heavy images before 1.2.3 skipped the compatibility half of the check and only enforced the `1.1.0` floor.
+`panel_version` is checked when the extension is installed, by `panel-rs extensions add`, `panel-rs extensions update` and the admin upload, and again by the heavy image on every rebuild, since a rebuild re-adds every archive. The requirement must rule out panel versions older than `1.1.0` (a requirement like `>=1.0.0`, which would _admit_ pre-1.1.0 panels, is rejected outright), and it has to match the panel version doing the install. On the heavy image that means an extension pinned below the version you just pulled fails the whole rebuild, with the failure reason naming it, and the Panel keeps running the previous binary until you remove or update that extension. Heavy images before 1.2.3 skipped the compatibility half of the check and only enforced the `1.1.0` floor.
 :::
 
 ### src/lib.rs
@@ -194,7 +194,7 @@ backend-extensions/
 ```
 
 ::: info
-Auto-generate the migration files by running `panel-rs database-migrator create <package_name>` with the dotted package name - it prompts for a snake_case migration name and creates the directory with the correct timestamp and both files for you to fill in. It writes through the `database/extension-migrations/<identifier>` compatibility symlink, which points at the `migrations/` directory above.
+Auto-generate the migration files by running `panel-rs database-migrator create <package_name>` with the dotted package name. It prompts for a snake_case migration name and creates the directory with the correct timestamp and both files for you to fill in. It writes through the `database/extension-migrations/<identifier>` compatibility symlink, which points at the `migrations/` directory above.
 :::
 
 ### up.sql

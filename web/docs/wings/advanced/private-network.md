@@ -1,6 +1,6 @@
 ---
 title: The Private Network
-description: Set up the private network between Wings nodes, so servers reach each other over an encrypted node-to-node tunnel instead of the public internet, whatever way Wings is installed.
+description: Set up the private network between Wings nodes, so servers reach each other over an encrypted node-to-node tunnel instead of the public internet.
 ---
 
 # The Private Network
@@ -60,7 +60,7 @@ The daemon's state goes under `/var/lib/calagopus-wings/tundra`, next to the ser
 The configuration is `config/config.yml` next to your `compose.yml`.
 
 ```bash
-docker compose restart wings
+sudo docker compose restart wings
 ```
 
 Wings is itself in a container here, but the daemon is still started on the host's container engine through the mounted Docker socket, exactly as with a package install. The one thing to keep right is paths: Wings tells the engine to mount the daemon's data directory and the vmounts directory by the paths it sees _inside its own container_, so those paths must be mounted at the same location on both sides. The shipped `compose.yml` mounts `/var/lib/calagopus-wings/` to the same path, which covers both, so nothing extra is needed.
@@ -122,7 +122,7 @@ Repeat for every node that should take part. A node that is not on the network c
 
 From here on, the work moves to the users of the servers. Each server joins from its own **Network → Connections** tab (unless an [egg configuration](../../panel/features/admin/egg-configurations.md#feature-configuration) switches the private network off for it), which gives it a hostname (`<name>.tunnel`) and a private address. It then lists the ports it offers, and picks which other servers may reach it and which it may reach. The [Connections](../../panel/features/server/network/connections.md) page walks through all of it.
 
-Two things are worth knowing on the operator side:
+On the operator side:
 
 - **Servers that were already running** when you enabled the daemon need a restart before they can resolve `.tunnel` hostnames. Wings mounts a managed `/etc/hosts` into each server container when the daemon is enabled, and that mount is only added when the container is created.
 - **Port planning matters.** A destination's private address is bound _inside the source server's container_ on the destination's port. A game server listening on all addresses (`0.0.0.0` or `[::]`, which is how nearly all of them bind) already holds that port for every address in its container, so it cannot reach a peer on a port it listens on itself with the same protocol. Two Minecraft servers both on `25565` cannot be connected to each other on that port. TCP and UDP are separate, so a server listening on UDP `25565` can still reach a peer's TCP `25565`. The panel refuses connections and offered ports that clash with a server's allocations, but it only looks at the port number, and it does not see listeners that have no allocation, such as an RCON or query port. Distinct ports across servers you intend to connect saves the trouble. How many connections and offered ports a server may have is set under [Settings > Server](../../panel/features/admin/settings.md#server).
@@ -136,8 +136,8 @@ Traffic over a private connection does not pass through the destination server's
 On the node, the daemon shows up as a normal container:
 
 ```bash
-docker ps --filter name=calagopus-wings-tundra
-docker logs --tail 50 calagopus-wings-tundra
+sudo docker ps --filter name=calagopus-wings-tundra
+sudo docker logs --tail 50 calagopus-wings-tundra
 ```
 
 Its logs show, in order: a generated key pair, a certificate issued, the control link to Wings coming up and the first state snapshot applied. Once the panel has other nodes on the network, peer connections follow.
@@ -154,8 +154,8 @@ curl -s localhost:7101/metrics.json | jq '.peers[] | {name, rtt: .path.rtt_ms, d
 Inside a server that has been granted a connection, the peer's hostname resolves and its ports are bound on a loopback address:
 
 ```bash
-docker exec <server container> cat /etc/hosts
-docker exec <server container> ss -lntu
+sudo docker exec <server container> cat /etc/hosts
+sudo docker exec <server container> ss -lntu
 ```
 
 The hosts file has a `# tundra begin` block with a `127.0.x.y <name>.tunnel` line for each reachable peer, plus one for its `<alias>.tunnel` name, and the listening sockets include that address on each port the peer offers. A peer that is missing from both has not granted this server a connection in that direction.
@@ -169,20 +169,41 @@ The hosts file has a `# tundra begin` block with a `127.0.x.y <name>.tunnel` lin
 **Taking a node off.** **Disable** on the tab removes the node from the network; every connection to and from its servers is dropped and those servers lose their private addresses. Do that first. To stop running the daemon on the node as well, set `tundra.enabled: false`, restart Wings, and remove the container by hand, because Wings only manages it while the daemon is enabled:
 
 ```bash
-docker rm -f calagopus-wings-tundra
+sudo docker rm -f calagopus-wings-tundra
 ```
 
 **When the panel is unreachable**, established tunnels keep carrying traffic; the panel is not in the data path. What stops is change: nodes cannot dial a new peer, and connection or port changes made in the panel do not reach them, until it is back. Wings holds the daemon's control link open for three minutes after its last successful panel contact and then drops it, and the daemon reconnects on its own once Wings can reach the panel again.
 
 ## Troubleshooting
 
-| Symptom                                                                                                        | What to check                                                                                                                                                                                                                                                                                  |
-| -------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| The tab says the node **cannot run the private network**                                                       | `tundra.enabled` is still `false`, or Wings was not restarted after changing it.                                                                                                                                                                                                               |
-| The tab says the node **has not reported a certificate**                                                       | The daemon never enrolled. Read `docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `calagopus/tundra` never gets a binary.                                                                                                                 |
-| `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log | Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself.                                                                                                                                                                                 |
-| **Peers Connected** stays at zero                                                                              | The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy.                                                                        |
-| A peer's `.tunnel` hostname does not resolve inside a server                                                   | The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on.                                                                                                |
-| The hostname resolves but every connection is refused                                                          | The peer offers no ports, or offers the wrong ones. Ports are opened by the _destination_ under **Offered Ports**.                                                                                                                                                                             |
-| `EADDRINUSE` in the daemon log, or a game server that fails to bind its port                                   | A port collision: the server listens on a port, with the same protocol, that a peer it reaches offers. This can happen even when the panel allowed the connection, if the port is not one of the server's allocations (RCON, query, a plugin's web server). Give one of them a different port. |
-| **Daemon** shows **Disconnected** while the container is running                                               | The daemon's link to Wings dropped, which happens briefly after **Rotate Identity** and after a Wings restart. If it stays down, check that the tunnel data directory is the same path on the host and inside the Wings container, and that it is mounted as a directory.                      |
+::: details The tab says the node **cannot run the private network** {open}
+`tundra.enabled` is still `false`, or Wings was not restarted after changing it.
+:::
+
+::: details The tab says the node **has not reported a certificate** {open}
+The daemon never enrolled. Read `sudo docker logs calagopus-wings-tundra`, and the Wings log for image pull errors; a node that cannot pull `calagopus/tundra` never gets a binary.
+:::
+
+::: details `container name calagopus-wings-tundra is taken by a container that was not created by wings` in the Wings log {open}
+Something else created a container by that name. Remove it; Wings only replaces containers it labelled itself.
+:::
+
+::: details **Peers Connected** stays at zero {open}
+The UDP tunnel port is blocked in one direction or both, or the **Host** in the panel does not reach the node directly. Check both firewalls, and that the host resolves to the node's own address rather than a proxy.
+:::
+
+::: details A peer's `.tunnel` hostname does not resolve inside a server {open}
+The server was started before the daemon was enabled, so restart it. Otherwise no connection has been granted in that direction; both edges being drawn on the graph does not mean both are on.
+:::
+
+::: details The hostname resolves but every connection is refused {open}
+The peer offers no ports, or offers the wrong ones. Ports are opened by the _destination_ under **Offered Ports**.
+:::
+
+::: details `EADDRINUSE` in the daemon log, or a game server that fails to bind its port {open}
+A port collision: the server listens on a port, with the same protocol, that a peer it reaches offers. This can happen even when the panel allowed the connection, if the port is not one of the server's allocations (RCON, query, a plugin's web server). Give one of them a different port.
+:::
+
+::: details **Daemon** shows **Disconnected** while the container is running {open}
+The daemon's link to Wings dropped, which happens briefly after **Rotate Identity** and after a Wings restart. If it stays down, check that the tunnel data directory is the same path on the host and inside the Wings container, and that it is mounted as a directory.
+:::

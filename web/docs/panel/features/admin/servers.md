@@ -1,5 +1,5 @@
 ---
-title: Servers
+title: Admin Servers
 description: Create servers, look them up, and manage every server on the panel from the admin area, including transfers, suspension, and deletion.
 ---
 
@@ -193,7 +193,7 @@ Two tables. **Classic Databases** lists databases on [database hosts](../../../a
 
 ### Logs
 
-Fetch the server's recent **Console** or **Install** logs: pick the **Log Type**, how many **Lines** (default 1000), and hit **Load Logs**. Output opens in a read-only viewer with ANSI colors stripped. Handy for diagnosing a failed install without leaving the admin area.
+Fetch the server's recent **Console** or **Install** logs: pick the **Log Type**, how many **Lines** (default 1000), and hit **Load Logs**. Output opens in a read-only viewer with ANSI colors stripped. Use it to diagnose a failed install from the admin area.
 
 ![Server Logs tab with the Log Type dropdown open showing Console and Install, above install output](./images/servers/logs.webp)
 

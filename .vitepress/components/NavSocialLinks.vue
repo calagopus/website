@@ -1,12 +1,23 @@
 <script setup lang="ts">
-import { useData } from 'vitepress';
+import { useData, useIcon } from 'vitepress';
 import VPSocialLink from 'vitepress/dist/client/theme-default/components/VPSocialLink.vue';
-import { computed } from 'vue';
+import { useNavOverflow } from 'vitepress/dist/client/theme-default/composables/nav-overflow.js';
+import { type ComponentPublicInstance, computed } from 'vue';
 import { data as guild } from '../data/discord-guild.data.mts';
 import { data as github } from '../data/github-stars.data.mts';
 import { formatCount } from '../lib/format.ts';
 
+const props = defineProps<{ screen?: boolean }>();
+
 const { theme } = useData();
+const overflow = props.screen ? null : useNavOverflow();
+const isCollapsed = computed(() => !!overflow && !overflow.state.socialLinks);
+const setClusterEl = (el: Element | ComponentPublicInstance | null) =>
+  overflow?.setClusterEl('socialLinks', el instanceof HTMLElement ? el : null);
+
+for (const { icon } of theme.value.socialLinks ?? []) {
+  if (typeof icon === 'string') useIcon(icon.includes(':') ? icon : `simple-icons:${icon}`);
+}
 
 const links = computed(() => theme.value.socialLinks ?? []);
 const stars = computed(() => (github.stars === null ? null : formatCount(github.stars)));
@@ -20,7 +31,12 @@ const membersLabel = computed(() =>
 </script>
 
 <template>
-  <ul v-if="links.length" class="VPNavBarSocialLinks">
+  <ul
+    v-if="links.length"
+    :ref="setClusterEl"
+    class="VPNavSocialLinks"
+    :class="[screen ? 'VPNavScreenSocialLinks' : 'VPNavBarSocialLinks', { collapsed: isCollapsed }]"
+  >
     <li v-for="link in links" :key="link.link" class="item">
       <a
         v-if="link.icon === 'github'"
@@ -60,11 +76,16 @@ const membersLabel = computed(() =>
 </template>
 
 <style scoped>
+.VPNavSocialLinks {
+  display: flex;
+  justify-content: center;
+}
+
 .VPNavBarSocialLinks {
   display: none;
 }
 
-@media (min-width: 1280px) {
+@media (min-width: 48rem) {
   .VPNavBarSocialLinks {
     display: flex;
     align-items: center;
@@ -75,8 +96,8 @@ const membersLabel = computed(() =>
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 36px;
-  height: 36px;
+  width: 2.25rem;
+  height: 2.25rem;
   color: var(--vp-c-text-2);
   transition: color 0.5s;
 }

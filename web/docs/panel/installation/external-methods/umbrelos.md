@@ -1,6 +1,6 @@
 ---
 title: umbrelOS Panel Installation
-description: How to install Calagopus on umbrelOS from the Calagopus Community App Store. Choose between a panel-only app, an All-in-One app with Wings included, or a Heavy AIO app for backend extensions.
+description: Install Calagopus on umbrelOS from the Calagopus Community App Store, as a panel-only app, an All-in-One app with Wings, or a Heavy AIO app for backend extensions.
 ---
 
 # umbrelOS Panel Installation

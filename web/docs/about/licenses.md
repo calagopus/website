@@ -1,6 +1,6 @@
 ---
 title: Licenses
-description: License information for every Calagopus repository, including the non-MIT and currently unlicensed ones, plus the vendored third-party components that affect redistribution.
+description: License information for every Calagopus repository, including the non-MIT and unlicensed ones, plus vendored third-party components that affect redistribution.
 ---
 
 # Licenses
@@ -48,7 +48,7 @@ doubt, read the `LICENSE` file in the repository itself.
 
 ### Container images
 
-These repositories contain only packaging - a `Dockerfile` and a build workflow.
+These repositories contain only packaging: a `Dockerfile` and a build workflow.
 The license shown covers that packaging; the software inside the published
 images remains under its own upstream license.
 
@@ -79,8 +79,8 @@ wrapper in the Wings repository itself.
 
 Wings also contains a `pbs-client` crate used for
 [Proxmox Backup Server backups](../wings/advanced/backup-configurations.md). It
-is a first-party implementation of the PBS wire protocol - no Proxmox source is
-vendored - and is covered by the Wings MIT license, not by Proxmox's AGPL.
+is a first-party implementation of the PBS wire protocol (no Proxmox source is
+vendored) and is covered by the Wings MIT license, not by Proxmox's AGPL.
 
 ## Full dependency licenses
 

@@ -15,6 +15,7 @@
     ".vitepress/data/**/*.mts",
     ".vitepress/plugins/**/*.ts",
     ".vitepress/lib/**/*.ts",
+    ".vitepress/theme/anchors.ts",
     ".vitepress/theme/webmcp.ts"
   ]
 }

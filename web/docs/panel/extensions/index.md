@@ -1,10 +1,11 @@
 ---
+title: Panel Extensions
 description: 'Extend the Calagopus panel with native Rust extensions: installing, developing, and publishing extensions plus core concept guides.'
 ---
 
 # Extensions
 
-Extensions are the primary way to extend the functionality of the Panel. They allow you to add backend logic, frontend interfaces, database migrations, and deep system integrations in a structured and controlled way.
+Extensions add backend logic, frontend UI and database migrations to the Panel, and can hook into most of its systems.
 
 For a high-level architectural breakdown of how extensions work within the system, see the [Technical Overview section](../overview.md#technical-overview).
 
@@ -22,7 +23,7 @@ If you are new to extensions, start here:
 
 ## Concepts
 
-Extensions are built around several core systems:
+Guides for each part of the extension API:
 
 - [Theming](./concepts/theming.md) - Customize the look and feel of the Panel interface
 - [File Overrides](./concepts/file-overrides.md) - Replace a whole Panel frontend file with your own at build time
@@ -50,7 +51,7 @@ Extensions are built around several core systems:
 
 ## Installation Methods
 
-Extensions can be installed in multiple ways depending on your setup:
+Extensions can be installed in three ways:
 
 - Docker-based installation (requires `:heavy` or `:nightly-heavy` image)
 - Development environment installation
@@ -60,12 +61,10 @@ See [Installing Extensions](./installing-extensions.md) for full instructions.
 
 ## Structure Overview
 
-Extensions follow a standardized multi-part structure consisting of:
+An extension has up to three parts:
 
 - Frontend (React-based UI layer)
 - Backend (Rust-based logic layer)
 - Database migrations (optional)
-
-This structure defines how extensions are loaded, initialized, and integrated into the Panel.
 
 For a complete breakdown of directories, required files, package naming, and extension entrypoints, see [Extension File Structure](./file-structure.md).

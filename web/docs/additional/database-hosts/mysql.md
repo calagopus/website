@@ -13,16 +13,18 @@ The panel connects to this host using a privileged account to provision database
 
 ## Installation
 
-::::tabs
+Pick how you want to run it:
+
+::::tabs key:dbhost
 === Docker Compose
 
 Create a directory for the service and enter it:
 
 ```bash
-mkdir mariadb && cd mariadb
+sudo mkdir mariadb && cd mariadb
 ```
 
-Create a `compose.yaml` with the following content:
+Create a `compose.yaml` with `sudo nano compose.yaml` and the following content:
 
 ```yaml
 services:
@@ -37,16 +39,11 @@ services:
       - '0.0.0.0:3306:3306'
 ```
 
-Start the service:
+Start the service, then open a shell inside the container to continue with user setup. The `ports` entry already accepts connections from the panel and Wings nodes.
 
 ```bash
-docker compose up -d
-```
-
-Then open a shell inside the container to continue with user setup:
-
-```bash
-docker compose exec mariadb mariadb -u root -p
+sudo docker compose up -d
+sudo docker compose exec mariadb mariadb -u root -p
 ```
 
 === APT (Debian / Ubuntu)
@@ -63,9 +60,17 @@ Run the interactive security script to set a root password, remove anonymous use
 sudo mariadb-secure-installation
 ```
 
-Connect as root:
+By default, MariaDB only listens on `127.0.0.1`. To accept connections from the panel and Wings nodes, edit `/etc/mysql/mariadb.conf.d/50-server.cnf`:
+
+```ini
+[mysqld]
+bind-address = 0.0.0.0
+```
+
+Restart MariaDB and connect as root:
 
 ```bash
+sudo systemctl restart mariadb
 sudo mariadb -u root -p
 ```
 
@@ -82,61 +87,28 @@ Run the interactive security script:
 sudo mariadb-secure-installation
 ```
 
-Connect as root:
+By default, MariaDB only listens on `127.0.0.1`. To accept connections from the panel and Wings nodes, edit `/etc/my.cnf.d/mariadb-server.cnf`:
+
+```ini
+[mysqld]
+bind-address = 0.0.0.0
+```
+
+Restart MariaDB and connect as root:
 
 ```bash
+sudo systemctl restart mariadb
 sudo mariadb -u root -p
-```
-
-::::
-
-## Configuring Remote Access
-
-By default, MariaDB only listens on `127.0.0.1`. To accept connections from the panel and Wings nodes, update the bind address.
-
-::: info
-If you used Docker Compose, the `ports` entry already handles this - skip this section.
-:::
-
-::::tabs
-=== APT (Debian / Ubuntu)
-
-Edit `/etc/mysql/mariadb.conf.d/50-server.cnf`:
-
-```ini
-[mysqld]
-bind-address = 0.0.0.0
-```
-
-Restart MariaDB:
-
-```bash
-sudo systemctl restart mariadb
-```
-
-=== RPM (RHEL / Fedora / Rocky / Alma)
-
-Edit `/etc/my.cnf.d/mariadb-server.cnf`:
-
-```ini
-[mysqld]
-bind-address = 0.0.0.0
-```
-
-Restart MariaDB:
-
-```bash
-sudo systemctl restart mariadb
 ```
 
 ::::
 
 ## Creating the Panel User
 
-Inside the MariaDB shell, create a dedicated account that the panel uses to provision user databases:
+Inside the MariaDB shell you just opened, create a dedicated account that the panel uses to provision user databases:
 
 ::: danger
-The user below can connect from **any IP address** (`%`). Use a long, randomly generated password - a weak password on an exposed port is a critical security risk.
+The user below can connect from **any IP address** (`%`). Use a long, randomly generated password; a weak password on an exposed port is a serious security risk.
 :::
 
 ```sql
@@ -178,5 +150,5 @@ By default, new database hosts are not visible to any client API endpoints. To f
 ![Create Location Database Host dialog with a Database Host dropdown over the location's database host list](./files/location.webp)
 
 ::: info
-For further reference on MariaDB configuration, see the [official MariaDB documentation](https://mariadb.com/kb/en/documentation/).
+For further reference on MariaDB configuration, see the [official MariaDB documentation](https://mariadb.com/docs/).
 :::

@@ -1,6 +1,6 @@
 ---
 title: System Backup Policies
-description: Schedule automatic server file or database backups panel-wide, scoped to locations, nodes, database agent hosts, or single servers, with retention and parallelism controls.
+description: Schedule automatic file or database backups panel-wide, scoped to locations, nodes, database agent hosts, or single servers, with retention and parallelism controls.
 ---
 
 # System Backup Policies

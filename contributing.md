@@ -2,127 +2,183 @@
 
 # Contributing to the Calagopus Website & Docs
 
-Thanks for taking the time to contribute. This repo powers the Calagopus website and documentation, built with [VitePress](https://vitepress.dev), currently on `v2.0.0-alpha.20`. Expect occasional breaking changes between VitePress versions. Check the [changelog](https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md) if something breaks after an update.
+This repo is the Calagopus website and docs, built with [VitePress](https://vitepress.dev) `v2.0.0-alpha.21`. If something breaks after an update, check its [changelog](https://github.com/vuejs/vitepress/blob/main/CHANGELOG.md).
 
-Don't stress about following every rule below perfectly or making everything look identical. The goal is that changes stay readable, easy to review, and easy to understand later. Keep things consistent with what's already there where it makes sense, and explain non-obvious changes.
+Don't stress about following every rule perfectly. Keep changes readable and easy to review, and explain anything non-obvious.
 
 ## Before You Start
 
-- For small fixes (typos, broken links, a missing detail, small wording passes), just open a PR.
-- For anything larger, e.g. restructuring the sidebar, splitting or merging pages, adding a new top-level section, opening a PR directly is fine if you'd rather show the change than describe it first.
-- For something genuinely big, e.g. reorganizing an entire section like Features, changing how the docs are structured overall, open an issue first or bring it up in [Discord](https://discord.gg/uSM8tvTxBV) before you start. This avoids wasted work if the change doesn't fit how the docs are organized.
-- Not sure if a restructure is clean enough? Same rule: ask before you sink time into it.
+| Your change                                                                            | What to do                                                             |
+| -------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Small fix: typo, broken link, missing detail                                           | Just open a PR                                                         |
+| Larger: restructuring the sidebar, splitting or merging pages, a new top-level section | A PR is fine if you'd rather show it than describe it                  |
+| Big: reorganizing a whole section like Features, or how the docs are structured        | Open an issue or ask in [Discord](https://discord.gg/uSM8tvTxBV) first |
+
+Not sure a restructure is clean enough? Ask before you sink time into it.
 
 ## Getting Started
-
-1. Clone the repo and `cd` into it:
 
 ```bash
 git clone https://github.com/calagopus/website.git
 cd website
-```
-
-2. Install dependencies:
-
-```bash
 pnpm i
-```
-
-3. Start the dev server:
-
-```bash
 pnpm docs:dev
 ```
 
-This runs a live environment that updates automatically as you edit files.
-
 ## AI / LLM Usage
 
-Using AI to draft or edit a page is fine here, unlike in the [panel repo](https://github.com/calagopus/panel/blob/main/CONTRIBUTING.md#ai--llm-usage), which doesn't accept AI-written code at all. Docs are different: a first draft is easier to review and fix than to write from scratch, as long as someone actually read and rewrote it before opening the PR.
+Using AI to draft or edit a page is fine here, unlike in the [panel repo](https://github.com/calagopus/panel/blob/main/CONTRIBUTING.md#ai--llm-usage), as long as you read and rewrite it before opening the PR. You're responsible for what you submit and should be able to explain it.
 
-- Submitting what a model produced without reading and rewriting it is not fine.
 - No em dashes. Use a period, comma, or "and" instead.
-- No filler phrases, no restating the obvious, no "in conclusion" or "it's worth noting that."
-- No padded lists where three real points get stretched into ten bullets.
-- Say the thing once, plainly, in the tone the rest of the docs already use.
+- No filler, no restating the obvious, no "in conclusion" or "it's worth noting that."
+- No padded lists where three real points become ten bullets.
+- Say it once, plainly.
 
-If a reviewer can tell a page was AI-generated without checking git blame, it needs another pass. You're responsible for what you submit either way, AI or not, and should be able to explain any part of your change if asked.
+If a reviewer can tell a page was AI-generated, it needs another pass.
 
 ## Making Changes
 
-- Keep PRs focused. A PR should do one thing; unrelated changes make review harder and should be a separate PR.
+- Keep PRs focused on one thing.
 - Match the existing tone: direct, practical, no fluff.
-- Don't touch commands, config values, or code blocks during a wording or formatting pass. Technical content stays byte-for-byte correct.
-- More than one method in a guide? Use the existing `:::: tabs` / `=== Method` pattern instead of stacking headings.
-- Long code blocks, like full proxy configurations, go in a file under `web/snippets/` and get included with a [snippet import](https://vitepress.dev/guide/markdown#import-code-snippets), the way the reverse proxy guides do it: `<<< @/snippets/reverse-proxies/panel/nginx.conf{nginx}`
+- Don't change commands, config values, or code blocks during a wording or formatting pass.
+- Put long code blocks, like full proxy configs, in `web/snippets/` and use a [snippet import](https://vitepress.dev/guide/markdown#import-code-snippets): `<<< @/snippets/reverse-proxies/panel/nginx.conf{nginx}`
+
+### Writing Commands
+
+- **One block:** commands that always run together go in one block. Split only where the reader has to edit a file, check something, or choose.
+- **No prompts:** a prompt swallows the rest of a pasted block, so use `-y` and `--no-pager` mid-block.
+- **`sudo`:** use it on everything that needs root, including every `docker` command. The exceptions are Alpine blocks and rootless guides.
+- **Binary installs:** use the full path, like `sudo /usr/local/bin/wings`. Some distributions leave `/usr/local/bin` off the path `sudo` uses.
+- **Panel CLI:** it reads `.env` from the current directory, so binary and package installs need `cd /etc/calagopus` first.
 
 ### Sidebar
 
-Keep `.vitepress/config.mts` straightforward, minimal, and easy to navigate.
+The sidebar lives in `.vitepress/data/sidebar.ts`.
 
-- Don't nest for a single page. Only create a group when there are actually multiple related pages.
-- Adding a larger topic with multiple pages or folders? Follow an existing structure instead of inventing a new layout. If something naturally fits a pattern like `Migrations` (grouped pages with sub-groups), organize it the same way rather than dumping everything in one place.
-- Keep names short and parallel across siblings: `Database Hosts`, not `Setting up Database Hosts`.
-- Before creating a new top-level section, check whether the page already belongs somewhere existing.
+- Only create a group for multiple related pages, never for one.
+- Follow an existing structure for larger topics, like `Migrations`.
+- Keep names short and parallel: `Database Hosts`, not `Setting up Database Hosts`.
+- Check whether a page fits an existing section before adding a top-level one.
+- A `link:` to a folder's `index.md` ends with a `/`, like `/docs/panel/installation/`. Otherwise the page isn't highlighted and its previous and next links are wrong.
 
-### Naming Pages and Files
+### Naming Pages
 
-Name a file after its sidebar entry, not its H1. The two don't have to match.
+Name a file after its sidebar entry, not its H1, so `link:` paths stay predictable.
 
-| Filename                   | Sidebar entry      | H1                                       |
-| -------------------------- | ------------------ | ---------------------------------------- |
-| `ssl-certificates.md`      | `SSL Certificates` | Generating SSL Certificates              |
-| `reverse-proxies/panel.md` | `Panel`            | Putting the Panel Behind a Reverse Proxy |
+| Filename                            | Sidebar entry                | H1                                       |
+| ----------------------------------- | ---------------------------- | ---------------------------------------- |
+| `additional/ssl-certificates.md`    | `SSL Certificates`           | Generating SSL Certificates              |
+| `panel/next-steps/reverse-proxy.md` | `Setting up a Reverse Proxy` | Putting the Panel Behind a Reverse Proxy |
 
-Keeping filenames aligned with sidebar entries keeps `link:` paths predictable.
+Moved or renamed a page? Update every link to it and add the old URL to `.vitepress/lib/redirects.ts`. Renamed a section? Add the old anchor to `.vitepress/data/moved-anchors.ts`. `pnpm docs:build` catches links to missing pages, but not broken `#anchors`. After a build, `pnpm run check-redirects` checks that every page on the live site is still a page or a redirect.
 
 ### Frontmatter
 
-If a page already has frontmatter (`prev`, `next`, `title`, etc.), leave it alone. It's usually there on purpose.
+| Key             | When to set it                                                                                       |
+| --------------- | ---------------------------------------------------------------------------------------------------- |
+| `description`   | Always. Plain words, ideally under 170 characters. Use double quotes if it contains `: `.            |
+| `title`         | When the H1 isn't enough for a browser tab, like `Admin Settings` for a page whose H1 is `Settings`. |
+| `prev` / `next` | Only as `false`, as below. `true` does nothing.                                                      |
 
-Think something is wrong with it? Mention it in your PR description instead of changing it silently.
+Each top-level sidebar group, like `Panel` or `Compare`, keeps its previous and next links to itself:
+
+| Page                             | Frontmatter   |
+| -------------------------------- | ------------- |
+| First in a group                 | `prev: false` |
+| Last in a group                  | `next: false` |
+| Not in the sidebar, like `/docs` | Both          |
+| Everything else                  | Neither       |
+
+`pnpm run check-frontmatter` lists anything wrong, and CI runs it too.
+
+### Tabs and Dropdowns
+
+| Use      | For                                              | Syntax                                   |
+| -------- | ------------------------------------------------ | ---------------------------------------- |
+| Tabs     | The reader picks one option and ignores the rest | `::::tabs`, then `=== Docker`            |
+| Dropdown | Something most readers can skip                  | `::: details Docker isn't installed yet` |
+
+- If most of a page splits the same way, use one set of tabs at the top holding the whole guide.
+- Add a key like `::::tabs key:pkg` to remember the choice across pages that share the same labels.
+- Don't put required steps or warnings in a dropdown.
+- Troubleshooting sections use one dropdown per problem, titled with the symptom and ending in `{open}` so it starts expanded: ``::: details `address already in use` on port `8080` {open}``.
+- Two or more dropdowns under one heading, outside tabs, get an **Expand all** / **Collapse all** button automatically.
+- Links can point at a dropdown or at a heading inside a tab, and the page opens it. A dropdown's anchor is its title, slugified like a heading.
+
+When nesting, the outer container needs more colons, or the inner closing marker closes both. Tabs inside tabs also need longer tab markers, `====` instead of `===`:
+
+```md
+:::::tabs
+=== Docker
+
+:::: details Optional steps
+::: warning
+Something to watch out for.
+:::
+::::
+
+:::::
+```
+
+### Where Things Go
+
+- **`next-steps/`:** setup guides for one component, like SSL or a reverse proxy, with `Docker` and `Standalone` tabs where both apply.
+- **`additional/`:** anything shared between components, like `additional/ssl-certificates.md`.
+- **`compare/`:** see below.
+
+Comparison pages follow the same order: summary, which to choose, performance or architecture, features, where each side is stronger, migrating. Say where the other project is the better choice.
+
+- Use `<Yes />` and `<No />` in feature tables, not emoji.
+- End the page with `<CompareFaq />`. The answers live in `.vitepress/data/compare-faqs.ts`.
+- Give new pages the same `pageClass` as the existing ones.
+
+### Generated Pages
+
+| Page                                           | Edit this instead                                                                           |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `wings/configuration.md`                       | `.vitepress/data/config/wings.ts`                                                           |
+| `db-agent/configuration.md`                    | `.vitepress/data/config/db-agent.ts`                                                        |
+| `releases/panel.md`, `wings.md`, `db-agent.md` | Changelogs come from GitHub releases. Extra notes go in `.vitepress/data/release-notes.ts`. |
+
+Config options show **Optional** unless you set `required: true`, or a string like `required: 'SSL'` for "Required for SSL". Almost every option has a default, so only tag one if the source shows the software can't work without it.
 
 ### Plugins & Dependencies
 
-Adding a new plugin, package, or dependency? Say what it does and why it's needed in your PR description. Undisclosed dependencies will probably get sent back.
+Adding a dependency? Say what it does and why in your PR description, or it'll probably get sent back.
 
-Currently installed:
+| Plugin                                                | Purpose                                                                                                         | Docs                                                               |
+| ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `vite-imagetools`                                     | Converts imported PNG and JPEG images to WebP, capped at 1600px wide                                            | [Repo](https://github.com/JonasKruckenberg/imagetools)             |
+| `vite-plugin-image-optimizer`                         | Compresses PNG, JPEG and SVG images at build time, skipping WebP                                                | [npm](https://www.npmjs.com/package/vite-plugin-image-optimizer)   |
+| `vitepress-plugin-mermaid`                            | Mermaid diagrams                                                                                                | [Docs](https://emersonbottero.github.io/vitepress-plugin-mermaid/) |
+| `vitepress-plugin-tabs`                               | The `::::tabs` syntax                                                                                           | [Docs](https://vitepress-plugins.sapphi.red/tabs/)                 |
+| `aiDocPlugin` (`./plugins/ai-doc.ts`)                 | Internal and intentionally undocumented, ignore it                                                              | n/a                                                                |
+| `detailsTogglePlugin` (`./plugins/details-toggle.ts`) | The **Expand all** / **Collapse all** buttons. `theme/details-toggle.ts` makes them work and animates dropdowns | n/a                                                                |
 
-| Plugin                                | Purpose                                      | Docs                                                               |
-| ------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------ |
-| `vite-plugin-image-optimizer`         | Optimizes images at build time               | [npm](https://www.npmjs.com/package/vite-plugin-image-optimizer)   |
-| `vitepress-plugin-mermaid`            | Mermaid diagram support                      | [Docs](https://emersonbottero.github.io/vitepress-plugin-mermaid/) |
-| `vitepress-plugin-tabs`               | Powers the `:::: tabs` syntax                | [Docs](https://vitepress-plugins.sapphi.red/tabs/)                 |
-| `vitepress-plugin-viewerjs`           | Click-to-zoom lightbox for images            | [Repo](https://github.com/Lovinoes/vitepress-plugin-viewerjs)      |
-| `aiDocPlugin` (`./plugins/ai-doc.ts`) | Internal, intentionally undocumented, ignore | n/a                                                                |
+The click-to-zoom image viewer isn't a plugin. It's `.vitepress/components/ImageViewer.vue`.
 
 ## Before Opening a PR
 
 Run the same checks CI runs:
 
 ```bash
-pnpm docs:build
-pnpm exec biome check
+pnpm run lint
+pnpm run fmt:check
 pnpm run typecheck
+pnpm run check-frontmatter
+pnpm docs:build
+pnpm run check-worker-routes
+pnpm run check-redirects
+pnpm exec wrangler deploy --dry-run
 ```
 
-If `biome check` reports dozens of unrelated files needing reformatting, it's almost certainly CRLF line endings from a Windows checkout, not a real issue. A `.gitattributes` in the repo root forces LF on checkout, but it only applies to files checked out _after_ it's in place. If you cloned before it existed, run `git add --renormalize .` once (and `git config core.autocrlf false` if you have it set globally), then re-run the check.
+Then check the dev server for console errors and broken links. `pnpm run fmt` and `pnpm run lint:fix` fix most of what the first two report.
 
-Then confirm in the dev server:
+**`fmt:check` flags dozens of unrelated files?** That's CRLF line endings from a Windows checkout. If you cloned before `.gitattributes` existed, run `git add --renormalize .` once, plus `git config core.autocrlf false` if you set it globally.
 
-- no console errors
-- no dead links
-- no broken `link:` sidebar entries
-- no broken `[text](path.md)` references
+## Commits and PRs
 
-## Commit Messages & PR Description
+- Write titles like a person, not `fix` or `update docs`. Say what changed.
+- In the description, explain why and call out anything non-obvious, like a new dependency, a renamed page, or a restructure.
 
-Write commit titles and PR descriptions like a person, not `fix` or `update docs`. A title should say what changed.
-
-A description, when you need one, should explain why, call out anything non-obvious (new dependency, breaking sidebar change, renamed page, restructuring, etc.), and give reviewers enough context to follow along. No strict format required, just make sure someone reading the history later can understand what happened without opening every file.
-
-## Review
-
-A maintainer will review your PR. Expect requested changes on first pass for larger contributions, especially restructures.
-
-Already have the Contributor role? Ask your questions in our [Discord](https://discord.gg/uSM8tvTxBV) in the `#general-contributor` channel.
+Expect requested changes on larger PRs, especially restructures. Have the Contributor role? Ask questions in `#general-contributor` on [Discord](https://discord.gg/uSM8tvTxBV).

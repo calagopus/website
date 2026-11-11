@@ -1,6 +1,6 @@
 ---
 title: Migrating from Pterodactyl
-description: How to migrate from Pterodactyl to Calagopus. The built-in importer copies users, servers, nodes, and eggs from your Pterodactyl database to a fresh Calagopus instance with no server data to move.
+description: Migrate from Pterodactyl to Calagopus. The built-in importer copies users, servers, nodes, and eggs from your Pterodactyl database to a fresh Calagopus instance.
 ---
 
 # Migrating from Pterodactyl
@@ -9,7 +9,7 @@ Calagopus includes an importer that reads a Pterodactyl database and writes equi
 
 API keys and active login sessions do not migrate. Users need to sign in again. Generate new API keys and update your integrations: the Calagopus API differs from Pterodactyl's, so existing API scripts also need changes.
 
-This guide covers the panel database migration only. Wings also needs to be updated to point at the new panel. See [Wings Updating](../../wings/updating.md) for that step.
+This guide covers the panel database migration only. Your nodes already run Pterodactyl Wings, so they don't need a fresh install: follow [Migrating Wings Nodes](./wings.md) on each one once the panel is done.
 
 ## Pterodactyl 2.x
 
@@ -26,15 +26,12 @@ Nests created this way say in their description which tag they came from. An egg
 
 Pterodactyl comes in two flavors and the import process is slightly different for each. Figure out which one you're running and follow the matching guide:
 
-::::tabs
-=== Standalone
-A normal install on a Linux box, Pterodactyl running directly on the host. Head to the [Standalone](./pterodactyl/standalone.md) guide.
+| You're running                                                              | Guide                                     |
+| --------------------------------------------------------------------------- | ----------------------------------------- |
+| A normal install on a Linux box, Pterodactyl running directly on the host   | [Standalone](./pterodactyl/standalone.md) |
+| Pterodactyl inside Docker containers, with a `docker-compose.yml` somewhere | [Dockerized](./pterodactyl/docker.md)     |
 
-=== Dockerized
-Pterodactyl running inside Docker containers, with a `docker-compose.yml` somewhere. Head to the [Dockerized](./pterodactyl/docker.md) guide.
-::::
-
-If you're not sure which setup you're using, run `docker compose ps` in your Pterodactyl directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
+If you're not sure which setup you're using, run `sudo docker compose ps` in your Pterodactyl directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
 
 ## Import Options
 
@@ -60,21 +57,75 @@ A failed data write rolls back the import. Panel settings are saved after the da
 
 The importer talks to the Pterodactyl database from inside the Calagopus container, which is where most of the trouble comes from. These are the errors people hit most, with the fix that worked. Problems that show up after the import, such as nodes not connecting, are covered on the general [Troubleshooting](../troubleshooting.md) page.
 
-| Symptom                                                                                                                                            | Fix                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| -------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `failed to connect to pterodactyl database: PoolTimedOut`                                                                                          | The container can't reach MySQL. Inside the container `127.0.0.1` is the container itself, so `DB_HOST` in the copied `.env` has to be `host.docker.internal` (the compose file maps it to the host) or the database host's real IP. The database also has to listen on something other than `127.0.0.1`, which for MariaDB means `bind-address = 0.0.0.0`, and the user needs a grant from `'%'` as described in the [standalone guide](./pterodactyl/standalone.md). If all of that is in place and it still times out, the host firewall is blocking port `3306` from the Docker network. As a last resort, remove the `ports:` section from the Calagopus compose file, add `network_mode: host` to the `web` service, and connect to `127.0.0.1` directly. |
-| `Configuration(Utf8Error ...)` or authentication errors while connecting                                                                           | Use the original database password in the copied `.env`, with appropriate quoting for special characters. The importer URL-encodes credentials itself; do not pre-encode `DB_PASSWORD`. Check that the username, host, and password still match the source database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| A missing-column or schema error during import                                                                                                     | Check that the Calagopus binary matches the target database schema and that its required migrations have completed. Keep a database backup before changing versions. A failed import write rolls back; a schema mismatch alone is not a reason to discard the target database or downgrade it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| `duplicate key value violates unique constraint` on an egg variable                                                                                | Only relevant on panels older than 1.0.10, where two variables on the same egg could not share a name. Current versions allow duplicate names, so update before importing rather than editing the Pterodactyl database.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| The import fails during validation or writing                                                                                                      | Current imports validate before writing and roll back failed data writes. Fix the reported issue and retry. A settings-save warning means the records were imported successfully; repair settings in the admin area. Partial data left by an older importer needs separate review: use a fresh target, or inspect it with `--force --dry-run` before deciding what to keep.                                                                                                                                                                                                                                                                                                                                                                                     |
-| `WARN ... slow statement: execution time exceeded alert threshold` during the import                                                               | A warning only. Large `egg_variables` tables take a few seconds to read.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
-| After logging in, pages are blank with "missing authorization", or requests say the session is invalid                                             | Sign in again: sessions are not imported. Check the Panel URL, HTTPS, and [reverse proxy](../reverse-proxies/panel.md) configuration, then clear stale cookies for the domain if you changed schemes or replaced the old panel.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| Imported users with two-factor authentication can't finish signing in: the code is refused or the checkpoint errors                                | Panels before 1.2.7 rejected TOTP secrets shorter than 128 bits, and Pterodactyl and Pelican generate shorter ones. Update the Panel; the imported secrets then work as they are.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| The Nodes or Servers pages fail with `memory: Too small: expected number to be >=0 [got: -1]`                                                      | Pterodactyl used `-1` for "unlimited" on a node, and Calagopus uses `0`. Imports run on 1.1.1 or newer convert this for you. If you imported on an older version, fix it in the database: `docker compose exec db psql -U panel panel -c "update nodes set memory = 0 where memory < 0;"`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| Admin pages for servers, users or databases error out, and the log says a name is too short                                                        | A migrated user has an empty last name. Panels from 1.2.0 accept that. On older versions, find them with `select id, username from users where name_last = '';` and give them a placeholder.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
-| `APP_ENCRYPTION_KEY`                                                                                                                               | Generate a new random value for Calagopus. Don't reuse Pterodactyl's `APP_KEY`, and set the key before running the import, not after.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
-| Users can't create databases after the import                                                                                                      | Database hosts come over with the address they had in Pterodactyl, often `127.0.0.1`, which now points at the panel container. Change the host's address to something the container can reach, check that **Deployment Enabled** is on, and attach the host to a node or location. See [Database Hosts](../database-hosts/index.md).                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| Users can't add allocations they could add before                                                                                                  | Self-assigned allocations are an [egg configuration](../../panel/features/admin/egg-configurations.md) setting in Calagopus and aren't imported. Create a configuration with **User Self Assign** enabled for the eggs that need it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
-| Nodes stay offline, and the Wings log shows `github.com/pterodactyl/wings` in a stack trace or `manager: failed to retrieve server configurations` | The old Pterodactyl Wings is still what runs on the node. Replace it as described in [Updating Wings](../../wings/updating.md) and point `remote:` at the new panel. Existing servers are picked up without any extra step.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| Servers on a migrated node fail with `network calagopus_nw not found`                                                                              | The migrated Wings config kept `docker.network.name: pterodactyl_nw` but picked up the new default for `docker.network.mode`. Set `mode` to the same value as `name`. Wings from 1.1.3 on warns about this at boot and names the value to set.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| Servers were imported under the wrong node                                                                                                         | If the old node and the new one are the same machine with the same data paths, point the records at the new node in the database (replace `new-uuid` and `old-uuid` with the node UUIDs from the admin area): `docker compose exec db psql -U panel panel -c "update servers set node_uuid = 'new-uuid' where node_uuid = 'old-uuid'; update node_allocations set node_uuid = 'new-uuid' where node_uuid = 'old-uuid';"`. Don't do this across different machines, it moves nothing, it only changes which node the panel asks for the files.                                                                                                                                                                                                                   |
+::: details `failed to connect to pterodactyl database: PoolTimedOut` {open}
+The container can't reach MySQL. Check these in order:
+
+1. `DB_HOST` in the copied `.env` is `host.docker.internal` (the compose file maps it to the host) or the database host's real IP. `127.0.0.1` is the container itself.
+2. The database listens on something other than `127.0.0.1`. For MariaDB that means `bind-address = 0.0.0.0`.
+3. The user has a grant from `'%'`, as described in the [standalone guide](./pterodactyl/standalone.md).
+4. The host firewall allows port `3306` from the Docker network.
+
+As a last resort, remove the `ports:` section from the Calagopus compose file, add `network_mode: host` to the `web` service, and connect to `127.0.0.1` directly.
+:::
+
+::: details `Configuration(Utf8Error ...)` or authentication errors while connecting {open}
+Use the original database password in the copied `.env`, with appropriate quoting for special characters. The importer URL-encodes credentials itself; do not pre-encode `DB_PASSWORD`. Check that the username, host, and password still match the source database.
+:::
+
+::: details A missing-column or schema error during import {open}
+Check that the Calagopus binary matches the target database schema and that its required migrations have completed. Keep a database backup before changing versions. A failed import write rolls back; a schema mismatch alone is not a reason to discard the target database or downgrade it.
+:::
+
+::: details `duplicate key value violates unique constraint` on an egg variable {open}
+Only relevant on panels older than 1.0.10, where two variables on the same egg could not share a name. Current versions allow duplicate names, so update before importing rather than editing the Pterodactyl database.
+:::
+
+::: details The import fails during validation or writing {open}
+Current imports validate before writing and roll back failed data writes. Fix the reported issue and retry. A settings-save warning means the records were imported successfully; repair settings in the admin area. Partial data left by an older importer needs separate review: use a fresh target, or inspect it with `--force --dry-run` before deciding what to keep.
+:::
+
+::: details `WARN ... slow statement: execution time exceeded alert threshold` during the import {open}
+A warning only. Large `egg_variables` tables take a few seconds to read.
+:::
+
+::: details After logging in, pages are blank with "missing authorization", or requests say the session is invalid {open}
+Sign in again: sessions are not imported. Check the Panel URL, HTTPS, and [reverse proxy](../../panel/next-steps/reverse-proxy.md) configuration, then clear stale cookies for the domain if you changed schemes or replaced the old panel.
+:::
+
+::: details Imported users with two-factor authentication can't finish signing in: the code is refused or the checkpoint errors {open}
+Panels before 1.2.7 rejected TOTP secrets shorter than 128 bits, and Pterodactyl and Pelican generate shorter ones. Update the Panel; the imported secrets then work as they are.
+:::
+
+::: details The Nodes or Servers pages fail with `memory: Too small: expected number to be >=0 [got: -1]` {open}
+Pterodactyl used `-1` for "unlimited" on a node, and Calagopus uses `0`. Imports run on 1.1.1 or newer convert this for you. If you imported on an older version, fix it in the database: `sudo docker compose exec db psql -U panel panel -c "update nodes set memory = 0 where memory < 0;"`.
+:::
+
+::: details Admin pages for servers, users or databases error out, and the log says a name is too short {open}
+A migrated user has an empty last name. Panels from 1.2.0 accept that. On older versions, find them with `select id, username from users where name_last = '';` and give them a placeholder.
+:::
+
+::: details `APP_ENCRYPTION_KEY` {open}
+Generate a new random value for Calagopus. Don't reuse Pterodactyl's `APP_KEY`, and set the key before running the import, not after.
+:::
+
+::: details Users can't create databases after the import {open}
+Database hosts come over with the address they had in Pterodactyl, often `127.0.0.1`, which now points at the panel container. Change the host's address to something the container can reach, check that **Deployment Enabled** is on, and attach the host to a node or location. See [Database Hosts](../database-hosts/index.md).
+:::
+
+::: details Users can't add allocations they could add before {open}
+Self-assigned allocations are an [egg configuration](../../panel/features/admin/egg-configurations.md) setting in Calagopus and aren't imported. Create a configuration with **User Self Assign** enabled for the eggs that need it.
+:::
+
+::: details Nodes stay offline, and the Wings log shows `github.com/pterodactyl/wings` in a stack trace or `manager: failed to retrieve server configurations` {open}
+The old Pterodactyl Wings is still what runs on the node. Replace it as described in [Migrating Wings Nodes](./wings.md). Existing servers are picked up without any extra step.
+:::
+
+::: details Servers on a migrated node fail with `network calagopus_nw not found` {open}
+The migrated Wings config kept `docker.network.name: pterodactyl_nw` but picked up the new default for `docker.network.mode`. Set `mode` to the same value as `name`. Wings from 1.1.3 on warns about this at boot and names the value to set.
+:::
+
+::: details Servers were imported under the wrong node {open}
+If the old node and the new one are the same machine with the same data paths, point the records at the new node in the database (replace `new-uuid` and `old-uuid` with the node UUIDs from the admin area): `sudo docker compose exec db psql -U panel panel -c "update servers set node_uuid = 'new-uuid' where node_uuid = 'old-uuid'; update node_allocations set node_uuid = 'new-uuid' where node_uuid = 'old-uuid';"`.
+
+Don't do this across different machines, it moves nothing, it only changes which node the panel asks for the files.
+:::

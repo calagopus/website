@@ -1,6 +1,7 @@
 ---
 title: Releases
 description: Changelogs for Calagopus Panel, Wings and DB Agent releases, newest first.
+prev: false
 ---
 
 # Releases

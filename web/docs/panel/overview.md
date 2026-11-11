@@ -1,17 +1,17 @@
 ---
 title: Panel Overview
-description: Overview of the Calagopus Panel, the central web UI and backend for game server management. Covers minimum requirements, the React + Rust tech stack, and real-world resource usage.
+description: 'Overview of the Calagopus Panel, the web UI and backend for game server management: minimum requirements, the React and Rust stack, and real-world resource usage.'
 ---
 
 # Panel
 
-The Calagopus **Panel** is the central management interface for game servers and related services. It provides the web UI and backend that handle server orchestration, user management, and integrations. The panel alone doesn't host game servers - for that you also need [Wings](../wings/overview.md) running on at least one node.
+The Calagopus **Panel** is the central management interface for game servers and related services. It provides the web UI and backend that handle server orchestration, user management, and integrations. The panel alone doesn't host game servers; for that you also need [Wings](../wings/overview.md) running on at least one node.
 
 The interface works on phones and tablets as well as desktops. The sidebar becomes a drawer on small screens, the console and file manager support touch selection and long-press menus, layouts account for the on-screen keyboard, and the file editor defaults to a touch-oriented engine on those devices.
 
 ## Minimum Requirements
 
-- **Operating System**: Windows 10 or later, macOS, Ubuntu 22.04 LTS or later, Debian 11 or later, or anything that supports modern Docker versions
+- **Operating System**: Windows 10 or later, Ubuntu 22.04 LTS or later, Debian 11 or later, or anything that supports modern Docker versions
 - **CPU Architecture**: x86_64, ARM64, RISC-V, or PPC64LE (extensions require x86_64 or ARM64)
 - **RAM**: 512 MB minimum (1 GB recommended; 2 GB recommended when using extensions)
 - **Disk Space**: 1 GB minimum (10 GB recommended when using extensions)
@@ -38,11 +38,11 @@ The panel is split into a React frontend and a Rust backend.
 The frontend is built with React and communicates with the backend via REST APIs.
 
 - **Language**: TypeScript
-- **Framework**: [React.js](https://reactjs.org/)
+- **Framework**: [React.js](https://react.dev/)
 - **State Management**: [Zustand](https://zustand.docs.pmnd.rs/)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Build Tool**: [Vite](https://vitejs.dev/)
-- **Linting**: [Biome](https://biomejs.dev/)
+- **Build Tool**: [Vite](https://vite.dev/)
+- **Linting and formatting**: [oxlint](https://oxc.rs/docs/guide/usage/linter) and [oxfmt](https://oxc.rs/docs/guide/usage/formatter)
 
 ### Backend
 

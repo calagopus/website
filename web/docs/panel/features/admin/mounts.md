@@ -1,5 +1,5 @@
 ---
-title: Mounts
+title: Admin Mounts
 description: Define host directories that can be mounted into server containers, and control which eggs, nodes, and servers get them.
 ---
 

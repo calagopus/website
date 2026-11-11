@@ -1,14 +1,13 @@
 ---
-prev: true
 next: false
 description: How Calagopus extensions store and serve files through the Panel's Storage abstraction, which targets the local filesystem or an S3-compatible bucket.
 ---
 
 # File Storage
 
-Some extensions need to store files - user-uploaded avatars, generated reports, exported backups, cached external assets, anything that doesn't fit into a database row. The Panel handles this through a `Storage` abstraction available at `state.storage`, which routes file operations to either the local filesystem or an S3-compatible bucket depending on what the operator has configured.
+Some extensions need to store files that don't fit in a database row, such as user uploads, generated reports, exports or cached external assets. The Panel handles this through a `Storage` abstraction available at `state.storage`, which routes file operations to either the local filesystem or an S3-compatible bucket depending on what the operator has configured.
 
-The big win of going through `state.storage` rather than calling `tokio::fs` directly is that your extension Just Works regardless of the deployment shape. An operator running everything on a single VPS gets a filesystem-backed install; an operator running a horizontally-scaled deployment configures S3 in their settings; your extension code is identical in both cases. Same `store(...)`, same `remove(...)`, same public URLs handed back to clients.
+Going through `state.storage` instead of calling `tokio::fs` directly means your extension works on any deployment. A single VPS uses the filesystem, a horizontally scaled deployment configures S3, and your code is the same in both cases: the same `store(...)`, `remove(...)` and public URLs.
 
 This page covers the storage API, the convention around well-known directory prefixes, and a handful of escape hatches for cases the high-level API doesn't fit.
 
@@ -16,11 +15,11 @@ This page covers the storage API, the convention around well-known directory pre
 
 Most extensions only ever need three methods on `state.storage`:
 
-- **`store(path, data, content_type)`** - write a file. Takes any `AsyncRead` for the body, returns the number of bytes written.
-- **`remove(path)`** - delete a file by path. Takes an `Option`, so `None` is a no-op; it's also a no-op if the file doesn't exist.
-- **`retrieve_urls()`** - get a helper that turns paths into publicly-accessible URLs.
+- **`store(path, data, content_type)`**: write a file. Takes any `AsyncRead` for the body, returns the number of bytes written.
+- **`remove(path)`**: delete a file by path. Takes an `Option`, so `None` is a no-op; it's also a no-op if the file doesn't exist.
+- **`retrieve_urls()`**: get a helper that turns paths into public URLs.
 
-Here's a concrete example - storing a user-uploaded image and returning a URL the frontend can use to display it:
+This example stores a user-uploaded image and returns a URL the frontend can display:
 
 ```rs
 use shared::{
@@ -71,23 +70,21 @@ pub async fn route(
 }
 ```
 
-A few things to call out:
-
-- **`store` accepts any `AsyncRead + Unpin`** - direct from a multipart upload, from a `tokio::fs::File`, from a `Cursor` over an in-memory buffer, from an HTTP stream, anything. No need to buffer the whole file into memory unless you want to. The `content_type` only reaches S3; the filesystem driver ignores it and serves public files with a type derived from the extension, so name files with a real extension rather than `.bin` if browsers should render them.
+- **`store` accepts any `AsyncRead + Unpin`**: a multipart upload, a `tokio::fs::File`, a `Cursor` over an in-memory buffer, an HTTP stream. You don't have to buffer the whole file in memory. The `content_type` only reaches S3; the filesystem driver ignores it and serves public files with a type derived from the extension, so name files with a real extension rather than `.bin` if browsers should render them.
 - **The path is yours to construct.** No `id`-keyed lookup, no auto-generated names. The path you pass to `store` is the path used to retrieve and remove later. UUIDs in the filename are a good idea if you don't want users to be able to guess each other's filenames.
-- **`retrieve_urls()` returns a helper, not a URL directly.** This is because it needs to read the storage settings, and that's an awaited operation - getting the helper once and calling `.get_url(...)` repeatedly is cheaper than awaiting per call. Hold on to it for the lifetime of your handler if you're constructing many URLs.
+- **`retrieve_urls()` returns a helper, not a URL directly.** It has to read the storage settings, which is an awaited operation, so getting the helper once and calling `.get_url(...)` repeatedly is cheaper. Keep it for the lifetime of your handler if you build many URLs.
 
 ::: info
-The path **must not** contain `..`, start with `/`, or be empty. The store method enforces this and returns an error if you violate it. This is your built-in protection against path-traversal bugs, but only if you're using `state.storage.store` directly - if you reach for the lower-level cap filesystem API (covered later), you have to enforce it yourself.
+The path **must not** contain `..`, start with `/`, or be empty. The store method enforces this and returns an error if you violate it. That protects against path traversal, but only through `state.storage.store`; with the lower-level cap filesystem API (covered later), you have to enforce it yourself.
 :::
 
 ## The Well-Known Directory Prefixes
 
-Storage paths are global - whatever you write to `foo/bar.txt` is reachable as `foo/bar.txt` to everyone using the same backend. To keep extensions, the core Panel, and admin operations from stepping on each other, there's a convention around top-level directories.
+Storage paths are global: whatever you write to `foo/bar.txt` is `foo/bar.txt` for everyone using the same backend. A convention for top-level directories keeps extensions, the core Panel and admin operations apart.
 
 | Prefix         | Public? | What it's for                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | -------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `assets/`      | Yes     | Admin assets - logos, branding images, anything the admin panel needs publicly available.                                                                                                                                                                                                                                                                                                                                                                                                 |
+| `assets/`      | Yes     | Admin assets: logos, branding images and anything else the admin panel makes public.                                                                                                                                                                                                                                                                                                                                                                                                      |
 | `avatars/`     | Yes     | User avatar images. Structure is `avatars/{user_uuid}/{identifier}.webp`, where the identifier is random for an uploaded avatar, and for one imported from an OAuth provider is a digest of the source URL followed by a digest of the stored image. An avatar path never gets new content, so browsers can cache it forever. **Don't write here directly** unless you're confident; the core Panel manages this and a botched write can leave a user with a missing or corrupted avatar. |
 | `publicdata/`  | Yes     | Currently unused by the base Panel; available for extension use. Suggested structure: `publicdata/extensions/{your.package.identifier}/...`.                                                                                                                                                                                                                                                                                                                                              |
 | `privatedata/` | No      | Not publicly accessible. Same suggested structure as `publicdata/`: `privatedata/extensions/{your.package.identifier}/...`.                                                                                                                                                                                                                                                                                                                                                               |
@@ -102,7 +99,7 @@ The most common pattern for extensions:
 Both prefixes accept the same path shape. Picking between them is purely about whether you want anyone-with-the-URL access or not.
 
 ::: warning Don't reach for `assets/` or `avatars/` unless you mean it
-The `assets/` prefix is for admin-managed branding; the `avatars/` prefix is structured around user UUIDs and managed by core. Writing into either of these from your extension can collide with core Panel operations - extensions should default to `publicdata/` or `privatedata/` and only use `assets/` or `avatars/` if you have a specific, documented reason to be touching that namespace.
+The `assets/` prefix is for admin-managed branding; the `avatars/` prefix is structured around user UUIDs and managed by core. Writing into either from your extension can collide with core Panel operations. Use `publicdata/` or `privatedata/`, and only touch `assets/` or `avatars/` for a specific, documented reason.
 :::
 
 ## Getting Public URLs
@@ -117,7 +114,7 @@ let avatar_url = urls.get_url("publicdata/extensions/dev.yourname.my-feature/som
 // S3 backend:         "https://cdn.example.com/publicdata/extensions/dev.yourname.my-feature/some-image.webp"
 ```
 
-The format depends on the configured driver: filesystem-backed installs serve through the Panel itself (URL prefixed with `app.url`), S3-backed installs serve from the configured `public_url` (typically a CDN). Either way, your extension code doesn't care - you get a URL string, you hand it to the frontend.
+The format depends on the configured driver: filesystem-backed installs serve through the Panel itself (URL prefixed with `app.url`), S3-backed installs serve from the configured `public_url` (typically a CDN). Either way, your code gets a URL string and hands it to the frontend.
 
 For paths under `privatedata/`, `get_url(...)` will still return _a_ URL. On the filesystem driver hitting it is a 404; on S3 it is whatever the bucket policy says. Treat the returned value as a path identifier for your own routes' use, not as something to expose to clients.
 
@@ -172,7 +169,7 @@ let bytes = state
     .await?;
 ```
 
-This is also the right pattern for large files - if a user is uploading a 500 MB report and you store it through the streaming API, peak memory use stays low.
+This is also the right pattern for large files: a 500 MB upload stored through the streaming API keeps peak memory use low.
 
 ## Listing Files
 
@@ -191,9 +188,9 @@ for asset in page.data {
 
 Returns a paginated list of `StorageAsset` entries, each with name, size, URL, creation time, and a flag indicating whether it's a directory or a file. Directories sort before files, both alphabetically.
 
-`list` is shallow - it shows you the immediate children of `directory` and nothing deeper. Each returned `name` is the entry's path relative to `base`, so within a subdirectory you'll get `images/logo.png` rather than a bare `logo.png`. `base` must not be empty and `directory` must not end in a slash; both `list` and `search` reject those with an "invalid directory path" error, on top of the usual `..` and leading-slash rules.
+`list` is shallow: it returns the immediate children of `directory` and nothing deeper. Each returned `name` is the entry's path relative to `base`, so within a subdirectory you'll get `images/logo.png` rather than a bare `logo.png`. `base` must not be empty and `directory` must not end in a slash; both `list` and `search` reject those with an "invalid directory path" error, on top of the usual `..` and leading-slash rules.
 
-This method is primarily used by the admin panel's asset-browser UI; most extensions don't need it. If you're tracking your own files (you wrote them, you know where they are), prefer keeping a record in your own database table - that's both faster than listing the storage backend and more flexible for the kinds of queries your code actually wants to do.
+This method is primarily used by the admin panel's asset-browser UI; most extensions don't need it. If you're tracking your own files (you wrote them, you know where they are), keep a record in your own database table instead. That is faster than listing the storage backend and lets you query it however you need.
 
 ## Searching by Name
 
@@ -210,26 +207,26 @@ for asset in results {
 }
 ```
 
-The matching is on the last path segment only, not the full path - a search for `report` finds `exports/q3-report.pdf` and the directory `reports/`, but not `reports/summary.pdf` (whose own name contains no `report`). Results are the same `StorageAsset` shape `list` returns, with `name` again relative to `base`, and directories sorted before files.
+Only the last path segment is matched, not the full path: a search for `report` finds `exports/q3-report.pdf` and the directory `reports/`, but not `reports/summary.pdf` (whose own name contains no `report`). Results are the same `StorageAsset` shape `list` returns, with `name` again relative to `base`, and directories sorted before files.
 
 Two differences from `list` worth internalising:
 
-- **It isn't paginated.** You get a flat `Vec<StorageAsset>` of at most `limit` entries. There's no page cursor and no total count - if more matched than `limit`, the extras are simply not returned and nothing tells you so.
+- **It isn't paginated.** You get a flat `Vec<StorageAsset>` of at most `limit` entries. There's no page cursor and no total count; if more matched than `limit`, the rest are dropped without notice.
 - **An empty `search` is an error**, not a "match everything". If your caller might pass a blank string, branch to `list` instead of forwarding it.
 
 ::: warning Searching is O(subtree), and on S3 that's network
 Neither backend can do substring matching itself. On filesystem the Panel walks the directory tree; on S3 it issues `ListObjectsV2` **without a delimiter** across the whole prefix and filters the keys client-side, pulling up to 1000 keys per round trip. A search over a prefix holding tens of thousands of objects is many sequential API calls, and the cost falls on every keystroke if you wire it to a live-updating input.
 
-An internal scan cap bounds this at 10,000 entries walked per call. Past that the walk stops and you get whatever matched so far - silently, with no indication the results were cut short. So on a large bucket, a broad search is not just slow, it's _incomplete_.
+An internal scan cap bounds this at 10,000 entries walked per call. Past that the walk stops and you get whatever matched so far, without any sign the results were cut short. On a large bucket, a broad search is not just slow but _incomplete_.
 
 Debounce anything user-driven, scope the search to the narrowest `directory` you can, and treat the result as a browse aid rather than an authoritative answer to "does this file exist".
 :::
 
-The same advice as `list` applies, only more strongly: if the files are yours, index them in your own database table and query that. `search` exists for browse-style UIs over storage nobody has indexed - it's what the admin panel's asset browser uses - not as a general lookup mechanism.
+The same advice as `list` applies, only more strongly: if the files are yours, index them in your own database table and query that. `search` exists for browsing storage nobody has indexed, as the admin panel's asset browser does, not as a general lookup.
 
 ## Temporary Files
 
-Sometimes you need a file briefly - to write some intermediate output, to hand a path to a subprocess, to do anything that involves "I need this file to exist for the next ten seconds and then disappear." **Don't use `state.storage` for this.** That's persistent storage; using it for ephemeral data means your operator's S3 bill goes up and you have to remember to delete the file when you're done.
+Sometimes you need a file only briefly, for intermediate output or to hand a path to a subprocess. **Don't use `state.storage` for this.** It is persistent storage: temporary data there costs the operator S3 storage, and you have to remember to delete it.
 
 The right tool is the [tempfile](https://docs.rs/tempfile) crate, which is already a workspace dependency. Add `tempfile = { workspace = true }` to your extension's `Cargo.toml` and use it directly:
 
@@ -245,7 +242,7 @@ Use `state.storage` for things you want to keep; use `tempfile` for things you w
 
 ## Cap Filesystem Access (Escape Hatch)
 
-For cases where the high-level API isn't enough - random-access reads, complex directory traversal, file metadata operations - you can get a [cap-std](https://docs.rs/cap-std)-style filesystem rooted at a specific path under the storage base. This is **only available when the storage driver is Filesystem**; on S3 deployments, this method returns `None` and you're stuck with the high-level API.
+Where the high-level API isn't enough, such as random-access reads, complex directory traversal or file metadata operations, you can get a [cap-std](https://docs.rs/cap-std)-style filesystem rooted at a specific path under the storage base. This is **only available when the storage driver is Filesystem**; on S3 deployments it returns `None` and only the high-level API is available.
 
 ```rs
 use std::path::Path;
@@ -270,7 +267,7 @@ The pattern is:
 
 - Hardcode the root (or build it from values you fully control, like your own extension identifier)
 - Open the cap filesystem rooted there
-- _Then_ let user input flow into operations on the opened filesystem - those operations are sandboxed to the root and `..` segments can't escape
+- _Then_ let user input flow into operations on the opened filesystem; those operations are confined to the root, and `..` segments can't escape it
 
 If you put user input in the call to `get_cap_filesystem` itself, you've defeated the protection.
 :::
@@ -281,4 +278,4 @@ A few more reasons most extensions shouldn't reach for this:
 - The high-level `store` / `remove` / `retrieve_urls` API does what most code needs and is portable across both backends.
 - For temporary scratch space (which is the most common reason people _think_ they need raw filesystem access), the [tempfile](https://docs.rs/tempfile) crate is what you actually want.
 
-If you have a specific, justifiable reason to need cap-filesystem access - large directory operations, things the high-level API doesn't expose - this is the supported path. But default to the high-level API and only reach for this when you've established you actually need it.
+If you have a real need for cap-filesystem access, such as large directory operations the high-level API doesn't cover, this is the supported way. Otherwise, use the high-level API.

@@ -82,7 +82,7 @@ The toolbar at the top shows which layout was detected ("Windows/Linux detected"
 - **Paste** applies a previously copied (and optionally edited) set of bindings.
 - **Reset All** restores every shortcut to its default at once.
 
-The button at the end reads **Account** or **This Device** and controls where your rebinds live. By default they are saved to your account and follow you to every browser you log into - see [Settings Sync](./index.md#settings-sync). Copy and paste are still how you move bindings to a _different_ panel.
+The button at the end reads **Account** or **This Device** and controls where your rebinds live. By default they are saved to your account and follow you to every browser you log into; see [Settings Sync](./index.md#settings-sync). Copy and paste are still how you move bindings to a _different_ panel.
 
 ```txt
 # Calagopus keyboard shortcuts

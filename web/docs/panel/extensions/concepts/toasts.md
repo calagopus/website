@@ -22,7 +22,7 @@ export default function MyCard() {
 }
 ```
 
-Before you reach for it, check whether something already toasts for you - the Panel's data-fetching hooks raise error and success toasts internally, so a lot of the obvious cases are already covered. See [Toasts the data hooks already raise](#toasts-the-data-hooks-already-raise).
+Before you reach for it, check whether something already toasts for you. The Panel's data-fetching hooks raise error and success toasts internally, which covers many of the obvious cases. See [Toasts the data hooks already raise](#toasts-the-data-hooks-already-raise).
 
 The hook hands you six things:
 
@@ -35,7 +35,7 @@ The hook hands you six things:
 | `dismissToast(id)`                    | Removes a toast early                                                                               |
 | `toastPosition`                       | The corner the current user has chosen                                                              |
 
-The provider sits above the whole app, so the hook works from anywhere you render: a route you registered, a component you slotted into a core page, a modal, a form submit handler. It throws if called outside the provider, which in practice only happens if you call it outside React entirely - see [Toasting Outside React](#toasting-outside-react).
+The provider sits above the whole app, so the hook works from anywhere you render: a route you registered, a component you slotted into a core page, a modal, a form submit handler. It throws if called outside the provider, which in practice only happens outside React entirely; see [Toasting Outside React](#toasting-outside-react).
 
 ## Types
 
@@ -82,11 +82,11 @@ export default function DeleteButton({ fileName }: Props) {
 }
 ```
 
-Keep messages short. The toast card is a fixed 288px wide and long text just wraps into a wall - if you need to explain something properly, put it on the page and use the toast to point at it. See [Translations](./translations.md) for wiring up your extension's own strings, and note that the base Panel already ships plenty of generic ones you can reuse.
+Keep messages short. The toast card is a fixed 288px wide and long text wraps into a block; if something needs explaining, put it on the page and use the toast to point at it. See [Translations](./translations.md) for your extension's own strings. The base Panel already has many generic ones you can reuse.
 
 ## Actions
 
-A toast can carry action buttons - small icon buttons rendered inside the card, to the left of the close button. They're for the "and now what" follow-up: jump to the thing you just created, or undo it.
+A toast can carry action buttons: small icon buttons inside the card, to the left of the close button. Use them for a follow-up, such as jumping to the thing you just created or undoing it.
 
 An action is `{ name, icon, disabled?, onClick }`, where `icon` is a FontAwesome `IconDefinition` rather than a rendered element:
 
@@ -113,7 +113,7 @@ export default function ImportCard({ serverUuid }: Props) {
 }
 ```
 
-`name` isn't rendered as a label - it becomes the button's tooltip, so the `icon` has to carry the meaning on its own. Pick an obvious one and keep `name` to a couple of words.
+`name` isn't rendered as a label; it becomes the button's tooltip, so the `icon` has to carry the meaning on its own. Pick an obvious one and keep `name` to a couple of words.
 
 When actions are the only extra you need, there's a shorthand overload that skips the type and defaults to `success`:
 
@@ -121,20 +121,18 @@ When actions are the only extra you need, there's a shorthand overload that skip
 addToast('Import finished.', [{ name: 'Show files', icon: faFolderOpen, onClick: onShow }]);
 ```
 
-A few behaviors worth knowing:
-
-- **`onClick` may return a promise.** If it does, the button shows a loading spinner until the promise settles. Handy for actions that hit the API.
+- **`onClick` may return a promise.** If it does, the button shows a loading spinner until the promise settles, which suits actions that call the API.
 - **Actions fire exactly once.** The button guards against a second click and disables itself after the first, so an async action can't be double-submitted by an impatient user.
 - **Clicking an action doesn't dismiss the toast.** If your action should close it, capture the id from `addToast` and call `dismissToast` yourself.
 - **`disabled: true`** renders the button greyed out from the start, for an action you want visible but not yet available.
 
 ::: warning
-Actions live and die with the toast, which disappears on its own after a few seconds. That makes them fine for _shortcuts_ - a faster way to do something the user could also do by navigating - and a poor fit for anything that's the only way to complete a flow. If missing the button means the user is stuck, it doesn't belong in a toast.
+Actions live and die with the toast, which disappears on its own after a few seconds. That makes them fine for _shortcuts_, a faster way to do something the user could also reach by navigating, and a poor fit for anything that's the only way to complete a flow. If missing the button means the user is stuck, it doesn't belong in a toast.
 :::
 
 ## Undoable Toasts
 
-"Did it, here's an undo button" is common enough that the Panel ships a purpose-built hook for it rather than making you hand-roll the action every time. `useUndoableToast` wraps `addToast` with an Undo action _and_ registers the same undo in a scoped history, so the user can trigger it either by clicking the button or by pressing the undo shortcut. The file manager uses it for renames, moves, and permission changes.
+An undo button after an action is common enough that the Panel has a hook for it. `useUndoableToast` wraps `addToast` with an Undo action _and_ registers the same undo in a scoped history, so the user can trigger it either by clicking the button or by pressing the undo shortcut. The file manager uses it for renames, moves, and permission changes.
 
 The hook takes a scope and returns an `addUndoableToast(message, undo)` function:
 
@@ -152,7 +150,7 @@ export default function RenameModal({ server, file }: Props) {
 }
 ```
 
-That one call gets you a success toast carrying an Undo button (a left-arrow icon, tooltipped with the Panel's translated `common.button.undo`), plus an entry in the undo history. You don't wire the action yourself and you don't dismiss the toast in your callback. While the undo runs, the toast swaps its Undo button for an indeterminate progress bar, and it comes down once your function settles.
+That one call gets you a success toast carrying an Undo button (a left-arrow icon, tooltipped with the Panel's translated `common.button.undo`), plus an entry in the undo history. You don't add the action or dismiss the toast yourself. While the undo runs, the toast swaps its Undo button for an indeterminate progress bar, and it comes down once your function settles.
 
 <img src="./images/toasts/undo-action.webp" alt="A green success toast reading File has been renamed, with an undo arrow action button to the left of the close button" width="288">
 
@@ -160,7 +158,7 @@ That is the file manager's rename toast, and it is what every `useUndoableToast`
 
 ### Writing the undo callback
 
-The callback is just "do the inverse operation". It can return a promise, which keeps the toast's progress bar up until it settles, and it's responsible for its own feedback - the Panel doesn't toast anything on your behalf when an undo runs. The shape the file manager uses:
+The callback performs the inverse operation. It can return a promise, which keeps the toast's progress bar up until it settles, and it handles its own feedback: the Panel doesn't toast anything when an undo runs. The shape the file manager uses:
 
 ```tsx
 addUndoableToast('Renamed 3 files.', () =>
@@ -178,7 +176,7 @@ addUndoableToast('Renamed 3 files.', () =>
 );
 ```
 
-Two things that matter here. First, **an undo can fail** - the file may have moved on, the API may reject it - so check the result and say so rather than silently doing nothing. Second, **invalidate your queries in the undo path too**. The undo mutates state exactly like the original action did, and nothing re-fetches for you.
+**An undo can fail**: the file may have changed again, or the API may reject it. Check the result and report it instead of silently doing nothing. Also, **invalidate your queries in the undo path too**. The undo mutates state exactly like the original action did, and nothing re-fetches for you.
 
 ### Actions that can't be undone
 
@@ -204,9 +202,9 @@ import { runLastUndoEntry } from '@/stores/undoHistory.ts';
 runLastUndoEntry(`server:${server.uuid}:files`);
 ```
 
-Scope your extension's entries to something unique and stable - include the server or resource id if the undo is per-resource, the way the file manager's `server:{uuid}:files` does. If you register your own keyboard shortcut, point its callback at `runLastUndoEntry` with the same scope string you pass to `useUndoableToast`.
+Scope your extension's entries to something unique and stable: include the server or resource id if the undo is per-resource, the way the file manager's `server:{uuid}:files` does. If you register your own keyboard shortcut, point its callback at `runLastUndoEntry` with the same scope string you pass to `useUndoableToast`.
 
-The store has a few properties worth knowing about:
+How the undo store behaves:
 
 - **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Undo entries are always tied to that constant, even though [progress toasts](#progress-toasts) outlive it. Expired entries are pruned as new ones arrive.
 - **Entries are one-shot.** Running an undo removes it, whether it was triggered by the button or the shortcut, so there's no way to fire the same undo twice.
@@ -215,7 +213,7 @@ The store has a few properties worth knowing about:
 - **There's no redo.** Undoing doesn't push an inverse entry. If you want "undo the undo", raise another undoable toast from inside your undo callback.
 
 ::: info
-`useUndoableToast` is a convenience layer over the same `addToast` actions described above - nothing stops you from building your own Undo action by hand. Use the hook anyway when the semantics fit. Wiring it yourself means reimplementing the shortcut integration and the progress-then-dismiss behavior, and keeping your label and icon in sync with the ones users see everywhere else.
+`useUndoableToast` is a convenience layer over the same `addToast` actions described above, and you can build your own Undo action by hand. Use the hook anyway when the semantics fit. Wiring it yourself means reimplementing the shortcut integration and the progress-then-dismiss behavior, and keeping your label and icon in sync with the ones users see everywhere else.
 :::
 
 ## Progress Toasts
@@ -253,7 +251,7 @@ const id = addProgressToast('Uploading 3 files...', {
 });
 ```
 
-The Panel's upload toasts work exactly this way: the X cancels every upload heading for that destination, and the toast disappears once nothing in that scope is still in flight. Note that `onClose` _replaces_ the dismiss rather than running alongside it, so if your handler doesn't end up removing the toast one way or another, the card stays on screen.
+The Panel's upload toasts work exactly this way: the X cancels every upload heading for that destination, and the toast disappears once nothing in that scope is still in flight. `onClose` _replaces_ the dismiss instead of running alongside it, so if your handler doesn't end up removing the toast one way or another, the card stays on screen.
 
 ### Indeterminate and determinate
 
@@ -353,7 +351,7 @@ A progress toast outlives the thing that raised it, which makes _where_ you rais
 
 Pick something that outlives the operation and mounts once, keep the id in a ref rather than state, and let an effect handle raise and dismiss. The Panel does this in two places worth copying from: `ServerStatusToast` mounts once per server and holds a single toast across every navigation inside that server, and `useUploadProgressToasts` keeps one toast per upload destination and drops it when that destination has nothing left in flight.
 
-Two gotchas specific to the Panel. Anything that reads a **context-scoped store** - `useServerStore` is the one you'll hit - has to read it in the component that owns the toast, not inside the message. Toast messages render inside the `ToastProvider`, which sits above those providers, so a message component that subscribes to the server store throws. And if you mount your owner in a place that virtual windows also render, gate it, or every open window raises its own copy into the same stack.
+Two Panel-specific pitfalls. Anything that reads a **context-scoped store**, usually `useServerStore`, has to read it in the component that owns the toast, not inside the message. Toast messages render inside the `ToastProvider`, which sits above those providers, so a message component that subscribes to the server store throws. And if you mount your owner in a place that virtual windows also render, gate it, or every open window raises its own copy into the same stack.
 
 ## Dismissing and Lifetime
 
@@ -374,7 +372,7 @@ dismissToast(id);
 addToast('Upload complete.', 'success');
 ```
 
-If you need the timeout value yourself - to line up an animation, say - import it rather than hardcoding `7500`:
+If you need the timeout value yourself, to line up an animation for example, import it rather than hardcoding `7500`:
 
 ```ts
 import { toastTimeout } from '@/providers/contexts/toastContext.ts';
@@ -387,12 +385,12 @@ Toasts stack in the order they're raised, and nothing dedupes them. Firing one p
 Which corner toasts appear in is a **user preference**, not an extension setting. It's the synced user setting `app::toast_position`, edited from the account page's Preferences card. The six options are `top_left`, `top_center`, `top_right`, `bottom_left`, `bottom_center`, and `bottom_right`.
 
 ::: warning
-The context exposes `toastPosition` for reading only - use it if you need to position something of your own relative to the stack. Don't write the underlying setting from an extension: it moves _every_ toast in the Panel, core ones included, away from the corner the user deliberately chose.
+The context exposes `toastPosition` for reading only; use it to position something of your own relative to the stack. Don't write the underlying setting from an extension: it moves _every_ toast in the Panel, core ones included, away from the corner the user deliberately chose.
 :::
 
 ## Toasting Outside React
 
-Unlike translations, which expose a module-scope `getTranslations()` for use outside components, toasts are hook-only - there's no `getToast()`. Code that runs outside the React tree, like a background upload loop or a websocket handler, has to be handed `addToast` from something that _is_ inside the tree.
+Unlike translations, which expose a module-scope `getTranslations()` for use outside components, toasts are hook-only; there's no `getToast()`. Code that runs outside the React tree, like a background upload loop or a websocket handler, has to be handed `addToast` from something that _is_ inside the tree.
 
 The Panel's own upload manager solves this with a small externals object: the module keeps a mutable slot, and a component fills it in an effect.
 
@@ -429,9 +427,9 @@ export default function MyWorkerBridge() {
 }
 ```
 
-A long-running job wants `updateToast` and `dismissToast` in that same bag, for the reasons the [progress toast](#progress-toasts) section covers - the module holds the id it got back and patches it from wherever the work happens.
+A long-running job wants `updateToast` and `dismissToast` in that same bag, for the reasons the [progress toast](#progress-toasts) section covers: the module keeps the id it got back and patches it from wherever the work happens.
 
-Note the optional call (`addToast?.(...)`). The module can run before any component has mounted, so treat "no toast available yet" as normal rather than an error - the same reason `copyToClipboard`'s helpers take `addToast` as an optional argument.
+The call is optional (`addToast?.(...)`) because the module can run before any component has mounted, so "no toast available yet" is normal, not an error. That is also why `copyToClipboard`'s helpers take `addToast` as an optional argument.
 
 ## Toasting API Errors
 
@@ -459,7 +457,7 @@ Not every failure deserves a toast. Field-level validation belongs on the field 
 
 ### Toasts the data hooks already raise
 
-Write that pattern by hand only when you're calling the API directly. The Panel's [data-fetching hooks](./frontend-api.md#data-fetching-hooks) call `useToast` internally and toast on your behalf - if you're using one of them, adding your own toast on top produces two cards for one event.
+Write that pattern by hand only when you're calling the API directly. The Panel's [data-fetching hooks](./frontend-api.md#data-fetching-hooks) call `useToast` internally and toast for you; adding your own toast on top of one of them produces two cards for one event.
 
 | Hook                            | What it toasts for you                                        |
 | ------------------------------- | ------------------------------------------------------------- |
@@ -479,7 +477,7 @@ The opt-outs differ, and four of the hooks don't have one:
 - **`useResourceForm`** always toasts too, and its success messages are the Panel's translated "{resource} created." / "updated." / "deleted." strings with the `resourceName` you pass filled in. If you want different wording, that argument is the lever, not a second toast.
 
 ::: warning
-The fetch-error toasts fire from an effect on `error`, so a query that keeps failing - a poll against a down node, say - toasts each time the error updates. `usePollingResource`'s `retryOnError` bounds that by stopping the poll after N consecutive failures; on a long-lived poll where the failure is already visible on the page, `silent: true` is usually the kinder choice.
+The fetch-error toasts fire from an effect on `error`, so a query that keeps failing, such as a poll against a node that is down, toasts each time the error updates. `usePollingResource`'s `retryOnError` bounds that by stopping the poll after N consecutive failures; on a long-lived poll where the failure is already visible on the page, `silent: true` is usually the kinder choice.
 :::
 
 ## Intercepting Toasts
@@ -544,5 +542,5 @@ The bar inside a progress toast is the Panel's `Progress` element, which is hook
 The per-type colors (`green`, `red`, `yellow`, `teal`) come from the Mantine palette, so redefining those colors in `initializeMantineTheme()` reshades toasts along with everything else. See [Theming](./theming.md) for both layers.
 
 ::: warning
-`Notification` is used for more than toasts, and the hook is global. Restyling it changes the Panel's own toasts too - which is the point for a theme extension, but a surprise if you were only trying to tweak your own.
+`Notification` is used for more than toasts, and the hook is global. Restyling it changes the Panel's own toasts too. That is intended for a theme extension, but unexpected if you only meant to change your own.
 :::

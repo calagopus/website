@@ -55,165 +55,148 @@ These bundle the Panel and Wings in a single container. Pick one of these if you
 
 ### Install Docker
 
-Ensure you have Docker and Docker Compose installed on your system. You can validate your Docker installation by running:
+You need Docker and Docker Compose installed on your system. You can validate your Docker installation by running:
 
 ```bash
-docker --version
-docker compose version # if this says "command not found" you may need to use `docker-compose` instead or update your docker installation
+sudo docker --version
+sudo docker compose version # if this says "command not found" you may need to use `docker-compose` instead or update your docker installation
 ```
 
+::: details Docker isn't installed yet
 If Docker is not installed, see the [official Docker installation guide](https://docs.docker.com/engine/install) for your operating system.
 In many cases running Docker's installation script is the easiest way to get started:
 
 ```bash
-curl -sSL https://get.docker.com/ | CHANNEL=stable bash
+curl -sSL https://get.docker.com/ | sudo CHANNEL=stable bash
 ```
 
 This should automatically install Docker Compose as well. If not, you can follow the [Docker Compose installation instructions](https://docs.docker.com/compose/install).
+:::
 
 ## Option A: All-in-One (recommended for single-node setups)
 
-The AIO image runs the Panel and Wings inside the same container. You do not need to install Wings separately or register a node manually - the bundled Wings is wired up through the Panel automatically.
+The AIO image runs the Panel and Wings inside the same container. You do not need to install Wings separately or register a node manually; the bundled Wings is connected to the Panel automatically.
 
-### 1. Download the AIO Compose Stack
+### 1. Download and Start the Stack
 
-Pick the compose file that matches your needs:
+Pick the compose file that matches your needs. Each block downloads it, sets `APP_ENCRYPTION_KEY` to a random value, and starts the stack. Run it once: running it again replaces `compose.yml` and its encryption key. Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block.
 
 ::: code-group
 
 ```bash [Basic AIO]
-mkdir calagopus-panel
+sudo mkdir calagopus-panel
 cd calagopus-panel
 
-curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.aio.yml
-ls -lh # should show you the compose.yml file
+sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.aio.yml
+echo 'app_name: Calagopus' | sudo tee wings-config.yml > /dev/null
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
+
+sudo docker compose up -d
 ```
 
 ```bash [Heavy AIO for Extension Support]
-mkdir calagopus-panel
+sudo mkdir calagopus-panel
 cd calagopus-panel
 
-curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.heavy.aio.yml
-ls -lh # should show you the compose.yml file
+sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.heavy.aio.yml
+echo 'app_name: Calagopus' | sudo tee wings-config.yml > /dev/null
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
+
+sudo docker compose up -d
 ```
 
 :::
 
 The **Basic AIO** compose uses the `:aio` image and is the right choice for most single-node installations.
-The **Heavy AIO** compose uses the `:heavy-aio` image and adds the volume mounts needed to install [extensions](../extensions/index.md) - pick this one only if you know you'll be using extensions.
+The **Heavy AIO** compose uses the `:heavy-aio` image and adds the volume mounts needed to install [extensions](../extensions/index.md). Only pick it if you'll use extensions.
 
-### 2. Create the Wings configuration file
-
-::: warning
-This step is **mandatory before the first `docker compose up`**. The compose file mounts `./wings-config.yml` into the container as a file. If the file does not already exist on the host, Docker will helpfully create it as a **directory**, which will break the container. Create the file first.
+::: warning Keep the `wings-config.yml` line
+The compose file mounts `./wings-config.yml` into the container as a file, and it has to exist **before the first `docker compose up`**. If it doesn't, Docker creates it as a **directory**, which breaks the container. The AIO container fills it on first startup.
 :::
 
-```bash
-echo 'app_name: Calagopus' > wings-config.yml
-```
+Once it's up, navigate to `http://<your-server-ip>:8000` in your web browser and you'll see the OOBE (Out Of Box Experience) setup screen.
 
-You can leave the file empty - the AIO container will populate it on first startup. You only need to make sure the file exists so the bind mount attaches correctly.
+![Calagopus Panel OOBE](../oobe.webp)
 
-### 3. Change the Docker Image Variant (Optional)
+### 2. Change the Configuration (Optional)
 
-If you want a different tag than what your chosen compose file ships with (for example `:nightly-aio`, or `:nightly-heavy-aio` on the heavy stack), open `compose.yml` in your preferred text editor and change the image tag on the `web` service. [See the Docker Image Variants section above](#docker-image-variants) for details on each.
+The defaults work for most installs. To change something, edit the file with `sudo nano compose.yml` and run `sudo docker compose up -d` again.
+
+To use a different tag than what your chosen compose file ships with (for example `:nightly-aio`, or `:nightly-heavy-aio` on the heavy stack), change the image tag on the `web` service. [See the Docker Image Variants section above](#docker-image-variants) for details on each.
+
+For the other settings, review the environment variables on the `web` service. See the [Environment Configuration documentation](../environment.md) for details on each variable.
 
 ::: warning Switching between the AIO and Heavy AIO tracks needs more than the tag
 `:heavy-aio` also needs four extra volume mounts for the build artifacts it produces. Without them the container refuses to start and tells you which path is missing. If you started on the Basic AIO compose and later want extensions, don't just retag - follow [Switching to the Heavy Image](../extensions/switching-to-the-heavy-image.md), which lists the mounts to add.
 :::
 
-### 4. Configure Environment Variables
-
-Open `compose.yml` in your preferred text editor and review the environment variables on the `web` service. See the [Environment Configuration documentation](../environment.md) for details on each variable.
-
-At minimum you must set `APP_ENCRYPTION_KEY` to a random value. If you want a one-liner:
-
-```bash
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
-```
-
-### 5. Start the Panel
-
-```bash
-docker compose up -d
-```
-
-This will download the necessary Docker images and start the stack in detached mode.
-Once it's up, navigate to `http://<your-server-ip>:8000` in your web browser and you'll see the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-
 ## Option B: Standalone Panel (multi-node or split-host setups)
 
 Use this option if you want the Panel on one host and Wings on one or more separate hosts.
 
-### 1. Download the Panel Compose Stack
+### 1. Download and Start the Stack
 
-Pick the compose file that matches your needs:
+Pick the compose file that matches your needs. Each block downloads it, sets `APP_ENCRYPTION_KEY` to a random value, and starts the Panel. Run it once: running it again replaces `compose.yml` and its encryption key. Run `sudo -v` first so a password prompt doesn't swallow the rest of a pasted block.
 
 ::: code-group
 
 ```bash [Basic]
-mkdir calagopus-panel
+sudo mkdir calagopus-panel
 cd calagopus-panel
 
-curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.yml
-ls -lh # should show you the compose.yml file
+sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.yml
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
+
+sudo docker compose up -d
 ```
 
 ```bash [Basic with automatic Database Backups]
-mkdir calagopus-panel
+sudo mkdir calagopus-panel
 cd calagopus-panel
 
-curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.with-db-backups.yml
-ls -lh # should show you the compose.yml file
+sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.with-db-backups.yml
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
+
+sudo docker compose up -d
 ```
 
 ```bash [Heavy Image for Extension Support]
-mkdir calagopus-panel
+sudo mkdir calagopus-panel
 cd calagopus-panel
 
-curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.heavy.yml
-ls -lh # should show you the compose.yml file
+sudo curl -o compose.yml https://raw.githubusercontent.com/calagopus/panel/refs/heads/main/compose.heavy.yml
+RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+sudo sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
+
+sudo docker compose up -d
 ```
 
 :::
 
 The **Basic** compose uses the `:latest` image and is the right choice for most standalone Panel installations.
 The **Basic with automatic Database Backups** variant adds a small sidecar that periodically backs up the Postgres database.
-The **Heavy** compose uses the `:heavy` image and includes the volume mounts needed to install [extensions](../extensions/index.md) - pick this one only if you know you'll be using extensions.
+The **Heavy** compose uses the `:heavy` image and includes the volume mounts needed to install [extensions](../extensions/index.md). Only pick it if you'll use extensions.
 
-### 2. Change the Docker Image Variant (Optional)
+Once it's up, navigate to `http://<your-server-ip>:8000` in your web browser to see the OOBE (Out Of Box Experience) setup screen.
 
-If you want a different tag than what your chosen compose file ships with (for example `:nightly` or `:latest-pre`), open `compose.yml` in your preferred text editor and change the image tag on the `web` service. [See the Docker Image Variants section above](#docker-image-variants) for details.
+![Calagopus Panel OOBE](../oobe.webp)
+
+### 2. Change the Configuration (Optional)
+
+The defaults work for most installs. To change something, edit the file with `sudo nano compose.yml` and run `sudo docker compose up -d` again.
+
+To use a different tag than what your chosen compose file ships with (for example `:nightly` or `:latest-pre`), change the image tag on the `web` service. [See the Docker Image Variants section above](#docker-image-variants) for details.
+
+For the other settings, see the [Environment Configuration documentation](../environment.md).
 
 ::: warning
 If you switch from a non-heavy variant to a heavy variant after the fact, you will also need to add the compose mounts required for extensions to work. See the [`compose.heavy.yml`](https://github.com/calagopus/panel/blob/main/compose.heavy.yml) file for reference.
 :::
 
-### 3. Configure Environment Variables
-
-Open `compose.yml` in your preferred text editor and modify the environment variables as needed. See the [Environment Configuration documentation](../environment.md) for details on each variable.
-
-At minimum, set `APP_ENCRYPTION_KEY` to a random value:
-
-```bash
-RANDOM_STRING=$(cat /dev/urandom | LC_ALL=C tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
-sed -i -e "s/CHANGEME/$RANDOM_STRING/g" compose.yml
-```
-
-### 4. Start the Panel
-
-```bash
-docker compose up -d
-```
-
-This will download the necessary Docker images and start the Panel in detached mode.
-Once it's up, navigate to `http://<your-server-ip>:8000` in your web browser to see the OOBE (Out Of Box Experience) setup screen.
-
-![Calagopus Panel OOBE](../oobe.webp)
-
-### 5. Install Wings
+### 3. Install Wings
 
 Since this is a split-host setup, you now need to install Wings on each node that will actually run game servers. Follow the [Wings Docker Installation](../../wings/installation/docker.md) guide on each node host.

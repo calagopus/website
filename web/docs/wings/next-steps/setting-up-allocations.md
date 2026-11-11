@@ -5,7 +5,7 @@ description: Create the IP and port allocations that determine how players conne
 
 # Setting up Allocations
 
-An allocation is an IP address and port combination that you assign to a server. It's how players connect to their game server - the allocation determines what address and port appear in the panel.
+An allocation is an IP address and port combination that you assign to a server. It's how players connect to their game server: the allocation determines what address and port appear in the panel.
 
 To create allocations, go to **Admin → Nodes**, click your node, then open the **Allocations** tab.
 

@@ -94,7 +94,7 @@ The icon button at the start of a route or redirect entry picks its sidebar icon
 ![Route Configuration section listing server routes from Console to Activity, each with an icon button, and a route picker](./images/egg-configurations/route-config.webp)
 
 ::: warning
-Pages left out of the list are not just hidden from the sidebar, they become inaccessible for those servers. Only remove pages you genuinely want to cut off.
+Pages left out of the list are hidden from the sidebar and become inaccessible for those servers. Only remove pages you want to cut off.
 :::
 
 ## Duplicating and Deleting

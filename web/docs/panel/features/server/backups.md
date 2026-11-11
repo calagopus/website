@@ -47,7 +47,7 @@ Wings adds two more sources to that list: a `.pteroignore` file in the server's 
 
 A database backup is a dump of a managed database, written by the database's own tooling: a SQL dump for PostgreSQL and MariaDB, a `mongodump` archive for MongoDB, and an RDB snapshot for Redis. It goes through the same backup configuration as your server backups and sits in the same list and the same groups. The managed database it came from lists it too, on its own [Backups tab](./databases/managed.md#backups-tab), where you can take one without leaving the database's page.
 
-A few things have to be true before the panel takes one:
+Before the panel takes one, all of these have to be true:
 
 - The managed database must be running. Its Backups tab disables **Create** with "The managed database must be running to take a backup." while it is off.
 - The server's backup configuration cannot be a btrfs or ZFS one; those store file snapshots and have nowhere to put a dump. Every other driver works.

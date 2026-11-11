@@ -365,7 +365,7 @@ it first, replay a signed request, or guess the code offline from a captured
 request (it has about 40 bits) and pair Wings with a Panel they control. Pair over
 a network you trust and soon after Wings starts, give it an HTTPS Panel URL, and
 avoid `--ignore-certificate-errors` on the setup server and `--allow-insecure` on
-`calagopus-wings configure`, which both turn off certificate checks on the
+`sudo calagopus-wings configure`, which both turn off certificate checks on the
 connection to the Panel.
 
 Sources: [pairing signatures](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/setup/pairing.rs), [setup server](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/setup/mod.rs#L78-L365), [enrollment codes](https://github.com/calagopus/panel/blob/28e9fcb8fe2c8a53611a6247de31145da7bae57c/shared/src/models/node/enrollment.rs).
@@ -563,7 +563,7 @@ sensitive endpoints are covered individually rather than by one blanket limit:
 Dedicated limits for expensive actions supplement the general client budget.
 Those requests still count toward the shared client limit. Limits are keyed by
 client IP, so configure trusted proxies and the real client address correctly
-(see [Reverse proxies](../additional/reverse-proxies/)).
+(see [Reverse proxies](../additional/reverse-proxies.md)).
 
 Redis/Valkey coordinates limits across Panel instances. When Redis is unavailable or returns an error, the local fallback keeps
 counters in one process; it cannot provide a shared budget across replicas.
@@ -688,7 +688,7 @@ that never sign in again.
 ::: warning Optional decrypted-secret cache
 `APP_USE_DECRYPTION_CACHE` is off by default. Enabling it allows the encrypted-secret
 helper to hold decrypted values for 30 seconds, in the Panel process's own memory and
-capped at 16384 entries - nothing decrypted is written to Redis/Valkey. Treat
+capped at 16384 entries; nothing decrypted is written to Redis/Valkey. Treat
 Redis/Valkey as trusted infrastructure regardless of this option: the Panel uses it for
 application and authentication state either way.
 :::

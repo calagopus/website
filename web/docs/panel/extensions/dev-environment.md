@@ -5,11 +5,11 @@ description: Set up a development environment for building Calagopus Panel exten
 
 # Setting up your Development Environment
 
-This guide walks through setting up a development environment for creating extensions for the Calagopus Panel.
+This guide sets up a development environment for building Calagopus Panel extensions.
 
 ## Prerequisites
 
-Before you begin, ensure you have the following installed on your machine:
+You need the following installed:
 
 - Node.js (version 24 or higher)
 - pnpm (version 11 or higher)

@@ -16,7 +16,7 @@ The list shows each schedule's name, **Last Run**, **Last Failure**, **Status** 
 ![Upcoming Runs Calendar in week view with Daily Backups runs shown across several days](./images/schedules/calendar.webp)
 
 ::: info
-What a subuser can do here is controlled by the `schedules` permission group. See the [Permissions Reference](../dashboard/permissions.md#schedules).
+What a subuser can do here is controlled by the `schedules` permission group. See **Schedules** in the [Permissions Reference](../dashboard/permissions.md#server-permissions).
 :::
 
 ## Creating a Schedule

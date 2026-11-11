@@ -21,10 +21,10 @@ Fusequota is **not** a true quota system. It is a workaround that enforces limit
 
 ## Requirements
 
-- The host kernel must support FUSE (the `fuse` module) and `allow_other` mounts (which is the default on most distros, but some hardened kernels disable it - check `/etc/fuse.conf` for `user_allow_other`).
+- The host kernel must support FUSE (the `fuse` module) and `allow_other` mounts (which is the default on most distros, but some hardened kernels disable it; check `/etc/fuse.conf` for `user_allow_other`).
 - Wings must be able to mount FUSE filesystems. In practice this means running Wings as root (normal setup).
 
-Fusequota tries to minimize its user-space overhead by using aggressive write caching and - for read-only file descriptors - bypassing the FUSE layer entirely and reading directly from the backing filesystem. This helps, but does not eliminate, the performance cost.
+Fusequota tries to minimize its user-space overhead by using aggressive write caching and, for read-only file descriptors, bypassing the FUSE layer entirely and reading directly from the backing filesystem. This helps, but does not eliminate, the performance cost.
 
 ## Downsides
 
@@ -36,7 +36,7 @@ Fusequota tries to minimize its user-space overhead by using aggressive write ca
 
 ## Migrating existing servers
 
-Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), Fusequota does not need to convert server directories into subvolumes or datasets - it mounts a FUSE layer over whatever directory already exists. Flipping `disk_limiter_mode` to `fuse_quota` and restarting Wings will bring existing servers under the limiter as they start up. No data movement is required.
+Unlike [Btrfs](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), Fusequota does not need to convert server directories into subvolumes or datasets; it mounts a FUSE layer over whatever directory already exists. Flipping `disk_limiter_mode` to `fuse_quota` and restarting Wings will bring existing servers under the limiter as they start up. No data movement is required.
 
 ## When should I use it?
 
@@ -44,7 +44,7 @@ Use `fuse_quota` if, and generally **only if**, you have no other option:
 
 - **If you run any kind of production or public hosting**, you should be using a native limiter. [Btrfs](./btrfs-subvolume.md), [ZFS](./zfs-dataset.md), and [XFS](./xfs-quota.md) are all substantially better across every axis that matters (performance, stability, simplicity).
 - **If you run a small private panel for yourself and a few friends**, you probably don't need a disk limiter at all. The threat model Fusequota exists to counter ("Pterodactyl-Destroyer"-style attacks where a malicious user fills the disk) mostly doesn't apply to trusted users.
-- **If you host free or low-trust servers** on a filesystem where no native limiter is available, Fusequota can be worth the trade-off - having a slow-but-protected server is better than having no protection at all.
+- **If you host free or low-trust servers** on a filesystem where no native limiter is available, Fusequota can be worth the trade-off: a slower server with a disk limit is better than no limit at all.
 - **If you host high-performance servers**, Fusequota's overhead may be unacceptable. Move the volumes to a filesystem that supports a native limiter instead.
 
 If you are unsure which limiter is right for your setup, ask in the [Discord](https://discord.gg/uSM8tvTxBV) for guidance.

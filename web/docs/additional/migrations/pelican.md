@@ -9,21 +9,18 @@ Calagopus includes an importer that reads a Pelican database and writes equivale
 
 API keys and active login sessions do not migrate. Users need to sign in again. Generate new API keys and update your integrations: the Calagopus API differs from Pelican's, so existing API scripts also need changes.
 
-This guide covers the panel database migration only. Wings also needs to be updated to point at the new panel. See [Wings Updating](../../wings/updating.md) for that step.
+This guide covers the panel database migration only. Your nodes already run Pelican Wings, so they don't need a fresh install: follow [Migrating Wings Nodes](./wings.md) on each one once the panel is done.
 
 ## Pick Your Path
 
 Pelican comes in two flavors and the import process is slightly different for each. Figure out which one you're running and follow the matching guide:
 
-::::tabs
-=== Standalone
-A normal install on a Linux box, Pelican running directly on the host. Head to the [Standalone](./pelican/standalone.md) guide.
+| You're running                                                          | Guide                                 |
+| ----------------------------------------------------------------------- | ------------------------------------- |
+| A normal install on a Linux box, Pelican running directly on the host   | [Standalone](./pelican/standalone.md) |
+| Pelican inside Docker containers, with a `docker-compose.yml` somewhere | [Dockerized](./pelican/docker.md)     |
 
-=== Dockerized
-Pelican running inside Docker containers, with a `docker-compose.yml` somewhere. Head to the [Dockerized](./pelican/docker.md) guide.
-::::
-
-If you're not sure which setup you're using, run `docker compose ps` in your Pelican directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
+If you're not sure which setup you're using, run `sudo docker compose ps` in your Pelican directory. If it shows a running panel/web container, you're using Docker. Otherwise, you're using Standalone. A `docker-compose.yml` file alone doesn't indicate a Docker setup.
 
 ## Import Options
 
@@ -49,7 +46,14 @@ A failed data write rolls back the import. Panel settings are saved after the da
 
 The importer shares its code with the Pterodactyl one, so connection and data errors are covered under [Troubleshooting the Import](./pterodactyl.md#troubleshooting-the-import) on that page. Two things are specific to Pelican.
 
-| Symptom                                                                                                                                                                       | Fix                                                                                                                                                                                                                    |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect                                                                      | The `remote:` URL in the Wings config still points at the Pelican panel. Set it to the Calagopus panel's address and restart Wings.                                                                                    |
-| Config file replacements such as `{{server.environment.SERVER_NAME}}` are written literally, and the Wings log says `unknown server variable: server.environment.SERVER_NAME` | Calagopus Wings exposes the environment as `server.env`. Wings from 1.1.4 on accepts `server.environment` as an alias. On older versions, edit the egg's config file replacements to use `{{server.env.SERVER_NAME}}`. |
+::: details Login fails with "Invalid username or password" for an account that had an empty password on Pelican {open}
+Signing in with an empty password doesn't work on Calagopus. Set a new password from the CLI with `sudo docker compose exec web calagopus-panel users reset-password` on Docker, or `sudo calagopus-panel users reset-password` from `/etc/calagopus` otherwise, then sign in with it.
+:::
+
+::: details Wings logs a JSON parse error naming a missing field such as `oom_disabled`, and the panel can't connect {open}
+The `remote:` URL in the Wings config still points at the Pelican panel. Set it to the Calagopus panel's address and restart Wings.
+:::
+
+::: details Config file replacements such as `{{server.environment.SERVER_NAME}}` are written literally, and the Wings log says `unknown server variable: server.environment.SERVER_NAME` {open}
+Calagopus Wings exposes the environment as `server.env`. Wings from 1.1.4 on accepts `server.environment` as an alias. On older versions, edit the egg's config file replacements to use `{{server.env.SERVER_NAME}}`.
+:::

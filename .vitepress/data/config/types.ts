@@ -21,6 +21,7 @@ export interface ConfigNote {
 export interface ConfigOption {
   key: string;
   description: string;
+  required?: boolean | string;
   values?: string[];
   default?: YamlValue;
   platformDefaults?: Record<string, YamlValue>;

@@ -1,6 +1,6 @@
 ---
 title: WHMCS
-description: The Calagopus WHMCS module provisions servers from your billing workflow, creating, suspending, upgrading, and terminating them automatically, with a live server summary in the client area.
+description: The Calagopus WHMCS module creates, suspends, upgrades and terminates servers from your billing workflow, with a live server summary in the client area.
 ---
 
 # WHMCS
@@ -8,7 +8,7 @@ description: The Calagopus WHMCS module provisions servers from your billing wor
 The **Calagopus WHMCS module** is a server provisioning module for [WHMCS](https://www.whmcs.com). It lets WHMCS automatically create, suspend, unsuspend, upgrade, and terminate Calagopus servers as part of your billing workflow, and shows customers a live summary of their server in the WHMCS client area.
 
 ::: danger
-This module authenticates with an **admin API key** (entered as the server password), which grants full administrative access to your panel - creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
+This module authenticates with an **admin API key** (entered as the server password), which grants full administrative access to your panel: creating users and servers, reading every resource, and more. Treat it like a root password: never share it, and rotate it immediately if it is ever exposed.
 :::
 
 ## What It Does
@@ -198,13 +198,34 @@ Change Package re-resolves the limits, feature limits, hugepages and KVM passthr
 
 ## Troubleshooting
 
-| Symptom                                                                            | Fix                                                                                                                                                                                                                                                                     |
-| ---------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Test Connection fails                                                              | Confirm the **Hostname** has no scheme or trailing path (just the domain, plus `:port` if needed), **Secure** matches your panel's protocol, and the **Password** field contains a valid **admin** API key. A `cURL Error` means WHMCS couldn't reach the panel at all. |
-| "No available allocations on the selected node."                                   | The chosen node has no free allocations. Add allocations to the node, or switch the product to auto-deploy by clearing the Node UUID and supplying Location UUIDs.                                                                                                      |
-| The product won't save                                                             | The module settings failed validation: Nest UUID or Egg UUID is missing, neither a Node UUID nor Location UUIDs were given, or a number is out of range. All UUIDs must come from the same panel the server is configured against.                                      |
-| "A panel user with this username already exists and was not linked automatically." | The panel already has a user with the username generated for this client, under a different email. Check that the account belongs to the client, then set that panel user's `external_id` to the WHMCS client ID and run **Create** again.                              |
-| "Failed to create server because it already exists for this service"               | A server with this service's ID as its `external_id` is already on the panel, for example from an earlier Create. Terminate or remove that server first, or keep using it.                                                                                              |
-| "Server not found." on Suspend, Terminate or Change Package                        | No panel server has this service's ID as its `external_id`, and the `Server UUID` custom field (if any) doesn't match one either. Set the server's `external_id` in the panel to the WHMCS service ID.                                                                  |
-| Clients get a duplicate panel account                                              | The client registered on the panel separately with a different email than the one in WHMCS. Link the accounts by setting that panel user's `external_id` to the WHMCS client ID.                                                                                        |
-| The client area shows "Unable to load server information from the panel."          | The panel couldn't be reached or returned an error. Enable the WHMCS module log (**System Logs → Module Log**) and reload the page to see the underlying error.                                                                                                         |
+::: details Test Connection fails {open}
+Confirm the **Hostname** has no scheme or trailing path (just the domain, plus `:port` if needed), **Secure** matches your panel's protocol, and the **Password** field contains a valid **admin** API key. A `cURL Error` means WHMCS couldn't reach the panel at all.
+:::
+
+::: details "No available allocations on the selected node." {open}
+The chosen node has no free allocations. Add allocations to the node, or switch the product to auto-deploy by clearing the Node UUID and supplying Location UUIDs.
+:::
+
+::: details The product won't save {open}
+The module settings failed validation: Nest UUID or Egg UUID is missing, neither a Node UUID nor Location UUIDs were given, or a number is out of range. All UUIDs must come from the same panel the server is configured against.
+:::
+
+::: details "A panel user with this username already exists and was not linked automatically." {open}
+The panel already has a user with the username generated for this client, under a different email. Check that the account belongs to the client, then set that panel user's `external_id` to the WHMCS client ID and run **Create** again.
+:::
+
+::: details "Failed to create server because it already exists for this service" {open}
+A server with this service's ID as its `external_id` is already on the panel, for example from an earlier Create. Terminate or remove that server first, or keep using it.
+:::
+
+::: details "Server not found." on Suspend, Terminate or Change Package {open}
+No panel server has this service's ID as its `external_id`, and the `Server UUID` custom field (if any) doesn't match one either. Set the server's `external_id` in the panel to the WHMCS service ID.
+:::
+
+::: details Clients get a duplicate panel account {open}
+The client registered on the panel separately with a different email than the one in WHMCS. Link the accounts by setting that panel user's `external_id` to the WHMCS client ID.
+:::
+
+::: details The client area shows "Unable to load server information from the panel." {open}
+The panel couldn't be reached or returned an error. Enable the WHMCS module log (**System Logs → Module Log**) and reload the page to see the underlying error.
+:::

@@ -14,7 +14,7 @@ Wings assigns each server a deterministic project ID (derived from the first fou
 ## Requirements
 
 - The path you use for server volumes (e.g. `/var/lib/pterodactyl/volumes`) must live on an XFS filesystem.
-- That filesystem must be mounted with the `prjquota` mount option. This is a mount-time option - you cannot toggle it on a live mount - so it needs to be set in `/etc/fstab` (or equivalent) and the filesystem remounted. For the root filesystem, this means editing the kernel command line (e.g. `rootflags=prjquota` in GRUB) and rebooting.
+- That filesystem must be mounted with the `prjquota` mount option. This is a mount-time option that can't be toggled on a live mount, so it needs to be set in `/etc/fstab` (or equivalent) and the filesystem remounted. For the root filesystem, this means editing the kernel command line (e.g. `rootflags=prjquota` in GRUB) and rebooting.
 - The `xfsprogs` package (providing the `xfs_quota` CLI) must be installed on the host and available in Wings' `PATH`.
 - Wings must be able to read and write `/etc/projects`. In practice this means running Wings as root (normal setup).
 
@@ -30,8 +30,8 @@ If `prjquota` appears in the mount options, the option is active. If it does not
 ## Downsides
 
 - **Mount-time setup requirement.** `prjquota` cannot be enabled on a running filesystem. Enabling it on the root filesystem requires a reboot. This is the main friction point compared to Btrfs/ZFS, which can have quotas enabled online.
-- **Shared `/etc/projects` file.** Wings atomically rewrites `/etc/projects` each time it adds or removes a server. If you have other tooling on the host that also writes to `/etc/projects`, coordinate carefully - Wings does not merge with unknown entries, but it will preserve any lines it does not own (any line not starting with a project ID Wings manages). A per-server file lock inside Wings prevents concurrent server operations from racing on the file.
-- **No `/etc/projid`.** Wings works with numeric project IDs directly and does not touch `/etc/projid`, which is the file that would normally map symbolic names to IDs. This is intentional - there are no symbolic names to manage - but if you go looking for project entries by name, you won't find them there.
+- **Shared `/etc/projects` file.** Wings atomically rewrites `/etc/projects` each time it adds or removes a server. If you have other tooling on the host that also writes to `/etc/projects`, coordinate carefully: Wings does not merge with unknown entries, but it will preserve any lines it does not own (any line not starting with a project ID Wings manages). A per-server file lock inside Wings prevents concurrent server operations from racing on the file.
+- **No `/etc/projid`.** Wings works with numeric project IDs directly and does not touch `/etc/projid`, which is the file that would normally map symbolic names to IDs. This is intentional: there are no symbolic names to manage - but if you go looking for project entries by name, you won't find them there.
 
 ## Migrating existing servers
 
@@ -61,7 +61,7 @@ First, make sure the volumes filesystem is mounted with `prjquota`. Edit `/etc/f
 Then remount (or reboot, if it's the root filesystem):
 
 ```bash
-mount -o remount /var/lib/pterodactyl
+sudo mount -o remount /var/lib/pterodactyl
 ```
 
 Confirm the option is active:

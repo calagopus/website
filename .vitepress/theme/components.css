@@ -82,6 +82,20 @@
   transform: rotate(0deg);
 }
 
+/* Inline code would split the title into columns. */
+.vp-doc .custom-block.details > summary {
+  display: block;
+  position: relative;
+  padding-inline-end: calc(14px + 0.75em + 10px);
+}
+
+.vp-doc .custom-block.details > summary::after {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  margin-top: -0.375em;
+}
+
 .m-collapsible-icon {
   display: flex;
   flex-shrink: 0;
@@ -108,12 +122,95 @@
   margin-inline: var(--mantine-spacing-sm);
 }
 
+/* VitePress sets this margin with !important. */
+.vp-doc .custom-block.details > div[class*='language-'] {
+  margin-inline: var(--mantine-spacing-sm) !important;
+}
+
 .vp-doc .custom-block.details > summary + * {
   margin-top: 4px;
 }
 
 .vp-doc .custom-block.details > :last-child:not(summary) {
   margin-bottom: var(--mantine-spacing-sm);
+}
+
+.vp-doc .custom-block.details > summary {
+  border-bottom: 1px solid transparent;
+  box-shadow: inset 0 0 transparent;
+  transition:
+    color 200ms ease,
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+.vp-doc .custom-block.details[open] > summary {
+  border-bottom-color: var(--mantine-color-default-border);
+  background-color: var(--mantine-primary-color-light);
+  box-shadow: inset 3px 0 var(--mantine-primary-color-filled);
+}
+
+.vp-doc .custom-block.details[open] > summary + * {
+  margin-top: var(--mantine-spacing-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .custom-block.details > summary {
+    transition: none;
+  }
+}
+
+/* Animated by theme/details-toggle.ts. */
+.vp-doc .custom-block.details::details-content {
+  transition: none;
+}
+
+/* Set by theme/details-toggle.ts while a block closes. */
+.vp-doc .custom-block.details.details-closing {
+  background-color: transparent;
+}
+
+.vp-doc .custom-block.details.details-closing > summary {
+  border-bottom-color: transparent;
+  background-color: transparent;
+  box-shadow: inset 0 0 transparent;
+  color: var(--mantine-color-dimmed);
+}
+
+.vp-doc .custom-block.details.details-closing > summary::after {
+  transform: rotate(-90deg);
+}
+
+/* plugins/details-toggle.ts */
+.vp-doc .details-toggle {
+  display: flex;
+  justify-content: flex-end;
+  margin: -0.5rem 0 -0.25rem;
+}
+
+.vp-doc .details-toggle > button {
+  padding: 2px 8px;
+  border-radius: var(--mantine-radius-sm);
+  font-size: var(--mantine-font-size-xs);
+  font-weight: 500;
+  color: var(--mantine-color-dimmed);
+  cursor: pointer;
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+@media (hover: hover) {
+  .vp-doc .details-toggle > button:hover {
+    background-color: var(--mantine-color-default-hover);
+    color: var(--mantine-color-text);
+  }
+}
+
+.vp-doc .details-toggle > button:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: 2px;
 }
 
 /* Markdown tables, wrapped in .m-table by the markdown renderer (config.mts). */
@@ -320,6 +417,69 @@
   padding: var(--mantine-spacing-md) 0 0;
 }
 
+.vp-doc .plugin-tabs .plugin-tabs--tab-list {
+  flex-wrap: nowrap;
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-radius: var(--mantine-radius-default);
+  background-color: var(--vp-code-tab-bg);
+  scrollbar-width: thin;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list::after {
+  display: none;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab {
+  flex: 0 1 auto;
+  padding-inline: var(--mantine-spacing-sm);
+  line-height: 1.3;
+  color: var(--vp-code-tab-text-color);
+  text-align: center;
+  white-space: normal;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab[aria-selected='true'] {
+  color: var(--vp-code-tab-active-text-color);
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab:focus-visible {
+  outline: 2px solid var(--mantine-primary-color-filled);
+  outline-offset: -2px;
+}
+
+/* Sliding underline, placed by theme/tabs.ts. */
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator]::after,
+.vp-doc .vp-code-group .tabs[data-indicator]::after {
+  content: '';
+  position: absolute;
+  display: block;
+  z-index: 1;
+  right: auto;
+  bottom: 0;
+  left: var(--indicator-left);
+  width: var(--indicator-width);
+  height: 2px;
+  background-color: var(--mantine-primary-color-filled);
+  transition:
+    left 200ms ease,
+    width 200ms ease;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator] .plugin-tabs--tab[aria-selected='true']::after,
+.vp-doc .vp-code-group .tabs[data-indicator] input:checked + label::after {
+  background-color: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator]::after,
+  .vp-doc .vp-code-group .tabs[data-indicator]::after {
+    transition: none;
+  }
+}
+
 .vp-doc .vp-code-group .tabs {
   padding: 0;
   box-shadow: inset 0 -2px var(--tab-border-color);
@@ -401,4 +561,76 @@
 .VPBadge.important {
   background-color: var(--mantine-color-violet-light);
   color: var(--mantine-color-violet-light-color);
+}
+
+/* Internal doc links get a chevron, built like the default theme's external link icon so it
+   never wraps onto a line of its own. */
+.VPDoc .vp-doc a:not([class], [download], [href*='://'], [target='_blank'], svg a, :has(img, svg))::after {
+  content: var(--vp-direction-mark) '\2060';
+  display: inline;
+  margin-inline-start: 0.125rem;
+  padding-inline-start: 0.6875rem;
+  background: currentColor;
+  --icon: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='none' stroke='black' stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='m9 6 6 6-6 6'/%3E%3C/svg%3E");
+  -webkit-mask: var(--icon) center / 100% 100% no-repeat;
+  mask: var(--icon) center / 100% 100% no-repeat;
+}
+
+/* Compare section: the sidebar, set via pageClass in each page's frontmatter. */
+
+.compare-page .VPSidebarItem.level-0 > .item > .text,
+.compare-page .VPSidebarItem.level-0.has-active > .item > .text {
+  margin-bottom: 2px;
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.is-link > .item > .link > .text {
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.level-1 > .item > .text,
+.compare-page .VPSidebarItem.level-1.has-active > .item > .text {
+  margin-top: 8px;
+  font-weight: 700;
+  color: var(--vp-c-text-1);
+}
+
+.compare-page .VPSidebarItem.level-1:not(.is-link) + .VPSidebarItem.level-1.is-link {
+  margin-top: 8px;
+}
+
+.compare-page .VPSidebarItem.is-link > .item {
+  width: calc(100% + 20px);
+  margin-inline: -10px;
+  padding-inline: 10px;
+  border-radius: var(--mantine-radius-sm);
+  transition: background-color 0.15s;
+}
+
+.compare-page .VPSidebarItem.is-link > .item:hover {
+  background-color: var(--mantine-color-default-hover);
+}
+
+.compare-page .VPSidebarItem.is-active > .item,
+.compare-page .VPSidebarItem.is-active > .item:hover {
+  background-color: var(--vp-c-brand-soft);
+}
+
+.compare-page .VPSidebarItem .indicator {
+  display: none;
+}
+
+.compare-page .VPSidebarItem.level-1 > .items {
+  padding-inline-start: 10px;
+  border-inline-start: none;
+}
+
+/* Compare section: two-sided tables keep their columns lined up from one table to the next. */
+
+.compare-versus .vp-doc .m-table table {
+  table-layout: fixed;
+}
+
+.compare-versus .vp-doc .m-table th:first-child {
+  width: 46%;
 }

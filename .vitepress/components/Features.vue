@@ -17,7 +17,7 @@ const features = [
     icon: faLock,
     title: 'Security',
     details:
-      'Calagopus is built with security in mind, utilizing best practices to minimize vulnerabilities and protect your game servers from potential threats. Servers run in isolated Docker containers, and the panel itself also follows best practices for secure web applications.',
+      'Every game server runs in its own sandbox, and is never able to escape to the host machine. The panel supports best security practices, like passkeys, rate limiting and detailed access control.',
     link: {
       href: '/docs/about/security',
       label: 'Learn more about security',
@@ -27,7 +27,7 @@ const features = [
     icon: faBolt,
     title: 'Performance',
     details:
-      "With Rust's high performance and low-level control, Calagopus delivers fast and efficient game server management, with panel API throughput up to 447x that of PHP-based panels - making server administration smoother than ever. Our binaries are compiled to be as small and efficient as possible, and we use caching and other optimization techniques to ensure the best performance possible.",
+      'Calagopus provides high-performance game server management with low-level control and minimal overhead. Its panel API achieves up to 447x the throughput of alternatives. We keep binaries small through optimized compilation and use caching and other performance optimizations to reduce overhead and improve responsiveness.',
     link: {
       href: '/docs/about/benchmarks',
       label: 'See the benchmarks',
@@ -37,7 +37,7 @@ const features = [
     icon: faPuzzlePiece,
     title: 'Modularity',
     details:
-      'The Extension API uses Rust traits to let extensions add backend logic, custom routes, CLI commands, and database migrations - and go further than fixed plugin slots: extensions can intercept or replace built-in UI elements, inject fields into admin forms, and even install from the admin UI with live build logs on the all-in-one image.',
+      'The extension API uses Rust traits to let extensions add backend logic, custom routes, CLI commands, and database migrations. They are not limited to fixed slots: they can intercept or replace built-in UI elements and add fields to admin forms. They even install from the admin area with a live build log.',
     link: {
       href: '/docs/panel/extensions/',
       label: 'Explore the Extension API',
@@ -57,7 +57,7 @@ const features = [
     icon: faDesktop,
     title: 'User-Friendly Interface',
     details:
-      'A guided first-run wizard gets you from install to a running server, and day-to-day management includes real-time collaborative file editing, a disk usage treemap, revision diffs with one-click restore, and 14+ languages with automatic right-to-left support. An "Advanced Mode" toggle keeps expert options out of the way until you want them.',
+      'A first-run wizard takes you from install to a running server. Day to day you get collaborative file editing, a disk usage treemap, file history with one-click restore, and 14+ languages with right-to-left support. Expert options stay hidden until you turn on Advanced Mode.',
     link: {
       href: '/docs/about/features',
       label: 'Browse the feature reference',
@@ -67,7 +67,7 @@ const features = [
     icon: faRocket,
     title: 'Easy Deployment',
     details:
-      'Calagopus offers easy deployment options, including Docker and traditional installation methods, allowing users to quickly set up and start managing their game servers without hassle. Our documentation provides clear instructions for both methods, and our community is available to assist with any issues during deployment.',
+      'Install with Docker, from the APT, RPM, APK or AUR packages, or as a single binary. The All-in-One Docker image runs the panel and Wings together, and TrueNAS, Unraid, umbrelOS, Runtipi and Hostinger have their own guides.',
     link: {
       href: '/docs/panel/installation/docker',
       label: 'Read the Docker install guide',

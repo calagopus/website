@@ -1,15 +1,15 @@
 ---
-title: Settings
+title: Extension Settings
 description: Store your extension configuration with the Panel settings system instead of hardcoding values.
 ---
 
 # Settings
 
-Let's say you're making the best extension in the universe. Impossible? Maybe. But you're facing a BIG issue - you need an API key to make it work. So where do you put it? Hardcoding is out, environment variables mean the operator has to restart the Panel to change them, and storing a config file next to your binary is a nightmare to keep in sync across deployments. What you actually want is for the operator to open the admin panel, paste the key into a text field, click Save, and have it Just Work.
+Say your extension needs an API key. Hardcoding it is out, an environment variable means restarting the Panel to change it, and a config file next to the binary is hard to keep in sync across deployments. Instead, the operator should paste the key into a field in the admin area and click Save.
 
-That's what settings are for. The settings API lets you declare what data your extension needs to persist, the Panel stores it in its database, and your handlers can read or update it like any other Rust struct.
+The settings API does that. You declare the data your extension needs to keep, the Panel stores it in its database, and your handlers read or update it like any other Rust struct.
 
-The whole thing boils down to three steps: define a struct, tell the Panel how to turn it into rows and back, then point the Panel at the deserializer so it knows to use your types. This page walks through all three, and a few patterns that will save you pain along the way.
+There are three steps: define a struct, tell the Panel how to turn it into rows and back, and register the deserializer so the Panel uses your types.
 
 ## Defining Your Settings Struct
 
@@ -26,11 +26,11 @@ pub struct ExtensionSettingsData {
 }
 ```
 
-The only hard requirements are `serde::Serialize` and `serde::Deserialize` (since Rust needs to know how to read and write each field) and that the struct and every field are `Send + Sync`. `ToSchema` from utoipa is also standard - if you're ever going to expose settings through a route, utoipa needs it to generate the OpenAPI schema.
+The only hard requirements are `serde::Serialize` and `serde::Deserialize` (since Rust needs to know how to read and write each field) and that the struct and every field are `Send + Sync`. `ToSchema` from utoipa is also usual: if you expose settings through a route, utoipa needs it to generate the OpenAPI schema.
 
 ## Serializing and Deserializing
 
-Now the interesting part. The Panel stores extension settings in a key-value shape in the database - one row per (extension, key) pair, with the value as a string. That's the storage format you're mapping your struct onto. You implement two traits that describe the mapping: `SettingsSerializeExt` to turn your struct into key-value pairs, and `SettingsDeserializeExt` to rebuild your struct from those pairs.
+The Panel stores extension settings as key-value rows in the database, one row per (extension, key) pair, with the value as a string. That's the storage format you're mapping your struct onto. You implement two traits that describe the mapping: `SettingsSerializeExt` to turn your struct into key-value pairs, and `SettingsDeserializeExt` to rebuild your struct from those pairs.
 
 You have two options for how the keys line up with your struct's fields: **one key per field**, or **one key for the whole struct**. Both work; pick based on what the data looks like.
 
@@ -91,16 +91,16 @@ impl SettingsDeserializeExt for ExtensionSettingsDataDeserializer {
 }
 ```
 
-There's a lot here but it's all the same two ideas. On the serialize side, `write_raw_setting(key, value)` tells the Panel to save that key as that value, chained once per field. On the deserialize side, `take_raw_setting(key)` pulls it back as an `Option<CompactString>` - you decide what to do if it's missing (in the example above, fall back to empty string or `false`). `read_raw_setting` is the non-consuming twin, for a value you need to look at twice.
+It is the same two ideas repeated. On the serialize side, `write_raw_setting(key, value)` tells the Panel to save that key as that value, chained once per field. On the deserialize side, `take_raw_setting(key)` reads it back as an `Option<CompactString>`, and you decide what to do if it's missing (in the example above, fall back to empty string or `false`). `read_raw_setting` is the non-consuming twin, for a value you need to look at twice.
 
 The example does a couple of extra things worth calling out:
 
-- **Encryption** - the `api_key` goes through `write_raw_encrypted_setting` and comes back through `read_raw_encrypted_setting`. The Panel encrypts the value with its application key and stores it base64-encoded, so a secret never sits in the settings table in the clear. `write_serde_encrypted_setting` / `read_serde_encrypted_setting` do the same for the JSON pattern below, and `serializer.nest(prefix, &sub_settings)` / `deserializer.nest(prefix, &sub_deserializer)` split a large struct into prefixed sub-structs the way the core settings do.
-- **Graceful defaults** - every field falls back to a default value if the setting doesn't exist in the database. Missing keys happen on first startup before anyone's set anything, on fresh installs, and any time you add a new field to an existing extension without writing a migration. Never assume a key will be there.
+- **Encryption.** The `api_key` goes through `write_raw_encrypted_setting` and comes back through `read_raw_encrypted_setting`. The Panel encrypts the value with its application key and stores it base64-encoded, so a secret never sits in the settings table in the clear. `write_serde_encrypted_setting` / `read_serde_encrypted_setting` do the same for the JSON pattern below, and `serializer.nest(prefix, &sub_settings)` / `deserializer.nest(prefix, &sub_deserializer)` split a large struct into prefixed sub-structs the way the core settings do.
+- **Defaults.** Every field falls back to a default value if the setting doesn't exist in the database. Missing keys happen on first startup before anyone's set anything, on fresh installs, and any time you add a new field to an existing extension without writing a migration. Never assume a key will be there.
 
 ### Pattern 2: One Key for the Whole Struct (`write_serde_setting`)
 
-Use this when your data is more complex than scalar fields - a `Vec<T>`, a nested struct, a `HashMap`, anything that doesn't round-trip cleanly as a single string. Instead of mapping each field to its own key, you treat the whole struct (or a sub-field of it) as one serde-serializable blob under a single key:
+Use this when your data is more complex than scalar fields: a `Vec<T>`, a nested struct, a `HashMap`, anything that doesn't round-trip cleanly as a single string. Instead of mapping each field to its own key, you treat the whole struct (or a sub-field of it) as one serde-serializable blob under a single key:
 
 ```rs
 use serde::{Deserialize, Serialize};
@@ -149,24 +149,24 @@ impl SettingsDeserializeExt for ExtensionSettingsDataDeserializer {
 }
 ```
 
-Much shorter. `write_serde_setting(key, &value)?` does the serde dance internally (the value ends up as JSON in the database) and `read_serde_setting(key)` reads it back into any `Deserialize` type as a `Result<T, serde_json::Error>`. A stored value that fails to deserialize is an `Err`, which the example above handles by falling back to an empty `Vec`. A missing key is deserialized from JSON `null`, so it is an `Err` for a `Vec` but an `Ok(None)` for an `Option<T>`.
+`write_serde_setting(key, &value)?` serializes the value to JSON in the database and `read_serde_setting(key)` reads it back into any `Deserialize` type as a `Result<T, serde_json::Error>`. A stored value that fails to deserialize is an `Err`, which the example above handles by falling back to an empty `Vec`. A missing key is deserialized from JSON `null`, so it is an `Err` for a `Vec` but an `Ok(None)` for an `Option<T>`.
 
 Fall back like this rather than returning the error with `?`. Since Panel 1.2.7, the Panel runs your deserializer once at startup, and if it returns an `Err` or panics, the extension is marked as failed to start and none of its entrypoints run. If it only fails on a later settings reload, the Panel logs the error and leaves your extension's settings out, and the rest of the Panel's settings still load. Before 1.2.7 an `Err` there failed the settings load for the whole Panel.
 
 ### Mixing Both
 
-You can mix patterns in one `serialize`/`deserialize` implementation - use `write_raw_setting` for scalar fields that benefit from per-field treatment (encryption, validation at read time) and `write_serde_setting` for fields that are inherently complex. The key space is shared, so just don't use the same key twice.
+You can mix both in one `serialize`/`deserialize` implementation: `write_raw_setting` for scalar fields that benefit from per-field treatment (encryption, validation at read time) and `write_serde_setting` for fields that are inherently complex. The key space is shared, so don't use the same key twice.
 
 ### Choosing Between Them
 
-- **`write_raw_setting`** when you need per-field control - encryption, custom encoding, stricter fallback logic, or you specifically want each setting inspectable as its own row in the database.
+- **`write_raw_setting`** when you need per-field control: encryption, custom encoding, stricter fallback logic, or you specifically want each setting inspectable as its own row in the database.
 - **`write_serde_setting`** when the field is a collection or struct that doesn't flatten nicely to a single string. Saves a lot of boilerplate.
 
 For a settings struct with a mix of scalar secrets and complex configuration, using both is perfectly normal.
 
 ## Wiring It Up
 
-You've got a struct and ser/deser logic. Now tell the Panel to use them. Over in your `lib.rs`, implement the `settings_deserializer` method on your `Extension` trait:
+With the struct and its serialization in place, register them. In your `lib.rs`, implement the `settings_deserializer` method on your `Extension` trait:
 
 ```rs
 use shared::{State, extensions::Extension};
@@ -188,11 +188,11 @@ impl Extension for ExtensionStruct {
 }
 ```
 
-That's it for wiring. Return an `Arc` of your deserializer and the Panel will route every "settings for this extension" read through it.
+Return an `Arc` of your deserializer, and the Panel reads this extension's settings through it.
 
 ## Reading Settings
 
-Once wired up, you access your settings through `state.settings`. The read path looks like this:
+Access your settings through `state.settings`. The read path looks like this:
 
 ```rs
 async fn load_api_key(state: &State) -> Result<String, anyhow::Error> {
@@ -204,7 +204,7 @@ async fn load_api_key(state: &State) -> Result<String, anyhow::Error> {
 }
 ```
 
-Two calls. `state.settings.get().await?` gives you a snapshot of the current settings store. `.find_extension_settings::<T>()?` walks every extension's settings and returns the first one that downcasts to your struct type. From there it's just a reference - read fields as normal. `get_extension_settings("dev.yourname.test")` is the by-identifier variant, which is what you want when reading _another_ extension's settings. Both fail for a disabled extension, since its deserializer is never registered.
+Two calls. `state.settings.get().await?` gives you a snapshot of the current settings store. `.find_extension_settings::<T>()?` walks every extension's settings and returns the first one that downcasts to your struct type. From there it's a plain reference. `get_extension_settings("dev.yourname.test")` is the by-identifier variant, which is what you want when reading _another_ extension's settings. Both fail for a disabled extension, since its deserializer is never registered.
 
 The type parameter on `find_extension_settings` is usually inferred from the annotation on the left-hand side (`let ext_settings: &ExtensionSettingsData = ...`), but you can also call it as `.find_extension_settings::<ExtensionSettingsData>()?` if the surrounding code doesn't disambiguate.
 
@@ -235,9 +235,9 @@ async fn update_settings(state: &State) -> Result<(), anyhow::Error> {
 }
 ```
 
-The important part is **`settings.save().await?` at the end** - without it, your changes stay in memory and get discarded when the guard drops. `save` is what serializes everything and persists it to the database. Forgetting it is the single most common settings bug, so develop the reflex.
+**Call `settings.save().await?` at the end.** Without it, your changes stay in memory and are discarded when the guard drops. `save` serializes everything and writes it to the database. Forgetting it is the most common settings bug.
 
-Writes are serialized - only one writer can hold `get_mut` at a time, so don't hold the mutable guard longer than you need to. Grab it, mutate, save, drop. Readers won't be blocked by your write in the common case (see the callout above), but other writers will wait, and holding the guard across unrelated async work is still asking for trouble.
+Writes are serialized: only one writer can hold `get_mut` at a time, so release the mutable guard as soon as you can. Get it, change it, save, drop. Readers won't be blocked by your write in the common case (see the callout above), but other writers will wait, so don't hold the guard across unrelated async work.
 
 ::: warning
 The `save()` call serializes **every** extension's settings, not just yours. That's how the Panel keeps everything consistent, but it does mean calling `save` is heavier than a single-extension write. Batch related changes into one `get_mut` + `save` block rather than saving after every field change.
@@ -265,11 +265,11 @@ pub async fn route(state: GetState, permissions: GetPermissionManager) -> ApiRes
 }
 ```
 
-For update routes (typically `PUT` on the same path), follow the patterns from [Routing](./routing.md#request-bodies-and-validation) - accept a payload, validate it, permission-check, then do the `get_mut` / mutate / `save` dance inside the handler.
+For update routes (typically `PUT` on the same path), follow the patterns from [Routing](./routing.md#request-bodies-and-validation): accept a payload, validate it, check permissions, then `get_mut`, change and `save` inside the handler.
 
 ## Building the Admin Form
 
-The Panel doesn't automatically build a settings UI from your struct - it has no idea whether `collect_secret_government_telemetry` should be a checkbox or a dropdown or a free-text field, and it can't infer validation rules from types. That's your job: ship a settings page as your `cardConfigurationPage` (see [Mounting UI](./mounting-ui.md)) that calls your own GET/PUT routes to read and update the data.
+The Panel doesn't build a settings UI from your struct. It can't tell whether a field should be a checkbox, a dropdown or a text field, or infer validation rules from types. Instead, ship a settings page as your `cardConfigurationPage` (see [Mounting UI](./mounting-ui.md)) that calls your own GET/PUT routes to read and update the data.
 
 The pattern every Calagopus form follows is: **`@mantine/form` for state management + Zod for validation + custom inputs from `@/elements/input/`.** It's a stable stack that composes well, and once you've written one form the rest are mostly copy-and-tweak.
 
@@ -286,12 +286,13 @@ export const extensionSettingsSchema = z.object({
 });
 ```
 
-Note the **camelCase field names** - this is the frontend, and the same schema is what you hand to `parseFromApi` / `serializeForApi` in your API files, which map the backend's snake_case keys to these camelCase names (and back) and validate the data. See [Frontend API Calls](./frontend-api.md) for the transformation rules.
+The field names are **camelCase** because this is the frontend, and the same schema is what you hand to `parseFromApi` / `serializeForApi` in your API files, which map the backend's snake_case keys to these camelCase names (and back) and validate the data. See [Frontend API Calls](./frontend-api.md) for the transformation rules.
 
 ### The Form Component
 
-Here's the canonical shape of a configuration page. It loads settings on mount, renders form fields bound to the schema, and saves on submit:
+A typical configuration page looks like this. It loads settings on mount, renders form fields bound to the schema, and saves on submit:
 
+::: details Full example: configuration page
 ```tsx
 import { Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -357,16 +358,15 @@ export default function ConfigurationPage() {
   );
 }
 ```
+:::
 
-Let's unpack the moving parts.
+**`useForm<z.infer<typeof schema>>({ ... })`** creates the form object. The type parameter gives you autocompletion on every field name and value type. The config object needs three things: `initialValues` (placeholder data until your GET response arrives; use empty values matching the schema shape), `validateInputOnBlur: true` (run validation when a field loses focus, rather than only on submit), and `validate: zod4Resolver(schema)` (wire the Zod schema in as the actual validator).
 
-**`useForm<z.infer<typeof schema>>({ ... })`** creates the form object. The type parameter gives you IntelliSense on every field name and value type, which becomes massively useful once your settings have more than a handful of fields. The config object needs three things: `initialValues` (placeholder data before your GET response arrives - use "empty" values matching the schema shape), `validateInputOnBlur: true` (run validation when a field loses focus, rather than only on submit), and `validate: zod4Resolver(schema)` (wire the Zod schema in as the actual validator).
-
-**`form.getInputProps(path, options?)`** spreads the right set of props onto a field - `value`, `onChange`, `error`, and so on. For checkbox-like inputs (`Switch`, checkboxes) pass `{ type: 'checkbox' }` so the resolver binds `checked` instead of `value`. For nested paths, use dot notation: `form.getInputProps('eggGroups.0.name')` works fine, and is type-safe thanks to the Zod-derived form type.
+**`form.getInputProps(path, options?)`** spreads the right props onto a field: `value`, `onChange`, `error` and so on. For checkbox-like inputs (`Switch`, checkboxes) pass `{ type: 'checkbox' }` so the resolver binds `checked` instead of `value`. For nested paths, use dot notation: `form.getInputProps('eggGroups.0.name')` works fine, and is type-safe thanks to the Zod-derived form type.
 
 **`form.onSubmit(callback)`** wraps a submit handler so it only fires if the form is valid. Validation errors get attached to fields automatically and render as red text under each input.
 
-**`form.isValid()`** is safe to call during render - it's a synchronous boolean reflecting whether current values pass the schema. Good for disabling the submit button when there are outstanding errors, as shown above.
+**`form.isValid()`** is safe to call during render; it's a synchronous boolean that says whether the current values pass the schema. Use it to disable the submit button when there are outstanding errors, as shown above.
 
 **The save pattern** is the standard three-callback shape from [Frontend API Calls](./frontend-api.md#handling-errors): `.then` success toast → `.catch` error toast → `.finally` loading reset. `httpErrorToHuman` unpacks whatever the backend returned into a user-friendly string.
 
@@ -398,4 +398,4 @@ class MyExtension extends Extension {
 export default new MyExtension();
 ```
 
-The Panel mounts the page at `/admin/extensions/<your-package-identifier>` automatically. The admin layout, navigation, and breadcrumbs are all provided by the shell - your component just returns its content. See [Mounting UI](./mounting-ui.md#the-extension-class) for the full story on how this wiring works.
+The Panel mounts the page at `/admin/extensions/<your-package-identifier>` automatically. The admin layout, navigation and breadcrumbs come from the shell; your component only returns its content. See [Mounting UI](./mounting-ui.md#the-extension-class) for how this works.

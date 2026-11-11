@@ -1,5 +1,5 @@
 ---
-title: Devices
+title: Admin Devices
 description: Make host devices available to server containers, with per-node and per-egg eligibility and an explicit Wings allowlist.
 ---
 
@@ -48,7 +48,7 @@ devices:
   - /dev/dri/renderD128:/dev/dri/renderD128
 ```
 
-Recreate Wings with `docker compose up -d` after changing Compose. A mapping does not install drivers, change device ownership, or bypass the host's permissions.
+Recreate Wings with `sudo docker compose up -d` after changing Compose. A mapping does not install drivers, change device ownership, or bypass the host's permissions.
 
 ## Assign Eggs, Nodes, and Servers
 
@@ -68,7 +68,7 @@ Both the server's node and egg must be assigned before it is eligible. These ass
 
 Restart a running server after attaching, detaching, or changing its device mappings so the container picks up the change. If the Panel shows it as attached but the device is missing inside the container, check the Wings allowlist, host device path, and Wings logs.
 
-Admin definitions use `devices.create`, `devices.read`, `devices.update`, and `devices.delete`. Assignments use `eggs.devices`, `nodes.devices`, and `servers.devices`. User access has separate [server permissions](../dashboard/permissions.md#devices).
+Admin definitions use `devices.create`, `devices.read`, `devices.update`, and `devices.delete`. Assignments use `eggs.devices`, `nodes.devices`, and `servers.devices`. User access has separate [server permissions](../dashboard/permissions.md#server-permissions).
 
 ## Node Allowlist Feedback
 

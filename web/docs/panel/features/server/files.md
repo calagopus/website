@@ -229,7 +229,7 @@ While the trash is on, deleting doesn't remove anything straight away. **Delete*
 
 <img src="./images/files/trash-delete-modal.webp" width="220" alt="Move to Trash dialog saying ops.json.old can be restored for 7 days, with the Delete permanently switch off" />
 
-Out of the box the trash keeps files for 7 days. Admins set that default under [Settings > Server](../admin/settings.md#trash), and a server can have its own values on its [Settings](./settings.md#trash) page. A retention of 0 turns the trash off, and deleting is permanent again.
+By default the trash keeps files for 7 days. Admins set that default under [Settings > Server](../admin/settings.md#trash), and a server can have its own values on its [Settings](./settings.md#trash) page. A retention of 0 turns the trash off, and deleting is permanent again.
 
 ::: warning
 The trash needs Wings 1.2.6 or newer. On a node with an older Wings, **Move to Trash** fails with "route not found". Switch on **Delete permanently instead of moving to the trash**, or set the server's retention to 0, until the node is updated.
@@ -329,7 +329,7 @@ Uploads are not private to the tab that started them. Wings tracks each one and 
 
 ![File list with an Incomplete Uploads banner, a modpack.zip upload at 18 percent, and an incomplete file](./images/files/uploads.webp)
 
-Seeing an upload needs the `files.read` permission, and a subuser whose [ignored files](./subusers.md#ignored-files) hide the destination does not see the upload either - the deny rule is matched against the name the file will end up with, so a partial cannot be used to peek at a path that is otherwise hidden.
+Seeing an upload needs the `files.read` permission, and a subuser whose [ignored files](./subusers.md#ignored-files) hide the destination does not see the upload either; the deny rule is matched against the name the file will end up with, so a partial cannot be used to peek at a path that is otherwise hidden.
 
 ### Incomplete Uploads
 
@@ -347,7 +347,7 @@ How to clear one depends on where it came from:
 | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | Yours, still in this session               | Right-click the row for **Pause**, **Resume**, and **Cancel**, or use the upload popover next to the toolbar. Cancelling deletes the partial file from the node for you. |
 | Yours, after a page reload                 | The browser no longer holds the file's contents, so the row offers **Re-select file to resume**. Pick the same file again and it carries on from where it stopped.       |
-| Someone else's, or left by a wings restart | Delete the partial file from the listing. Restart leftovers are listed without an owner or a total size and cannot be resumed at all.                                    |
+| Someone else's, or left by a Wings restart | Delete the partial file from the listing. Restart leftovers are listed without an owner or a total size and cannot be resumed at all.                                    |
 
 ::: info
 Files larger than the current request size are sent in chunks, and only those can be paused and resumed. Smaller files are bundled into shared requests, so **Cancel** is the only action offered on their rows. The request size starts at 8 MiB for each server and adapts to your connection as the upload runs, aiming for requests that take about a minute, never below 4 MiB or above 95 MiB. A slow connection therefore uses small chunks rather than running into proxy timeouts, and whether a file counts as large is decided when you start the upload.
@@ -358,7 +358,7 @@ The 30-second threshold only decides when the panel calls an upload incomplete. 
 :::
 
 ::: warning
-Staging appends `.upload-part` to the name, so a file whose name is longer than 243 bytes cannot be uploaded through the file manager at all - wings rejects it with `file name too long`. Use SFTP for those, or shorten the name.
+Staging appends `.upload-part` to the name, so a file whose name is longer than 243 bytes cannot be uploaded through the file manager at all: Wings rejects it with `file name too long`. Use SFTP for those, or shorten the name.
 :::
 
 ### Pulling from a URL
@@ -387,7 +387,7 @@ Files above the panel-wide view-size limit ([Settings > Server](../admin/setting
 
 ## SQLite Databases
 
-SQLite files (`.db`, `.db3`, `.sqlite`, `.sqlite3`) don't open in the editor: they open the same [data explorer](./databases/index.md#data-explorer) the panel uses for managed databases, at `/files/sqlite` - browsing rows, inspecting and editing the schema, and a raw query console. This requires the `files.query-raw` permission, which grants full read and write access to the file's contents; changing rows or structure additionally needs `files.update`.
+SQLite files (`.db`, `.db3`, `.sqlite`, `.sqlite3`) don't open in the editor: they open the same [data explorer](./databases/index.md#data-explorer) the panel uses for managed databases, at `/files/sqlite`, browsing rows, inspecting and editing the schema, and a raw query console. This requires the `files.query-raw` permission, which grants full read and write access to the file's contents; changing rows or structure additionally needs `files.update`.
 
 Wings (1.2.4 and newer) fences raw queries in: `ATTACH` only works for `:memory:` and temporary databases, setting the `temp_store_directory`, `data_store_directory`, `hard_heap_limit` and `soft_heap_limit` pragmas is refused, `PRAGMA threads` is ignored, a single string or blob value can be at most 32 MiB, and all queries running on one server at the same time share 128 MiB of memory.
 

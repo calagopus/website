@@ -43,7 +43,7 @@ Eggs support bulk operations: drag across rows to select, Ctrl/Cmd-click or use 
 
 **from File** accepts an egg file in JSON or YAML format (`.json`, `.yml`, `.yaml`), including eggs exported from Pterodactyl. A file picked here is parsed in your browser, which expands YAML aliases (`*name`) and merge keys (`<<:`). Importing from a URL or syncing an [egg repository](./egg-repositories.md) parses the YAML on the panel instead, and since Panel 1.2.7 an egg that uses aliases or merge keys fails to import from a URL and is silently left out of a repository sync. You can also drag files from your file manager anywhere onto the page and drop them to import several at once.
 
-**from URL** fetches the eggs instead. Paste up to 25 `http`/`https` URLs and the panel downloads them (5 at a time), auto-detecting JSON or YAML. Each egg may be at most 1 MiB. If some URLs fail, the import still succeeds for the rest and lists the failures with a reason next to each URL. Eggs imported this way are not linked to a repository, so they won't be updated automatically - **Update** on an existing egg also offers **from URL** for refreshing one by hand.
+**from URL** fetches the eggs instead. Paste up to 25 `http`/`https` URLs and the panel downloads them (5 at a time), auto-detecting JSON or YAML. Each egg may be at most 1 MiB. If some URLs fail, the import still succeeds for the rest and lists the failures with a reason next to each URL. Eggs imported this way are not linked to a repository, so they won't be updated automatically. **Update** on an existing egg also offers **from URL** for refreshing one by hand.
 
 **from Repository** opens a search over the eggs of every synced [egg repository](./egg-repositories.md). Use the arrow keys and Enter (or click) to pick an egg, open its **README** if you want to check it first, then click **Install** to add it to this nest. It needs `egg-repositories.read` on top of `eggs.create`, and stays greyed out without it. Each result shows its repository and, as badges, the nests it's already installed in: yellow when the panel knows the repository has a newer version than that copy, green otherwise. If the nest already has an egg with the same name, nothing is imported; the panel uses the existing egg and tells you so ("This egg was already installed in Games, the existing egg was used."). Eggs installed this way stay linked to their repository egg, so **Update from Repository** works on them later.
 
@@ -97,7 +97,7 @@ At the bottom, next to **Save**:
 - **Export**: dropdown with **Export as JSON**, **Export as YAML**, and **Export as Pterodactyl** (JSON in Pterodactyl's egg format, for taking eggs back the other way).
 - **Move** (to another nest), **Duplicate** (copy under a new name, optionally into a different nest), and **Delete**.
 
-Pterodactyl and Pelican eggs don't map one-to-one onto Calagopus eggs, so a few things get translated on the way in and out:
+Pterodactyl and Pelican eggs don't map one-to-one onto Calagopus eggs, so some values are translated on import and export:
 
 - **Import**: a stop value of `^C` becomes the `SIGINT` signal, and `^SIGTERM`, `^SIGQUIT`, `^SIGABRT` and `^SIGKILL` become those signals. Any other `^` value, including `^^C`, becomes `SIGKILL`. Conditional config file replacements (an object of value-to-replacement pairs) turn into replacements with **If Value** set, and the file's `create_file` setting carries over to **Create New File**.
 - **Export as Pterodactyl**: **Docker Stop** and the `SIGQUIT` signal are written as `^SIGTERM`, since Pterodactyl doesn't know them. The author must be an email address, so one is pulled out of the author field if it contains one, and `unknown@example.com` is used otherwise. Variables without rules are exported with `nullable`.
@@ -137,7 +137,7 @@ Each variable is a card in a grid; drag a card by the grip handle in its top-rig
 | **Default Value**                     | Value used when the user hasn't set one.                                                                                                                                                                                                                                                                                           |
 | **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page.                                                                                                                                                                                                                                                                 |
 | **Secret**                            | Hides the value like a password.                                                                                                                                                                                                                                                                                                   |
-| **Rules**                             | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/docs/12.x/validation#available-validation-rules) syntax.                                                                                                                                                                               |
+| **Rules**                             | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/framework/docs/12.x/validation#available-validation-rules) syntax.                                                                                                                                                                     |
 
 Each card has its own **Save**, **Duplicate**, and **Remove** buttons.
 
@@ -153,7 +153,7 @@ Assign [devices](./devices.md) that servers using this egg may attach (requires 
 
 ### Servers
 
-A read-only, searchable list of all servers currently using this egg, with the same columns as the [Servers](./servers.md) list, handy before deleting or heavily editing one.
+A read-only, searchable list of all servers currently using this egg, with the same columns as the [Servers](./servers.md) list. Check it before deleting or heavily editing an egg.
 
 ![Paper egg Servers tab listing two servers with status, node, owner, and allocation](./images/nests/egg-servers.webp)
 

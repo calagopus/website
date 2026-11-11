@@ -1,5 +1,5 @@
 ---
-title: Extensions
+title: Admin Extensions
 description: See installed panel extensions, configure them, install new ones, and manage the extension build pipeline.
 ---
 
