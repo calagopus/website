@@ -14,6 +14,7 @@ import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
 import { setupDetailsToggle } from './details-toggle.ts';
 import { setupPageTransition } from './page-transition.ts';
+import { setupSearchClose } from './search.ts';
 import { setupTabIndicator } from './tabs.ts';
 import { registerWebMcpTools } from './webmcp.ts';
 import './colors.css';
@@ -43,6 +44,7 @@ export default {
       setupDetailsToggle();
       setupTabIndicator();
       setupPageTransition(router);
+      setupSearchClose();
     }
   },
 } satisfies Theme;
