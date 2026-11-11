@@ -13,7 +13,7 @@ import ImageViewer from '../components/ImageViewer.vue';
 import { AnchorHandler } from './anchors.ts';
 import { createAppearanceToggle } from './appearance.ts';
 import { setupDetailsToggle } from './details-toggle.ts';
-import { setupPageTransition } from './page-transition.ts';
+import { setupPageTransition, useFirstLoadFade } from './page-transition.ts';
 import { setupSearchClose } from './search.ts';
 import { setupTabIndicator } from './tabs.ts';
 import { registerWebMcpTools } from './webmcp.ts';
@@ -30,6 +30,9 @@ export default {
       'layout-bottom': () => [h(ImageViewer), h(AnchorHandler)],
       'sidebar-nav-after': () => h(CompareSidebarLinks),
     });
+  },
+  setup() {
+    useFirstLoadFade();
   },
   enhanceApp({ app, router }) {
     enhanceAppWithTabs(app);

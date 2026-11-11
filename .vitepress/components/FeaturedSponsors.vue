@@ -152,7 +152,7 @@ const markLogoFailed = (section: SponsorSection): void => {
 .featured-logo {
   width: auto;
   height: 80px;
-  max-width: 244px;
+  max-width: min(244px, 100%);
   flex: none;
   padding: 8px 12px;
   object-fit: contain;

@@ -12,39 +12,45 @@ const groupDetails = (group: string) => [
 
 const labelFor = (group: string) => (groupDetails(group).every(isOpen) ? 'Collapse all' : 'Expand all');
 
-function animateTo(details: HTMLDetailsElement, open: boolean): void {
-  if (isOpen(details) === open && !animations.has(details)) return;
+function animateTo(blocks: HTMLDetailsElement[], open: boolean): void {
+  blocks = blocks.filter((details) => isOpen(details) !== open);
 
-  // Measure first so reversing mid-animation doesn't jump.
-  const from = details.getBoundingClientRect().height;
-  animations.get(details)?.cancel();
-  animations.delete(details);
-  details.classList.remove('details-closing');
+  const from = blocks.map((details) => details.getBoundingClientRect().height);
+  for (const details of blocks) {
+    animations.get(details)?.cancel();
+    animations.delete(details);
+    details.classList.remove('details-closing');
+  }
 
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    details.open = open;
+    for (const details of blocks) details.open = open;
     return;
   }
 
-  let to: number;
-  if (open) {
-    details.open = true;
-    to = details.getBoundingClientRect().height;
-  } else {
-    details.classList.add('details-closing');
-    const summary = details.querySelector<HTMLElement>(':scope > summary');
-    to = (summary?.offsetHeight ?? 0) + details.offsetHeight - details.clientHeight;
+  for (const details of blocks) {
+    if (open) details.open = true;
+    else details.classList.add('details-closing');
   }
+  const to = blocks.map((details) => {
+    if (open) return details.getBoundingClientRect().height;
+    const summary = details.querySelector<HTMLElement>(':scope > summary');
+    return (summary?.offsetHeight ?? 0) + details.offsetHeight - details.clientHeight;
+  });
 
-  const animation = details.animate({ height: [`${from}px`, `${to}px`] }, { duration: DURATION, easing: 'ease' });
-  animations.set(details, animation);
-  animation.onfinish = () => {
-    animations.delete(details);
-    if (!open) {
-      details.classList.remove('details-closing');
-      details.open = false;
-    }
-  };
+  blocks.forEach((details, i) => {
+    const animation = details.animate(
+      { height: [`${from[i]}px`, `${to[i]}px`] },
+      { duration: DURATION, easing: 'ease' },
+    );
+    animations.set(details, animation);
+    animation.onfinish = () => {
+      animations.delete(details);
+      if (!open) {
+        details.classList.remove('details-closing');
+        details.open = false;
+      }
+    };
+  });
 }
 
 export function setupDetailsToggle(): void {
@@ -55,7 +61,7 @@ export function setupDetailsToggle(): void {
     const group = button?.dataset.detailsToggle;
     if (button && group !== undefined) {
       const open = !groupDetails(group).every(isOpen);
-      for (const details of groupDetails(group)) animateTo(details, open);
+      animateTo(groupDetails(group), open);
       button.textContent = open ? 'Collapse all' : 'Expand all';
       return;
     }
@@ -64,9 +70,10 @@ export function setupDetailsToggle(): void {
     const details = summary?.parentElement;
     if (!(details instanceof HTMLDetailsElement) || !details.matches(BLOCKS)) return;
     if (summary !== details.querySelector(':scope > summary')) return;
+    if (target?.closest('a, button, input, select, textarea')?.closest('summary') === summary) return;
 
     event.preventDefault();
-    animateTo(details, !isOpen(details));
+    animateTo([details], !isOpen(details));
   });
 
   // `toggle` doesn't bubble.
