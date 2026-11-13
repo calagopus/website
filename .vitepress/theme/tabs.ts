@@ -4,13 +4,26 @@ const LISTS = '.vp-doc .plugin-tabs--tab-list, .vp-doc .vp-code-group .tabs';
 const observed = new Set<HTMLElement>();
 let frame = 0;
 
-function place(list: HTMLElement): void {
+type Spot = [list: HTMLElement, left: number, bottom: number, width: number];
+
+function measure(list: HTMLElement): Spot | undefined {
   const tab = list.querySelector<HTMLElement>(':scope > [aria-selected="true"], :scope > input:checked + label');
   if (!tab || list.offsetParent === null) return;
+  return [list, tab.offsetLeft, tab.offsetTop + tab.offsetHeight - list.clientHeight, tab.offsetWidth];
+}
 
-  list.style.setProperty('--indicator-left', `${tab.offsetLeft}px`);
-  list.style.setProperty('--indicator-width', `${tab.offsetWidth}px`);
+function place([list, left, bottom, width]: Spot): void {
+  list.style.setProperty('--indicator-left', `${left}px`);
+  list.style.setProperty('--indicator-bottom', `${bottom}px`);
+  list.style.setProperty('--indicator-width', `${width}`);
   list.setAttribute('data-indicator', '');
+}
+
+function fitRows(lists: HTMLElement[]): void {
+  const rows = lists.filter((list) => list.matches('.plugin-tabs--tab-list'));
+  for (const row of rows) row.removeAttribute('data-wrap');
+  const tooWide = rows.filter((row) => row.scrollWidth > row.clientWidth + 1);
+  for (const row of tooWide) row.setAttribute('data-wrap', '');
 }
 
 function update(resize: ResizeObserver): void {
@@ -22,14 +35,16 @@ function update(resize: ResizeObserver): void {
       for (const element of [list, ...list.children]) resize.unobserve(element);
     }
 
-    for (const list of document.querySelectorAll<HTMLElement>(LISTS)) {
-      if (!observed.has(list)) {
-        observed.add(list);
-        // Full-width rows don't resize when fonts load, their tabs do.
-        for (const element of [list, ...list.children]) resize.observe(element);
-      }
-      place(list);
+    const lists = [...document.querySelectorAll<HTMLElement>(LISTS)];
+    for (const list of lists) {
+      if (observed.has(list)) continue;
+      observed.add(list);
+      // Full-width rows don't resize when fonts load, their tabs do.
+      for (const element of [list, ...list.children]) resize.observe(element);
     }
+
+    fitRows(lists);
+    for (const spot of lists.map(measure)) if (spot) place(spot);
   });
 }
 

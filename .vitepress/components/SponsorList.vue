@@ -108,13 +108,15 @@ const markAvatarFailed = (sponsor: Sponsor): void => {
               @error="markAvatarFailed(sponsor)"
             />
             <span v-else class="avatar-fallback small" aria-hidden="true">{{ avatarFallback(sponsor) }}</span>
-            <a v-if="sponsor.profile" :href="sponsor.profile.url" target="_blank" rel="noreferrer">
-              {{ displayName(sponsor) }}
-            </a>
-            <span v-else>Anonymous</span>
-            <Badge variant="outline" color="gray">{{ providerLabel(sponsor) }}</Badge>
-            <Badge v-if="sponsor.status === 'monthly'" variant="light">monthly</Badge>
-            <Badge v-else-if="sponsor.status === 'former'" variant="outline" color="gray">former monthly</Badge>
+            <span class="row-name">
+              <a v-if="sponsor.profile" :href="sponsor.profile.url" target="_blank" rel="noreferrer">
+                {{ displayName(sponsor) }}
+              </a>
+              <span v-else>Anonymous</span>
+              <Badge variant="outline" color="gray">{{ providerLabel(sponsor) }}</Badge>
+              <Badge v-if="sponsor.status === 'monthly'" variant="light">monthly</Badge>
+              <Badge v-else-if="sponsor.status === 'former'" variant="outline" color="gray">former monthly</Badge>
+            </span>
             <span class="row-meta">{{ formatUsd(sponsor.lifetimeCents) }}</span>
           </li>
         </ol>
@@ -243,12 +245,26 @@ const markAvatarFailed = (sponsor: Sponsor): void => {
   margin: 0;
 }
 
+.row-name {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: center;
+  min-width: 0;
+}
+
+.row-name > :first-child {
+  min-width: 0;
+}
+
 .rows img {
   border-radius: 50%;
   flex: none;
 }
 
 .row-meta {
+  flex: none;
   margin-left: auto;
   font-size: 13px;
   color: var(--vp-c-text-2);
