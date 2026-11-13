@@ -1,6 +1,6 @@
 ---
 title: Index HTML Variables
-description: Render values from your backend extension into the Panel's index.html, readable before any request is made.
+description: Render values from your backend extension into the Panel's index.html, readable before any request is made, and allow third-party sources in its content security policy.
 ---
 
 # Index HTML Variables
@@ -88,4 +88,60 @@ If your extension provides [`src/boot.html`](../file-structure.md#src-boot-html)
 In development (`pnpm dev`) the dev server serves the boot screen, and it only substitutes plain <code v-pre>{{ variables.name }}</code> placeholders using values from the running backend. Tags like <code v-pre>{% if %}</code> show up as written until you build.
 
 The dev server also copies the variables block from the running backend's `index.html` (port `BACKEND_PORT`, 8000 by default) into every page it serves, so `getIndexVariable` works in development too. If the backend isn't reachable, the dev server logs a warning and the variables are missing.
+:::
+
+## Allowing Third-Party Sources
+
+The Panel serves `index.html` with a strict `Content-Security-Policy`. Scripts, styles, fonts and media only load from the Panel itself, plus whatever the configured captcha provider needs. If your extension embeds a third-party widget like a live chat or an analytics script, add its origin to the policy from the same `initialize_index_html` method:
+
+```rs
+use shared::extensions::index_html::{CspDirective, IndexHtmlBuilder};
+
+async fn initialize_index_html(
+    &mut self,
+    _state: State,
+    builder: IndexHtmlBuilder,
+) -> IndexHtmlBuilder {
+    builder
+        .add_csp_source(CspDirective::ScriptSrc, "https://client.crisp.chat")
+        .add_csp_source(CspDirective::StyleSrc, "https://client.crisp.chat")
+        .add_csp_sources(CspDirective::ScriptSrc, |settings| {
+            let settings = settings.get_extension_settings::<MySettings>("dev.0x7d8.test")?;
+
+            Ok(settings.analytics_url.iter().cloned().collect())
+        });
+
+    builder
+}
+```
+
+`add_csp_source` adds one fixed source. `add_csp_sources` takes a function that returns a list, which helps when the source comes from your extension's settings, like the URL of a self-hosted analytics instance. That function runs on the same schedule as variable functions and follows the same rules: keep it cheap, read from the `settings` argument, and if it returns an `Err` or panics, its sources are left out of that render.
+
+Your sources are merged with the Panel's own and the captcha provider's, and duplicates are removed. Removing a source from your extension or disabling the extension removes it from the policy on the next start.
+
+| Directive                  | Panel default            |
+| -------------------------- | ------------------------ |
+| `CspDirective::ScriptSrc`  | `'self' blob:`           |
+| `CspDirective::StyleSrc`   | `'self' 'unsafe-inline'` |
+| `CspDirective::FontSrc`    | `'self' blob: data:`     |
+| `CspDirective::MediaSrc`   | `'self' blob: data:`     |
+| `CspDirective::FormAction` | `'self'`                 |
+| `CspDirective::ConnectSrc` | `* blob:`                |
+| `CspDirective::FrameSrc`   | `*`                      |
+| `CspDirective::ImgSrc`     | `* blob: data:`          |
+
+`connect-src`, `frame-src` and `img-src` allow everything today, so adding to them changes nothing yet. Declare what you load there anyway. If the Panel tightens those defaults later, extensions that declared their sources keep working.
+
+Each source must be a single CSP source expression: a host like `https://*.example.com`, a scheme like `wss:`, or a quoted keyword. The Panel logs and drops sources that would break it:
+
+- Anything with whitespace, `;` or `,` in it, since that would inject another directive.
+- `'unsafe-inline'` in `script-src`. Browsers ignore it as soon as a nonce is present, and the Cap captcha provider adds one, so it would only work with some captcha providers. Use a `'sha256-...'` hash of the inline script instead.
+- Hashes and nonces in `style-src`. Either one makes browsers ignore `'unsafe-inline'`, which the Panel's own styles rely on.
+- `'none'`, `'strict-dynamic'` and fixed nonces.
+- Sources past a total policy length of 3 KiB. Larger response headers overflow the default proxy buffer in Nginx and turn into a 502.
+
+`'unsafe-eval'`, `*` and bare schemes like `https:` in `script-src` are accepted, but the Panel logs a warning once, because each of them lets almost any script run.
+
+::: info
+The development server doesn't send a content security policy, so a missing source only shows up against a built Panel. Check the browser console there for `Content-Security-Policy` violations before you release.
 :::
