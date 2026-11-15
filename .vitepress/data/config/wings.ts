@@ -667,6 +667,71 @@ export const wingsConfigDoc: ConfigDoc = {
       ],
     },
     {
+      title: 'Crash History Configuration',
+      options: [
+        {
+          key: 'system.crash_history.enabled',
+          description:
+            "Enables or disables crash history. When enabled, Wings stores the exit code, whether the server was killed for running out of memory, and the last lines of console output every time [crash detection](#system-crash-detection-enabled) counts a stop as a crash. Records are kept in `crash_history.db` inside `system.root_directory`, so the Panel can list a server's past crashes and show the console output that led up to each one. When disabled, nothing is recorded, requests to list or read crashes are refused, and old records are no longer pruned. Data already stored stays in the database file.",
+          default: true,
+          notesBefore: [
+            {
+              type: 'info',
+              body: 'Added in Wings 1.2.10.',
+            },
+          ],
+        },
+        {
+          key: 'system.crash_history.lines',
+          description:
+            'How many lines of console output Wings keeps per crash. `0` stores the crash without any console output.',
+          default: 2000,
+        },
+        {
+          key: 'system.crash_history.record_size_cap',
+          description:
+            "The maximum size (in bytes) of a crash's console output before compression. When the lines exceed it, Wings drops the oldest ones first and marks the crash as truncated. The newest line is always kept, even if it is larger on its own. At most `16777216` (16 MiB) is allowed, otherwise Wings refuses to load the configuration.",
+          default: 524288,
+        },
+        {
+          key: 'system.crash_history.zstd_level',
+          description:
+            'The [Zstandard](https://github.com/meta/zstd) compression level used for the stored console output. Higher values produce smaller records at the cost of more CPU time when a crash is stored.',
+          default: 3,
+        },
+        {
+          key: 'system.crash_history.max_records',
+          description:
+            "The maximum number of crashes kept per server. When a new crash goes over it, the oldest records are dropped. `0` removes the limit. The server's most recent crash is always kept.",
+          default: 10,
+        },
+        {
+          key: 'system.crash_history.max_age',
+          description:
+            'How long (in seconds) a crash record is kept before it is deleted. The default is 30 days. `0` keeps records until another limit removes them.',
+          default: 2592000,
+        },
+        {
+          key: 'system.crash_history.per_server_disk_budget',
+          description:
+            "The maximum disk space (in bytes, after compression) the crash records of a single server may use. When exceeded, Wings drops the oldest records until the budget is met, but always keeps the server's most recent crash. `0` removes the limit.",
+          default: 2097152,
+          notesAfter: [
+            {
+              type: 'info',
+              body: 'All three limits are applied whenever a crash is stored and once an hour in the background. The hourly run also removes the records of servers that are no longer on the node.',
+            },
+          ],
+        },
+        {
+          key: 'system.crash_history.capture_timeout',
+          description:
+            'How long (in seconds) Wings waits to read the console output of a crash. If reading takes longer, the crash is stored with the lines read so far. The limit covers only reading the lines: compressing the log and writing it to the database come after it and have no limit of their own. Wings waits for all of this before it logs the crash activity, runs crash schedules, prints the crash message to the console and decides on the automatic restart, so a slow disk can delay those by more than this value.',
+          default: 5,
+        },
+      ],
+    },
+    {
       title: 'Resource History Configuration',
       options: [
         {
@@ -690,7 +755,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.resource_history.tiers',
           description:
-            "The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range.\n\nAt most 8 tiers are allowed, every `step` must be at least `1` and unique, and `retention` must be `0` or at least the tier's `step`, otherwise Wings refuses to load the configuration. An empty list stops recording, but unlike `enabled: false`, history requests are still answered, with no data, and the Panel shows **No data recorded in this range**.\n\nA tier added later is filled from the existing finer tiers whose `step` divides its own. A removed tier stops being written, but its data is kept and pruned under its last `retention` until it runs empty.",
+            "The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range. Since Wings 1.2.10, when no such tier has data in the range, for example a short window further back than the finest tiers keep, Wings answers from a coarser tier that does and spreads each of its buckets over the chart points it covers. Older versions returned an empty chart there.\n\nAt most 8 tiers are allowed, every `step` must be at least `1` and unique, and `retention` must be `0` or at least the tier's `step`, otherwise Wings refuses to load the configuration. An empty list stops recording, but unlike `enabled: false`, history requests are still answered, with no data, and the Panel shows **No data recorded in this range**.\n\nA tier added later is filled from the existing finer tiers whose `step` divides its own. A removed tier stops being written, but its data is kept and pruned under its last `retention` until it runs empty.",
           default: [
             { step: 1, retention: 3600 },
             { step: 10, retention: 604800 },

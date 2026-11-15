@@ -436,7 +436,7 @@ export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
 
   const { loading, search, setSearch, page, setPage } = useSearchablePaginatedTable({
     queryKey: ['extensions', 'dev.yourname.test', 'items', serverUuid],
-    fetcher: (page, search) => getMyItems(serverUuid, page, search),
+    fetcher: (page, search, perPage) => getMyItems(serverUuid, page, search, perPage),
     setStoreData: setItems,
   });
 
@@ -455,11 +455,13 @@ export default function MyItemsTable({ serverUuid }: { serverUuid: string }) {
 }
 ```
 
-The fetcher signature is `(page: number, search: string) => Promise<T>`. The hook builds the final query key as `[...queryKey, ...deps, { page, search: debouncedSearch }]`, so each page/search combination has its own cache entry. `invalidate` works like the one on `useSearchableResource`: it invalidates `[...queryKey, ...deps]`, which covers every cached page and search. Use it after a mutation that can shift rows between pages, where `refetch` would only reload the page you're on.
+The fetcher signature is `(page: number, search: string, perPage: number) => Promise<T>`, where `perPage` is the user's rows-per-page setting (since Panel 1.2.7). The hook builds the final query key as `[...queryKey, ...deps, { page, search: debouncedSearch, perPage }]`, so each page/search/page-size combination has its own cache entry. `invalidate` works like the one on `useSearchableResource`: it invalidates `[...queryKey, ...deps]`, which covers every cached page and search. Use it after a mutation that can shift rows between pages, where `refetch` would only reload the page you're on.
 
 **URL params:** On mount, the hook initialises `search` from `?search=` and `page` from `?page=` in the URL (the page param is parsed and ignored unless it's a finite integer `>= 1`). Whenever either changes, the hook rewrites just those two params and leaves any others in the URL alone; `page` is dropped from the URL while it equals `initialPage` and `search` while it is empty, so a table at rest has a clean address. The immediate `search` value (not debounced) is written to the URL on every keystroke; the debounced copy is what drives the query. Clearing the search field bypasses the debounce entirely and immediately resets both the debounced state and the query.
 
 **Pagination auto-correction:** When a fetch returns, the hook inspects `total`, `perPage`, and `page` on the response (or on `response[paginationKey]` if `paginationKey` is set) _before_ calling `setStoreData`. If the current page exceeds the last valid page, it calls `setPage(totalPages)` and skips the store update for this fetch; the resulting re-fetch populates the store. If the total is zero and the current page isn't 1, it resets to page 1 the same way. Only when the page is already valid does `setStoreData` get called with the response. This handles the common case of deleting the last item on a page.
+
+Since Panel 1.2.10 the hook also goes back to page 1 whenever the debounced search or one of the `deps` changes, so a new filter starts on its first page instead of keeping whatever page number the old filter was on. Before 1.2.10 the page stayed, and the auto-correction above only caught pages past the end.
 
 **`paginationKey`** handles responses where the paginated shape is nested under a key. Without it, the hook looks for `total`, `perPage`, and `page` at the root of the fetcher's return value. With it, it looks at `response[paginationKey]` for those fields, while still passing the full response to `setStoreData`:
 

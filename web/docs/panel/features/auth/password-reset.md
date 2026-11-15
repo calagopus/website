@@ -25,7 +25,7 @@ Self-service resets are off entirely when an admin has turned off **Enable Passw
 
 The emailed link opens `/auth/reset-password` with your reset token attached ("Please enter your new password"). Enter the new **Password** twice, the second time in **Confirm Password**, and hit **Reset Password**. On success you're sent back to the login page with a "Password has been reset." confirmation. Opening the page without a token just redirects to login.
 
-Reset tokens expire after 20 minutes and work exactly once; if yours is rejected as invalid or expired, request a new email.
+Reset tokens expire after 20 minutes and work exactly once; if yours is rejected as invalid or expired, request a new email. Since Panel 1.2.10 the error comes with a **Request a New Link** button that goes back to the forgot-password form, unless password login is off.
 
 The email a new account gets when it is created for you (for example when someone adds your address as a [subuser](../server/subusers.md) and no account exists yet) also links here to set your first password. Since Panel 1.2.8 that link lasts an hour. It doesn't count as a recent request, so if it expired or never arrived you can request a normal reset straight away, and doing so replaces the original link.
 

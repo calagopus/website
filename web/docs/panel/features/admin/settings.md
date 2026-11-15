@@ -54,6 +54,14 @@ Four combinations are rejected when you save, with an error rather than a silent
 - _"an enabled oauth provider is required before password login can be disabled"_: there is nothing left to sign in with, so turning off **Enable Password Login** would lock out the whole panel.
 - _"a link to an enabled oauth provider or a security key is required before password login can be disabled"_: the panel has a way in, but **you** do not. Link your own account first, or register a security key.
 
+Since Panel 1.2.10 the tabs catch these before you save:
+
+- Without a mail transport, **Email Two-Factor** and **Require Email Verification** can't be switched on, a red alert links to the [Mail](#mail) tab while either is already on, and **Save** stays disabled until you fix it. The other way round, the Mail tab shows a red alert and won't save **None** while either option is on.
+- **Accepted Two-Factor Methods** marks methods that can't currently be used, such as "Security Key (WebAuthn is disabled)" or "Email (no mail transport is configured)", and refuses to save when none of the accepted methods is usable. For the same reason the [Webauthn](#webauthn) tab locks **Enable Security Keys** while security keys are the only usable accepted method, and a [role](./roles.md) can't turn on **Require Two Factor** while no accepted method is usable.
+- The **Enable Registration** confirmation warns when no [captcha](#captcha) is configured, and **Enable Registration** notes that local registration doesn't work while password login is off.
+- The **Disable Password Login** confirmation lists your own other ways in (your OAuth links to enabled providers and your security keys), and keeps **Disable** greyed out when no provider is enabled or you have neither.
+- [Mail Templates](#mail-templates) warns when you disable `two_factor_code` while email two-factor is on, or `email_verification` while verification is required, since those mails then stop going out.
+
 ### Additional URLs
 
 A panel served under more than one address, say a public domain and a LAN address, lists the extra ones here. **URL** stays the main address. For each request the panel looks at the host it came in on, and if it matches one of the configured URLs (host and port), it uses that URL instead of the main one for:
@@ -69,7 +77,7 @@ Trailing slashes are stripped and duplicates of the main URL are dropped on save
 
 ## Metadata
 
-![Admin Settings Metadata tab with description, preview image, Twitter card type, theme color, and search indexing toggle](./images/settings/metadata.webp)
+![Admin Settings Metadata tab with description, preview image, Twitter card type, theme color, search indexing toggle, and the Installable App (PWA) section](./images/settings/metadata.webp)
 
 Controls the `<head>` of the panel's own page: what search engines record and what a link to your panel looks like when it is pasted into Discord, Slack, or a social app. These values are rendered into the HTML the panel serves, so they apply before anyone logs in.
 
@@ -81,7 +89,21 @@ Controls the `<head>` of the panel's own page: what search engines record and wh
 | **Theme Color**                  | Hex color that tints the browser UI on mobile and the accent bar on some link previews. Defaults to `#6c5ce7`                                                                                                                                                                                                                                 |
 | **Allow Search Engine Indexing** | On sends `robots: index, follow`; off sends `noindex, nofollow`                                                                                                                                                                                                                                                                               |
 
-**Autofill** fills **Description** and **Preview Image** with the defaults described above, which is the quickest way back to a working starting point.
+**Autofill** fills **Description** and **Preview Image** with the defaults described above, and since Panel 1.2.10 also sets **App Name** and **Short App Name** to the panel **Name**.
+
+### Installable App
+
+Since Panel 1.2.10, the web app manifest that lets browsers install the panel as an app is built from these settings instead of a fixed file, so an installed panel carries your own name and icon. The **Installable App (PWA)** section has an **Enabled** switch, on by default. Turning it off removes the manifest link from the page, and `/site.webmanifest` answers 404, so browsers stop offering to install the panel.
+
+| Field                   | Description                                                                                                                                                                                |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **App Name**            | "Shown in the install prompt and on the splash screen." Up to 64 characters; empty uses the panel **Name**                                                                                 |
+| **Short App Name**      | "Shown under the home screen icon when the full name does not fit." Up to 32 characters; empty uses the panel **Name**                                                                     |
+| **App Icon**            | A square PNG of at least 512x512, or an SVG. Suggests files uploaded under [Assets](./assets.md). Empty uses the panel's own `android-chrome-192x192.png` and `android-chrome-512x512.png` |
+| **Display Mode**        | **Standalone** (the default), **Fullscreen**, **Minimal UI**, or **Browser Tab**                                                                                                           |
+| **Splash Screen Color** | Hex color for the "background of the splash screen shown while the app opens". Defaults to `#222222`                                                                                       |
+
+The manifest's description comes from **Description** above, and its theme color from **Theme Color**. A PNG or other raster **App Icon** is offered at both 192x192 and 512x512, so give it at least 512 pixels on each side. Browsers cache an installed app's name and icon, so a change can take a while to show up on devices that already installed it.
 
 ::: info
 `noindex` is a request, not an access control. It asks well-behaved crawlers to stay out; it does not hide the panel. Keep a private panel behind real authentication rather than relying on this switch.
@@ -97,6 +119,14 @@ Where the panel stores uploaded files such as profile pictures and admin assets.
 ::: warning
 Changing the driver makes the panel look for existing assets in the new location. Move them over manually, or they'll turn up missing.
 :::
+
+To move from **Filesystem** to **S3**, Panel 1.2.10 and newer have a CLI command for it. Save the S3 settings first, then point the command at the old **Path** (`/var/lib/calagopus` unless you changed it):
+
+```bash
+calagopus-panel storage migrate-s3 /var/lib/calagopus
+```
+
+On Docker, prefix it with `sudo docker compose exec web`. It refuses to run unless the saved driver is S3, uploads every file under the path to the bucket with the same relative key, and gives avatars and egg repository data the same long-lived `Cache-Control` header new uploads get. Each file is printed as it goes, followed by "migrated N files, M failed". The exit code is `1` if any file failed, and running it again uploads everything again. The local files are left in place, so delete them yourself once the panel shows its assets from S3.
 
 ## Mail
 
@@ -158,7 +188,7 @@ For **Cap**, enter the **Instance URL** of your Cap server, such as `https://cap
 
 ![Cap settings with instance URL and key fields](./images/settings/cap.webp)
 
-Both sides talk to the Cap instance directly. The widget in the visitor's browser calls `{Instance URL}/{Site Key}/`, and the Panel verifies each solution by posting to `{Instance URL}/{Site Key}/siteverify`. The instance therefore has to be reachable from your users' browsers and from the Panel host. The Panel's verification request does not go through [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked-cidrs), so an instance on your LAN works as long as browsers can reach it too. The Panel adjusts its Content Security Policy for Cap on its own (`'wasm-unsafe-eval'` and a per-request script nonce), so there is nothing to add to a reverse proxy.
+Both sides talk to the Cap instance directly. The widget in the visitor's browser calls `{Instance URL}/{Site Key}/`, and the Panel verifies each solution by posting to `{Instance URL}/{Site Key}/siteverify`. The instance therefore has to be reachable from your users' browsers and from the Panel host. The Panel's verification request does not go through [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked-cidrs), so an instance on your LAN works as long as browsers can reach it too. The Panel adjusts its Content Security Policy for Cap on its own with a per-request script nonce, so there is nothing to add to a reverse proxy. Cap's solver also needs `'wasm-unsafe-eval'`, which Panel 1.2.10 and newer allow on every page (the file editor needs it on touch devices); older versions only added it while Cap was the provider.
 
 For **reCAPTCHA V3**, **Score threshold** is the minimum accepted score, from `0` to `1`, with a default of `0.5`. Scores below it are rejected; increasing it makes the check stricter. It does not affect reCAPTCHA V2.
 
@@ -266,7 +296,7 @@ Retention for the three activity logs and what gets logged.
 
 ![Admin Settings Ratelimits tab with hits and window fields per route, including client/servers/subusers/create, plus exempt IPs and API keys](./images/settings/ratelimits.webp)
 
-Per-endpoint API rate limits. Each endpoint card has two values: **Hits**, the maximum number of requests allowed per window, and **Window**, the window duration in seconds.
+Per-endpoint API rate limits. Each endpoint card has two values: **Hits**, the maximum number of requests allowed per window, and **Window**, the window duration in seconds. Before Panel 1.2.10 the limit kicked in one request early, so a client got one request fewer per window than **Hits** said.
 
 Endpoints covered: `auth/register`, `auth/login`, `auth/login/checkpoint`, `auth/login/checkpoint/email`, `auth/login/security-key`, `auth/password/forgot`, `auth/password/reset`, `auth/email/verify`, `client`, `client/account/email/resend-verification`, `client/servers/backups/create`, `client/servers/files/pull`, `client/servers/files/pull/query`, `client/servers/subusers/create`, `remote`, `remote/enroll`, and `remote/sftp/auth`.
 

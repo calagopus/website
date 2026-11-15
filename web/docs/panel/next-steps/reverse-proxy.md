@@ -349,7 +349,7 @@ Serving the Panel on more than one hostname? Add the others under **Additional U
 ## Step 4: Verify
 
 1. Open `https://<domain>` in a browser. You should see the Panel's login page with a valid padlock. If the page doesn't load, check the [troubleshooting section](#troubleshooting).
-2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#step-1-prepare-the-panel).
+2. Log in, then open **Account → Activity**. The login entry's IP column must show your own public IP. If it shows the proxy's address (something like `172.18.0.1`), `APP_TRUSTED_PROXIES` is wrong; go back to [Step 1](#step-1-prepare-the-panel). On a panel that already has users, the [Reverse Proxy](../features/admin/index.md#reverse-proxy) card on the admin Health tab (Panel 1.2.10 and newer) also lists addresses that many users seem to share.
 3. Open a server and check that the console connects and shows live output.
 4. Upload a file through the file manager, and download a backup.
 5. Confirm the old address no longer works from another machine: `http://<server-ip>:8000` should time out or be refused.

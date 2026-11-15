@@ -153,6 +153,8 @@ sudo docker compose exec web calagopus-panel oobe finish
 calagopus-panel oobe finish
 ```
 
+The `oobe` commands exist since Panel 1.1.3. Up to 1.2.9 they saved the step under a key the panel never read, so on those versions `oobe finish` changes nothing; use the SQL below or update first. From 1.0.11 to 1.2.9 the web wizard saved its steps under the same wrong key, so finishing the wizard couldn't clear a stuck step either. Panel 1.2.10 also deletes the stale key while migrating.
+
 To do it in SQL instead, delete both spellings of the key, since different panel versions wrote it under each:
 
 ```bash
@@ -164,6 +166,8 @@ If the wizard appears on an install that previously had data, the data directory
 
 ::: details Locked out by the captcha {open}
 A wrong captcha key, or a [Cap](../panel/features/admin/settings.md#captcha) instance that the browser or the Panel can't reach, blocks the login page itself.
+
+Since Panel 1.2.10, a captcha that fails to load in the browser shows "The captcha failed to load. A browser extension such as an ad blocker may be blocking it, disable it for this site and retry." with a **Retry** button. If that clears up after allowing the site in your ad blocker, the keys are fine and nothing needs disabling.
 
 Disable the captcha in the database, log in, then enter the keys again under **Admin → Settings → Captcha**:
 
@@ -455,6 +459,8 @@ Pick the matching Docker image on the server's Startup page, or add the version 
 
 ::: details `./run.sh: Permission denied` {open}
 Uploaded scripts lose their execute bit. Right-click the file in the file manager, open the permissions dialog, and add execute.
+
+Wings 1.2.9 and older did the same to every file when restoring a Btrfs or ZFS backup. Update Wings and restore the backup again, or fix the permissions by hand as above.
 :::
 
 ::: details `<VARIABLE>: is required and cannot be empty` when creating a server {open}

@@ -247,6 +247,8 @@ The JSON file is **flat**: `items` and `translations` at the top level, with key
 
 For non-English item translations, you fill in **each plural category your language uses individually**. English collapses into singular and plural; Spanish does the same; Russian uses three or more distinct forms (`one`, `few`, `many`); Japanese only has `other`. The [Unicode CLDR plural rules table](https://www.unicode.org/cldr/charts/latest/supplemental/language_plural_rules.html) is the authoritative reference for which categories your language needs.
 
+If an item is missing the category the count needs, `tItem` falls back to that item's `other`, then to the English item's matching category and its `other`. Before Panel 1.2.10 a translated item without the needed category threw during render, so on older Panels fill in every category your language uses.
+
 ::: warning Never ship incomplete translations
 If you ship a Spanish translation file, every translation key your extension uses needs a Spanish value. Users with their language set to Spanish will see your Spanish file, and any missing key falls back to the **English** translation, which gives a mixed-language UI. Shipping no Spanish at all is better than shipping 80% of it: users then get English for the whole extension, which is at least consistent.
 

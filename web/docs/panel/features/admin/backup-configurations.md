@@ -21,7 +21,7 @@ Click **Create**. The common fields are **Name**, **Backup Disk** (Local, S3, Dd
 
 ![Create backup configuration form](./images/backup-configurations/create.webp)
 
-- **Maintenance Enabled**: "If enabled, any server using this backup configuration will not be able to create new backups, or manage existing ones."
+- **Maintenance Enabled**: "If enabled, any server using this backup configuration will not be able to create new backups, or manage existing ones." Since Panel 1.2.10 it also pauses the configuration's restic [prune jobs](../../../wings/advanced/backup-configurations.md#disk-specific-settings), so you can work on the repository by hand without a scheduled prune starting underneath you. Older Panels kept starting prunes during maintenance.
 - **Shared**: "If enabled, backups on this backup configuration will not be transferred between nodes, they will be assumed to be accessible by all nodes."
 
 Picking S3, Restic, Proxmox Backup Server, or Kopia reveals a disk-specific settings section; the node-local disks need none. See the [per-disk field reference](../../../wings/advanced/backup-configurations.md#backup-disks) for what goes in each. Btrfs, ZFS, and Ddup-Bak show a warning with extra requirements when selected.

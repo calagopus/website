@@ -32,7 +32,7 @@ If your account has [security keys](../dashboard/security-keys.md) registered an
 
 **Use Password** is hidden when password login is off panel-wide, leaving the passkey and **Back**.
 
-Otherwise (or after **Use Password**) you land on **Enter Password** ("Please enter your password for `<username>`"). Type your password, it has a visibility toggle, and hit **Sign In**. **Forgot Password** and **Back** sit below the separator here too. There is no remember-me option; sessions last seven days by default (an instance setting).
+Otherwise (or after **Use Password**) you land on **Enter Password** ("Please enter your password for `<username>`"). Type your password, it has a visibility toggle, and hit **Sign In**. **Forgot Password** and **Back** sit below the separator here too. Since Panel 1.2.10 the same OAuth buttons as on the first step follow, under "Signed up with a provider? Use it to sign in instead.", whenever any OAuth provider is set up, which helps accounts that never had a password. An account whose own **Password Login** switch is off gets "Password sign-in is turned off for this account, sign in with a security key or one of the options below instead." and, if it has a passkey, is sent back to the passkey step. There is no remember-me option; sessions last seven days by default (an instance setting).
 
 ## Sign in with a Passkey
 
@@ -44,7 +44,9 @@ Each **Login with `<name>`** button sends you to the external provider to approv
 
 - An account already [linked](../dashboard/oauth-links.md) to that provider is logged straight in.
 - If that account has 2FA enabled, the [two-factor checkpoint](#two-factor-checkpoint) comes first, unless the admin has set **Bypass 2FA on Login** for the provider.
-- With no linked account, the panel registers a new one from the provider's profile and logs you in. If the provider is set to **Only allow Login**, or an account with the same username or email already exists, you're sent back to the login page with an error instead.
+- With no linked account, the panel registers a new one from the provider's profile and logs you in. If the provider is set to **Only allow Login**, you're sent back to the login page with "No matching Account could be found and registration is currently disabled." instead. If an account with the same email already exists, the error reads "An account with this username or email already exists. Sign in another way first, then connect this provider under Account → OAuth Links."
+
+Since Panel 1.2.10, the username taken from the provider is cleaned up first: every character other than an ASCII letter or digit becomes `_`, and it is cut to 15 characters. A name shorter than 3 characters gets `_` and four random characters appended, and an empty one, or a provider without a **Username Path**, gets 10 random characters. When the username is already taken, the panel retries up to five times with the first 10 characters, `_`, and four random characters, such as `jane_doe_x_4fQz`, instead of refusing the login. If all five are taken too, or before 1.2.10 on any clash, the login ends with the "already exists" error above.
 
 ::: info
 For admins: providers, their **Bypass 2FA on Login** and **Only allow Login** flags, and automatic role mappings live under [OAuth Providers](../admin/oauth-providers.md).

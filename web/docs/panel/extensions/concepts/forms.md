@@ -173,11 +173,19 @@ A `text` field can carry an icon picker in front of it with `icon: { name, label
 ### Selection
 
 ```ts
-{ type: 'select', name: '...', label: '...', options: { value: string; label: LazyString }[], props?: Partial<SelectProps> }
-{ type: 'multiselect', name: '...', label: '...', options: { value: string; label: LazyString }[], props?: Partial<MultiSelectProps> }
-{ type: 'multiselectgroup', name: '...', label: '...', data: { group: LazyString; items: { value: string; label: LazyString }[] }[], props?: Partial<MultiSelectProps> }
+{ type: 'select', name: '...', label: '...', options: FieldOption[], props?: Partial<SelectProps> }
+{ type: 'multiselect', name: '...', label: '...', options: FieldOption[], props?: Partial<MultiSelectProps> }
+{ type: 'multiselectgroup', name: '...', label: '...', data: { group: LazyString; items: FieldOption[] }[], props?: Partial<MultiSelectProps> }
 { type: 'autocomplete', name: '...', label: '...', options?: string[], props?: Partial<AutocompleteProps> }
+
+interface FieldOption {
+  value: string;
+  label: LazyString;
+  disabled?: boolean;
+}
 ```
+
+An option with `disabled: true` is listed but can't be picked. `disabled` was added in Panel 1.2.10.
 
 ### Date / time
 

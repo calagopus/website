@@ -40,14 +40,14 @@ The **Connect** menu offers two ways to work on your files outside the browser:
 
 The **New** menu (shown when you can write to the current directory and hold `files.create`) creates content in the directory you are browsing:
 
-| Option                    | What it does                                                                                                                                                                                                                                       |
-| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **File from Editor**      | Opens an empty code editor; **Create** asks for a file name.                                                                                                                                                                                       |
-| **Directory**             | Creates a new directory.                                                                                                                                                                                                                           |
-| **Symlink**               | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in, or to the server root when starting with /", and the modal previews both resolved paths before you commit. |
-| **File from Pull**        | Downloads a file from a URL directly onto the server, see [Pulling from a URL](#pulling-from-a-url).                                                                                                                                               |
-| **File from Upload**      | Uploads files from your device.                                                                                                                                                                                                                    |
-| **Directory from Upload** | Uploads an entire folder, keeping its structure.                                                                                                                                                                                                   |
+| Option                    | What it does                                                                                                                                                                                                                                        |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **File from Editor**      | Opens an empty code editor; **Create** asks for a file name. Since Panel 1.2.10, a name that already exists in the directory gets the warning "_name_ already exists. Submit again to overwrite it." instead of being overwritten on the first try. |
+| **Directory**             | Creates a new directory.                                                                                                                                                                                                                            |
+| **Symlink**               | Creates a symbolic link. You give it a **Symlink Name** and a **Symlink Target**, "relative to the directory the symlink is created in, or to the server root when starting with /", and the modal previews both resolved paths before you commit.  |
+| **File from Pull**        | Downloads a file from a URL directly onto the server, see [Pulling from a URL](#pulling-from-a-url).                                                                                                                                                |
+| **File from Upload**      | Uploads files from your device.                                                                                                                                                                                                                     |
+| **Directory from Upload** | Uploads an entire folder, keeping its structure.                                                                                                                                                                                                    |
 
 ### Disk Usage
 
@@ -177,13 +177,15 @@ Right-click a row (or use its menu button) for the single-file context menu belo
 | **More** > **Permissions** | Unix permissions editor, see below.                                                                                                                                                                                                                                                                                        |
 | **Delete**                 | Deletes the file after confirmation. While the [trash](#trash) is on, the item reads **Move to Trash** and the file can be restored later.                                                                                                                                                                                 |
 
-The folder a [mount](./mounts.md) appears at can't be renamed, moved, or deleted, so those items are missing from its menu. Wings (1.2.6 and newer) also refuses to delete, rename, or change the permissions of a folder that contains a mount point, with "path is a mount point or virtual directory".
+The folder a [mount](./mounts.md) appears at can't be renamed, moved, or deleted, so those items are missing from its menu. Wings (1.2.6 and newer) also refuses to delete, rename, or change the permissions of a folder that contains a mount point, with "path is a mount point or virtual directory". Since Wings 1.2.10 it checks every item in a multi-file delete, rename, move or permission change first, so a selection that includes such a folder fails before anything else in it is changed.
 
 ### Permissions (chmod)
 
 **File Permissions** shows the current mode as both **Symbolic** (`-rw-r--r--`) and **Octal** (`644`), with Read/Write/Execute checkboxes for **Owner**, **Group**, and **Other** and a breakdown of what each bit means.
 
 For directories, a switch applies the change recursively to everything inside. Changes can be undone straight from the confirmation toast.
+
+Wings never takes read and write away from a file's owner, and since Wings 1.2.10 a directory also always keeps read, write and execute for its owner, so `644` on a folder is applied as `744`. Older versions treated a folder like a file, so `644` left it without execute and the server could no longer enter it.
 
 ![File Permissions dialog with owner, group, and other checkboxes and octal mode 644](./images/files/permissions.webp)
 
@@ -205,7 +207,7 @@ A live preview shows every resulting name and flags conflicts before anything is
 
 ### Remote Copy
 
-**Remote Copy Files** sends files to other servers you have access to. Pick one or more **Destination Servers** (or **Add servers from a group** to add a whole [server group](../dashboard/servers.md#grouped-servers)), browse to a destination directory, and optionally give a single file a new name. The browser shows the first server you picked, and the path you choose is used on every destination. You need `files.create` on each destination server; the modal names the ones where you lack it and won't copy until you remove them.
+**Remote Copy Files** sends files to other servers you have access to. Pick one or more **Destination Servers** (or **Add servers from a group** to add a whole [server group](../dashboard/servers.md#grouped-servers)), browse to a destination directory, and optionally give a single file a new name. The browser shows the first server you picked, and the path you choose is used on every destination. You need `files.create` on each destination server; the modal names the ones where you lack it and won't copy until you remove them. Since Panel 1.2.10 it does the same for destinations that are suspended, installing, restoring a backup or being transferred.
 
 ![Remote Copy Files dialog with Survival SMP and paper picked as destination servers and the destination directory browser](./images/files/remote-copy-modal.webp)
 
@@ -220,6 +222,8 @@ The check needs Wings 1.2.6 or newer on both the source and the destination node
 **Archive** opens **Create Archive** with an optional **Archive Name** (a timestamped name is generated if you leave it empty) and a **Format**: `.tar`, `.tar.gz`, `.tar.xz`, `.tar.lz`, `.tar.bz2`, `.tar.lz4`, `.tar.zst`, `.zip`, or `.7z`.
 
 **Extract** unpacks an archive into any directory you pick in the browser. `.zip`, `.7z`, and `.ddup` archives can also be browsed in place, double-click one to navigate into it like a directory (where the filesystem supports it).
+
+Since Wings 1.2.10, `.7z` archives keep Unix permissions and symlinks, both when Wings creates one and when it extracts or browses one, and a `.tar` keeps symlinks with targets longer than 100 bytes. Older versions left those symlinks out when creating an archive, extracted a symlink from a `.7z` as a regular file containing its target path, and gave every file in a `.7z` the default permissions.
 
 Both run in the background; progress appears next to the toolbar, where operations (compressing, extracting, pulling, copying) can be cancelled individually or all at once via **Cancel all operations**.
 
@@ -293,6 +297,8 @@ The percentage rule does nothing on a server with unlimited disk. Each automatic
 
 Drag files from your device anywhere onto the page and a **Drop files here to upload** overlay appears; drop to start. Alternatively use **New** > **File from Upload** or **Directory from Upload**. Upload progress lives in a popover next to the toolbar, where uploads can be paused, resumed, and cancelled.
 
+Since Panel 1.2.10 the overlay also appears where you can't upload, reading "This directory is read-only" or "You do not have permission to upload files" with "Dropped files will not be uploaded", so a drop there is no longer silently ignored. On a server with a disk limit, an upload bigger than the free space left (counting uploads still running) doesn't start straight away: a toast reads "Not enough free disk space: 3 files need 2 GiB, but only 500 MiB is free." with **Upload anyway** and, when the [trash](#trash) holds anything, **Open trash**. Resuming a staged upload that another tab of yours is still sending is refused with "`file` is being uploaded in another tab."
+
 Uploads keep going when you leave the page, and a progress toast follows you around the panel until they finish, one per destination, reading "Uploading 3 files to `server`...". Its **Show files** button takes you back to the directory being uploaded into, and its close button cancels every upload still heading there.
 
 ::: info
@@ -363,7 +369,7 @@ Staging appends `.upload-part` to the name, so a file whose name is longer than 
 
 ### Pulling from a URL
 
-**New** > **File from Pull** makes the server download a file itself, no round trip through your browser. Enter the **File URL** and hit **Query** to fetch the file's name and size in advance, adjust the **File Name** if needed, then **Pull**. The download runs on the node and shows up in the background operations progress.
+**New** > **File from Pull** makes the server download a file itself, no round trip through your browser. Enter the **File URL** and hit **Query** to fetch the file's name and size in advance, adjust the **File Name** if needed, then **Pull**. The download runs on the node and shows up in the background operations progress. Since Wings 1.2.10 it is staged as a `.upload-part` file like an [upload](#uploading) and only takes its real name once it finishes, so a failed or cancelled pull leaves no partial file behind and an existing file of the same name stays untouched until then. A name taken from the URL is also percent-decoded, so `my%20file.jar` is saved as `my file.jar`. Since Panel 1.2.10, when **Query** reports a size larger than the server's free disk space, the dialog warns "This file is 2 GiB, but only 500 MiB of disk space is free. The pull may fail part way.", plus an **Open trash** button when the trash holds anything. The pull can still be started.
 
 ## The Editor
 
@@ -383,7 +389,7 @@ While you type, the editor keeps a local draft in your browser (for up to three 
 
 A single compressed file whose contents are text, such as a rotated `latest.log.gz`, opens decompressed and read-only: there is no **Save**, no file history, and no live collaboration for it.
 
-Files above the panel-wide view-size limit ([Settings > Server](../admin/settings.md#server)) show a warning instead of opening; images open in a zoomable viewer (its own gear has a **Smoothen Image (Anti-Aliasing)** toggle, turn it off to inspect pixel art), and audio files open in a player with a waveform, 15-second skips, and playback speed control.
+Files above the panel-wide view-size limit ([Settings > Server](../admin/settings.md#server)) show a warning instead of opening (since Panel 1.2.10 it names the limit and suggests downloading the file instead); images open in a zoomable viewer (its own gear has a **Smoothen Image (Anti-Aliasing)** toggle, turn it off to inspect pixel art), and audio files open in a player with a waveform, 15-second skips, and playback speed control.
 
 ## SQLite Databases
 

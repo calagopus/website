@@ -124,7 +124,7 @@ Shown with the `backups.read` permission. Lists the database backups taken from 
 
 Flip **All MariaDB backups on this server** (the engine name follows the instance) to widen the list to every database backup of the same engine on this server. A **Source** column then names the managed database each dump was taken from, marking one whose database no longer exists as "Example (deleted)". Restoring one of those into this instance is how you move data between managed databases, or recover a dump whose database has been deleted.
 
-Right-click a backup for **Edit**, **Download**, **Restore**, and **Delete**; they work as described under [Backup Actions](../backups.md#backup-actions).
+Right-click a backup for **Edit**, **Download**, **Restore**, and **Delete**; they work as described under [Backup Actions](../backups.md#backup-actions). Since Panel 1.2.10 a restore also requires the instance to be running: while it isn't, the restore dialog shows a notice like "This managed database is offline. It must be running to restore a backup into it.", with a **Start** button if you may start it, and **Restore** stays disabled. Creating a database backup from the server's Backups page gets the same notice.
 
 ## Logs Tab
 

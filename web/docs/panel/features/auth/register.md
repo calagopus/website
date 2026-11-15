@@ -9,7 +9,7 @@ When registration is enabled, the **Create account** link on the [login page](./
 
 ![Register form with username, email, first name, last name, and password fields plus a Login button](./images/register/form.webp)
 
-The form asks for **Username**, **Email**, **Password** (with a visibility toggle), and optionally **First Name** and **Last Name**. Usernames are 3 to 15 characters of letters, numbers, and underscores; passwords need at least 8 characters. Hit **Register** to create the account, or **Login** below the separator to go back.
+The form asks for **Username**, **Email**, **Password** (with a visibility toggle), and optionally **First Name** and **Last Name**. Usernames are 3 to 48 characters of letters, numbers, and underscores (up to 15 before Panel 1.2.10); passwords need at least 8 characters. Hit **Register** to create the account, or **Login** below the separator to go back.
 
 Registering logs you in immediately: your session starts the moment the account is created. If the username or email is already taken, you get an error instead. The first account ever registered on a fresh panel automatically becomes a root admin, and is marked verified straight away.
 

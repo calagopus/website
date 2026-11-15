@@ -49,7 +49,7 @@ Select rows with their checkboxes, by dragging across them, by `Shift`-clicking 
 
 ## Third-Party Key Requests
 
-External applications can send you to `/account/api-keys/create` or `/account/api-keys/update` to request a key with specific permissions, or changes to an existing one. The page shows exactly what is requested, with **Added**, **Granted**, and **Removed** badges on the permission diff, warns when admin permissions are involved, and returns you to the app's callback URL once you approve.
+External applications can send you to `/account/api-keys/create` or `/account/api-keys/update` to request a key with specific permissions, or changes to an existing one. The page shows exactly what is requested, with **Added**, **Granted**, and **Removed** badges on the permission diff, warns when admin permissions are involved, and returns you to the app's callback URL once you approve. Since Panel 1.2.10 it also lists requested permissions that are unknown or not available to your account and won't be granted, and when you already have the maximum number of keys it says so before you approve rather than failing afterwards.
 
 ::: info
 A key can never edit itself or grant permissions it doesn't already have, even with `api-keys.update`. The maximum number of API keys per account is set by the instance administrator under [Settings > User](../admin/settings.md#user).

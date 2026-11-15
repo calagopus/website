@@ -9,7 +9,7 @@ An egg configuration is a named bundle of optional behavior plus a matcher that 
 
 The list shows ID, **Order**, Name, **Applies To** (a summary of the matcher, such as `Eggs (3)`), and Created. Use the search box to filter.
 
-![Admin egg configuration list with order, name, and Applies To columns and a Create button](./images/egg-configurations/list.webp)
+![Admin egg configuration list with order, name, and Applies To columns and the Import and Create buttons](./images/egg-configurations/list.webp)
 
 ## How Configurations Stack
 
@@ -100,6 +100,14 @@ Pages left out of the list are hidden from the sidebar and become inaccessible f
 ## Duplicating and Deleting
 
 When editing, **Duplicate** copies the whole configuration under a new name and **Delete** removes it (servers and eggs are untouched, only the layered behavior disappears).
+
+## Import and Export
+
+Since Panel 1.2.10, an existing configuration has an **Export** button, a dropdown with **Export as JSON** and **Export as YAML**. Next to **Create** on the list, **Import** (requires `egg-configurations.create`) accepts such a `.json`, `.yml`, or `.yaml` file, either through the file picker or by dragging files anywhere onto the list, and creates a new configuration from each.
+
+<img src="./images/egg-configurations/export-menu.webp" width="220" alt="Export dropdown open with Export as JSON and Export as YAML next to Save, Duplicate, and Delete" />
+
+The export holds everything except the ID and creation date, so **Order** and every section come along. The matcher refers to eggs, nests, nodes and locations by their UUID, which only exist on the panel the configuration came from. Imported into another panel, those matchers select nothing until you pick the right entries again under **Applies To**.
 
 ![Update Egg Configuration form for Standard, matching the Minecraft nest, with Save, Duplicate, and Delete buttons](./images/egg-configurations/general.webp)
 

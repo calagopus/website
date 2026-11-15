@@ -26,14 +26,14 @@ Before you reach for it, check whether something already toasts for you. The Pan
 
 The hook hands you six things:
 
-| Member                                | What it does                                                                                        |
-| ------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| `addToast(message, type?, actions?)`  | Shows a toast, returns its numeric id                                                               |
-| `addProgressToast(message, options?)` | Shows a toast with a progress bar that stays until you dismiss it, returns its id                   |
-| `addPendingToast(message)`            | Shows a progress toast only if the work takes longer than 300ms, returns a handle to settle it with |
-| `updateToast(id, update)`             | Patches a toast that's already on screen                                                            |
-| `dismissToast(id)`                    | Removes a toast early                                                                               |
-| `toastPosition`                       | The corner the current user has chosen                                                              |
+| Member                                         | What it does                                                                                        |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `addToast(message, type?, actions?, options?)` | Shows a toast, returns its numeric id                                                               |
+| `addProgressToast(message, options?)`          | Shows a toast with a progress bar that stays until you dismiss it, returns its id                   |
+| `addPendingToast(message)`                     | Shows a progress toast only if the work takes longer than 300ms, returns a handle to settle it with |
+| `updateToast(id, update)`                      | Patches a toast that's already on screen                                                            |
+| `dismissToast(id)`                             | Removes a toast early                                                                               |
+| `toastPosition`                                | The corner the current user has chosen                                                              |
 
 The provider sits above the whole app, so the hook works from anywhere you render: a route you registered, a component you slotted into a core page, a modal, a form submit handler. It throws if called outside the provider, which in practice only happens outside React entirely; see [Toasting Outside React](#toasting-outside-react).
 
@@ -126,6 +126,18 @@ addToast('Import finished.', [{ name: 'Show files', icon: faFolderOpen, onClick:
 - **Clicking an action doesn't dismiss the toast.** If your action should close it, capture the id from `addToast` and call `dismissToast` yourself.
 - **`disabled: true`** renders the button greyed out from the start, for an action you want visible but not yet available.
 
+Since Panel 1.2.10, `addToast` takes a fourth `options` argument. Only the full `addToast(message, type, actions, options)` form accepts it; the `(message, actions)` shorthand has no options, so pass the type explicitly when you need them:
+
+```ts
+const id = addToast('Export ready.', 'success', [{ name: 'Download', icon: faDownload, onClick: onDownload }], {
+  persistent: true,
+  onDismissed: () => releaseExport(),
+});
+```
+
+- **`persistent: true`** skips the timeout, so the toast stays until the user closes it or you call `dismissToast(id)`. Use it when the action is worth keeping around, and take it down yourself once it no longer applies.
+- **`onDismissed`** runs once the toast is gone, however that happened: the timeout, the close button, or `dismissToast`. It also runs straight away if a [show handler](#intercepting-toasts) cancelled the toast, so it never got on screen. It does not run while a dismiss handler keeps the toast up by cancelling its dismissal.
+
 ::: warning
 Actions live and die with the toast, which disappears on its own after a few seconds. That makes them fine for _shortcuts_, a faster way to do something the user could also reach by navigating, and a poor fit for anything that's the only way to complete a flow. If missing the button means the user is stuck, it doesn't belong in a toast.
 :::
@@ -206,7 +218,7 @@ Scope your extension's entries to something unique and stable: include the serve
 
 How the undo store behaves:
 
-- **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Undo entries are always tied to that constant, even though [progress toasts](#progress-toasts) outlive it. Expired entries are pruned as new ones arrive.
+- **Entries expire with the toast.** An entry's lifetime is `toastTimeout` from when it was pushed, so the undo shortcut stops working at the same moment the toast disappears. Undo entries are always tied to that constant, even though [progress toasts](#progress-toasts) outlive it. Expired entries are pruned as new ones arrive. Since Panel 1.2.10 the entry also goes as soon as the toast does, so closing the toast early ends the shortcut too, and a toast that a [show handler](#intercepting-toasts) cancelled never gets an entry at all. Before 1.2.10 the shortcut kept working for the rest of `toastTimeout` after the toast was closed.
 - **Entries are one-shot.** Running an undo removes it, whether it was triggered by the button or the shortcut, so there's no way to fire the same undo twice.
 - **One undo per scope at a time.** Since 1.2.8, while an undo is still running, the shortcut and the Undo buttons for that scope do nothing, so pressing the shortcut again on a slow connection doesn't start on the next older entry.
 - **The history holds 10 entries, globally.** It's shared across all scopes, and the oldest fall off. In practice the timeout expires entries long before the cap bites, but don't build anything that assumes a deep undo stack.
@@ -355,9 +367,9 @@ Two Panel-specific pitfalls. Anything that reads a **context-scoped store**, usu
 
 ## Dismissing and Lifetime
 
-Toasts raised with `addToast` auto-dismiss after `toastTimeout`, which is 7500ms. It's a module constant, not a per-toast option, so you can't make one of them stickier or shorter from the call site, and hovering doesn't pause the timer. A [dismiss handler](#intercepting-toasts) can cancel the timeout, but that keeps the toast around for good rather than longer.
+Toasts raised with `addToast` auto-dismiss after `toastTimeout`, which is 7500ms. It's a module constant, not a per-toast duration, so you can't make one of them shorter or a little longer from the call site, and hovering doesn't pause the timer. A [dismiss handler](#intercepting-toasts) can cancel the timeout, but that keeps the toast around for good rather than longer.
 
-There are two lifetimes available and nothing in between: 7500ms, or until you take the toast down yourself. The second one is what [`addProgressToast`](#progress-toasts) gives you. If what you want is a normal toast that lingers a bit longer than the rest, that isn't on offer, so use a modal or an inline alert on the page instead.
+There are two lifetimes available and nothing in between: 7500ms, or until the toast is taken down. The second one is what [`addProgressToast`](#progress-toasts) gives you, and since Panel 1.2.10 also `addToast` with [`persistent: true`](#actions), which the user can still close. If what you want is a normal toast that lingers a bit longer than the rest, that isn't on offer, so use a modal or an inline alert on the page instead.
 
 To take a toast down early, hold onto the id `addToast` gives you:
 

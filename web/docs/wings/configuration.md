@@ -658,6 +658,64 @@ The interval (in seconds) between background maintenance runs that clean up stal
 
 Default: `3600`
 
+## Crash History Configuration
+
+### system.crash_history.enabled <Badge type="info" text="Optional" />
+
+::: info
+Added in Wings 1.2.10.
+:::
+
+Enables or disables crash history. When enabled, Wings stores the exit code, whether the server was killed for running out of memory, and the last lines of console output every time [crash detection](#system-crash-detection-enabled) counts a stop as a crash. Records are kept in `crash_history.db` inside `system.root_directory`, so the Panel can list a server's past crashes and show the console output that led up to each one. When disabled, nothing is recorded, requests to list or read crashes are refused, and old records are no longer pruned. Data already stored stays in the database file.
+
+Default: `true`
+
+### system.crash_history.lines <Badge type="info" text="Optional" />
+
+How many lines of console output Wings keeps per crash. `0` stores the crash without any console output.
+
+Default: `2000`
+
+### system.crash_history.record_size_cap <Badge type="info" text="Optional" />
+
+The maximum size (in bytes) of a crash's console output before compression. When the lines exceed it, Wings drops the oldest ones first and marks the crash as truncated. The newest line is always kept, even if it is larger on its own. At most `16777216` (16 MiB) is allowed, otherwise Wings refuses to load the configuration.
+
+Default: `524288`
+
+### system.crash_history.zstd_level <Badge type="info" text="Optional" />
+
+The [Zstandard](https://github.com/meta/zstd) compression level used for the stored console output. Higher values produce smaller records at the cost of more CPU time when a crash is stored.
+
+Default: `3`
+
+### system.crash_history.max_records <Badge type="info" text="Optional" />
+
+The maximum number of crashes kept per server. When a new crash goes over it, the oldest records are dropped. `0` removes the limit. The server's most recent crash is always kept.
+
+Default: `10`
+
+### system.crash_history.max_age <Badge type="info" text="Optional" />
+
+How long (in seconds) a crash record is kept before it is deleted. The default is 30 days. `0` keeps records until another limit removes them.
+
+Default: `2592000`
+
+### system.crash_history.per_server_disk_budget <Badge type="info" text="Optional" />
+
+The maximum disk space (in bytes, after compression) the crash records of a single server may use. When exceeded, Wings drops the oldest records until the budget is met, but always keeps the server's most recent crash. `0` removes the limit.
+
+Default: `2097152`
+
+::: info
+All three limits are applied whenever a crash is stored and once an hour in the background. The hourly run also removes the records of servers that are no longer on the node.
+:::
+
+### system.crash_history.capture_timeout <Badge type="info" text="Optional" />
+
+How long (in seconds) Wings waits to read the console output of a crash. If reading takes longer, the crash is stored with the lines read so far. The limit covers only reading the lines: compressing the log and writing it to the database come after it and have no limit of their own. Wings waits for all of this before it logs the crash activity, runs crash schedules, prints the crash message to the console and decides on the automatic restart, so a slow disk can delay those by more than this value.
+
+Default: `5`
+
 ## Resource History Configuration
 
 ### system.resource_history.enabled <Badge type="info" text="Optional" />
@@ -678,7 +736,7 @@ Default: `10`
 
 ### system.resource_history.tiers <Badge type="info" text="Optional" />
 
-The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range.
+The resolutions history is kept at. Each tier stores one bucket every `step` seconds and drops buckets older than `retention` seconds; a `retention` of `0` keeps them forever. With the defaults, the last hour is kept per second, the last week per 10 seconds, the last year per minute, and everything older per 10 minutes. A history request is answered from the coarsest tier whose `step` still fits within one chart point and whose data reaches back to the start of the requested range. Since Wings 1.2.10, when no such tier has data in the range, for example a short window further back than the finest tiers keep, Wings answers from a coarser tier that does and spreads each of its buckets over the chart points it covers. Older versions returned an empty chart there.
 
 At most 8 tiers are allowed, every `step` must be at least `1` and unique, and `retention` must be `0` or at least the tier's `step`, otherwise Wings refuses to load the configuration. An empty list stops recording, but unlike `enabled: false`, history requests are still answered, with no data, and the Panel shows **No data recorded in this range**.
 
@@ -1776,6 +1834,15 @@ system:
     per_file_disk_budget: 5242880
     per_server_disk_budget: 209715200
     maintenance_interval: 3600
+  crash_history:
+    enabled: true
+    lines: 2000
+    record_size_cap: 524288
+    zstd_level: 3
+    max_records: 10
+    max_age: 2592000
+    per_server_disk_budget: 2097152
+    capture_timeout: 5
   resource_history:
     enabled: true
     flush_interval: 10
@@ -2101,6 +2168,15 @@ system:
     per_file_disk_budget: 5242880
     per_server_disk_budget: 209715200
     maintenance_interval: 3600
+  crash_history:
+    enabled: true
+    lines: 2000
+    record_size_cap: 524288
+    zstd_level: 3
+    max_records: 10
+    max_age: 2592000
+    per_server_disk_budget: 2097152
+    capture_timeout: 5
   resource_history:
     enabled: true
     flush_interval: 10

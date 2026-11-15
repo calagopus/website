@@ -17,7 +17,7 @@ A nest is just three fields: **Name**, **Author**, and an optional **Description
 
 Nests can also be created without leaving the page you're on: the nest pickers in the egg install dialogs and the egg repository form have a **Can't find one? Create a new nest** link (needs `nests.create`) that opens the same form in a modal and selects the new nest.
 
-Opening an existing nest shows two tabs: **General**, the same form plus a **Delete** button, and **Eggs**. Deleting a nest asks whether you also want to delete all eggs inside it, via the **Do you want to delete all eggs in this nest?** switch in the confirmation.
+Opening an existing nest shows two tabs: **General**, the same form plus a **Delete** button, and **Eggs**. Deleting a nest asks whether you also want to delete all eggs inside it, via the **Do you want to delete all eggs in this nest?** switch in the confirmation. Since Panel 1.2.10 **Delete** is disabled, with a tooltip, while servers still use eggs in the nest.
 
 ![Games nest General tab with the Update Nest form, Save and Delete buttons](./images/nests/general.webp)
 
@@ -93,9 +93,9 @@ The startup command and Docker image rules apply wherever an egg is written: sav
 
 At the bottom, next to **Save**:
 
-- **Update**: dropdown with **from File** (upload a `.json`/`.yml`/`.yaml` egg to overwrite this one) and **from Repository** (re-pull from the linked egg repository egg; disabled if none is linked). Installing or updating from a repository records which version of the repository egg you have, which is how the [Egg Library](./egg-library.md#installed) knows an update is waiting. Overwriting the egg from a file or URL keeps the repository link but forgets that version, so the egg shows no pending update until you next run **from Repository**.
+- **Update**: dropdown with **from File** (upload a `.json`/`.yml`/`.yaml` egg to overwrite this one) and **from Repository** (re-pull from the linked egg repository egg; disabled if none is linked). Installing or updating from a repository records which version of the repository egg you have, which is how the [Egg Library](./egg-library.md#installed) knows an update is waiting. Overwriting the egg from a file or URL keeps the repository link but forgets that version, so the egg shows no pending update until you next run **from Repository**. Since Panel 1.2.10 an update also carries over each variable's **Secret** flag, and runs as one transaction: a variable that can't be written fails the whole update and leaves the egg as it was, where older versions logged a warning and skipped that variable.
 - **Export**: dropdown with **Export as JSON**, **Export as YAML**, and **Export as Pterodactyl** (JSON in Pterodactyl's egg format, for taking eggs back the other way).
-- **Move** (to another nest), **Duplicate** (copy under a new name, optionally into a different nest), and **Delete**.
+- **Move** (to another nest), **Duplicate** (copy under a new name, optionally into a different nest), and **Delete**. Since Panel 1.2.10 **Delete** is disabled, with a tooltip, while servers still use the egg.
 
 Pterodactyl and Pelican eggs don't map one-to-one onto Calagopus eggs, so some values are translated on import and export:
 

@@ -74,7 +74,7 @@ Each peer card lists the addresses and ports _you_ would use to reach it. A peer
 
 ## Connecting a Server
 
-**Connect a Server** opens a picker of servers already on the private network (a server has to join before it can be connected), and then a switch per direction. Each switch previews the addresses it would make reachable. Admins get a **Show other user's servers** toggle to reach beyond their own.
+**Connect a Server** opens a picker of servers already on the private network (a server has to join before it can be connected), and then a switch per direction. Each switch previews the addresses it would make reachable. Admins get a **Show other user's servers** toggle to reach beyond their own. Since Panel 1.2.10 the toggle's position is saved to your account and shared with the same toggle in the other server pickers, such as [Remote Copy](../files.md#remote-copy) and adding servers to a [group](../../dashboard/servers.md#grouped-servers).
 
 <img src="./images/connections/connect-form.webp" width="220" alt="Connect a Server dialog with a server selector and toggles for each connection direction" />
 

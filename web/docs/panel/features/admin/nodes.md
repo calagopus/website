@@ -102,7 +102,7 @@ The same form as [creating a node](#creating-a-node), plus three extra buttons:
 
 - **Reset Token** (requires `nodes.reset-token`): issues a new connection token. The Wings config contains this token, so re-apply the configuration afterwards or the node loses contact.
 - **Duplicate**: copies the node's settings under a new name.
-- **Delete**: removes the node after confirmation.
+- **Delete**: removes the node after confirmation. Since Panel 1.2.10 the button is disabled while servers still use the node, with a tooltip saying how many to delete or transfer first.
 
 Changing the node's **URL** also needs `nodes.read-token` since Panel 1.2.7, because the panel sends the node token to whatever that URL points at.
 
@@ -240,6 +240,8 @@ The six **Allocation Mode** options, with the caveats their dropdown entries sta
 - **Preserve port numbers** (the default): reuses the same port numbers on the destination node where available, falls back to random allocations otherwise.
 - **Assign allocations based on Egg deployment configuration**: only works if an [egg configuration](./egg-configurations.md#allocation-configuration) with allocation settings applies to the egg on the destination node, and that node has compatible allocations. Configurations are matched against the destination node and its location, not the source.
 - **Self-assign new allocations based on Egg port range**: only works if the egg has a port range and the destination node has compatible allocations.
+
+Since Panel 1.2.10 the two egg-based modes show a warning that a server whose egg has no matching configuration makes the request fail: servers handled before it keep transferring, the rest are not transferred. Picking the All-In-One node as the destination disables **Transfer** ("Transfers to the All-In-One node are not supported.").
 
 ![Transfer Servers dialog with node, allocation mode, backup options, archive format, and compression level](./images/nodes/transfer-modal.webp)
 

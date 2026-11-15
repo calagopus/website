@@ -9,7 +9,7 @@ description: Enforce per-server disk limits with native Btrfs subvolumes and qgr
 
 The `btrfs_subvolume` disk limiter uses native [Btrfs](https://btrfs.readthedocs.io) subvolumes and qgroups (quota groups) to enforce per-server disk limits. Each server's volume directory becomes its own Btrfs subvolume, and the limit is applied via a qgroup on that subvolume. Because this is kernel-enforced at the filesystem level, there is no user-space overhead, and it is significantly more stable and performant than [Fusequota](./fusequota.md).
 
-Wings drives this by shelling out to the `btrfs` CLI: `btrfs subvolume create` on setup, `btrfs qgroup limit` to enforce limits, and `btrfs qgroup show --raw` on a 5-second interval to collect usage.
+Wings drives this by shelling out to the `btrfs` CLI: `btrfs subvolume create` on setup, `btrfs qgroup limit` to enforce limits, and `btrfs qgroup show --raw` on a 5-second interval to collect usage. Since Wings 1.2.10 that value is also the disk usage the Panel shows for the server, so it reflects Btrfs compression and shared extents. Older versions mixed it with the size from Wings' own file scan, and on a compressed filesystem the shown usage jumped between the two.
 
 ## Requirements
 

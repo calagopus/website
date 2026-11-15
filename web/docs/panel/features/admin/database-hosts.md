@@ -50,7 +50,7 @@ Opening a host lands on its **Overview** tab. Badges show the deployment and mai
 
 The **General** tab has the same form as creating a host, plus two extra buttons: **Test Connection** verifies the panel can actually reach and authenticate against the database server, and **Delete** removes the host.
 
-The **Connection Credentials** section starts collapsed when editing; leave it collapsed to keep the stored credentials, or expand it to replace them.
+The **Connection Credentials** section starts collapsed when editing; leave it collapsed to keep the stored credentials, or expand it to replace them. Since Panel 1.2.10, saving the host with the credentials section expanded, or deleting it, closes the panel's open connections to it, so new credentials or a new address take effect on the next database operation instead of after the pool has gone five minutes unused.
 
 ## Databases
 

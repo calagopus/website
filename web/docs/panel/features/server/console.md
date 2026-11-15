@@ -1,6 +1,6 @@
 ---
 title: Console
-description: The Calagopus server console, with power controls, a live terminal, command history, resource stats, usage graphs, and resource history.
+description: The Calagopus server console, with power controls, a live terminal, command history, resource stats, usage graphs, resource history, and crash history.
 ---
 
 # Console
@@ -119,7 +119,11 @@ Since Panel 1.2.9, **Resource History** shows what the server used anywhere from
 
 ![Resource History page showing 24 hours of a running server: range buttons and date pickers, Uptime, CPU, Memory Usage, Network, and Disk Usage cards, the Server State strip, and CPU, memory, network, and disk charts](./images/console/resource-history.webp)
 
-Pick a range with the **1h**, **6h**, **24h**, **7d**, **30d**, and **1y** buttons (24 hours by default). The arrows next to them step one range length **Earlier** or **Later**, and **Jump to Now** returns to the current time. The **Start** and **End** pickers move the window to any point in the past while keeping the selected length. While the window reaches the present, the page refreshes on its own once per chart point: every 30 seconds on 1h, about 2.5 minutes on 6h, 10 minutes on 24h, 1 hour on 7d, 4 hours on 30d, and once a day on 1y. The range and start time are kept in the page URL, so a link opens the same view.
+Pick a range with the **1h**, **6h**, **24h**, **7d**, **30d**, and **1y** buttons (24 hours by default). The arrows next to them step one range length **Earlier** or **Later**, and **Jump to Now** returns to the current time. While the window reaches the present, the page refreshes on its own once per chart point: every 30 seconds on 1h, about 2.5 minutes on 6h, 10 minutes on 24h, 1 hour on 7d, 4 hours on 30d, and once a day on 1y. The range and start time are kept in the page URL, so a link opens the same view.
+
+Since Panel 1.2.10 the window can have any length between one minute and ten years. Change the **Start** or **End** picker to move that edge, or drag across any of the four charts with the mouse to zoom into the part you selected (`Esc` cancels a drag). A window that matches a preset length selects that button; anything else shows up as **Custom**, with about 150 points on the charts (one point per second at most, so a one-minute window has 60), never fewer than the narrowest preset covering the same length would give it. Custom windows are kept in the URL too, as `range=custom` plus a `duration` in seconds. A window outside the one-minute to ten-year bounds is ignored and the pickers jump back. Before 1.2.10 the pickers only moved the window and kept its length.
+
+![Resource History in a Custom window of a few minutes, with a drag selection across the CPU chart and the crash and restart visible in the Server State strip](./images/console/resource-history-custom.webp)
 
 Five cards sum up the selected range:
 
@@ -131,7 +135,7 @@ Five cards sum up the selected range:
 | **Network**      | Total **Inbound** and **Outbound** traffic               |
 | **Disk Usage**   | The last disk usage recorded in the range                |
 
-Below them are the charts. **Server State** is a strip coloured by how long the server spent in each state, with the running share (like **99.5% running**) in its corner. Hover a slice to see the time per state. **CPU Load** and **Memory Load** each plot an **Average** line, a dashed **Peak** line, and the **Limit** that applied at the time, so a raised or lowered limit shows up where it changed. **Network** plots outbound and inbound rate, and **Disk Usage** plots stored size against the server's current disk limit. Hovering over one of these four charts highlights the same moment on the others. Gaps where nothing was recorded, such as before the node was updated, stay empty, and a chart with no data at all in the range shows **No data recorded in this range**.
+Below them are the charts. **Server State** is a strip coloured by how long the server spent in each state, with the running share (like **99.5% running**) in its corner. Hover a slice to see the time per state. **CPU Load** and **Memory Load** each plot an **Average** line, a dashed **Peak** line, and the **Limit** that applied at the time, so a raised or lowered limit shows up where it changed. Since Wings 1.2.10 that is the limit set on the server, without the memory overhead Wings adds to the container or the lifted CPU limit of a [startup boost](../../../wings/configuration.md#docker-startup-boost-enabled). Wings 1.2.9 recorded the container's own limits instead, so the memory line sat above the configured limit and a server without a memory limit showed the host's memory as its limit. It also recorded the host's cores × 100 as the CPU limit of a server without one. In 1.2.10 an unlimited resource is recorded as 0 and the chart hides its **Limit** line. Ranges recorded under 1.2.9 keep the old values. **Network** plots outbound and inbound rate, and **Disk Usage** plots stored size against the server's current disk limit. Hovering over one of these four charts highlights the same moment on the others. Gaps where nothing was recorded, such as before the node was updated, stay empty, and a chart with no data at all in the range shows **No data recorded in this range**.
 
 Each point on the charts covers a slice of the range, from 30 seconds on the 1h view to a day on the 1y view. How far back the data goes, and how detailed it stays, depends on the node's [`system.resource_history`](../../../wings/configuration.md#system-resource-history-tiers) settings. With the defaults, Wings keeps:
 
@@ -145,6 +149,22 @@ Each point on the charts covers a slice of the range, from 30 seconds on the 1h 
 The history is stored on the node in `resource_history.db` in the Wings root directory. It moves with the server when the server is [transferred](../admin/servers.md#transfer), as long as both nodes run Wings 1.2.9 with resource history turned on, and is deleted along with the server. Nothing is recorded while a transfer is running.
 
 If the node has resource history turned off with `enabled: false`, or runs an older Wings, the page shows **Resource History Unavailable** instead. A node with an empty `tiers` list records nothing, and the charts show **No data recorded in this range**.
+
+## Crash History
+
+Since Panel 1.2.10, every crash Wings detects is kept with its exit code, whether the server was killed for running out of memory, and the console output that led up to it. The node needs Wings 1.2.10 or newer, and a stop only counts as a crash when [crash detection](../../../wings/configuration.md#system-crash-detection-enabled) treats it as one.
+
+Once a server has at least one recorded crash, a skull icon appears in the top right of the terminal. It is red with the tooltip **Crashed in the Last 24 Hours** when the latest crash is less than a day old, and grey (**Crash History**) otherwise. Clicking it opens the newest crash at `/server/<id>/console/crashes`, which stays under the Console tab like Resource History. The page and the icon need the `control.read-console` permission. `server:crash.detected` rows on the [Activity](./activity.md) page link to the same crash with a skull icon.
+
+<img src="./images/console/crash-icon.webp" width="250" alt="Terminal toolbar with a red skull icon and its Crashed in the Last 24 Hours tooltip" />
+
+The **Crashes** list on the left shows each crash's time, exit code and number of lines, with an **Out of Memory** badge where it applies. Exit codes above 128 from common signals (such as `SIGKILL`, `SIGTERM`, `SIGSEGV` or `SIGABRT`) also name the signal that ended the process, as in **Exit Code 137 (SIGKILL)**. The selected crash shows its console output in a read-only terminal, plus a **Truncated** badge when older output was cut off to stay within the size limit. The download icon saves the output as `crash-<id>-<crash>.log`, and the delete icon (requires `control.delete-crashes`) removes the record and its output after a confirmation.
+
+![Crash History page with two crashes listed and the selected Exit Code 137 (SIGKILL) crash showing its console output, download and delete icons](./images/console/crashes.webp)
+
+How many lines are kept, and for how long, is set per node under [`system.crash_history`](../../../wings/configuration.md#system-crash-history-enabled). With the defaults, Wings keeps the last 2000 lines (at most 512 KiB) of each crash and up to 10 crashes per server for 30 days, within a 2 MiB disk budget per server (`per_server_disk_budget`), which can evict older crashes before the count or age limit does. A crash that has been pruned since shows **Crash Not Found**. Crash history moves with the server on a [transfer](../admin/servers.md#transfer) and is deleted along with it. When the node has crash history turned off, or runs an older Wings, the page shows **Crash History Unavailable** and the skull icon never appears.
+
+Admins can read and delete the same records from the server's [Logs](../admin/servers.md#logs) tab in the admin area.
 
 ## Automatic Prompts
 

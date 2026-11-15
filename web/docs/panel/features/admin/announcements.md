@@ -42,7 +42,9 @@ Finish with **Save**, or **Save & Stay** to keep creating. Opening an existing a
 ## Where Announcements Render
 
 - An announcement with **no targeting** shows at the top of every dashboard page, for every user.
-- An announcement with **any targeting** shows only on server pages, and only for servers matching at least one selected location, node, backup configuration, or egg.
+- An announcement with **any targeting** shows only on server pages, and only for servers that match every field you filled in: the server's location must be one of the selected **Locations**, its node one of the **Nodes**, and so on, while empty fields don't restrict anything. Picking a location and an egg, for example, shows the announcement on servers with that egg in that location only. A server without a backup configuration never matches an announcement that targets **Backup Configurations**.
+
+Before Panel 1.2.10 the fields were combined the other way round, so a server matching any one selected location, node, backup configuration, or egg saw the announcement. Check targeted announcements that list several fields after updating.
 
 In both cases only enabled announcements inside their schedule window are shown.
 

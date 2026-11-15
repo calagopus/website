@@ -13,6 +13,8 @@ The **Databases** tab lists each database's name, type (MySQL, PostgreSQL, or Mo
 
 Click **Create**. Pick a **Database Name** and a **Database Host**; hosts are grouped by database type, and a host marked **Under Maintenance** can't be selected. The button is disabled with a tooltip once the shared limit is hit, or with "No hosts found" when there's nothing to provision on.
 
+Since Panel 1.2.10, a name the server already uses is refused with "database with name already exists", as is a MongoDB database that already exists on the host. On MySQL the panel no longer adopts a database or user that is already on the host under the same name, the create fails instead. On MySQL and PostgreSQL, a create that fails part way now drops the user or database it had already made.
+
 ::: info
 Database hosts are set up by administrators and attached to locations, see [Database Hosts](../../../../additional/database-hosts/index.md). Users only ever pick from the hosts made available to their server.
 :::
@@ -29,12 +31,13 @@ The password is only visible with the `databases.read-password` permission. From
 
 The rest of the right-click menu:
 
-| Action           | What it does                                                                                                                                                                              |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Explore Data** | Opens the [Data Explorer](./index.md#data-explorer).                                                                                                                                      |
-| **Edit**         | Toggle **Locked**. A locked database can't be recreated or deleted, and its password can't be rotated.                                                                                    |
-| **Recreate**     | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first. |
-| **Delete**       | Permanently deletes the database and all data. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first.                                       |
+| Action                | What it does                                                                                                                                                                                         |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Explore Data**      | Opens the [Data Explorer](./index.md#data-explorer).                                                                                                                                                 |
+| **Edit**              | Toggle **Locked**. A locked database can't be recreated or deleted, and its password can't be rotated.                                                                                               |
+| **Lock** / **Unlock** | Since Panel 1.2.10, flips **Locked** straight from the menu (requires `databases.update`). While locked, **Recreate** and **Delete** are greyed out with "This database is locked. Unlock it first." |
+| **Recreate**          | Wipes all data and creates a fresh, empty database with the same connection details. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first.            |
+| **Delete**            | Permanently deletes the database and all data. Type the database name to confirm. On PostgreSQL, open connections to the database are closed first.                                                  |
 
 With `databases.delete`, you can also select several databases (checkboxes, `Shift`-click for a range, drag, or `Ctrl+A`) and **Delete** them together after one confirmation. Locked databases are skipped. Each action reports how many items it changed, skipped or failed in a toast.
 

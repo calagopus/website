@@ -7,7 +7,7 @@ description: Create, browse, restore, and download server and database backups, 
 
 The Backups page lists every backup of your server, with a counter like "2 of 15 maximum backups created." at the top.
 
-There are two kinds of backup: a **Server** backup is an archive of the server's files, and a **Database** backup is a dump of one of the server's [managed databases](./databases/managed.md). Both count toward the same limit, which is part of the server's [feature limits](../admin/servers.md#feature-limits). As soon as a database backup exists the counter splits, as in "11 of 15 maximum backups created (9 server, 2 database)." Once you hit the limit, the create option is disabled with the tooltip "This server is limited to 15 backups."
+There are two kinds of backup: a **Server** backup is an archive of the server's files, and a **Database** backup is a dump of one of the server's [managed databases](./databases/managed.md). Both count toward the same limit, which is part of the server's [feature limits](../admin/servers.md#feature-limits). As soon as a database backup exists the counter splits, as in "11 of 15 maximum backups created (9 server, 2 database)." Once you hit the limit, the create option is disabled with the tooltip "This server is limited to 15 backups." Since Panel 1.2.10 it stays enabled when a backup your rules no longer keep can make room, and the tooltip and the create dialog name the backup that will go: "This server is at its limit of 15 backups. Creating one deletes _name_ to make room." See [Reaching the Backup Limit](#reaching-the-backup-limit).
 
 ![Backups page with a Daily Backups group showing retention badges and an Ungrouped section of server and database backups](./images/backups/list.webp)
 
@@ -117,7 +117,7 @@ Pick **Create Backup Group** from the **Create** menu. Give it a name and fill i
 
 ![Edit Backup Group dialog with name and keep latest, daily, weekly, monthly, and yearly retention fields](./images/backups/group-edit-modal.webp)
 
-Leave them all empty and the modal tells you what that means: "With no retention set, this group is just a label and never deletes successful backups automatically." Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); the **Create Backup Group** option disappears once you reach it.
+Leave them all empty and the modal tells you what that means: "With no retention set, this group is just a label and never deletes successful backups automatically." Use the pencil icon in a group's header to edit it later. There is also a panel-wide limit on groups per server, set under [Settings > Server](../admin/settings.md#server); once you reach it, the **Create Backup Group** option is greyed out with "This server is limited to N backup groups." (Panels before 1.2.10 hid it).
 
 Once you have more than one group, each header grows a grip handle: drag it to reorder the groups on the page. This is display order only and doesn't affect retention.
 
@@ -133,6 +133,8 @@ The server's backup limit is a hard cap that groups don't raise; retention only 
 Every automatic deletion shows up in the server's [Activity](./activity.md) log with the rule and the group that caused it.
 
 Manual backups also clear out backups your rules no longer keep when they need the room. If a backup, automatic or manual, needs to free a slot but cannot remove the old backups, creation is refused with the reason: "cannot delete old backups while their backup configuration is in maintenance mode" or "failed to delete old backups to make room for a new one". When nothing could be freed, creation fails with "maximum number of backups reached". The backup-creation rate limit is checked before any of this, so a rate-limited request never deletes anything.
+
+Since Panel 1.2.10 a backup that is still being deleted no longer counts toward the limit. One whose deletion has failed on every retry counts again.
 
 ### Deleting a Group
 

@@ -19,7 +19,7 @@ Click an actor's username to filter the log to just that user; a **Clear User Fi
 
 ## Details
 
-The **IP** column shows the address the request came from; seeing it needs the extra `activity.read-ip` permission, without which every row reads "N/A" (as do events that never had an IP). An administrator can also hide addresses from everyone but the user who made the request, with [Hide Server Activity IPs](../admin/settings.md#activity). Rows with extra metadata have an info button at the end that opens an **Activity Details** modal with the raw JSON, and `server:file.write` rows link straight to that revision in the file editor's diff view.
+The **IP** column shows the address the request came from; seeing it needs the extra `activity.read-ip` permission, without which every row reads "N/A" (as do events that never had an IP). An administrator can also hide addresses from everyone but the user who made the request, with [Hide Server Activity IPs](../admin/settings.md#activity). Rows with extra metadata have an info button at the end that opens an **Activity Details** modal with the raw JSON, and `server:file.write` rows link straight to that revision in the file editor's diff view. Since Panel 1.2.10, `server:crash.detected` rows link to that crash in [Crash History](./console.md#crash-history) for users with `control.read-console`, and deleting a crash record is logged as `server:crash.delete`.
 
 <img src="./images/activity/details-modal.webp" width="310" alt="Activity Details dialog showing a JSON payload for a database instance start" />
 

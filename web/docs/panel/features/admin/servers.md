@@ -195,7 +195,9 @@ Two tables. **Classic Databases** lists databases on [database hosts](../../../a
 
 Fetch the server's recent **Console** or **Install** logs: pick the **Log Type**, how many **Lines** (default 1000), and hit **Load Logs**. Output opens in a read-only viewer with ANSI colors stripped. Use it to diagnose a failed install from the admin area.
 
-![Server Logs tab with the Log Type dropdown open showing Console and Install, above install output](./images/servers/logs.webp)
+Since Panel 1.2.10 the **Log Type** dropdown also has **Crash**, which swaps the **Lines** field for a **Crash** picker listing the server's [recorded crashes](../server/console.md#crash-history) by time and exit code, marked "(Out of Memory)" where that applies. Loading one shows the console output kept for it, and a delete button next to it removes the record after a confirmation (requires `servers.update`). The picker reads "Crash history unavailable" when the node does not keep crash history.
+
+![Server Logs tab with Log Type Crash, the Crash picker open listing two crashes by time and exit code, and the loaded crash output below](./images/servers/logs.webp)
 
 ### Management
 
@@ -207,7 +209,7 @@ Action cards, each gated by its own permission and confirmed in a modal.
 
 Moves the server and its data to another node (requires `servers.transfer` and `nodes.read`). The modal asks for:
 
-- **Node** (required; the current node is excluded, and the All-In-One node is not a valid target)
+- **Node** (required; the current node is excluded, and the All-In-One node is not a valid target: since Panel 1.2.10, picking it disables **Transfer** with the tooltip "Transfers to the All-In-One node are not supported.")
 - **Primary Allocation** and **Additional Allocations** on the target node
 - **Backups to transfer**, plus a **Delete source backups** switch to remove the transferred copies from the source node afterwards
 - **Archive Format** (`.tar` or `.itaf`, plain or compressed as `.gz`, `.xz`, `.lz`, `.bz2`, `.lz4`, or `.zst`), **Compression Level** (**Best Speed**, **Good Speed**, **Good Compression**, or **Best Compression**; disabled for uncompressed `.tar` and `.itaf`), and **Multiplex Channels** (0 to 16 extra HTTP connections for split archives)
@@ -241,6 +243,8 @@ Requires `servers.delete`. The modal has a force switch ("Do you want to execute
 ::: danger
 Deleting a server removes it and all of its data, and cannot be undone. "Force deletion skips the normal shutdown sequence. The server files on the node may not be fully cleaned up, leaving orphaned data behind.", so only force it when a normal delete fails (for example, the node is unreachable).
 :::
+
+Since Panel 1.2.10, a normal delete also goes through when Wings answers that it doesn't know the server, so a server that is already gone from its node no longer needs **Force**. Any other error from Wings still cancels a normal delete.
 
 ::: info
 On Wings 1.2.8 and older, deleting a running server could stop halfway when Docker answered `removal of container ... is already in progress`, most often when several running servers were deleted at once. The server disappeared from the Panel and from Wings, but its container, its files, or both stayed on the node. Wings 1.2.9 waits for that removal to finish and then deletes the files. To clean up after an older node, check `docker ps -a` for the leftover container and remove it with `docker rm -f`, then delete the directory named after the server's UUID under [`system.data`](../../../wings/configuration.md#system-data).

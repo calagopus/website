@@ -41,6 +41,8 @@ Like **Restic** and **DdupBak**, both **Proxmox Backup Server** and **Kopia** de
 
 **Btrfs** and **Zfs** store backups as filesystem snapshots and require the corresponding [disk limiter](../disk-limiters/index.md) to be configured on the Wings node; that's what puts each server on its own subvolume or dataset in the first place, and snapshots only exist relative to that. See the [Btrfs](../disk-limiters/btrfs-subvolume.md) and [ZFS](../disk-limiters/zfs-dataset.md) disk limiter guides for the host-side setup. The same migration caveat applies: servers created before their node switched to `btrfs_subvolume` / `zfs_dataset` won't have backups that work until you transfer the server off the node and back.
 
+Restoring a Btrfs or ZFS backup copies the files back out of the snapshot. Since Wings 1.2.10 they keep their permissions and modification times. Older versions restored every file as `0644` with the time of the restore, so scripts and binaries lost their execute bit and a server that runs one failed to start with `Permission denied`.
+
 ## Browsing Backups from the Client UI
 
 **DdupBak**, **Btrfs**, **Zfs**, **Restic**, **Proxmox Backup Server**, and **Kopia** backups all support the **browse** feature: users can open a backup in the client UI, navigate its file tree, and download individual files or directories without downloading the full backup first. This is especially useful for large backups where a user only needs to recover one file.
@@ -118,6 +120,8 @@ Wings tries a streaming upload for server-file S3 backups, then falls back to bu
 === Restic
 
 Use the **Restic** disk when you want deduplicated, encrypted backups to any of restic's supported backends (S3, B2, Azure Blob Storage, Google Cloud Storage, SFTP, a REST server, local disk, etc.). See the [restic backend documentation](https://restic.readthedocs.io/en/stable/030_preparing_a_new_repo.html) for the full list and the repository URL format for each.
+
+An `sftp:` repository makes restic run `ssh` on the node, so the login has to work without a prompt for the user Wings runs as, usually with a key in that user's `~/.ssh`. In the Docker image Wings runs as root inside the container, so `ssh` looks in the container's `/root/.ssh`: bind-mount a directory with the key, `known_hosts` and any `config` there, for example `- "/etc/calagopus-wings/ssh/:/root/.ssh/:ro"` under `volumes` in the compose file. The Wings Docker image ships the OpenSSH client since Wings 1.2.10; with older images, SFTP repositories fail because `ssh` is missing from the container.
 
 | Field                     | Value                                                                                                                                                                                                                                                                                                                                                                                                  |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
@@ -242,6 +246,8 @@ A common setup is one restic repository per location (covering most servers) wit
 Every backup configuration has a **Maintenance Enabled** toggle. Turn this on to prevent the configuration from being used without deleting it. This is useful when rotating credentials, doing restic repository maintenance (`restic prune`, `restic check`), or migrating to a new bucket.
 
 While maintenance is enabled, any backup that would have used this configuration will fail. There is no automatic fallback to a less specific configuration; turning on maintenance blocks that layer of the lookup entirely.
+
+Since Panel 1.2.10, scheduled restic prune jobs also skip a configuration while its maintenance is on, so a manual `restic prune` or `restic check` no longer races a scheduled one.
 
 ## Supported Backup Drivers FAQ
 

@@ -119,13 +119,14 @@ Permissions that control the ability to view the activity log on an account.
 ::: details Control
 Permissions that control the ability to control the power state of a server, read the console, or send commands.
 
-| Permission             | Description                                                                                                |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `control.read-console` | Allows reading the server console logs.                                                                    |
-| `control.console`      | Allows sending commands to the server instance via the console.                                            |
-| `control.start`        | Allows starting the server if it is stopped.                                                               |
-| `control.stop`         | Allows stopping the server if it is running.                                                               |
-| `control.restart`      | Allows restarting the server. Permits starting it if offline, but not placing it in a fully stopped state. |
+| Permission               | Description                                                                                                |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `control.read-console`   | Allows reading the server console logs.                                                                    |
+| `control.delete-crashes` | Allows deleting stored crash records and their console output.                                             |
+| `control.console`        | Allows sending commands to the server instance via the console.                                            |
+| `control.start`          | Allows starting the server if it is stopped.                                                               |
+| `control.stop`           | Allows stopping the server if it is running.                                                               |
+| `control.restart`        | Allows restarting the server. Permits starting it if offline, but not placing it in a fully stopped state. |
 :::
 
 ::: details Subusers

@@ -33,7 +33,7 @@ Each variable is a card with its name, a description, and an input. The input ty
 | Secret                                        | Password-style input that hides the value     |
 | Anything else                                 | Text input with a **Reset to default** button |
 
-Required variables are marked with an asterisk (toggle-style boolean variables never are), and the input's placeholder shows the default value. Variables the egg does not let users change carry a **Read-Only** badge.
+Required variables are marked with an asterisk (toggle-style boolean variables never are), and the input's placeholder shows the default value. Variables the egg does not let users change carry a **Read-Only** badge. Since Panel 1.2.10, **Save** refuses to send an empty required variable and marks it with "This variable is required.", and an error the panel returns for one variable is shown on that field as well as in a toast.
 
 ![Variables grid with different input types](./images/startup/variables.webp)
 

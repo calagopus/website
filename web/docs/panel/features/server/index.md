@@ -11,7 +11,7 @@ Above every tab, the panel surfaces server-wide state:
 
 - Dismissible per-server announcements.
 - Status banners while the server is transferring (with progress, ETA, and an admin-only **Cancel**), suspended, restoring a backup, installing (cancellable with the `settings.cancel-install` permission), under node maintenance, or pending a restart.
-- A websocket banner with a reconnect countdown if the live connection drops.
+- A websocket banner with a reconnect countdown if the live connection drops. Since Panel 1.2.10, when the panel gives up refreshing its credentials the banner offers a **Reconnect** button instead of asking you to reload the page.
 
 Eggs whose install script reports its progress show a progress bar and a label in the installing banner instead of a plain "installing" message. While a transfer, restore, or installation is running, the same progress also sits in a toast in the corner, so it stays in view on every tab of the server.
 

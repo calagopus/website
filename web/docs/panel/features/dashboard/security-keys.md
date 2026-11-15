@@ -29,6 +29,8 @@ Right-click a key (or open the menu at the end of its row) to rename or remove i
 
 **Delete** removes the key from your account and asks for your account password to confirm, the same as creating one does. The credential stays on your device or password manager, so clean it up there as well if you do not intend to use it again. If password login is turned off for your account, you cannot remove your last remaining key; turn password login back on first.
 
+Since Panel 1.2.10 **Delete** on your last key is greyed out with a tooltip in that case, and also while password login is disabled for the whole panel, where removing it would lock you out. When the key is your only factor that counts towards a required [two-factor](../admin/settings.md#application) setup, the confirmation warns that you'll be limited to the Account page until you set up another accepted method.
+
 ![Confirm Security Key Deletion dialog asking for the account password](./images/security-keys/delete-form.webp)
 
 ::: info

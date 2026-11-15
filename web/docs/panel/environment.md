@@ -154,6 +154,8 @@ Comma-separated list of trusted proxy IP addresses or CIDR ranges. Required when
 APP_TRUSTED_PROXIES=192.168.178.0/24,10.0.0.0/8
 ```
 
+Since Panel 1.2.10, spaces around the entries are ignored, and an entry that isn't a valid IP or CIDR stops the Panel from starting with `Invalid APP_TRUSTED_PROXIES value`. Older versions silently dropped such entries, including any written with a space after the comma, so a typo left the proxy untrusted without any warning. The admin [Health](./features/admin/index.md#reverse-proxy) tab shows addresses that look like an untrusted proxy.
+
 ## APP_BLOCKED_CIDRS <Badge type="info" text="Optional" />
 
 Comma-separated list of IP ranges the Panel refuses to connect to when it fetches a URL someone supplied through the UI, such as importing an egg from a URL, discovering an OpenID provider, importing a user's avatar from an OAuth provider, or syncing an egg repository over git. Hostnames are resolved first and every resulting address is checked, so a name pointing at an internal address is rejected too. A URL that names an IP address directly, such as `http://192.168.1.10/egg.json`, is checked against the same list before any connection is made. This keeps an administrator from using the Panel as a proxy to reach services on its own network.

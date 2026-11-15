@@ -117,9 +117,42 @@ Each supports `prependComponent` and `appendComponent`. `server.schedules` and `
 
 `server.mounts.enterSubNavigation(...)` extends the navigation shared by **Mounts** and **Devices**. Admin device pages are under `pages.admin.devices`: the list exposes `enterContainer`, and `view` exposes `subNavigation`, `eggs`, `nodes`, and `servers`. Egg/node assignment tabs have `enterSubContainer` and `enterContextMenu`; the servers tab has `enterSubContainer`. The device tabs of admin nodes and servers are under `pages.admin.nodes.view.devices` and `pages.admin.servers.view.devices`.
 
+### Resource History and Crashes
+
+The console has two sub-pages with their own registries under `pages.server.console`: the resource history at `/server/<uuid>/console/history` (`enterHistory(...)`, since Panel 1.2.9) and the crash list at `/server/<uuid>/console/crashes` (`enterCrashes(...)`, since Panel 1.2.10). The crash page needs the `control.read-console` permission, and deleting a crash needs `control.delete-crashes`.
+
+On the history page, every component receives the same props: `timeframe` (the selected range and the window that was requested), `history` (the raw node response, `undefined` until the first load), `rows` (one row per point), `summary`, `loading`, and since 1.2.10 `selectTimeframe(start, end)`, which moves the page to another window, the same way dragging across a chart does. Pass `null` as `end` to follow the current time.
+
+```ts
+ctx.extensionRegistry.pages.server.console.enterHistory((history) =>
+  history
+    .addRange({ id: '90d', label: () => '90d', duration: 90 * 24 * 60 * 60 * 1000, points: 360 })
+    .addSummaryCard({ id: 'my-extension-players', component: PlayerSummaryCard })
+    .addBlock({ id: 'my-extension-players', component: PlayerChart, fullWidth: true }),
+);
+```
+
+`addRange`, `addSummaryCard` and `addBlock` add after the stock entries. The matching `addRangeInterceptor`, `addSummaryCardInterceptor` and `addBlockInterceptor` get the full list, stock entries included, and mutate it in place to remove or reorder entries. The range id `custom` is reserved for windows picked by dragging or through `selectTimeframe`, and a range registered under it is left out. `points` is capped at 2000. `enterHeaderComponents` renders next to the range controls, and `enterContainer` wraps the page.
+
+The crash page shows a list of crashes and, for the selected one, its stored console output in a read-only terminal:
+
+| Method                    | Where it renders                                                       | Props                    |
+| ------------------------- | ---------------------------------------------------------------------- | ------------------------ |
+| `enterListItemComponents` | On the right of each list entry, around the out of memory badge        | `crash`                  |
+| `enterActionComponents`   | Next to the download and delete buttons of the selected crash          | `crash`, `log`, `lines`  |
+| `enterDetailComponents`   | Prepended between the crash header and the terminal, appended below it | `crash`, `log`, `lines`  |
+| `enterXTerm`              | The terminal, created again for every selected crash                   | `crash`                  |
+| `enterContainer`          | The page wrapper                                                       | `ServerContentContainer` |
+
+`crash` carries `id`, `timestamp`, `exitCode`, `oomKilled`, `lines`, `bytes` and `truncated`. `log` is the stored output as one string, `undefined` while it loads, and `lines` is what the terminal shows. `addLogInterceptor((lines, { crash }) => ...)` changes those lines in place, for example to filter out noise or highlight a stack trace. It only changes the terminal: downloads and the `log` prop keep the stored output.
+
 ### Full Slot-Point Surface
 
 The page tree under `ctx.extensionRegistry.pages` is large and evolves as the Panel grows new slot points. Rather than enumerate it here (and go stale immediately), see the typedocs: [ExtensionRegistry](https://typedocs.calagopus.com/classes/extensions_shared_src_registries.ExtensionRegistry). Look for `pages.*` and follow the types to find the container method you need.
+
+Since Panel 1.2.10 the registry typings carry `@since` tags on their slots and methods, naming the Panel version that added each one, and many say where the slot renders. Your editor shows both on hover, so check `@since` against the oldest Panel your `panel_version` requirement allows.
+
+The admin server view (`pages.admin.servers.view`) no longer has a `subContainer` or `enterSubContainer` since Panel 1.2.10. No page ever rendered it, so components registered there never showed up. Each tab has its own instead, such as `pages.admin.servers.view.management.enterSubContainer(...)`; the overview tab has no wrapper slot, only its card slots (`enterOwner`, `enterServerDetails` and the rest).
 
 ## Adding New Routes
 

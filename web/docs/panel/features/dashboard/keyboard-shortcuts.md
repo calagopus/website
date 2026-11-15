@@ -70,7 +70,7 @@ The editor font goes from 6 to 72 and the console font from 10 to 24, and reset 
 
 ## Rebinding, Disabling, and Resetting
 
-Each shortcut has three buttons next to it. The pencil rebinds: click it and press the new key combination, which is captured as soon as you press it; `Esc` aborts the recording. The circle-slash disables the shortcut (and flips to a play icon that re-enables it), and the reset button restores the shipped default. Anything that differs from its default carries a **Modified** badge.
+Each shortcut has three buttons next to it. The pencil rebinds: click it and press the new key combination, which is captured as soon as you press it; `Esc` aborts the recording. The circle-slash disables the shortcut (and flips to a play icon that re-enables it), and the reset button restores the shipped default. Anything that differs from its default carries a **Modified** badge. Since Panel 1.2.10, binding a combination another shortcut already uses saves it anyway but warns "This key combination is also used by: ..." with the other shortcuts' names.
 
 ## Copy, Paste, and Reset All
 

@@ -47,7 +47,7 @@ Opening a location shows four tabs: **General**, **Database Hosts**, **Database 
 The same form as creating, plus:
 
 - **Duplicate** creates a copy under a new name (prefilled `<name> (copy)`).
-- **Delete** removes the location after confirmation (requires `locations.delete`).
+- **Delete** removes the location after confirmation (requires `locations.delete`). Since Panel 1.2.10 the button is disabled while nodes are still in the location, with a tooltip saying how many to move or delete first.
 
 ### Database Hosts
 

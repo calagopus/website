@@ -123,6 +123,8 @@ Push your items **during render, on every render**. The item array is rebuilt fr
 
 Two more things about the items themselves: submenus are exactly one level deep, so an item's `items` array cannot hold further nested items, and menu items only fire on real user clicks, which is worth knowing if you drive the Panel from a test script.
 
+Since Panel 1.2.10 an action item also takes a `tooltip` string, shown to the left of the item on hover. Only top-level items without a submenu render it; on submenu items and their parents it is ignored. Pair it with `disabled: true` to say why an item can't be used right now; the Panel does that for **Open** on files that are too large for the editor.
+
 ### Async Items
 
 Since 1.2.8, an item's `onClick` may return a promise. The menu still closes straight away, but every item in that menu stays disabled until the promise settles, so a second click can't run the action twice. In the meantime the row's `⋯` toggle shows a spinner, and so does the item itself (and its parent, for a submenu item) if the user opens the menu again. An open menu updates as soon as the promise settles. Return the promise whenever the click starts a request. The `Format YAML` item above already does if `formatYaml` returns one, because an arrow without braces returns whatever it calls.

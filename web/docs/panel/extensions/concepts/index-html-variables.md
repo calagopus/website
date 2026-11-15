@@ -92,7 +92,7 @@ The dev server also copies the variables block from the running backend's `index
 
 ## Allowing Third-Party Sources
 
-The Panel serves `index.html` with a strict `Content-Security-Policy`. Scripts, styles, fonts and media only load from the Panel itself, plus whatever the configured captcha provider needs. If your extension embeds a third-party widget like a live chat or an analytics script, add its origin to the policy from the same `initialize_index_html` method:
+The Panel serves `index.html` with a strict `Content-Security-Policy`. Scripts, styles, fonts and media only load from the Panel itself, plus whatever the configured captcha provider needs. If your extension embeds a third-party widget like a live chat or an analytics script, add its origin to the policy from the same `initialize_index_html` method.
 
 ```rs
 use shared::extensions::index_html::{CspDirective, IndexHtmlBuilder};
@@ -117,22 +117,34 @@ async fn initialize_index_html(
 
 `add_csp_source` adds one fixed source. `add_csp_sources` takes a function that returns a list, which helps when the source comes from your extension's settings, like the URL of a self-hosted analytics instance. That function runs on the same schedule as variable functions and follows the same rules: keep it cheap, read from the `settings` argument, and if it returns an `Err` or panics, its sources are left out of that render.
 
+CSP sources arrived in Panel 1.2.10. On 1.2.9 and older there is no `CspDirective`, `add_csp_source` or `add_csp_sources`, so an extension using them won't build against an older Panel.
+
 Your sources are merged with the Panel's own and the captcha provider's, and duplicates are removed. Removing a source from your extension or disabling the extension removes it from the policy on the next start.
 
-| Directive                  | Panel default            |
-| -------------------------- | ------------------------ |
-| `CspDirective::ScriptSrc`  | `'self' blob:`           |
-| `CspDirective::StyleSrc`   | `'self' 'unsafe-inline'` |
-| `CspDirective::FontSrc`    | `'self' blob: data:`     |
-| `CspDirective::MediaSrc`   | `'self' blob: data:`     |
-| `CspDirective::FormAction` | `'self'`                 |
-| `CspDirective::ConnectSrc` | `* blob:`                |
-| `CspDirective::FrameSrc`   | `*`                      |
-| `CspDirective::ImgSrc`     | `* blob: data:`          |
+| Directive                  | Panel default                     |
+| -------------------------- | --------------------------------- |
+| `CspDirective::ScriptSrc`  | `'self' blob: 'wasm-unsafe-eval'` |
+| `CspDirective::StyleSrc`   | `'self' 'unsafe-inline'`          |
+| `CspDirective::FontSrc`    | `'self' blob: data:`              |
+| `CspDirective::MediaSrc`   | `'self' blob: data:`              |
+| `CspDirective::FormAction` | `'self'`                          |
+| `CspDirective::ConnectSrc` | `* blob:`                         |
+| `CspDirective::FrameSrc`   | `*`                               |
+| `CspDirective::ImgSrc`     | `* blob: data:`                   |
+
+WebAssembly is allowed by default, so a widget that compiles WebAssembly doesn't need `'wasm-unsafe-eval'` from you.
 
 `connect-src`, `frame-src` and `img-src` allow everything today, so adding to them changes nothing yet. Declare what you load there anyway. If the Panel tightens those defaults later, extensions that declared their sources keep working.
 
-Each source must be a single CSP source expression: a host like `https://*.example.com`, a scheme like `wss:`, or a quoted keyword. The Panel logs and drops sources that would break it:
+Each source must be a single CSP source expression: a host like `https://*.example.com`, a scheme like `wss:`, or one of these quoted keywords:
+
+| Keyword                                                                               | Allowed in      |
+| ------------------------------------------------------------------------------------- | --------------- |
+| `'self'`                                                                              | Every directive |
+| `'wasm-unsafe-eval'`, `'unsafe-eval'`, `'sha256-...'`, `'sha384-...'`, `'sha512-...'` | `script-src`    |
+| `'unsafe-inline'`                                                                     | `style-src`     |
+
+The Panel logs and drops anything else. These are refused on purpose, because they would break it:
 
 - Anything with whitespace, `;` or `,` in it, since that would inject another directive.
 - `'unsafe-inline'` in `script-src`. Browsers ignore it as soon as a nonce is present, and the Cap captcha provider adds one, so it would only work with some captcha providers. Use a `'sha256-...'` hash of the inline script instead.

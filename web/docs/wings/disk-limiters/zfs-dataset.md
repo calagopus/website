@@ -9,7 +9,7 @@ description: Enforce per-server disk limits with per-server ZFS datasets and ref
 
 The `zfs_dataset` disk limiter uses native [ZFS](https://openzfs.org) datasets and the `refquota` property to enforce per-server disk limits. Each server gets its own child dataset (named `server-<uuid>`) under the ZFS pool covering your volumes path, mounted at the server's normal volume directory. The limit is enforced by setting `refquota` on that dataset, which caps the space referenced by the dataset itself (excluding snapshots and descendants).
 
-Wings drives this by shelling out to the `zfs` CLI: `zfs create` with an explicit `mountpoint` on setup, `zfs set refquota=<N>M` to enforce limits, and `zfs list -H -p -o name,used -t filesystem` on a 5-second interval to collect usage across all tracked datasets.
+Wings drives this by shelling out to the `zfs` CLI: `zfs create` with an explicit `mountpoint` on setup, `zfs set refquota=<N>M` to enforce limits, and `zfs list -H -p -o name,referenced -t filesystem` on a 5-second interval to collect usage across all tracked datasets. Wings 1.2.9 and older read `used` instead, which also counts snapshots and child datasets. Since Wings 1.2.10 that value is also the disk usage the Panel shows for the server, so it reflects dataset compression. Older versions mixed it with the size from Wings' own file scan, and on a compressed dataset the shown usage jumped between the two.
 
 ## Requirements
 

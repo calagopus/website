@@ -9,7 +9,7 @@ description: Enforce per-server disk limits with XFS project quotas, which apply
 
 The `xfs_quota` disk limiter uses [XFS Quotas](https://man7.org/linux/man-pages/man8/xfs_quota.8.html) to enforce per-server disk limits. Unlike [BTRFS](./btrfs-subvolume.md) and [ZFS](./zfs-dataset.md), which require each server to have its own subvolume or dataset, XFS project quotas apply to an arbitrary _directory tree_. This means existing server directories can be brought under the limiter without any data movement - a Wings restart is enough.
 
-Wings assigns each server a deterministic project ID (derived from the first four bytes of the server UUID), registers it in `/etc/projects`, initializes the tree with `xfs_quota -x -c 'project -s <id>'`, and enforces the limit with `xfs_quota -x -c 'limit -p bsoft=<N>m bhard=<N>m <id>'`. Usage is polled every 5 seconds with `xfs_quota -x -c 'report -p -b -N'`.
+Wings assigns each server a deterministic project ID (derived from the first four bytes of the server UUID), registers it in `/etc/projects`, initializes the tree with `xfs_quota -x -c 'project -s <id>'`, and enforces the limit with `xfs_quota -x -c 'limit -p bsoft=<N>m bhard=<N>m <id>'`. Usage is polled every 5 seconds with `xfs_quota -x -c 'report -p -b -N'`. Since Wings 1.2.10 that value is also the disk usage the Panel shows for the server. Older versions mixed it with the size from Wings' own file scan, so the shown usage could jump between the two.
 
 ## Requirements
 

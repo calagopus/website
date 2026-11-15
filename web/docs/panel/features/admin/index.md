@@ -104,9 +104,18 @@ Each daemon that can upgrade itself is asked about its own release source; the r
 
 ### Health
 
-![Admin home Health tab with applied migrations, NTP offset, debug mode toggle, and desynced nodes](./images/home/health.webp)
+![Admin home Health tab with the attention alert, applied migrations, NTP offset, a flagged Reverse Proxy card, debug mode toggle, and desynced nodes](./images/home/health.webp)
 
 - **General Health**: applied database migrations (e.g. `107 / 107 (100.00%)`) and the panel's **Avg. NTP Offset**, highlighted when it climbs above 100 ms.
 - **Extension Migration Health**: applied versus total migrations per installed extension.
 - **Debug Mode**: shows whether debug mode is currently enabled, with an **Enable Debug Mode** / **Disable Debug Mode** button (requires `settings.update`). The setting resets to its default when the application restarts.
 - **Desync Nodes**: nodes whose clock is more than 5 seconds off the panel's clock, which can cause file download and console issues. Ideally this list stays empty.
+- **Reverse Proxy** (since Panel 1.2.10): IP addresses that look like a reverse proxy rather than real visitors, see below. Requires `stats.read`, like the rest of the tab.
+
+Since Panel 1.2.10, a yellow alert above the cards names every card that needs attention ("Some health checks need attention: ..."): missing panel or extension migrations, an average NTP offset above 100 ms, suspicious proxy IPs, debug mode left on, and nodes that are desynced or failed the clock check.
+
+#### Reverse Proxy
+
+When the panel sits behind a reverse proxy but doesn't trust it, every visitor seems to come from the proxy's address. The card looks at sessions used in the last 7 days and lists an IP address when at least 3 different users share it and they make up at least half of all active users, or when at least two users share a loopback address. At most 50 addresses are checked. Each row shows the **IP**, how many **Users** and **Sessions** use it, and a **Hint**: "Add this IP to `APP_TRUSTED_PROXIES` if it belongs to your reverse proxy.", or, when the address is already in [`APP_TRUSTED_PROXIES`](../../environment.md#app-trusted-proxies), a reminder that the proxy has to send an `X-Forwarded-For` or `X-Real-IP` header. With nothing suspicious it reads "No IP address is shared by an unusual number of users." along with the number of active users. The result is cached for a minute. See [Reverse Proxy](../../next-steps/reverse-proxy.md) for setting up the trusted proxy list.
+
+A small panel where most users really do sit behind one shared address, such as a LAN party or a school network, can show up here without anything being wrong.
