@@ -14,9 +14,9 @@ export function setupSearchClose(): void {
         node.inert = true;
         node.classList.add('closing');
         document.body.append(node);
-        void Promise.allSettled(node.getAnimations({ subtree: true }).map((animation) => animation.finished)).then(() =>
-          node.remove(),
-        );
+        // Not the whole subtree, the loading spinner never finishes.
+        const fades = [...node.children].flatMap((child) => child.getAnimations());
+        void Promise.allSettled(fades.map((animation) => animation.finished)).then(() => node.remove());
       }
     }
   }).observe(document.body, { childList: true });

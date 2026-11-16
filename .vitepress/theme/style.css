@@ -145,8 +145,15 @@ body * {
   border-color: var(--mantine-primary-color-filled);
 }
 
+/* Hidden until theme/page-transition.ts fades it in. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  html:not(.content-ready) .VPContent {
+    animation: fade-in 200ms ease 2s both;
+  }
+}
+
 .VPLocalSearchBox > .backdrop {
-  animation: search-fade-in 200ms ease;
+  animation: fade-in 200ms ease;
 }
 
 .VPLocalSearchBox > .shell {
@@ -158,20 +165,20 @@ body * {
 }
 
 .VPLocalSearchBox.closing > .backdrop {
-  animation: search-fade-out 200ms ease forwards;
+  animation: fade-out 200ms ease forwards;
 }
 
 .VPLocalSearchBox.closing > .shell {
   animation: search-out 200ms ease forwards;
 }
 
-@keyframes search-fade-in {
+@keyframes fade-in {
   from {
     opacity: 0;
   }
 }
 
-@keyframes search-fade-out {
+@keyframes fade-out {
   to {
     opacity: 0;
   }
@@ -198,6 +205,10 @@ body * {
   .VPLocalSearchBox.closing > .shell {
     animation: none;
   }
+}
+
+.vp-doc {
+  overflow-wrap: break-word;
 }
 
 .label .nodeLabel {
