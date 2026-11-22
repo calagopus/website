@@ -1,4 +1,5 @@
-const INSERT_TIMEOUT_MS = 5_000;
+const ASYNC_INSERT_TIMEOUT_MS = 5_000;
+const ACKNOWLEDGED_INSERT_TIMEOUT_MS = 20_000;
 const ERROR_EXCERPT = 500;
 
 export interface ClickHouseConfig {
@@ -32,6 +33,8 @@ export async function insertRows(
   endpoint.searchParams.set('query', `INSERT INTO ${table} FORMAT JSONEachRow`);
   endpoint.searchParams.set('async_insert', acknowledged ? '0' : '1');
   endpoint.searchParams.set('wait_for_async_insert', acknowledged ? '1' : '0');
+  const timeout = acknowledged ? ACKNOWLEDGED_INSERT_TIMEOUT_MS : ASYNC_INSERT_TIMEOUT_MS;
+  endpoint.searchParams.set('max_execution_time', String(Math.ceil(timeout / 1_000)));
 
   const response = await fetch(endpoint, {
     method: 'POST',
@@ -41,7 +44,7 @@ export async function insertRows(
       'Content-Type': 'application/json',
     },
     body: rows.map((row) => JSON.stringify(row)).join('\n'),
-    signal: AbortSignal.timeout(INSERT_TIMEOUT_MS),
+    signal: AbortSignal.timeout(timeout),
   });
 
   if (!response.ok) {

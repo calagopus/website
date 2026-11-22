@@ -184,7 +184,7 @@ export async function handleTelemetry(request: Request, env: Env, ctx: Execution
   ctx.waitUntil(
     insertRows(config, TABLE, [row]).catch((error) => {
       console.error('telemetry insert failed', error);
-      captureException(error);
+      captureException(error, { fingerprint: ['telemetry-ingest', error?.name ?? 'Error'] });
     }),
   );
 

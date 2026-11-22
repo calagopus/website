@@ -11,6 +11,8 @@ import {
 export const MAX_OBSERVATIONS = 20_000;
 const DAILY_SAMPLE = 24;
 const REPLAY_BATCH = 1_000;
+const REPLAY_CONCURRENCY = 4;
+const REVIEW_BUDGET_MS = 8 * 60 * 1_000;
 const WRITE_BATCH = MAX_OBSERVATIONS;
 
 export const MODERATION_REVISIONS = `
@@ -159,15 +161,18 @@ export async function replayIdentity(config: ClickHouseConfig, uuid: string): Pr
 }
 
 export async function reviewTelemetry(config: ClickHouseConfig): Promise<void> {
+  const deadline = Date.now() + REVIEW_BUDGET_MS;
   const identities = await queryRows<{ uuid: string }>(config, DIRTY_IDENTITIES);
-  for (let offset = 0; offset < identities.length; offset += 4) {
+  for (let offset = 0; offset < identities.length && Date.now() < deadline; offset += REPLAY_CONCURRENCY) {
     const outcomes = await Promise.allSettled(
-      identities.slice(offset, offset + 4).map(({ uuid }) => replayIdentity(config, uuid)),
+      identities.slice(offset, offset + REPLAY_CONCURRENCY).map(({ uuid }) => replayIdentity(config, uuid)),
     );
-    for (const outcome of outcomes) {
-      if (outcome.status !== 'rejected') continue;
-      console.error('telemetry review failed', outcome.reason);
-      captureException(outcome.reason);
+    const failures = outcomes.flatMap((outcome) => (outcome.status === 'rejected' ? [outcome.reason] : []));
+    for (const reason of failures) {
+      console.error('telemetry review failed', reason);
+      captureException(reason, { fingerprint: ['telemetry-review', reason?.name ?? 'Error'] });
     }
+
+    if (failures.length === outcomes.length) break;
   }
 }
