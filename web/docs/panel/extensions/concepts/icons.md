@@ -15,10 +15,10 @@ import type { IconLike } from '@/elements/data-display/Icon.tsx';
 type IconLike = IconDefinition | ReactElement | ComponentType<{ className?: string }>;
 ```
 
-| Form             | Example                                       | Use it for                                                                                   |
-| ---------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `IconDefinition` | `faCube`                                      | Any Font Awesome icon. This is the usual choice and matches the rest of the Panel.           |
-| `ReactElement`   | `<img src='/my-extension/logo.svg' alt='' />` | Something already rendered, such as an image, or a `<FontAwesomeIcon />` with its own props. |
+| Form             | Example                                       | Use it for                                                                                                       |
+| ---------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `IconDefinition` | `faCube`                                      | Any Font Awesome icon. This is the usual choice and matches the rest of the Panel.                               |
+| `ReactElement`   | `<img src='/my-extension/logo.svg' alt='' />` | Something already rendered, such as an image, or a `<FontAwesomeIcon />` with its own props.                     |
 | `ComponentType`  | `MyLogoIcon`                                  | Your own SVG icon. The Panel renders it in a 1em box like a Font Awesome icon and stretches it to fill that box. |
 
 You don't need to wrap Font Awesome icons any more. These two lines render the same icon:
