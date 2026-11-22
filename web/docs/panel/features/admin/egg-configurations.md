@@ -58,7 +58,7 @@ The top half controls what users can do on their server's [Network page](../serv
 - **User Self Assign**: lets users create their own allocations, drawn from the **Automatic Allocation Start** / **Automatic Allocation End** port range. Without a configuration enabling this, the client-side create button is rejected.
 - **Require Primary Allocation**: whether users must always have a primary allocation.
 
-The **Deployment** half controls automatic allocation assignment when servers are deployed through the deployment API (a manual allocation choice always wins over these rules):
+The **Deployment** half controls automatic allocation assignment when servers are deployed through the deployment API, including **Automatic Deployment** on the [admin create form](./servers.md#automatic-deployment) since Panel 1.2.11 (a manual allocation choice always wins over these rules). The same rules drive the [Reassign](./servers.md#allocations) button on a server's Allocations tab and the egg-based [mass transfer](./nodes.md#servers) mode:
 
 - **Dedicated IP**: assign a dedicated IP address for servers using this configuration.
 - **Primary Allocation**: pick the primary port from a **Primary Start Port** / **Primary End Port** range, with an optional **Assign to Variable** (e.g. `SERVER_PORT`) that receives the assigned port as an environment variable.

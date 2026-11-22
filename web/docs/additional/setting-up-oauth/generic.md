@@ -107,6 +107,10 @@ This is the User Info URL that you have grabbed from the `userinfo_endpoint` JSO
 
 Example: `https://id.example.com/api/oidc/userinfo`
 
+::: warning Providers on a private network
+The Panel calls the Token URL and Info URL itself. Since Panel 1.2.11 those requests are refused for addresses in [`APP_BLOCKED_CIDRS`](../../panel/environment.md#app-blocked-cidrs), which covers private and loopback ranges by default. If your provider runs on your LAN or on the same host as the Panel, remove its range from that list, or logins fail at the token step.
+:::
+
 ### Basic Auth <Badge type="info" text="Optional" />
 
 Enable this if your provider transmits the Client ID and Client Secret via HTTP Basic Authentication. Do not enable this option unless you know what you are doing.

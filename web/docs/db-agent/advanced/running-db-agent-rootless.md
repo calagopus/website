@@ -131,7 +131,7 @@ sudo sysctl -w net.ipv4.tcp_allowed_congestion_control="reno cubic bbr"
 
 ### Ports
 
-The default ports (`5432`, `3306`, `27017`, `6379`, and `8090` for the API) are all above 1024, so an unprivileged user can bind them. If you move any of them below 1024, lower `net.ipv4.ip_unprivileged_port_start` as root, or the listener will fail to bind.
+The default ports (`5432`, `3306`, `27017`, `6379`, `9000`, and `8090` for the API) are all above 1024, so an unprivileged user can bind them. If you move any of them below 1024, lower `net.ipv4.ip_unprivileged_port_start` as root, or the listener will fail to bind.
 
 ## Test It
 

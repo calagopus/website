@@ -45,6 +45,8 @@ The path fields use JSONPath syntax (see [serdejsonpath.live](https://serdejsonp
 
 On every login the Panel fetches the Info URL with the user's access token. The request times out after 10 seconds and the response may be at most 1 MiB. Any error, a 404 included, fails the login with "failed to fetch oauth user info".
 
+Since Panel 1.2.11 the token exchange and the Info URL and [Additional Info URLs](#additional-info-urls) requests go through [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked-cidrs), like discovery and avatar downloads already did. A self-hosted provider on a private or loopback address, such as Keycloak or Authentik on your LAN, stops working after the upgrade until you take its range out of `APP_BLOCKED_CIDRS`. The browser redirect to the **Auth URL** is not affected, since your users' browsers make it.
+
 ::: warning
 **Bypass 2FA on Login** "Allows users logging in with this provider to bypass their panel 2FA." Only enable it when the provider enforces equivalent security itself.
 :::
@@ -108,12 +110,13 @@ Exports never contain the client credentials. An imported provider comes in with
 
 ## Mappings
 
-The **Mappings** tab automates access: whenever a user logs in through this provider, every mapping whose matcher applies takes effect. Adding one requires `oauth-providers.update`; the table shows ID, Type, Target, Matcher, and Created.
+The **Mappings** tab automates access: whenever a user logs in through this provider, every mapping whose matcher applies takes effect. Adding one requires `oauth-providers.update`; the table shows ID, Name, Type, Target, Matcher, and Created. The Name column was added in Panel 1.2.11 and shows N/A for mappings without one.
 
-![GitHub OAuth provider Mappings tab with an empty mappings table and an Add button](./images/oauth-providers/mappings.webp)
+![GitHub OAuth provider Mappings tab with one mapping named Verified GitHub users in the Name column](./images/oauth-providers/mappings.webp)
 
 **Add** opens the mapping form:
 
+- **Name**: optional, up to 255 characters, since Panel 1.2.11. It only labels the mapping in the table, so a provider with many mappings stays readable. **Duplicate** copies it along with the mapping.
 - **Mapping Type** decides what is granted:
   - **Role** assigns a panel [role](./roles.md); pick the **Role**.
   - **Server Subuser** adds the user as a [subuser](../server/subusers.md); pick the **Server**, the subuser **Permissions**, and optionally **Ignored Files**.
@@ -127,7 +130,7 @@ Since Panel 1.2.10 a **Server Subuser** mapping also needs the access you would 
 Since Panel 1.2.7, some changes need a root admin signed in to the panel; an API key, even a root admin's, is refused. That covers creating a provider with **Bypass 2FA on Login**, and changing an existing provider's Client Id, Auth URL, Token URL, Info URL, Additional Info URLs, Scopes, Identifier Path, **Only allow Login**, **Bypass 2FA on Login** or **Link Manageable by User** ("only administrators can change how an oauth provider identifies users, how they may sign in with it or who may link accounts to it"). Creating or duplicating a provider with **Linkable with API Keys** on, or switching it on or off, is limited the same way ("only administrators can create an oauth provider that api keys may link accounts to"). Linking an OAuth identity to someone else's account from the admin area is likewise limited to root admins in a session; anyone else can only link their own account, also from a session. From Panel 1.2.8 there is one exception, for integrations such as [Paymenter](../../../integrations/paymenter.md): an API key holding `users.oauth-links` and `users.impersonate` may link identities through a provider with **Linkable with API Keys** on, but only to accounts it could impersonate, so never to admins or to roles with permissions the key lacks.
 :::
 
-<img src="./images/oauth-providers/add-mapping.webp" width="310" alt="Add OAuth Provider Mapping dialog with Role type and a Field Equals matcher on the emails source" />
+<img src="./images/oauth-providers/add-mapping.webp" width="310" alt="Add OAuth Provider Mapping dialog with a Name, Role type, and a Field Equals matcher on the emails source" />
 
 ### Matchers
 

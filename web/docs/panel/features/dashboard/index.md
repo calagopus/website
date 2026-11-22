@@ -71,11 +71,13 @@ Typing one of four characters first switches the palette into a different mode. 
 
 The three dots next to your name open a small menu to jump to your **Account** page, switch to the **Admin** area (admins only), pick a **Theme**, toggle **Hide Addresses** (see [Preferences](./account.md#preferences)), reset your device overrides (see [Settings Sync](#settings-sync); the entry only appears when you have some), or log out. **Auto** follows your browser's theme, **Dark** and **Light** force one; the panel starts on **Dark** until you pick.
 
-![User menu with Account, Admin, Theme (Auto, Dark, Light), and Logout entries](./images/index/nav-menu.webp)
+Since Panel 1.2.11 the **Theme** submenu also lists theme variants above those three entries. **Standard** is the usual look. **Pure Black** is dark only and uses true black backgrounds, which suits OLED screens; while it is selected the menu hides **Light**, and picking it from light mode switches the panel to dark. **Auto** stays available: with Pure Black it keeps the panel dark, and once you switch back to Standard the panel follows your browser's theme again. Extensions can add more variants, sometimes grouped into their own submenus, or remove the variants entirely. The theme and variant are saved in your browser, not in your account, so each device keeps its own.
+
+![User menu with the Theme submenu open, listing the Standard and Pure Black variants above Auto, Dark, and Light](./images/index/nav-menu.webp)
 
 ## Settings Sync
 
-Most preferences follow your account rather than your browser: change the console font size or your toast position on one machine and it is already set on the next one you log into. This covers the [Preferences](./account.md#preferences) card, console and file-manager settings, the form-engine **Advanced mode** toggle, and your [keyboard shortcut](./keyboard-shortcuts.md) rebinds.
+Most preferences follow your account rather than your browser: change the console font size or your toast position on one machine and it is already set on the next one you log into. This covers the [Preferences](./account.md#preferences) card, console and file-manager settings, the form-engine **Advanced mode** toggle, the [password generator](../server/startup.md#generating-a-password) options (since Panel 1.2.11), and your [keyboard shortcut](./keyboard-shortcuts.md) rebinds.
 
 Every synced setting has a small icon next to its label that opens a scope menu:
 

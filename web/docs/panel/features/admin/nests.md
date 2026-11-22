@@ -137,9 +137,48 @@ Each variable is a card in a grid; drag a card by the grip handle in its top-rig
 | **Default Value**                     | Value used when the user hasn't set one.                                                                                                                                                                                                                                                                                           |
 | **User Viewable** / **User Editable** | Whether users see and can change the variable on the Startup page.                                                                                                                                                                                                                                                                 |
 | **Secret**                            | Hides the value like a password.                                                                                                                                                                                                                                                                                                   |
-| **Rules**                             | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/framework/docs/12.x/validation#available-validation-rules) syntax.                                                                                                                                                                     |
+| **Rules**                             | Validation rules applied to user input, using [Laravel validation rule](https://laravel.com/framework/docs/12.x/validation#available-validation-rules) syntax. See [Rules](#rules).                                                                                                                                                |
 
 Each card has its own **Save**, **Duplicate**, and **Remove** buttons.
+
+#### Rules
+
+Since Panel 1.2.11 the **Rules** field has two modes, switched with **Editor** and **Text** next to its label.
+
+**Editor** shows each rule as a pill. Type into "Add a rule..." to search the supported rules; each suggestion shows what arguments it takes. A rule without arguments, such as `required` or `boolean`, is added straight away. A rule with arguments, such as `max` or `in`, opens a small form with fields like **Value**, **Minimum** / **Maximum**, **Variable** or **Values** (comma-separated) and a preview of the finished rule, which **Add** puts into the list. Click a pill to change or **Remove** it, or press Backspace in the empty search field to drop the last one. You can also type a complete rule such as `max:20` and pick **Add max:20**.
+
+![Rules field in Editor mode with nullable, string, and max:20 pills, and the max argument form open with Value 20](./images/nests/rules-editor.webp)
+
+**Text** is a plain text area for pasting a rule set. "Separate rules with | or new lines.", so `required|string|max:20` works as it does in a Pterodactyl egg.
+
+![Rules field in Text mode with required, string, and max:20 written on one line](./images/nests/rules-text.webp)
+
+Both modes check rules as you type. A rule the panel can't parse turns red with the reason. A rule that refers to a variable this egg doesn't have, such as `required_if:SERVER_TYPE,paper` without a `SERVER_TYPE` variable, turns orange with "References unknown variable SERVER_TYPE.", since that rule never matches.
+
+The values themselves are now checked live as well: on [Create Server](./servers.md#variables) and on a server's [Variables](./servers.md#variables-1) tab, a value that breaks a rule shows the error on its field as soon as you change it, and the Variables tab's **Save** stays disabled until every changed variable passes.
+
+#### Excluding Variables
+
+Since Panel 1.2.11 a variable can be switched off depending on the value of another one, using Laravel's exclude rules:
+
+| Rule                              | The variable is excluded when                       |
+| --------------------------------- | --------------------------------------------------- |
+| `exclude`                         | Always.                                             |
+| `exclude_if:OTHER,value1,value2`  | `OTHER` has one of the listed values.               |
+| `exclude_unless:OTHER,value1,...` | `OTHER` has none of the listed values.              |
+| `exclude_with:OTHER`              | The egg has an `OTHER` variable, even an empty one. |
+| `exclude_without:OTHER`           | `OTHER` is empty or missing.                        |
+
+If `OTHER` has the `boolean` rule, `true`/`1` and `false`/`0` count as the same value. When the variable a rule points at is excluded itself, the variable with the rule is excluded too, so rules can chain: a `PAPER_BUILD` variable with `exclude_unless:SERVER_TYPE,paper` disappears along with anything that has `exclude_if:PAPER_BUILD,...`.
+
+An excluded variable:
+
+- is hidden on the user's [Startup](../server/startup.md#variables) page, on Create Server and on the server's Variables tab. The forms re-check while you type, so changing `SERVER_TYPE` shows or hides the variables that depend on it right away.
+- has none of its other rules checked, so a `required` excluded variable can stay empty.
+- keeps its stored value. Values sent for it are ignored when a server is created or its variables are saved, so it can't be changed while it is excluded.
+- is still passed to the container with that stored value (or the default). Exclusion only controls the forms, so write the install script and startup command to ignore the variable when it doesn't apply.
+
+Users don't see variables that aren't **User Viewable**, so their names stay hidden too. When a viewable variable has an exclude rule that points at a hidden variable, the user's Startup page only gets the outcome: the variable is left out when the rule excludes it, and otherwise is shown with that rule removed from its rules.
 
 ### Mounts
 

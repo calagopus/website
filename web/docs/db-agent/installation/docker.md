@@ -1,6 +1,6 @@
 ---
 title: Docker DB Agent Installation
-description: Install the Calagopus DB Agent with Docker. DB Agent is the database proxy and provisioning agent that runs PostgreSQL, MariaDB/MySQL, MongoDB, and Redis containers.
+description: Install the Calagopus DB Agent with Docker. DB Agent is the database proxy and provisioning agent that runs PostgreSQL, MariaDB/MySQL, MongoDB, Redis, and ClickHouse containers.
 ---
 
 # Docker DB Agent Installation

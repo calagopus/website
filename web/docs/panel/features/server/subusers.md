@@ -64,6 +64,8 @@ As you type, the gutter next to each line shows how many files currently match (
 
 A partially uploaded file is matched against the name it will end up with, not the `.upload-part` name it carries while in flight, so a pattern cannot be side-stepped by grabbing the partial file over SFTP mid-upload.
 
+Since Wings 1.2.11 a folder that contains anything hidden from the subuser can't be moved or removed as a whole either. Renaming or moving it (in the file manager or over SFTP), deleting it or moving it to the [trash](./files.md#trash), and restoring or purging a trash entry all check the folder against the subuser's ignored files and the egg's own file denylist, at both the old and the new path. A folder that fails the check is left in place with "a directory contains files you cannot access, so it was left in place" (HTTP 417), and the other items in the same request still go through. The same Wings version also hides ignored files when the subuser browses a backup. [Schedule](./schedules.md#files) **Delete Files** and **Rename Files** steps only check the egg's denylist, and skip such a folder without an error.
+
 Toggle **Preview ignored files** for a small file browser where everything the patterns hide is struck through and tagged **Ignored**, and directories that are only reachable because of an exception below them are tagged **Partially ignored**. Both the counts and the preview need the `files.read` permission.
 
 ## Editing and Removing

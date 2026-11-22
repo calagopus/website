@@ -27,7 +27,7 @@ Click **Create** (or go to `/admin/users/new`) and fill in the form:
 | **Language**                   | Required. The user's panel language.                                                                                                                                                                           |
 | **Role**                       | Optional; only shown to root admins. See [Roles](./roles.md).                                                                                                                                                  |
 | **External ID**                | Optional identifier for linking external systems.                                                                                                                                                              |
-| **Password**                   | Required when creating. When updating, leave it empty to keep the current one.                                                                                                                                 |
+| **Password**                   | Required when creating. When updating, leave it empty to keep the current one. Since Panel 1.2.11 the dice button next to it opens the [password generator](../server/startup.md#generating-a-password).       |
 | **Admin**                      | Only shown to root admins. "Admin users have full, unrestricted access to everything on the panel." Saving with this on asks for confirmation first ("Are you sure you want to grant **name** admin access?"). |
 | **Frozen**                     | "Frozen users cannot make any changes to their account information."                                                                                                                                           |
 | **Suspended**                  | "Suspended users cannot access the panel in any meaningful way."                                                                                                                                               |
@@ -67,7 +67,7 @@ These changes also reach the user's open console and SFTP/SSH sessions on every 
 
 ### Servers
 
-Every server the user has access to, with the same columns as the admin [Servers](./servers.md) list. The **Only show users' owned servers** switch narrows the list to servers they own, hiding ones where they're only a [subuser](../server/subusers.md).
+Every server the user has access to, with the same columns as the admin [Servers](./servers.md) list. The **Only show users' owned servers** switch narrows the list to servers they own, hiding ones where they're only a [subuser](../server/subusers.md). Since Panel 1.2.11 the rows can be selected (checkboxes, drag, `Ctrl+A`, or click while holding `S`), which opens the same [bulk action bar](./servers.md#bulk-actions) as the main server list.
 
 ![User Servers tab listing two servers with status, node, owner, and allocation](./images/users/servers.webp)
 

@@ -24,7 +24,7 @@ Click **Create**. The common fields are **Name**, **Backup Disk** (Local, S3, Dd
 - **Maintenance Enabled**: "If enabled, any server using this backup configuration will not be able to create new backups, or manage existing ones." Since Panel 1.2.10 it also pauses the configuration's restic [prune jobs](../../../wings/advanced/backup-configurations.md#disk-specific-settings), so you can work on the repository by hand without a scheduled prune starting underneath you. Older Panels kept starting prunes during maintenance.
 - **Shared**: "If enabled, backups on this backup configuration will not be transferred between nodes, they will be assumed to be accessible by all nodes."
 
-Picking S3, Restic, Proxmox Backup Server, or Kopia reveals a disk-specific settings section; the node-local disks need none. See the [per-disk field reference](../../../wings/advanced/backup-configurations.md#backup-disks) for what goes in each. Btrfs, ZFS, and Ddup-Bak show a warning with extra requirements when selected.
+Picking S3, Restic, Proxmox Backup Server, or Kopia reveals a disk-specific settings section; the node-local disks need none. See the [per-disk field reference](../../../wings/advanced/backup-configurations.md#backup-disks) for what goes in each. Btrfs, ZFS, and Ddup-Bak show a warning with extra requirements when selected. Since Panel 1.2.11 the Restic **Password** field has a dice button that opens the [password generator](../server/startup.md#generating-a-password).
 
 Finish with **Save** or **Save & Stay**; **View Documentation** links to the walkthrough above.
 
@@ -32,9 +32,9 @@ Finish with **Save** or **Save & Stay**; **View Documentation** links to the wal
 
 ## Where Configurations Attach
 
-A configuration takes effect once it's assigned to a **location**, **node**, or **server**; the panel picks the most specific one when a backup is created (server first, then node, then location). Assignment happens on those resources' own edit forms, each of which has a **Backup Configuration** field. See [Assigning a Backup Configuration](../../../wings/advanced/backup-configurations.md#assigning-a-backup-configuration).
+A configuration takes effect once it's assigned to a **location**, **node**, or **server**; the panel picks the most specific one when a backup is created (server first, then node, then location). Assignment happens on those resources' own edit forms, each of which has a **Backup Configuration** field. Since Panel 1.2.11 a [database agent host](./database-agent-hosts.md#backup-configuration) can have one too, used for database dumps of its instances between the server and the node. See [Assigning a Backup Configuration](../../../wings/advanced/backup-configurations.md#assigning-a-backup-configuration).
 
-Opening a configuration shows tabs for **General** (the edit form, plus **Duplicate** and **Delete**), **Stats**, **Backups**, and read-only **Locations**, **Nodes**, and **Servers** lists showing where it's currently assigned; the tab lists are all searchable.
+Opening a configuration shows tabs for **General** (the edit form, plus **Duplicate** and **Delete**), **Stats**, **Backups**, and read-only **Locations**, **Nodes**, **Servers**, and (since Panel 1.2.11) **Database Agent Hosts** lists showing where it's currently assigned; the tab lists are all searchable. The Database Agent Hosts tab needs `database-agent-hosts.read`.
 
 ![Configuration general tab](./images/backup-configurations/general.webp)
 
@@ -55,5 +55,7 @@ A backup whose deletion still fails after the panel's eight automatic attempts i
 ![Nodes tab](./images/backup-configurations/nodes.webp)
 
 ![Servers tab](./images/backup-configurations/servers.webp)
+
+![Database Agent Hosts tab](./images/backup-configurations/database-agent-hosts.webp)
 
 Managing configurations requires the `backup-configurations.create`, `backup-configurations.update`, and `backup-configurations.delete` admin permissions; **Test** works with either create or update, and the Backups tab uses `backup-configurations.backups`. See the [Permissions Reference](../dashboard/permissions.md).

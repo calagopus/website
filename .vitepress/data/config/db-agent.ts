@@ -133,6 +133,24 @@ export const dbAgentConfigDoc: ConfigDoc = {
           description: 'TLS configuration for the Redis proxy. See [TLS Configuration](#tls-configuration).',
           example: TLS_DEFAULTS,
         },
+        {
+          key: 'clickhouse.enabled',
+          description:
+            "Whether the ClickHouse proxy is enabled, since DB Agent 1.2.5. It speaks ClickHouse's native protocol, the one `clickhouse-client` uses on port `9000`, not the HTTP interface on `8123`. Clients and drivers that only speak HTTP, such as the JDBC driver, `clickhouse-connect` or `@clickhouse/client`, cannot connect through it.",
+          default: true,
+        },
+        {
+          key: 'clickhouse.bind',
+          description:
+            'The address the ClickHouse proxy listens on. Port `9000` is also the usual port of PHP-FPM, MinIO and Portainer. If something else already holds it, DB Agent logs `clickhouse stopped` with the bind error and the other proxies keep running; move the bind or turn the proxy off with `clickhouse.enabled`. The Docker install publishes `9000:9000` in `compose.yml`, so there a taken host port stops the whole container from starting until you change or remove that mapping.',
+          default: '0.0.0.0:9000',
+        },
+        {
+          key: 'clickhouse.tls',
+          description:
+            "TLS configuration for the ClickHouse proxy. See [TLS Configuration](#tls-configuration). Plain and TLS clients share the port, so there is no separate secure port like ClickHouse's own `9440`.",
+          example: TLS_DEFAULTS,
+        },
       ],
     },
     {
@@ -181,8 +199,14 @@ export const dbAgentConfigDoc: ConfigDoc = {
         {
           key: 'docker.container_pid_limit',
           description:
-            'The maximum number of processes (PIDs) allowed to run simultaneously within a single database container.',
-          default: 512,
+            'The maximum number of processes (PIDs) allowed to run simultaneously within a single database container. `0` sets no limit. Threads count towards it, and ClickHouse alone starts several hundred of them, so keep it well above that if you host ClickHouse.',
+          default: 5120,
+          notesAfter: [
+            {
+              type: 'warning',
+              body: 'The default was `512` before DB Agent 1.2.5. DB Agent writes every default into `config.yml` when it starts, so an agent that ran an older version keeps `container_pid_limit: 512` after the upgrade. Raise it by hand before hosting ClickHouse there.',
+            },
+          ],
         },
         {
           key: 'docker.container_apparmor_profile',
@@ -356,7 +380,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
             {
               type: 'info',
               title: 'Options the Panel can never change',
-              body: 'Even with config updates enabled, a set of paths is stripped out of every patch the Panel sends, so they can only be changed by editing `config.yml` on the node itself:\n\n- Paths: `socket_dir`, `data_dir`, `log_dir`\n- Host access: `docker.socket`\n- Listener and authentication: `api.bind`, `api.tls`, `api.token`, `api.trusted_proxies`\n- Remote imports: `api.disable_remote_import`, `api.remote_import_blocked_cidrs`\n- The flags themselves: `ignore_config_updates`, `ignore_upgrades`\n\nThe rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.',
+              body: 'Even with config updates enabled, a set of paths is stripped out of every patch the Panel sends, so they can only be changed by editing `config.yml` on the node itself:\n\n- Paths: `socket_dir`, `data_dir`, `log_dir`, and `database.url` (since DB Agent 1.2.5)\n- Host access: `docker.socket`\n- Listener and authentication: `api.bind`, `api.tls`, `api.token`, `api.trusted_proxies`\n- Remote imports: `api.disable_remote_import`, `api.remote_import_blocked_cidrs`\n- The flags themselves: `ignore_config_updates`, `ignore_upgrades`\n\nThe rest of the patch still applies, the forbidden keys are dropped silently rather than failing the whole update.',
             },
           ],
         },
@@ -370,7 +394,7 @@ export const dbAgentConfigDoc: ConfigDoc = {
     },
     {
       title: 'TLS Configuration',
-      body: '::: info\nThis section is a quick reference. [Securing DB Agent with SSL](./next-steps/ssl.md) covers the full setup, including getting a certificate, Docker installs, pointing the Panel at the agent and renewal.\n:::\n\nEvery proxy (`postgres`, `mariadb`, `mongodb`, `redis`) as well as the management API (`api`) has its own independent `tls` block with the same four options:',
+      body: '::: info\nThis section is a quick reference. [Securing DB Agent with SSL](./next-steps/ssl.md) covers the full setup, including getting a certificate, Docker installs, pointing the Panel at the agent and renewal.\n:::\n\nEvery proxy (`postgres`, `mariadb`, `mongodb`, `redis`, `clickhouse`) as well as the management API (`api`) has its own independent `tls` block with the same four options:',
       inExample: false,
       options: [
         {

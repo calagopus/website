@@ -14,6 +14,8 @@ A backup configuration is created once by an admin, then attached to one or more
 3. Otherwise, does the node's **location** have one assigned? If yes, use it.
 4. Otherwise, the backup fails.
 
+Since Panel 1.2.11, [database backups](../../panel/features/server/backups.md#database-backups) check one more place between the server and the node: the [database agent host](../../panel/features/admin/database-agent-hosts.md#backup-configuration) the managed database runs on. Btrfs and ZFS configurations can't be used for database backups, so they can't be assigned to a database agent host.
+
 This layered approach means you can set a sensible default at the location level and override it per-node or per-server when you need to.
 
 ## Backup Disks
@@ -141,6 +143,8 @@ Environment variables are whatever the restic backend requires, within an allowl
 
 Refer to the [restic environment variables documentation](https://restic.readthedocs.io/en/stable/040_backup.html#environment-variables) for the complete list.
 
+Restoring a backup onto the server runs `restic dump --archive tar` since Wings 1.2.11, and Wings unpacks that tar stream through the server's filesystem like any other archive. Older versions ran `restic restore` with the server directory as its target, so restic wrote the files itself. If restic fails, the error includes the start of its output.
+
 Deleting a backup runs `restic forget` for its snapshot, and that is all: the data the snapshot referenced stays in the repository until `restic prune` runs. **Prune Jobs** schedule that. Each job (up to 50 per configuration) has a **Cron Schedule** in six-field form (`second minute hour day month weekday`, e.g. `0 0 3 * * *` for 03:00 daily) and the **Nodes** it runs on. The panel checks every minute and asks each selected node to start the prune in the background; one node per repository is enough, since they all prune the same data.
 
 ::: warning Prune jobs before Panel 1.2.7 only dry-run
@@ -197,7 +201,9 @@ Use the **Kopia** disk to store backups in a [Kopia](https://kopia.io) repositor
 
 Backups are created as Kopia snapshots tagged with the backup UUID, deduplicated against the repository. The server's ignored files are kept as an ignore policy on its directory in the repository. Since Wings 1.2.9, Wings reads that policy back first and only rewrites it when the list has changed, because each `policy set` replaces the policy manifest while other snapshots on the repository may be running.
 
-Kopia errors containing `policy not found` or `connection refused` are treated as transient since Wings 1.2.9: Wings retries the snapshot or policy change up to [`system.backups.kopia.retry_limit`](../configuration.md#system-backups-kopia-retry-limit) times, waiting 1, 4, then 9 seconds (plus some jitter) with the default limit of 3. If the ignore policy still can't be updated, Wings only logs a warning and the backup goes ahead. How many files Kopia uploads and restores in parallel is set per node with [`system.backups.kopia.create_threads`](../configuration.md#system-backups-kopia-create-threads) and [`restore_threads`](../configuration.md#system-backups-kopia-restore-threads).
+Kopia errors containing `policy not found` or `connection refused` are treated as transient since Wings 1.2.9: Wings retries the snapshot or policy change up to [`system.backups.kopia.retry_limit`](../configuration.md#system-backups-kopia-retry-limit) times, waiting 1, 4, then 9 seconds (plus some jitter) with the default limit of 3. If the ignore policy still can't be updated, Wings 1.2.11 and newer fail the backup with `failed to apply ignore policy for Kopia backup`, so a backup never silently includes files the server's ignore list excludes. Older versions only logged a warning and went ahead. How many files Kopia uploads in parallel is set per node with [`system.backups.kopia.create_threads`](../configuration.md#system-backups-kopia-create-threads). Since Wings 1.2.11, Kopia sends a restore to Wings as a tar stream, which Wings unpacks through the server's filesystem like any other archive. Kopia writes a tar stream with one worker, so [`restore_threads`](../configuration.md#system-backups-kopia-restore-threads) currently has no effect.
+
+Every `kopia` process Wings starts opens its own session on the repository server, and each session makes the server load the repository's whole manifest catalog. Since Wings 1.2.11, Wings therefore checks the repository connection at most once every 5 minutes, and answers backup lookups from one shared snapshot listing per repository that it refreshes after a minute, or when a backup is missing from it. When a lookup fails because the repository server can't be reached, Wings now reports that error instead of treating the backup as missing.
 
 | Field           | Value                                                                                                                                                                                                                                                                                                                                                                                             |
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

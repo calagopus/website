@@ -8,7 +8,7 @@ description: Define the Docker images, environment, and resource limits that Cal
 Templates are the blueprints for managed databases: each one defines the Docker images an instance can run, its environment, volumes, and resource limits. When a user [creates a managed database](../server/databases/managed.md#creating-a-managed-database), they pick from your templates, grouped by database type.
 
 ::: info
-[Setting up Templates](../../../db-agent/templates.md) has ready-to-import example files for PostgreSQL, MariaDB/MySQL, MongoDB, and Redis, plus a full field reference. Importing a preset and adapting it beats writing one from scratch.
+[Setting up Templates](../../../db-agent/templates.md) has ready-to-import example files for PostgreSQL, MariaDB/MySQL, MongoDB, Redis, and ClickHouse, plus a full field reference. Importing a preset and adapting it beats writing one from scratch.
 :::
 
 The list at `/admin/database-agent-templates` shows each template's ID, Name, Type, and Created date. Use the search box to filter.
@@ -23,19 +23,20 @@ The form's fields, briefly (see the [field reference](../../../db-agent/template
 
 ![Create template form](./images/database-agent-templates/create-form.webp)
 
-| Field                                             | Description                                                                                                                                                             |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Name**, **Description**                         | What users see when picking a template.                                                                                                                                 |
-| **Type**                                          | **PostgreSQL**, **MariaDB**, **MongoDB**, or **Redis**. Locked after creation.                                                                                          |
-| **Docker Images**                                 | Display name to image mappings. With more than one entry, users choose an image when creating an instance.                                                              |
-| **Environment Variables**                         | Passed into the database container.                                                                                                                                     |
-| **Volumes**                                       | Additional volume mounts.                                                                                                                                               |
-| **Socket Path**                                   | The unix socket file path inside the database container; must match where the configured image actually creates its socket.                                             |
-| **Image UID** / **Image GID**                     | The user and group the container runs as.                                                                                                                               |
-| **Memory**, **Swap**, **Disk**, **CPU Limit (%)** | Resource limits every instance created from this template gets (`0` means no limit, `-1` for swap).                                                                     |
-| **Deployment Enabled**                            | Whether users can create new instances from this template. On by default; templates with it off stay usable by existing instances but disappear from the create dialog. |
+| Field                                             | Description                                                                                                                                                                                                                                                                   |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**, **Description**                         | What users see when picking a template.                                                                                                                                                                                                                                       |
+| **Type**                                          | **PostgreSQL**, **MariaDB**, **MongoDB**, **Redis**, or (since Panel 1.2.11) **ClickHouse**. Locked after creation.                                                                                                                                                           |
+| **Docker Images**                                 | Display name to image mappings. With more than one entry, users choose an image when creating an instance.                                                                                                                                                                    |
+| **Environment Variables**                         | Passed into the database container.                                                                                                                                                                                                                                           |
+| **Volumes**                                       | Additional volume mounts.                                                                                                                                                                                                                                                     |
+| **Socket Path**                                   | The unix socket file path inside the database container; must match where the configured image actually creates its socket.                                                                                                                                                   |
+| **Control Socket Path**                           | Since Panel 1.2.11, _advanced_. "An optional second unix socket the agent uses for administration instead of the socket path, must be in the same directory as the socket path." The ClickHouse preset needs it, see [ClickHouse](../../../db-agent/templates.md#clickhouse). |
+| **Image UID** / **Image GID**                     | The user and group the container runs as.                                                                                                                                                                                                                                     |
+| **Memory**, **Swap**, **Disk**, **CPU Limit (%)** | Resource limits every instance created from this template gets (`0` means no limit, `-1` for swap).                                                                                                                                                                           |
+| **Deployment Enabled**                            | Whether users can create new instances from this template. On by default; templates with it off stay usable by existing instances but disappear from the create dialog.                                                                                                       |
 
-**Command** and **IO Weight** only appear with the **Advanced** toggle enabled.
+**Control Socket Path**, **Command** and **IO Weight** only appear with the **Advanced** toggle enabled. Changing the control socket path bumps the template version like the socket path does.
 
 ## Versions and Updating Instances
 

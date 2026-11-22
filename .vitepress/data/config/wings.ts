@@ -470,7 +470,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.tcp_congestion_control',
           description:
-            'The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well). Linux only, and the algorithm has to be available to the kernel: Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
+            'The TCP congestion control algorithm applied to the sockets Wings owns: the API listener, the SFTP listener, and the outgoing HTTPS connections used for server transfers and S3 backup uploads (those are routed through a loopback proxy so the algorithm applies to them as well; since Wings 1.2.11, plain `http://` targets bypass the proxy and use the system default). Linux only, and the algorithm has to be available to the kernel: Wings looks it up in `/proc/sys/net/ipv4/tcp_available_congestion_control`, tries `modprobe tcp_<algorithm>` once if it is missing, and keeps the system default with a warning if it still is not there. Set to an empty string to leave congestion control alone entirely.',
           default: 'bbr',
         },
       ],
@@ -935,7 +935,8 @@ export const wingsConfigDoc: ConfigDoc = {
         },
         {
           key: 'system.backups.s3.retry_limit',
-          description: 'The number of retry attempts for each failed upload part.',
+          description:
+            'The number of retry attempts for each failed upload part. Since Wings 1.2.11 only network errors, `5xx` responses, `408` and `429` are retried. Any other rejection, such as a `403` from an expired presigned URL, fails the backup straight away, and the error includes the start of the S3 response body. A part accepted without an `ETag` header also fails the backup.',
           default: 10,
         },
         {
@@ -1003,7 +1004,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'system.backups.kopia.restore_threads',
           description:
-            'The number of files Kopia restores in parallel when a backup is restored onto a server, passed to `kopia restore` as `--parallel`.',
+            'The number of files Kopia restores in parallel when a backup is restored onto a server, passed to `kopia restore` as `--parallel`. Since Wings 1.2.11 a restore streams the snapshot out as a tar archive (`--mode tar`), and Kopia restores to a tar stream with a single worker whatever this is set to, so the value currently has no effect.',
           default: 8,
         },
         {
@@ -1216,7 +1217,7 @@ export const wingsConfigDoc: ConfigDoc = {
         {
           key: 'docker.registries',
           description:
-            'The Docker registry authentication configurations used for pulling private images, keyed by registry hostname. Each entry needs a `username` and a `password`.',
+            "The Docker registry authentication configurations used for pulling private images, keyed by registry hostname, optionally followed by a path such as `ghcr.io/my-org`. Each entry needs a `username` and a `password`. Since Wings 1.2.11 the host has to equal the image's registry host exactly (ignoring case, port included), a path has to end at a path segment of the image name, and when several keys match, the longest one wins. An image without a registry host, such as `ubuntu:latest` or `myuser/image`, never gets credentials, so write Docker Hub images as `docker.io/myuser/image`. Older versions matched any image whose name started with the key, so `ghcr.io` also sent its credentials to `ghcr.io.example.com`.",
           default: {},
         },
         {

@@ -154,9 +154,11 @@ compressed files), server transfers, and restores from Wings and S3 backups shar
 one entry check. An entry whose path contains `..` or starts at the filesystem
 root is skipped, as is one with a drive prefix on Windows. The remaining entries
 are written through the server's filesystem handle, so they get the same
-confinement as any other file write. Restic and Kopia restores are different: those
-tools write into the server directory themselves, outside this check and the
-capability-scoped handle.
+confinement as any other file write. Since Wings 1.2.11 this also covers restic
+and Kopia restores: Wings has the tool stream the snapshot as a tar archive
+(`restic dump --archive tar`, `kopia restore --mode tar`) and unpacks it itself.
+Older versions let those tools write into the server directory themselves, outside
+this check and the capability-scoped handle.
 
 Sources: [capability root and path handling](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/cap/mod.rs#L27-L118), [filesystem implementation](https://github.com/calagopus/wings/blob/f79492ea5ad89c8e7c844fbd77dac32933eb5ef2/application/src/server/filesystem/virtualfs/cap.rs), [archive entry check](https://github.com/calagopus/wings/blob/e1db91c8f1e20e3164f3cb3b56fe1ecf0558f7cd/application/src/server/filesystem/archive/extract/mod.rs#L51-L66).
 
@@ -430,6 +432,12 @@ and the download stops at 8 MB. A provider you point the Panel at can still choo
 which public URL it gets fetched, so treat the Avatar URL Template as trust placed
 in that provider.
 
+Since Panel 1.2.11 the OAuth token exchange and user-info requests use this client
+too, so they are filtered like discovery and avatar downloads. Egg repositories
+cloned over SSH pin the server's host key: an administrator confirms the key's
+fingerprint once, and a sync refuses to talk to a server presenting any other key.
+Older Panels accepted any SSH host key.
+
 Sources: [outbound client](https://github.com/calagopus/panel/blob/8843e3b4cfb17b831ae4bae495e12693fbd2567a/shared/src/net.rs#L155-L188), [address filtering](https://github.com/calagopus/panel/blob/8843e3b4cfb17b831ae4bae495e12693fbd2567a/shared/src/net.rs#L31-L108), [avatar url resolution](https://github.com/calagopus/panel/blob/8843e3b4cfb17b831ae4bae495e12693fbd2567a/shared/src/models/oauth_provider.rs#L394-L452), [avatar download](https://github.com/calagopus/panel/blob/8843e3b4cfb17b831ae4bae495e12693fbd2567a/shared/src/models/user/avatar.rs#L151-L191).
 
 ### Server firewalls
@@ -609,8 +617,13 @@ Sources: [application lints](https://github.com/calagopus/wings/blob/f79492ea5ad
 
 ### Passwords, sessions, and MFA
 
-Passwords use bcrypt at cost 12. Hashing and verification run in a blocking pool
-with a bounded number of concurrent bcrypt jobs. Session tokens and API keys are
+Passwords use bcrypt at cost 12 by default, or argon2id when
+`APP_PASSWORD_ALGORITHM` selects it, and existing hashes are rewritten to the
+configured algorithm and cost on the user's next login. bcrypt only counts the
+first 72 bytes of a password; argon2id uses all of it (the Panel accepts up to
+512 characters). Hashing and verification run
+in a blocking pool with a bounded number of concurrent jobs, and argon2id jobs
+also share a fixed memory budget. Session tokens and API keys are
 stored as hashes; credential resolution and model records are cached, so this is
 not a fresh database hash verification on every request.
 
@@ -662,6 +675,10 @@ only by the account behind it:
   keys, SSH keys, API keys and account settings cannot be changed.
 - Changing a node's or database agent host's URL needs the permission to read its
   token, since the Panel sends the token to that URL.
+- Since Panel 1.2.11, changing mail delivery, the storage driver, the Panel URL
+  and additional URLs, the two-factor policy, panel-wide password login, or the
+  WebAuthn relying party ID and origin also needs a root admin signed in with a
+  session. `settings.update` alone no longer covers them.
 - Reaching other users' servers as an admin needs the `servers.read` admin
   permission in the credential's scope, and acting on a suspended server needs
   `servers.update`, where it used to need the root **Admin** flag.

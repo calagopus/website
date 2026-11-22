@@ -19,16 +19,18 @@ Together they cover what most extensions need: a summary on the admin extension 
 Every extension's frontend entry point is a class extending `Extension`, whose instance you default-export:
 
 ```ts
+import { faRocket } from '@fortawesome/free-solid-svg-icons';
 import { Extension, ExtensionContext } from 'shared';
-import MyConfigurationPage from './ConfigurationPage.tsx';
-import MyCardSummary from './CardSummary.tsx';
+import type { IconLike } from '@/elements/data-display/Icon.tsx';
 import MyCardDetails from './CardDetails.tsx';
+import MyCardSummary from './CardSummary.tsx';
+import MyConfigurationPage from './ConfigurationPage.tsx';
 
 class MyExtension extends Extension {
   public cardConfigurationPage: React.FC | null = MyConfigurationPage;
   public cardComponent: React.FC | null = MyCardSummary;
   public cardPreviewComponent: React.FC | null = MyCardDetails;
-  public cardIcon: React.ReactNode = <FontAwesomeIcon icon={faRocket} />;
+  public cardIcon: IconLike | null = faRocket;
 
   public initialize(ctx: ExtensionContext): void {
     // register additional UI through ctx.extensionRegistry - see below
@@ -46,7 +48,7 @@ Four fields on the class map directly to admin-panel surfaces:
 
 - **`cardConfigurationPage`**: a React component shown when an admin clicks the Configure button on your extension's card. It's mounted at `/admin/extensions/<your-package-identifier>` automatically, without a route of your own. Set to `null` if your extension has nothing to configure. The Configure button is only enabled while the extension is enabled and has a backend part, and the page itself sits behind the `extensions.*` admin permissions.
 
-- **`cardIcon`**: a React node that overrides the icon next to your extension's name in the admin extension list (a puzzle piece by default). Any element works, such as a `<FontAwesomeIcon />`, an `<img>` or an inline SVG. It goes into the row's icon slot as-is, inside the existing styled container. Leave it `null` to keep the default puzzle piece.
+- **`cardIcon`**: overrides the icon next to your extension's name in the admin extension list (a puzzle piece by default). It takes an [`IconLike`](./icons.md), so a Font Awesome icon such as `faRocket`, an element such as an `<img>`, or your own icon component all work. Leave it `null` to keep the default puzzle piece. Before Panel 1.2.11 it was a `ReactNode` rendered as-is, so pass an element there.
 
 ::: info
 **Configuration pages are already wrapped for you.** The route shell that mounts your `cardConfigurationPage` at `/admin/extensions/<id>` provides the admin layout, navigation and title bar; your component only returns its content (a `<div>`, a `<Stack>`, anything). This is the _only_ exception. Every other route you add needs to wrap its own content (see [Container Wrappers](#container-wrappers) below).
@@ -203,7 +205,7 @@ The definition types form a small hierarchy, each level adding fields. These are
 **Additionally for named routes (`RouteDefinition`: account, admin, server):**
 
 - **`name: string | (() => string) | undefined`**: the label shown in the sidebar. A plain string works for untranslated labels. For translated labels, pass a function that returns the translated string, so the label updates when the user switches language. `undefined` gives a route with no sidebar entry (though in that case you probably want `addGlobalRoute` instead).
-- **`icon?: IconDefinition`**: a FontAwesome icon definition (such as `faCube` from `@fortawesome/free-solid-svg-icons`). Optional, but every core sidebar entry has one.
+- **`icon?: IconLike`**: the sidebar icon, usually a Font Awesome icon such as `faCube` from `@fortawesome/free-solid-svg-icons`. Since Panel 1.2.11 it also takes an element or a component, see [Icons](./icons.md). Optional, but every core sidebar entry has one.
 - **`activeMatches?: string[]`**: extra paths that also highlight this sidebar entry, for sub-pages of yours that live under a different URL.
 
 **Additionally for permissioned routes (`AdminRouteDefinition`, `ServerRouteDefinition`):**

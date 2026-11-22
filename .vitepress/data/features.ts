@@ -201,6 +201,7 @@ export const featureCategories: FeatureCategory[] = [
       { name: 'PostgreSQL Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       { name: 'MongoDB Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       { name: 'Redis Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: false },
+      { name: 'ClickHouse Server-Database Support', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       { name: 'In-Panel Database Explorer', calagopus: true, pterodactyl: false, pelican: false, amp: null },
       {
         name: 'Containerized Database Provisioning ("Database Agent")',
@@ -241,7 +242,7 @@ export const featureCategories: FeatureCategory[] = [
       {
         name: 'Database Import & Export',
         description:
-          'Download a full dump of a provisioned database instance, or of a single database inside it, straight from the panel - SQL for MariaDB and PostgreSQL, archive for MongoDB, RDB for Redis. Importing works the same way.',
+          'Download a full dump of a provisioned database instance, or of a single database inside it, straight from the panel - SQL for MariaDB and PostgreSQL, archive for MongoDB, RDB for Redis, native BACKUP archive for ClickHouse. Importing works the same way.',
       },
     ],
   },

@@ -5,7 +5,7 @@ description: Put Nginx, Apache or Caddy in front of the Calagopus DB Agent manag
 
 # Putting DB Agent Behind a Reverse Proxy
 
-A reverse proxy can only front DB Agent's management API, the HTTP connection the Panel uses to manage the agent. The database proxies on ports `5432`, `3306`, `27017` and `6379` speak the databases' own protocols, not HTTP, so they stay on their own ports; encrypt them with [DB Agent's built-in TLS](./ssl.md) instead. For how a proxy fits into the request path in general, see [Setting up a Reverse Proxy](../../additional/reverse-proxies.md).
+A reverse proxy can only front DB Agent's management API, the HTTP connection the Panel uses to manage the agent. The database proxies on ports `5432`, `3306`, `27017`, `6379` and `9000` speak the databases' own protocols, not HTTP, so they stay on their own ports; encrypt them with [DB Agent's built-in TLS](./ssl.md) instead. For how a proxy fits into the request path in general, see [Setting up a Reverse Proxy](../../additional/reverse-proxies.md).
 
 Most agents don't need a proxy at all: DB Agent can serve HTTPS itself. Use a proxy when one already runs on the machine, or you want one place to manage certificates.
 
@@ -58,6 +58,7 @@ services:
       - 3306:3306
       - 27017:27017
       - 6379:6379
+      - 9000:9000
       - 127.0.0.1:8090:8090
 ```
 

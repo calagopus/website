@@ -69,7 +69,21 @@ As a last resort, remove the `ports:` section from the Calagopus compose file, a
 :::
 
 ::: details `Configuration(Utf8Error ...)` or authentication errors while connecting {open}
-Use the original database password in the copied `.env`, with appropriate quoting for special characters. The importer URL-encodes credentials itself; do not pre-encode `DB_PASSWORD`. Check that the username, host, and password still match the source database.
+Use the original database password in the copied `.env`, quoted as described in the next entry if it contains special characters. The importer URL-encodes credentials itself; do not pre-encode `DB_PASSWORD`. Check that the username, host, and password still match the source database.
+:::
+
+::: details `failed to read pterodactyl environment file` naming a variable, or a password that is cut short {open}
+Since Panel 1.2.11 the importer reads the `.env` file with its own parser that follows Laravel's rules, so the file means the same to the importer as it does to Pterodactyl. Older versions used a generic dotenv parser and stripped double quotes from some values afterwards.
+
+- Without quotes, a `#` starts a comment, so `DB_PASSWORD=abc#123` reads as `abc`. A space in the middle of an unquoted value is an error ("unexpected characters after the value").
+- In single quotes everything is literal: `DB_PASSWORD='abc#1 $x\n'`. A single-quoted value can't contain `'` itself.
+- In double quotes `\"`, `\\`, `\$`, `\n`, `\r`, `\t`, `\f` and `\v` are decoded, and any other backslash sequence is an error ("unexpected escape sequence"). Double-quoted values may span several lines.
+- `${NAME}` in an unquoted or double-quoted value is replaced with an entry defined earlier in the file, or with the variable from the shell's environment. `$NAME` without braces stays as written.
+- A missing closing quote is an error ("missing closing quote"), and so is anything after the closing quote other than spaces and a comment.
+
+The [Docker guide](./pterodactyl/docker.md#create-the-environment-file) writes `DB_PASSWORD` without quotes. If the password contains `#`, a space or `${`, or starts with a quote, put it in single quotes in the generated file.
+
+Values in the file now take precedence over variables of the same name set in the shell or container that runs the import; the environment is only used for keys the file doesn't have.
 :::
 
 ::: details A missing-column or schema error during import {open}

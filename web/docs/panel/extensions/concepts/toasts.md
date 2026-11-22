@@ -88,7 +88,7 @@ Keep messages short. The toast card is a fixed 288px wide and long text wraps in
 
 A toast can carry action buttons: small icon buttons inside the card, to the left of the close button. Use them for a follow-up, such as jumping to the thing you just created or undoing it.
 
-An action is `{ name, icon, disabled?, onClick }`, where `icon` is a FontAwesome `IconDefinition` rather than a rendered element:
+An action is `{ name, icon, disabled?, onClick }`, where `icon` is usually a Font Awesome icon. Since Panel 1.2.11 it is an [`IconLike`](./icons.md); before that it had to be an `IconDefinition`:
 
 ```tsx
 import { faFolderOpen } from '@fortawesome/free-solid-svg-icons';

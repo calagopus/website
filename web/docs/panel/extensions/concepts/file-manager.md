@@ -121,13 +121,13 @@ For the mass context menu the component form is not a preference, it is the only
 Push your items **during render, on every render**. The item array is rebuilt from scratch each time the menu's props change, so an interceptor that adds its entries once (from a `useEffect`, or behind a "have I run yet" flag) loses them on the next rebuild.
 :::
 
-Two more things about the items themselves: submenus are exactly one level deep, so an item's `items` array cannot hold further nested items, and menu items only fire on real user clicks, which is worth knowing if you drive the Panel from a test script.
+Two more things about the items themselves: an item with an `items` array opens a submenu, and menu items only fire on real user clicks, which is worth knowing if you drive the Panel from a test script. Before Panel 1.2.11 submenus were exactly one level deep. Since 1.2.11 a submenu's `items` can hold further submenus, nested as deep as you need, so an interceptor that walks the tree to find an entry should recurse instead of stopping at the second level.
 
-Since Panel 1.2.10 an action item also takes a `tooltip` string, shown to the left of the item on hover. Only top-level items without a submenu render it; on submenu items and their parents it is ignored. Pair it with `disabled: true` to say why an item can't be used right now; the Panel does that for **Open** on files that are too large for the editor.
+Since Panel 1.2.10 an action item also takes a `tooltip` string, shown to the left of the item on hover. Before Panel 1.2.11 only top-level items without a submenu render it. Since 1.2.11 every item without a submenu does, at any depth; items that open a submenu still ignore it. Pair it with `disabled: true` to say why an item can't be used right now; the Panel does that for **Open** on files that are too large for the editor.
 
 ### Async Items
 
-Since 1.2.8, an item's `onClick` may return a promise. The menu still closes straight away, but every item in that menu stays disabled until the promise settles, so a second click can't run the action twice. In the meantime the row's `⋯` toggle shows a spinner, and so does the item itself (and its parent, for a submenu item) if the user opens the menu again. An open menu updates as soon as the promise settles. Return the promise whenever the click starts a request. The `Format YAML` item above already does if `formatYaml` returns one, because an arrow without braces returns whatever it calls.
+Since 1.2.8, an item's `onClick` may return a promise. The menu still closes straight away, but every item in that menu stays disabled until the promise settles, so a second click can't run the action twice. In the meantime the row's `⋯` toggle shows a spinner, and so does the item itself (and every submenu item above it) if the user opens the menu again. An open menu updates as soon as the promise settles. Return the promise whenever the click starts a request. The `Format YAML` item above already does if `formatYaml` returns one, because an arrow without braces returns whatever it calls.
 
 The clipboard item in [the trash example](#the-trash-page) is tracked as well, because `navigator.clipboard.writeText` returns a promise, so its menu is disabled for the moment the copy takes. Wrap the call in braces when you don't want that.
 
@@ -253,7 +253,7 @@ ctx.extensionRegistry.pages.server.files
   );
 ```
 
-**Icon handlers run first, before every built-in check.** Return `undefined` to pass and let the next handler or the stock icon logic decide. Return an icon and it is used, including for directories, which is almost never what you want, so check `file.directory` before you return anything.
+**Icon handlers run first, before every built-in check.** Return `undefined` to pass and let the next handler or the stock icon logic decide. Since Panel 1.2.11 a handler can return any [`IconLike`](./icons.md), not just a Font Awesome icon. Return an icon and it is used, including for directories, which is almost never what you want, so check `file.directory` before you return anything.
 
 **Openable handlers run in the middle.** Directories and browsable archives are resolved before your handler is called, and the sqlite, image, audio and text-editor checks happen after it. So:
 
@@ -447,14 +447,15 @@ The only escape hatch is a route interceptor that replaces the whole page, descr
 
 The component slots, the context menus and `addFileIconHandler` have been there since the first 1.0.0 pre-releases. Everything else arrived later:
 
-| Added                                                                                                                      | In    |
-| -------------------------------------------------------------------------------------------------------------------------- | ----- |
-| `fileMassContextMenu`                                                                                                      | 1.0.0 |
-| `addFileOpenableHandler`, `addFileEditorAction`                                                                            | 1.0.2 |
-| `reason: 'tooLarge'`                                                                                                       | 1.1.3 |
-| `fileTreeToolbar`, `FileEditorActionContext`, the `surface` prop on file context menus, `readOnly` on editor content props | 1.2.0 |
-| `enterFileMassContextMenu`, `elements.enterPierreEditor`                                                                   | 1.2.3 |
-| `trash`, `enterTrash`                                                                                                      | 1.2.6 |
-| `diskUsageBar`, `enterDiskUsageBar`, promise-returning context menu items                                                  | 1.2.8 |
+| Added                                                                                                                      | In     |
+| -------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `fileMassContextMenu`                                                                                                      | 1.0.0  |
+| `addFileOpenableHandler`, `addFileEditorAction`                                                                            | 1.0.2  |
+| `reason: 'tooLarge'`                                                                                                       | 1.1.3  |
+| `fileTreeToolbar`, `FileEditorActionContext`, the `surface` prop on file context menus, `readOnly` on editor content props | 1.2.0  |
+| `enterFileMassContextMenu`, `elements.enterPierreEditor`                                                                   | 1.2.3  |
+| `trash`, `enterTrash`                                                                                                      | 1.2.6  |
+| `diskUsageBar`, `enterDiskUsageBar`, promise-returning context menu items                                                  | 1.2.8  |
+| `IconLike` returned from `addFileIconHandler` and as context menu item icons                                               | 1.2.11 |
 
 An extension using the 1.2.0 additions will not build against an older Panel.

@@ -41,6 +41,27 @@ Unlike the command and image, variables only save when you hit **Save** (or Ctrl
 
 Saving never restarts the server. New values are pushed to the node right away and take effect the next time the server starts.
 
+Since Panel 1.2.11 a variable can also disappear and come back while you edit: the egg can [exclude](../admin/nests.md#excluding-variables) a variable depending on another one's value, for example hiding a Paper build number unless the server type is Paper. An excluded variable is hidden, isn't checked, and keeps its saved value.
+
+### Generating a Password
+
+Since Panel 1.2.11 secret variables have a dice button next to the visibility toggle ("Generate password") that opens a password generator:
+
+| Option                                                | What it does                                                                                                  |
+| ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Preview field                                         | Shows the generated password, with buttons to copy it and to regenerate it.                                   |
+| **Length**                                            | 8 to 128 characters, 24 by default.                                                                           |
+| **Lowercase**, **Uppercase**, **Digits**, **Symbols** | The character sets to draw from, all on by default. The password contains at least one character of each set. |
+| **Exclude ambiguous characters (I, l, 1, O, 0, o)**   | Leaves out characters that are easy to misread.                                                               |
+
+<img src="./images/startup/password-generator.webp" width="190" alt="Password generator popover with a generated password, Length 24, all four character sets on, and the Use Password button" />
+
+**Use Password** puts the password into the field and reveals it, so you can check it before you hit **Save**. The generator remembers your options, and they [sync with your account](../dashboard/index.md#settings-sync) like other preferences.
+
+The generator follows the variable's rules. `min`, `max`, `size` and `between` set the length range, and `alpha`, `alpha_num`, `alpha_dash`, `lowercase`, `uppercase`, `digits` and `digits_between` switch off the character sets the rules don't allow. A secret variable whose rules the generator can't satisfy for sure, such as one with a `regex` or `in` rule, gets no dice button.
+
+The same generator appears on the admin [user form](../admin/users.md#creating-a-user) and on the Restic password of a [backup configuration](../admin/backup-configurations.md), and on secret variables in the admin server forms.
+
 ::: info
 The predefined commands, image list, and variables come from the [egg](../admin/nests.md#editing-an-egg); whether custom commands are allowed comes from [egg configurations](../admin/egg-configurations.md). Both are managed by administrators.
 :::

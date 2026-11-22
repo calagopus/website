@@ -1,11 +1,11 @@
 ---
 title: DB Agent Overview
-description: Overview of Calagopus DB Agent, the Rust-based database proxy and provisioning agent for PostgreSQL, MariaDB/MySQL, MongoDB, and Redis.
+description: Overview of Calagopus DB Agent, the Rust-based database proxy and provisioning agent for PostgreSQL, MariaDB/MySQL, MongoDB, Redis, and ClickHouse.
 ---
 
 # DB Agent
 
-DB Agent is a database proxy and provisioning agent. It handles database routing and provisioning for PostgreSQL, MariaDB/MySQL, MongoDB, and Redis, running each database in its own Docker container and exposing a REST API for management.
+DB Agent is a database proxy and provisioning agent. It handles database routing and provisioning for PostgreSQL, MariaDB/MySQL, MongoDB, Redis, and ClickHouse, running each database in its own Docker container and exposing a REST API for management.
 
 ## Minimum Requirements
 
@@ -33,6 +33,8 @@ Only Linux is officially supported, due to reliance on Unix-specific features.
 The proxy sends its server greeting before it knows which instance you will connect to. It advertises the lowest MariaDB version detected on the agent, falling back to `5.5.5-10.6.0-MariaDB` until one is available. A database client may therefore display a different version from your instance. Run `SELECT VERSION()` after connecting to check the database server itself.
 
 The proxy also passes through the client's `CLIENT_FOUND_ROWS` setting, preserving the requested matched-row behavior for affected-row counts. Neither behavior needs a configuration option.
+
+Since DB Agent 1.2.5, the proxy does not let a client switch users on an open connection. It turns `COM_CHANGE_USER`, and `COM_MULTI` which can carry one, into a command the server rejects, so the client gets an `Unknown command` error (`1047`) and the connection stays logged in as the original user. Other commands pass through unchanged, including `COM_RESET_CONNECTION`, which connection pools use to reset a session. A client or pool that relies on change-user, such as PHP's `mysqli::change_user()`, has to open a new connection as the other user instead. This cannot be turned off.
 
 ## Volumes
 

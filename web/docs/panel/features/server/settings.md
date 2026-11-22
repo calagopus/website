@@ -33,7 +33,7 @@ Sometimes a server refuses to shut down cleanly. With **Enabled** on, a server t
 
 ## Timezone
 
-Sets the timezone inside the server's container, which is what timestamps in your server's own logs and anything time-based the server does will use. The **Timezone** dropdown is searchable, shows a live clock preview for the selected zone, and can be cleared to fall back to **System**, the node's own timezone.
+Sets the timezone inside the server's container, which is what timestamps in your server's own logs and anything time-based the server does will use. The **Timezone** dropdown is searchable, shows a live clock preview for the selected zone, and can be cleared to fall back to the node's own timezone. Since Panel 1.2.11 the cleared field shows that timezone, the node's [`system.timezone`](../../../wings/configuration.md#system-timezone), as its placeholder; it reads **System** only when the panel can't get the node's configuration within a few seconds or the node sets none.
 
 ## Trash
 

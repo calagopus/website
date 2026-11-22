@@ -1,0 +1,26 @@
+name: ClickHouse
+description: null
+type: clickhouse
+deployment_enabled: true
+docker_images:
+  ClickHouse 26.8 LTS: clickhouse/clickhouse-server:26.8
+env: {}
+image_uid: 101
+image_gid: 101
+cmd:
+  - /usr/local/libexec/calagopus-relay
+  - --forward
+  - /run/clickhouse/native.sock=127.0.0.1:9000
+  - --forward
+  - /run/clickhouse/http.sock=127.0.0.1:8123
+  - --
+  - /entrypoint.sh
+volumes:
+  data: /var/lib/clickhouse
+socket_path: /run/clickhouse/native.sock
+control_socket_path: /run/clickhouse/http.sock
+memory: 1024
+swap: -1
+disk: 10240
+io_weight: null
+cpu: 50

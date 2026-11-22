@@ -5,7 +5,7 @@ description: Register and manage Calagopus DB Agent hosts, the machines that run
 
 # Database Agent Hosts
 
-A database agent host is a machine running the [Calagopus DB Agent](../../../db-agent/index.md), which provisions managed databases: dedicated PostgreSQL, MariaDB, MongoDB, or Redis instances users create from their server's [Databases page](../server/databases/managed.md#creating-a-managed-database).
+A database agent host is a machine running the [Calagopus DB Agent](../../../db-agent/index.md), which provisions managed databases: dedicated PostgreSQL, MariaDB, MongoDB, Redis, or (since Panel 1.2.11) ClickHouse instances users create from their server's [Databases page](../server/databases/managed.md#creating-a-managed-database).
 
 ::: info
 Install the agent on the machine first; the [DB Agent docs](../../../db-agent/index.md) cover installation and the [configuration reference](../../../db-agent/configuration.md). The panel side below hands you the exact config file to drop in.
@@ -27,19 +27,26 @@ The capacity states compare the memory and disk claimed by the host's instances 
 
 Click **Create** in the top right.
 
-![Create database agent host form](./images/database-agent-hosts/create-form.webp)
+![Create database agent host form with the Backup Configuration field and PostgreSQL, MariaDB, MongoDB, Redis, and ClickHouse sections](./images/database-agent-hosts/create-form.webp)
 
-| Field                   | Description                                                                                                                                                                                                                                                   |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Name**                | Display name for the host.                                                                                                                                                                                                                                    |
-| **URL**                 | Where the panel reaches the agent, e.g. `https://agent.example.com:8090`. If you omit the port, a warning explains the panel will connect on the URL's default port while the agent listens on `8090` by default; an **Add :8090** button appends it for you. |
-| **Description**         | Optional free text.                                                                                                                                                                                                                                           |
-| **Memory**              | "The total memory available for database instances on this host." New instances are only placed while the combined limits of the host's instances fit within it. Defaults to `0`, which means no limit.                                                       |
-| **Disk**                | "The total disk available for database instances on this host." The same placement rule applies. Defaults to `0`, which means no limit.                                                                                                                       |
-| **Deployment Enabled**  | Whether new instances may be placed on this host. On by default.                                                                                                                                                                                              |
-| **Maintenance Enabled** | Puts the host into maintenance mode, see below. Off by default.                                                                                                                                                                                               |
+| Field                    | Description                                                                                                                                                                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Name**                 | Display name for the host.                                                                                                                                                                                                                                    |
+| **URL**                  | Where the panel reaches the agent, e.g. `https://agent.example.com:8090`. If you omit the port, a warning explains the panel will connect on the URL's default port while the agent listens on `8090` by default; an **Add :8090** button appends it for you. |
+| **Description**          | Optional free text.                                                                                                                                                                                                                                           |
+| **Memory**               | "The total memory available for database instances on this host." New instances are only placed while the combined limits of the host's instances fit within it. Defaults to `0`, which means no limit.                                                       |
+| **Disk**                 | "The total disk available for database instances on this host." The same placement rule applies. Defaults to `0`, which means no limit.                                                                                                                       |
+| **Backup Configuration** | Since Panel 1.2.11. Optional; defaults to "Inherit from Node/Location". Where [database backups](../server/backups.md#database-backups) of this host's instances go, see [Backup Configuration](#backup-configuration) below.                                 |
+| **Deployment Enabled**   | Whether new instances may be placed on this host. On by default.                                                                                                                                                                                              |
+| **Maintenance Enabled**  | Puts the host into maintenance mode, see below. Off by default.                                                                                                                                                                                               |
 
-Below that is a section per database type (**PostgreSQL**, **MariaDB**, **MongoDB**, **Redis**), each with an **Enabled** switch and optional **Public Host** and **Public Port** overrides for the address users connect to (defaults `5432`, `3306`, `27017`, `6379`).
+Below that is a section per database type (**PostgreSQL**, **MariaDB**, **MongoDB**, **Redis**, **ClickHouse**), each with an **Enabled** switch and optional **Public Host** and **Public Port** overrides for the address users connect to (defaults `5432`, `3306`, `27017`, `6379`, `9000`). ClickHouse was added in Panel 1.2.11 and needs a DB Agent that supports it. Its switch is on by default, also on hosts that existed before the upgrade, so once you add a ClickHouse [template](./database-agent-templates.md), turn it off on hosts whose agent can't run ClickHouse.
+
+### Backup Configuration
+
+A dump of a managed database normally goes to the backup configuration of its server, resolved the usual way (server, then node, then location). Since Panel 1.2.11 a host can set its own **Backup Configuration**, which then sits between the server and the node: a server with its own configuration still uses that one, and otherwise dumps of instances on this host go to the host's configuration instead of the node's or location's. File backups of the server are not affected. A [system backup policy](./system-backup-policies.md) with an explicit configuration still uses that one.
+
+Btrfs and ZFS configurations can't be picked here; saving one fails with "database backups cannot be created on a btrfs or zfs backup configuration". Deleting the backup configuration clears the setting, and the host goes back to inheriting. The configuration's own page lists the hosts that use it on its **Database Agent Hosts** tab.
 
 ## Connecting the Agent
 

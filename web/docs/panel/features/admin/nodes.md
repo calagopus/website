@@ -217,9 +217,9 @@ All servers on the node, in the standard admin server list (ID, Status, Name, No
 
 ![Node Servers tab listing two servers with Start, Restart, Stop, and Transfer bulk buttons](./images/nodes/servers.webp)
 
-Select individual servers (checkboxes, drag, `Ctrl+A`, or click while holding `S`) to run the same actions on just the selection. The checkbox in the table header selects or clears every server on the current page.
+Select individual servers (checkboxes, drag, `Ctrl+A`, or click while holding `S`) to run the same actions on just the selection. The checkbox in the table header selects or clears every server on the current page. Since Panel 1.2.11 the selection opens the same [bulk action bar](./servers.md#bulk-actions) as the main server list, so **Clear State**, **Unsuspend**, **Suspend** and **Delete** are available here too.
 
-![Node server selected with power and Transfer controls](./images/nodes/servers-selection.webp)
+![Node server selected, with the action bar showing power, Transfer, Clear State, Unsuspend, Suspend, and Delete controls](./images/nodes/servers-selection.webp)
 
 **Transfer Servers** moves servers to another node:
 
@@ -241,7 +241,7 @@ The six **Allocation Mode** options, with the caveats their dropdown entries sta
 - **Assign allocations based on Egg deployment configuration**: only works if an [egg configuration](./egg-configurations.md#allocation-configuration) with allocation settings applies to the egg on the destination node, and that node has compatible allocations. Configurations are matched against the destination node and its location, not the source.
 - **Self-assign new allocations based on Egg port range**: only works if the egg has a port range and the destination node has compatible allocations.
 
-Since Panel 1.2.10 the two egg-based modes show a warning that a server whose egg has no matching configuration makes the request fail: servers handled before it keep transferring, the rest are not transferred. Picking the All-In-One node as the destination disables **Transfer** ("Transfers to the All-In-One node are not supported.").
+Since Panel 1.2.10 the two egg-based modes show a warning that a server whose egg has no matching configuration makes the request fail: servers handled before it keep transferring, the rest are not transferred. Since Panel 1.2.11, the variables that **Assign allocations based on Egg deployment configuration** binds to the new ports (through **Assign to Variable**) are only written once the transfer succeeds. Older Panels wrote them when the transfer started, so a transfer that failed or was cleared with [Clear State](./servers.md#clear-state) left the server's port variables pointing at ports on the destination node. Picking the All-In-One node as the destination disables **Transfer** ("Transfers to the All-In-One node are not supported.").
 
 ![Transfer Servers dialog with node, allocation mode, backup options, archive format, and compression level](./images/nodes/transfer-modal.webp)
 

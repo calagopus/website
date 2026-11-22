@@ -145,6 +145,8 @@ Restoring stops the server and overwrites its files; avoid combining **Restore B
 
 **Move to Trash** on a **Delete Files** step is off by default, so a step deletes permanently unless you turn it on. It only takes effect while the trash is enabled for the server; with the trash off, or on a node older than Wings 1.2.6, the files are deleted permanently. Files inside a mount are always deleted permanently. When the trash is used, the step is logged as `server:file.trash` instead of `server:file.delete`, even if some of its files were on a mount and deleted permanently.
 
+Adding, editing or importing a step needs the permissions the step itself uses, so a subuser can only schedule what they could do by hand. Since Panel 1.2.11 **Write File** and **Copy File** need both `files.create` and `files.update`; before, `files.update` was enough. Since Wings 1.2.11 **Delete Files** and **Rename Files** silently skip a folder that contains files hidden by the egg's file denylist, and carry on with the other paths.
+
 #### Startup Settings
 
 | Step                        | What it does                                 | Key fields                          |

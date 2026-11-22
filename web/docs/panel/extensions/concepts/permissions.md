@@ -88,7 +88,6 @@ Icons are attached **from the frontend**, on the extension registry, not in the 
 
 ```tsx
 import { faCube } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Extension, ExtensionContext } from 'shared';
 
 class MyExtension extends Extension {
@@ -96,7 +95,7 @@ class MyExtension extends Extension {
   public cardComponent: React.FC | null = null;
 
   public initialize(ctx: ExtensionContext): void {
-    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon('my-feature', <FontAwesomeIcon icon={faCube} />);
+    ctx.extensionRegistry.permissionIcons.addServerPermissionIcon('my-feature', faCube);
   }
 }
 
@@ -109,7 +108,7 @@ The registry exposes one method per scope, matching the three on the backend bui
 - `addAdminPermissionIcon(groupName, icon)`
 - `addServerPermissionIcon(groupName, icon)`
 
-Each takes the **group name** (icons are per group, not per permission) and a `ReactNode`. Use a `<FontAwesomeIcon>` to match the rest of the Panel, though any React element works.
+Each takes the **group name** (icons are per group, not per permission) and an [`IconLike`](./icons.md). A Font Awesome icon matches the rest of the Panel, though an element or your own icon component works too. Before Panel 1.2.11 the icon was a `ReactNode`, so wrap it as `<FontAwesomeIcon icon={faCube} />` there.
 
 ::: info
 Registering an icon for a group name that doesn't exist is harmless: the icon is never rendered. Normally you add the icon for the same group name you registered in `initialize_permissions` on the backend.
@@ -184,7 +183,7 @@ The basic usage is to wrap any UI that requires a permission, passing the permis
 
 ```tsx
 <ServerCan action='settings.egg-changer'>
-  <TitleCard title='Change Egg' icon={<FontAwesomeIcon icon={faEgg} />}>
+  <TitleCard title='Change Egg' icon={faEgg}>
     {/* ... entire feature UI ... */}
   </TitleCard>
 </ServerCan>

@@ -41,6 +41,7 @@ Guides for each part of the extension API:
 - [Quick Actions](./concepts/quick-actions.md) - Add entries, categories and prefix modes to the command palette
 - [File Manager](./concepts/file-manager.md) - Slot components, context menu items, file icons and custom editors into the file manager
 - [Toasts](./concepts/toasts.md) - Show transient feedback to the user
+- [Icons](./concepts/icons.md) - Pass icons in any form and replace the Panel's own icons
 - [Frontend Events](./concepts/frontend-events.md) - Change or cancel toasts, websocket frames, API requests, clipboard use and more before the Panel acts on them
 - [Extending Models](./concepts/extending-models.md) - Add fields to existing data models
 - [Email Templates](./concepts/email-templates.md) - Define custom email templates for notifications and communications

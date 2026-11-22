@@ -146,6 +146,17 @@ The fields inside a form (and the ones your `transform` produces) are `FieldDef`
 { type: 'textarea', name: '...', label: '...', rows?: number, props?: Partial<TextareaProps> }
 ```
 
+Since Panel 1.2.11 a `password` field's `props` are those of the Panel's own `PasswordInput`, which adds three props on top of Mantine's. `withGenerator: true` puts the [password generator](../../features/server/startup.md#generating-a-password) button in the field. `generatorConstraints` (`{ minLength?, maxLength?, charsets? }`, with `charsets` drawn from `'lowercase'`, `'uppercase'`, `'digits'` and `'symbols'`) limits what it can produce. `onGenerate(password)` runs after the user picks a password, for example to fill a confirmation field as well:
+
+```ts
+{
+  type: 'password',
+  name: 'apiSecret',
+  label: 'API Secret',
+  props: { withGenerator: true, generatorConstraints: { maxLength: 32, charsets: ['lowercase', 'digits'] } },
+}
+```
+
 A `text` field can carry an icon picker in front of it with `icon: { name, label, fallback? }`. `name` is the form key the picked icon identifier is stored under (for example `fontawesome:solid:house`, or `null` for none), `label` labels the picker, and `fallback` is the Font Awesome `IconDefinition` shown while nothing is picked. The Panel uses it for the OAuth provider **Name** field. Available since Panel 1.2.7.
 
 ```ts
@@ -267,7 +278,7 @@ A section divider with an optional label and an optional inline switch (useful f
 {
   type: 'section',
   name: '...',
-  icon: ReactNode,
+  icon: IconLike,
   title: LazyString,
   nullableDefault?: Record<string, unknown> | (() => Record<string, unknown>),
   advanced?: boolean,

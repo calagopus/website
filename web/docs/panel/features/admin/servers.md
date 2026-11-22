@@ -15,20 +15,24 @@ Next to **Create** sits **Find by External ID**: enter the external identifier (
 
 Selecting servers in the list opens an action bar at the bottom of the page that applies one operation to the whole selection. Select with the row checkboxes, by dragging a box across the rows, or with the checkbox in the table header, which selects every server on the current page.
 
-![Admin server selected with Clear State, Unsuspend, Suspend and Delete controls](./images/servers/bulk-actions.webp)
+![Admin server selected, with the action bar showing Start, Restart, Stop, Transfer, Clear State, Unsuspend, Suspend, and Delete controls](./images/servers/bulk-actions.webp)
 
-| Action          | Effect                                                                                                    | Needs            |
-| --------------- | --------------------------------------------------------------------------------------------------------- | ---------------- |
-| **Clear State** | Clears the stored installation/transfer state, the same as [Clear State](#server-view) on a single server | `servers.update` |
-| **Unsuspend**   | Lifts suspension                                                                                          | `servers.update` |
-| **Suspend**     | Suspends the servers, stopping them and cutting off their owners                                          | `servers.update` |
-| **Delete**      | Permanently deletes the servers and everything on them                                                    | `servers.delete` |
+| Action                             | Effect                                                                                                                                                                                                                                                         | Needs                              |
+| ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| **Start** / **Restart** / **Stop** | Since Panel 1.2.11. Sends the power action to every selected server, grouped by node                                                                                                                                                                           | `nodes.read` and `nodes.power`     |
+| **Transfer**                       | Since Panel 1.2.11. Opens the [Transfer Servers](./nodes.md#servers) dialog for the selection. Only offered when every selected server is on the same node; otherwise the button is disabled with "Only servers on the same node can be transferred together." | `nodes.read` and `nodes.transfers` |
+| **Clear State**                    | Clears the stored installation/transfer state, the same as [Clear State](#server-view) on a single server                                                                                                                                                      | `servers.update`                   |
+| **Unsuspend**                      | Lifts suspension                                                                                                                                                                                                                                               | `servers.update`                   |
+| **Suspend**                        | Suspends the servers, stopping them and cutting off their owners                                                                                                                                                                                               | `servers.update`                   |
+| **Delete**                         | Permanently deletes the servers and everything on them                                                                                                                                                                                                         | `servers.delete`                   |
 
-Each action asks for confirmation first, and **Delete** spells out that it cannot be undone. Only the actions your role permits appear.
+Each action asks for confirmation first, and **Delete** spells out that it cannot be undone. Only the actions your role permits appear. Since Panel 1.2.11 the same action bar is used on a node's [Servers](./nodes.md#servers) tab and a user's [Servers](./users.md#servers) tab.
 
 The **Delete** confirmation carries the same two switches as a single [server deletion](#delete), both off by default: **Force**, which removes the servers from the panel even when their nodes cannot be reached (with a warning that their files and databases may be left behind), and "Do you want to delete backups of these servers?". Whatever you pick applies to every selected server.
 
-Servers the action would not change are skipped rather than pushed through, so suspending a selection that already contains suspended servers only touches the rest, and the toast reports both counts ("Successfully suspended 3 servers. 2 servers skipped."). If nothing in the selection would change, the panel says so and does nothing.
+Servers the action would not change are skipped rather than pushed through, so suspending a selection that already contains suspended servers only touches the rest, and the toast reports both counts ("Successfully suspended 3 servers. 2 servers skipped."). If nothing in the selection would change, the panel says so and does nothing. Since Panel 1.2.11 the confirmation dialog lists the servers the action will change, each with its owner and node, and warns up front when some are skipped: "2 Servers will be skipped because they are already in that state."
+
+<img src="./images/servers/bulk-confirm-modal.webp" width="220" alt="Confirm Bulk Action dialog asking to start 3 Servers, listing each server with its owner and node" />
 
 Servers are processed independently, so a bulk action can partly succeed; the toast then reports how many succeeded and how many failed.
 
@@ -54,6 +58,21 @@ Click **Create** (or go to `/admin/servers/new`). The form is a set of cards; an
 
 All five are searchable dropdowns. Picking an egg immediately prefills the Docker image and startup command from the egg's defaults.
 
+#### Automatic Deployment
+
+Since Panel 1.2.11, advanced mode adds a switch above **Node** between **Specific Node** (the default) and **Automatic Deployment**. Automatic deployment replaces the **Node** field with these, and the panel picks the node when you save, through `POST /api/admin/servers/deploy`:
+
+| Field                    | Notes                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| **Locations**            | Required. "The server is deployed to the most suitable node in these locations that has deployment enabled."      |
+| **Allow Overallocation** | "Also consider nodes that would exceed their memory or disk limit with this server." Off by default.              |
+| **Suspension Penalty**   | "How much the resources of suspended servers count towards node usage, from 0 to 1." Defaults to `0.5`.           |
+| **Randomness**           | "How much randomness is mixed into the node choice, from 0 (always the least used node) to 1." Defaults to `0.5`. |
+
+The [Allocations](#allocations) card then shows "Allocations are picked from the egg configuration of the node the server is deployed to. If that configuration doesn't define any, the server is created without allocations." instead of the allocation pickers. The panel uses the [egg configuration's deployment rules](./egg-configurations.md#allocation-configuration) for the chosen node, fills any **Assign to Variable** variables with the assigned ports, and checks the variables against the egg's rules with those values. A node whose configuration can't supply every additional port is skipped. When no node fits, saving fails with "could not deploy server: ..." and the reason. Turning advanced mode off switches the form back to **Specific Node**.
+
+![Create Server form in advanced mode with Automatic Deployment selected, showing Locations, Allow Overallocation, Suspension Penalty and Randomness, and the notice in the Allocations card](./images/servers/create-form-automatic-deployment.webp)
+
 If the egg you need isn't installed, the **Can't find it? Install one from a repository** link under the egg dropdown (needs `eggs.create` and `egg-repositories.read`) opens a search over every synced [egg repository](./egg-repositories.md). Pick an egg, choose a nest (the repository's default nest is preselected), and click **Install & Select**. The egg is installed and selected for the server, along with its first Docker image and its `Default` startup command, or its first one if none is called that. If the nest already has an egg with that name, the existing egg is selected instead. On a panel with no eggs at all, the form opens with a "No eggs installed yet" notice and an **Install from Repository** button that does the same. Backup configurations are covered in the [backup configurations guide](../../../wings/advanced/backup-configurations.md).
 
 ### Resource Limits
@@ -75,17 +94,17 @@ Bandwidth limits are enforced by Wings and need a Linux node where [`docker.band
 
 ### Server Configuration
 
-| Field                                         | Meaning                                                                                                                        |
-| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| **Docker Image**                              | Required. Pick from the egg's predefined images.                                                                               |
-| **Timezone**                                  | Timezone inside the container; **System** uses the node's own.                                                                 |
-| **Predefined Startup Commands**               | Only shown when the egg defines named startup commands; picking one fills the field below, **Custom** lets you write your own. |
-| **Startup Command**                           | Required. What actually runs in the container.                                                                                 |
-| **Start on Completion**                       | "Start server after installation completes." On by default.                                                                    |
-| **Skip Installer**                            | "Skip running the install script." Useful when restoring files by other means.                                                 |
-| **Container Labels** (_advanced_)             | Docker labels put on the server's container, as key/value pairs. See below.                                                    |
-| **Enable Hugepages Passthrough** (_advanced_) | Mounts `/dev/hugepages` into the container.                                                                                    |
-| **Enable KVM Passthrough** (_advanced_)       | Allows access to `/dev/kvm` inside the container.                                                                              |
+| Field                                         | Meaning                                                                                                                                                                                                                                                                                                                       |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Docker Image**                              | Required. Pick from the egg's predefined images.                                                                                                                                                                                                                                                                              |
+| **Timezone**                                  | Timezone inside the container. The create form starts with your browser's timezone; clear the field to use the node's own. Since Panel 1.2.11 the empty field shows the node's timezone as its placeholder, and **System** only when the panel can't read it. Before 1.2.11 the field listed **System** as an option instead. |
+| **Predefined Startup Commands**               | Only shown when the egg defines named startup commands; picking one fills the field below, **Custom** lets you write your own.                                                                                                                                                                                                |
+| **Startup Command**                           | Required. What actually runs in the container.                                                                                                                                                                                                                                                                                |
+| **Start on Completion**                       | "Start server after installation completes." On by default.                                                                                                                                                                                                                                                                   |
+| **Skip Installer**                            | "Skip running the install script." Useful when restoring files by other means.                                                                                                                                                                                                                                                |
+| **Container Labels** (_advanced_)             | Docker labels put on the server's container, as key/value pairs. See below.                                                                                                                                                                                                                                                   |
+| **Enable Hugepages Passthrough** (_advanced_) | Mounts `/dev/hugepages` into the container.                                                                                                                                                                                                                                                                                   |
+| **Enable KVM Passthrough** (_advanced_)       | Allows access to `/dev/kvm` inside the container.                                                                                                                                                                                                                                                                             |
 
 Container labels are for tooling outside the panel that reads Docker labels, such as a monitoring agent or a reverse proxy that routes by label (`com.example.tier` = `gold`). They are applied the next time the container is created, which is the next start; changing them does not mark the server as needing a restart, so restart it yourself. An egg's [configuration file replacements](./nests.md#general) can read one as `{{server.labels.<key>}}` (a missing key resolves to an empty string). The startup command cannot: its `{{...}}` placeholders only see the server's environment variables. A server takes at most 64 labels, keys and values are capped at 255 characters and cannot contain control characters, and `Service` and `ContainerType` are refused because Wings sets those itself. The server's **Overview** tab lists the labels as `key=value` badges.
 
@@ -148,7 +167,11 @@ Unsaved edits here survive switching to another tab of the server view and back.
 
 The server's allocations: primary marker, IP, IP Alias, Port, Notes, and Created. Notes are edited inline in the table and save automatically. **Add** opens a modal to attach free allocations from the server's node (multi-select). Right-click a row for **Set Primary** / **Unset Primary** and **Remove**. The owner-facing equivalent is the [Network](../server/network/index.md) page.
 
-![Server Allocations tab listing two allocations with IP, port, and notes, and an Add button](./images/servers/allocations.webp)
+Since Panel 1.2.11 a **Reassign** button sits next to **Add** (requires `servers.allocations`). It replaces all of the server's allocations with new ones picked by the [egg configuration's deployment rules](./egg-configurations.md#allocation-configuration) for the server's node, the same way automatic deployment does. "All current allocations are replaced with ones picked from the egg configuration, and variables bound to allocation ports are updated. The new ports apply on the next restart." The server's current allocations count as free for this, so it can keep some of its ports. It fails with "egg configuration does not have any configured allocations for deployment" when no configuration with deployment rules applies, and with "could not reassign allocations: ..." when the node can't supply them. Suspended servers, and servers that are installing, transferring or restoring a backup, can't be reassigned. It is logged as `server:allocation.reassign`.
+
+![Server Allocations tab listing two allocations with IP, port, and notes, and the Reassign and Add buttons](./images/servers/allocations.webp)
+
+<img src="./images/servers/allocations-reassign-modal.webp" width="220" alt="Confirm Allocation Reassignment dialog explaining that all current allocations are replaced and the new ports apply on the next restart" />
 
 ### Variables
 
@@ -217,6 +240,8 @@ Moves the server and its data to another node (requires `servers.transfer` and `
 ::: warning
 Backups you don't select stay on the source node and become partially detached once the transfer completes. They remain visible on the [Backups](#backups) tab (filter with the partially detached switch), but not from the client API.
 :::
+
+Since Panel 1.2.11 a transfer whose **Additional Allocations** include one another server took in the meantime is refused with "an additional allocation is already assigned to a server"; older versions started the transfer and left that allocation out.
 
 Confirming shows "Server transfer started." and drops you into the server's client view. While the transfer runs, the server carries a **Transferring** badge on its [Overview](#overview).
 

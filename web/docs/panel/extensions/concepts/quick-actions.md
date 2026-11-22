@@ -28,7 +28,6 @@ Global actions go in your `initialize()` method, through `enterQuickActions`:
 
 ```ts
 import { faBroom } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Extension, ExtensionContext } from 'shared';
 import { getExtTranslations } from './translations.ts';
 
@@ -40,7 +39,7 @@ class MyExtension extends Extension {
         category: 'power',
         label: () => getExtTranslations().t('quickAction.purgeLogs', {}),
         keywords: ['clean', 'logs', 'purge'],
-        icon: <FontAwesomeIcon icon={faBroom} />,
+        icon: faBroom,
         scopes: ['server'],
         permission: 'files.delete',
         perform: () => purgeLogs(),
@@ -63,7 +62,7 @@ class MyExtension extends Extension {
 | `content?`         | `ReactNode`                              | Rendered under the label, for what a string can't express, such as an avatar, a badge or a status dot. Core's server and user modes put an avatar and name here.            |
 | `path?`            | `string`                                 | The URL the action navigates to, for actions that are really links. Only the `/` mode reads it, showing it as the row's description and matching the typed term against it. |
 | `keywords?`        | `string[]`                               | Extra search terms. Matched with the same substring rule as the label, so `['mkdir']` makes "New Directory" findable by typing `mkdir`.                                     |
-| `icon?`            | `ReactNode`                              | Any node, so `<FontAwesomeIcon icon={faBroom} />` for a FontAwesome glyph or an `<img>` for something custom.                                                               |
+| `icon?`            | `IconLike`                               | A Font Awesome icon such as `faBroom`, or an element or component for something custom. See [Icons](./icons.md). Before Panel 1.2.11 this was a `ReactNode`.                |
 | `scopes?`          | `('dashboard' \| 'server' \| 'admin')[]` | Where the action shows up. Omitted means all three.                                                                                                                         |
 | `permission?`      | `string \| string[]`                     | Server permission node(s) required. An array passes if _any_ of them match.                                                                                                 |
 | `adminPermission?` | `string \| true`                         | `true` passes for an admin account or any role that holds at least one admin permission; a string requires that exact admin permission node, with no wildcard expansion.    |
@@ -135,19 +134,18 @@ Reuse one of those ids when your action fits the group: a power-related action b
 
 ```ts
 import { faDragon } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 ctx.extensionRegistry.enterQuickActions((quickActions) =>
   quickActions.addCategory({
     id: 'dev.0x7d8.cleanup',
     label: () => getExtTranslations().t('quickAction.category', {}),
-    icon: <FontAwesomeIcon icon={faDragon} />,
+    icon: faDragon,
     order: 25,
   }),
 );
 ```
 
-`label` takes a plain string or a getter, same as on an action. `icon` is a `ReactNode` here too, though it's rendered as a group heading rather than a row.
+`label` takes a plain string or a getter, same as on an action. `icon` is an `IconLike` here too, though it's rendered as a group heading rather than a row.
 
 Groups render by `order`, lowest first, with ties broken alphabetically on the resolved label. A group whose heading repeats the one directly above it drops the text and keeps only the icon, which is how a page's stacked tab bars read as one section. Two categories sharing a label therefore render as one headed group followed by unnamed ones. Core categories hold the numbers in the table above, and a category without an `order` falls back to 100, which puts it after core and sorted by label among the other extension categories. The `order: 25` in the example above lands the group between Page and Power, so pick a number when you care where your actions sit relative to core's.
 
@@ -165,7 +163,6 @@ An action that only makes sense on one page shouldn't be registered globally wit
 
 ```tsx
 import { faFileCirclePlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CORE_QUICK_ACTION_CATEGORIES } from '@/lib/quickActions/coreQuickActions.tsx';
 import { useQuickActions } from '@/plugins/quick-actions/useQuickActions.ts';
 
@@ -177,7 +174,7 @@ export default function MyServerPage() {
       id: 'dev.0x7d8.cleanup.purgeSelected',
       category: CORE_QUICK_ACTION_CATEGORIES.page,
       label: () => getExtTranslations().t('quickAction.purgeSelected', {}),
-      icon: <FontAwesomeIcon icon={faFileCirclePlus} />,
+      icon: faFileCirclePlus,
       isVisible: () => selected.length > 0,
       perform: () => purge(selected),
     },
@@ -226,7 +223,6 @@ A mode's items are a plain array, built from the query the user has typed. That 
 
 ```tsx
 import { faUser } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useQuickActionModes, useQuickActionTerm } from '@/plugins/quick-actions/useQuickActions.ts';
 import { useQuickActionsStore } from '@/stores/quickActions.ts';
 
@@ -248,7 +244,7 @@ export default function PlayerMode() {
         category: 'dev.0x7d8.cleanup',
         label: player.name,
         description: player.uuid,
-        icon: <FontAwesomeIcon icon={faUser} />,
+        icon: faUser,
         onSelect: () => {
           setOpen(false);
           kickPlayer(player.uuid);
@@ -312,7 +308,6 @@ A complete example: an extension that registers its own category, one server-sco
 ::: details Full example: a category and two actions
 ```ts
 import { faBroom, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Extension, ExtensionContext } from 'shared';
 import { getExtTranslations } from './translations.ts';
 
@@ -325,14 +320,14 @@ class CleanupExtension extends Extension {
         .addCategory({
           id: CATEGORY,
           label: () => getExtTranslations().t('quickAction.category', {}),
-          icon: <FontAwesomeIcon icon={faBroom} />,
+          icon: faBroom,
         })
         .addAction({
           id: 'dev.0x7d8.cleanup.purgeLogs',
           category: CATEGORY,
           label: () => getExtTranslations().t('quickAction.purgeLogs', {}),
           keywords: ['clean', 'logs'],
-          icon: <FontAwesomeIcon icon={faBroom} />,
+          icon: faBroom,
           scopes: ['server'],
           permission: 'files.delete',
           perform: () => purgeLogs(),
@@ -341,7 +336,7 @@ class CleanupExtension extends Extension {
           id: 'dev.0x7d8.cleanup.purgeAll',
           category: CATEGORY,
           label: () => getExtTranslations().t('quickAction.purgeAll', {}),
-          icon: <FontAwesomeIcon icon={faTrash} />,
+          icon: faTrash,
           danger: true,
           scopes: ['dashboard'],
           adminPermission: true,

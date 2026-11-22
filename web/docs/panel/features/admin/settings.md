@@ -7,6 +7,8 @@ description: Every panel-wide setting in the Calagopus admin area, from applicat
 
 Everything panel-wide that isn't its own admin page lives under `/admin/settings`, split into twelve category tabs. Saving any category requires the `settings.update` permission.
 
+Since Panel 1.2.11 some settings also need a root admin signed in with a session: anything on the [Mail](#mail) and [Storage](#storage) tabs, **URL**, **Additional URLs**, **Two-Factor Authentication Requirement**, **Accepted Two-Factor Methods**, **Email Two-Factor**, **Enable Password Login**, and the [Webauthn](#webauthn) **RP Id** and **RP Origin**. A role-based admin, or an API key (even a root admin's), can still save everything else, but a save that changes one of these is refused with "only administrators can change mail delivery, storage, panel urls, two-factor, password login or webauthn relying party settings".
+
 Unsaved changes stay in the form while you switch between settings tabs. Leaving settings with a draft prompts you to confirm. These drafts live only in the current page session; save each tab to keep its changes after a reload.
 
 ::: info
@@ -77,7 +79,7 @@ Trailing slashes are stripped and duplicates of the main URL are dropped on save
 
 ## Metadata
 
-![Admin Settings Metadata tab with description, preview image, Twitter card type, theme color, search indexing toggle, and the Installable App (PWA) section](./images/settings/metadata.webp)
+![Admin Settings Metadata tab with description, preview image, Twitter card type, theme color, search indexing toggle, and the Installable App (PWA) section with Categories, App Icons, Screenshots, and Shortcuts](./images/settings/metadata.webp)
 
 Controls the `<head>` of the panel's own page: what search engines record and what a link to your panel looks like when it is pasted into Discord, Slack, or a social app. These values are rendered into the HTML the panel serves, so they apply before anyone logs in.
 
@@ -95,15 +97,27 @@ Controls the `<head>` of the panel's own page: what search engines record and wh
 
 Since Panel 1.2.10, the web app manifest that lets browsers install the panel as an app is built from these settings instead of a fixed file, so an installed panel carries your own name and icon. The **Installable App (PWA)** section has an **Enabled** switch, on by default. Turning it off removes the manifest link from the page, and `/site.webmanifest` answers 404, so browsers stop offering to install the panel.
 
-| Field                   | Description                                                                                                                                                                                |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **App Name**            | "Shown in the install prompt and on the splash screen." Up to 64 characters; empty uses the panel **Name**                                                                                 |
-| **Short App Name**      | "Shown under the home screen icon when the full name does not fit." Up to 32 characters; empty uses the panel **Name**                                                                     |
-| **App Icon**            | A square PNG of at least 512x512, or an SVG. Suggests files uploaded under [Assets](./assets.md). Empty uses the panel's own `android-chrome-192x192.png` and `android-chrome-512x512.png` |
-| **Display Mode**        | **Standalone** (the default), **Fullscreen**, **Minimal UI**, or **Browser Tab**                                                                                                           |
-| **Splash Screen Color** | Hex color for the "background of the splash screen shown while the app opens". Defaults to `#222222`                                                                                       |
+| Field                   | Description                                                                                                            |
+| ----------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| **App Name**            | "Shown in the install prompt and on the splash screen." Up to 64 characters; empty uses the panel **Name**             |
+| **Short App Name**      | "Shown under the home screen icon when the full name does not fit." Up to 32 characters; empty uses the panel **Name** |
+| **Display Mode**        | **Standalone** (the default), **Fullscreen**, **Minimal UI**, or **Browser Tab**                                       |
+| **Splash Screen Color** | Hex color for the "background of the splash screen shown while the app opens". Defaults to `#222222`                   |
 
-The manifest's description comes from **Description** above, and its theme color from **Theme Color**. A PNG or other raster **App Icon** is offered at both 192x192 and 512x512, so give it at least 512 pixels on each side. Browsers cache an installed app's name and icon, so a change can take a while to show up on devices that already installed it.
+The manifest's description comes from **Description** above, its theme color from **Theme Color**, and its language from the panel **Language**. Browsers cache an installed app's name and icon, so a change can take a while to show up on devices that already installed it.
+
+Before Panel 1.2.11 the section had a single **App Icon** field: a square PNG of at least 512x512 or an SVG, which the manifest offered at both 192x192 and 512x512. Since 1.2.11 it is replaced by the lists below, all hidden while **Enabled** is off.
+
+- **Categories**: "Lowercase words that app stores use for sorting, such as utilities or games." Up to 10, each 1 to 32 lowercase letters, digits and dashes. Spaces you type become dashes.
+- **App Icons**: up to 8, added with **Add Icon**. Each has an **Image URL** (suggests files uploaded under [Assets](./assets.md)), **Sizes**, an optional **Type**, and a **Purpose** of **Any**, **Maskable** or **Monochrome**. With no icons the manifest uses the panel's own `android-chrome-192x192.png` and `android-chrome-512x512.png`. The field asks for "Square PNGs of 192x192 and 512x512, or an SVG", and for a maskable icon, keep the logo inside the middle 80%, since Android crops the rest.
+- **Screenshots**: up to 8, added with **Add Screenshot**, "shown in the install dialog". Each has the same **Image URL**, **Sizes** and **Type** fields, a **Form Factor** (**Wide (desktop)**, **Narrow (mobile)**, or empty for any), and an optional **Label**. Browsers show wide screenshots on desktop and narrow ones on mobile.
+- **Shortcuts**: up to 10, added with **Add Shortcut**, "shown when long-pressing or right-clicking the installed app icon". Each has a **Name** (up to 64 characters), an optional **Short Name** (up to 32), a **Path** inside the panel that starts with a single slash, such as `/admin`, and an optional **Description**.
+
+**Sizes** is filled in from the image once its URL loads: the image's pixel size, or `any` for an SVG. You can also type it yourself, as one or more sizes such as `512x512` separated by spaces, or `any`. **Type** is guessed from the file extension, such as `image/png`.
+
+The `apple-touch-icon` that iOS uses for home screen bookmarks follows these settings too since Panel 1.2.11. It picks the PNG or other raster **App Icon** closest to 180 pixels, preferring purpose **Any** over **Maskable**, then falls back to the panel **Icon** if that isn't an SVG, then to the built-in `/apple-touch-icon.png`. The home screen title on iOS is **Short App Name**, then **App Name**, then the panel **Name**. With the installable app turned off, the **App Icons** are skipped and the title is the panel **Name**. The default panel **Icon** is an SVG, so a panel with neither ends up with the built-in icon.
+
+A panel upgraded from 1.2.10 with an **App Icon** set gets it as one entry under **App Icons**, with **Sizes** `512x512` (or `any` for an SVG), so the manifest no longer lists it at 192x192 as well. Add a 192x192 entry if you want one.
 
 ::: info
 `noindex` is a request, not an access control. It asks well-behaved crawlers to stay out; it does not hide the panel. Keep a private panel behind real authentication rather than relying on this switch.

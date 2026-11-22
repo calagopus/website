@@ -30,6 +30,24 @@ Since Panel 1.2.7, `https` clones go through the same address filter as other ou
 
 ![Repository Credentials section expanded with the Credential Type set to None](./images/egg-repositories/repository-credentials.webp)
 
+### SSH Host Key
+
+Since Panel 1.2.11 an `ssh` repository, whether written as `ssh://` or in the scp-style `git@host:path` form, also needs an **SSH Host Key**: "Syncing only connects to an ssh server presenting this public key." The field appears under **Git Repository** as soon as the URL is an `ssh` one. Older Panels accepted whatever key the server presented.
+
+![Create Egg Repository form with an scp-style git@github.com URL and the SSH Host Key field holding GitHub's Ed25519 key](./images/egg-repositories/ssh-host-key.webp)
+
+Click **Fetch** inside the field. The panel connects to the host and lists every host key it presents (Ed25519, ECDSA and RSA) with its SHA256 fingerprint. "Compare the fingerprint with the one your git host publishes before using a key." GitHub, GitLab and most other hosts list theirs in their documentation. Pick a key and click **Use Host Key**. You can also paste a key in OpenSSH format, such as `ssh-ed25519 AAAA...`, yourself; the comment at the end is dropped on save.
+
+<img src="./images/egg-repositories/ssh-host-keys-modal.webp" width="310" alt="SSH Host Keys dialog listing the ssh-ed25519, ecdsa-sha2-nistp256 and ssh-rsa keys of github.com with their SHA256 fingerprints, Ed25519 selected" />
+
+Saving an `ssh` repository without a host key fails with "ssh repositories need a host key, fetch it and confirm its fingerprint first". When the server later presents a different key, the sync fails with "the ssh server presented a host key that does not match the configured host key", and nothing is fetched. Connecting has a 20 second timeout. Fetching keys goes through [`APP_BLOCKED_CIDRS`](../../environment.md#app-blocked-cidrs) like the sync itself.
+
+When you change the host or port of an `ssh` repository, the old key stays in the field and a yellow alert reads "This host key belongs to the previous host. Fetch the host keys of the new host and confirm one of them." Saving without doing that keeps the old key, and the next sync fails with the mismatch error above. An API update that moves an `ssh` repository to another host or port has to send the new host key, otherwise it fails with "ssh repositories need a host key, fetch it and confirm its fingerprint first". Switching the URL to `https` drops the stored key, the same way it clears the credentials.
+
+::: warning Existing ssh repositories
+`ssh` repositories created before Panel 1.2.11 have no host key. After the upgrade their syncs, including the daily automatic one, fail with "ssh repository has no host key set, fetch and confirm it in the repository settings". Open each one, fetch and confirm its host key, and save. `https` repositories are not affected.
+:::
+
 ## Syncing
 
 Open a repository and hit **Sync**. The panel clones the repository, scans it for egg definitions (`.json`, `.yml`, `.yaml`, with any nearby README and banner image picked up for the preview drawer and the [Egg Library](./egg-library.md#available)), refreshes the repository's egg list, and drops entries that no longer exist in the repository. Syncing never installs or modifies eggs in your nests; it only updates what's available to install.

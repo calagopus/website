@@ -102,7 +102,7 @@ The chart icon next to **Search** ("Analyze directory sizes") opens **Largest Di
 
 ### Browsing Backups
 
-Backups can be browsed read-only through the same file manager; the breadcrumb root switches to `backups / <backup name>` and an **Exit Backup** button brings you back to the live filesystem. Actions that modify files are hidden while browsing a backup.
+Backups can be browsed read-only through the same file manager; the breadcrumb root switches to `backups / <backup name>` and an **Exit Backup** button brings you back to the live filesystem. Actions that modify files are hidden while browsing a backup. Since Wings 1.2.11 a subuser's [ignored files](./subusers.md#ignored-files) are hidden inside the backup too, and [database backups](./backups.md#database-backups) can't be browsed.
 
 ## The Tree View
 
@@ -205,9 +205,11 @@ Renaming a selection opens **Rename Files**, a batch tool:
 
 A live preview shows every resulting name and flags conflicts before anything is renamed.
 
+Over SFTP, renaming a file onto one that already exists replaces it. Since Wings 1.2.11 that needs `files.delete` as well as `files.update`, since the old file is gone afterwards; without it the client gets a permission denied error.
+
 ### Remote Copy
 
-**Remote Copy Files** sends files to other servers you have access to. Pick one or more **Destination Servers** (or **Add servers from a group** to add a whole [server group](../dashboard/servers.md#grouped-servers)), browse to a destination directory, and optionally give a single file a new name. The browser shows the first server you picked, and the path you choose is used on every destination. You need `files.create` on each destination server; the modal names the ones where you lack it and won't copy until you remove them. Since Panel 1.2.10 it does the same for destinations that are suspended, installing, restoring a backup or being transferred.
+**Remote Copy Files** sends files to other servers you have access to. Pick one or more **Destination Servers** (or **Add servers from a group** to add a whole [server group](../dashboard/servers.md#grouped-servers)), browse to a destination directory, and optionally give a single file a new name. The browser shows the first server you picked, and the path you choose is used on every destination. You need `files.create` on each destination server; the modal names the ones where you lack it and won't copy until you remove them. Since Panel 1.2.10 it does the same for destinations that are suspended, installing, restoring a backup or being transferred. Since Panel 1.2.11, with Wings 1.2.11 on the destination node, your [ignored files](./subusers.md#ignored-files) on each destination server apply to what the copy writes there, so it cannot place files at paths that server hides from you.
 
 ![Remote Copy Files dialog with Survival SMP and paper picked as destination servers and the destination directory browser](./images/files/remote-copy-modal.webp)
 
@@ -259,7 +261,7 @@ Each row's menu, and the action bar that appears once you select rows, offer:
 
 If something already exists where an entry would be restored, **Resolve Restore Conflicts** lists each clash with both sides' size and date. Choose **Skip**, **Overwrite**, or **Rename** per entry, or **Skip all** / **Overwrite all**. **Overwrite** deletes the existing file or folder permanently; it doesn't go to the trash. A restore can be undone from its toast, which moves the entries back into the trash, unless you overwrote something to make it. If any entry in the conflict dialog overwrote something, that toast has no **Undo** at all, not even for the entries you renamed.
 
-A subuser only sees entries whose original path their [ignored files](./subusers.md#ignored-files) don't hide, and **Empty Trash** leaves the hidden ones alone.
+A subuser only sees entries whose original path their [ignored files](./subusers.md#ignored-files) don't hide, and **Empty Trash** leaves the hidden ones alone. Since Wings 1.2.11 the same goes for a deleted folder that only partly contains hidden files: moving it to the trash, restoring it and deleting it permanently are all refused with "a directory contains files you cannot access, so it was left in place", while the other selected entries are still handled.
 
 ### Browsing the Trash
 

@@ -81,13 +81,14 @@ The fragment is rendered as a MiniJinja template that can use your extension's [
 ```ts
 import type { CSSVariablesResolver, MantineThemeOverride } from '@mantine/core';
 import { Extension, ExtensionContext } from 'shared';
+import type { IconLike } from '@/elements/data-display/Icon.tsx';
 
 // the class name doesn't matter much, but naming it after your package is advisable
 class Dev0x7d8TestExtension extends Extension {
   public cardConfigurationPage: React.FC | null = null;
   public cardComponent: React.FC | null = null;
   public cardPreviewComponent: React.FC | null = null;
-  public cardIcon: React.ReactNode = null;
+  public cardIcon: IconLike | null = null;
 
   // Your extension entrypoint, this runs when the page is loaded
   public initialize(ctx: ExtensionContext): void {

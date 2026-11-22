@@ -45,14 +45,15 @@ Wings adds two more sources to that list: a `.pteroignore` file in the server's 
 
 ## Database Backups
 
-A database backup is a dump of a managed database, written by the database's own tooling: a SQL dump for PostgreSQL and MariaDB, a `mongodump` archive for MongoDB, and an RDB snapshot for Redis. It goes through the same backup configuration as your server backups and sits in the same list and the same groups. The managed database it came from lists it too, on its own [Backups tab](./databases/managed.md#backups-tab), where you can take one without leaving the database's page.
+A database backup is a dump of a managed database, written by the database's own tooling: a SQL dump for PostgreSQL and MariaDB, a `mongodump` archive for MongoDB, an RDB snapshot for Redis, and a native `BACKUP` archive (`.zip`) for ClickHouse (since Panel 1.2.11). It usually goes through the same backup configuration as your server backups and sits in the same list and the same groups. Since Panel 1.2.11 an admin can give the [database agent host](../admin/database-agent-hosts.md#backup-configuration) its own backup configuration; when the server has none of its own, dumps then go there instead of to the node's or location's. The managed database it came from lists it too, on its own [Backups tab](./databases/managed.md#backups-tab), where you can take one without leaving the database's page.
 
 Before the panel takes one, all of these have to be true:
 
 - The managed database must be running. Its Backups tab disables **Create** with "The managed database must be running to take a backup." while it is off.
-- The server's backup configuration cannot be a btrfs or ZFS one; those store file snapshots and have nowhere to put a dump. Every other driver works.
+- The backup configuration used for the dump cannot be a btrfs or ZFS one; those store file snapshots and have nowhere to put a dump. Every other driver works.
 - No restore may be running into that managed database at the time.
 - For PostgreSQL and MariaDB, the node needs Wings 1.2.5 or newer. The panel hands those dumps to Wings gzip-compressed as `.sql.gz`, and older Wings versions refuse them with "unsupported database dump extension".
+- For ClickHouse, the node needs Wings 1.2.11 or newer, which added the `.zip` dump extension. Older Wings refuse those dumps with the same "unsupported database dump extension".
 
 Wings doesn't compress a dump twice. The local backup driver keeps the gzip as it is when the node's backup compression is off or already gzip, and converts it otherwise; S3 converts it to the compression set in the backup configuration (unpacking it if that is none), and the deduplicating drivers (Restic, Kopia, Proxmox Backup Server, Ddup-Bak) unpack it first so deduplication still works.
 
@@ -210,6 +211,8 @@ Server backups only. Writes the backup as an archive file into the server's own 
 ### Backup Metadata
 
 Shown only for server backups that captured metadata (startup command, image, variables); opens a JSON view of it.
+
+Since Panel 1.2.11 the variables in this view, and in the client API's backup objects, are limited to those the egg marks as viewable to users, so a backup no longer shows the values of hidden variables. This only changes what is shown; restoring the startup settings works as before.
 
 ![Backup Metadata dialog showing JSON with the image, startup command, and variables](./images/backups/metadata-modal.webp)
 

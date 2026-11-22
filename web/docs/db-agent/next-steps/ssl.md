@@ -7,10 +7,10 @@ description: Serve the Calagopus DB Agent management API and database proxies ov
 
 DB Agent has two kinds of listeners, and each can use TLS on its own:
 
-| Listener                                                     | Default port                    | Who connects                                         |
-| ------------------------------------------------------------ | ------------------------------- | ---------------------------------------------------- |
-| Management API (`api`)                                       | `8090`                          | The Panel, authenticating with the host token        |
-| Database proxies (`postgres`, `mariadb`, `mongodb`, `redis`) | `5432`, `3306`, `27017`, `6379` | Game servers and users connecting to their databases |
+| Listener                                                                   | Default port                            | Who connects                                         |
+| -------------------------------------------------------------------------- | --------------------------------------- | ---------------------------------------------------- |
+| Management API (`api`)                                                     | `8090`                                  | The Panel, authenticating with the host token        |
+| Database proxies (`postgres`, `mariadb`, `mongodb`, `redis`, `clickhouse`) | `5432`, `3306`, `27017`, `6379`, `9000` | Game servers and users connecting to their databases |
 
 Browsers never connect to DB Agent directly; database consoles and logs go through the Panel. TLS on the management API matters when the Panel reaches the agent over a network you don't trust, such as the internet, because the host token and database data travel over that connection. TLS on the database proxies encrypts users' database connections.
 
@@ -85,7 +85,7 @@ postgres:
     key: /etc/ssl/certs/db-agent/privkey.pem
 ```
 
-`mariadb`, `mongodb` and `redis` take the same block.
+`mariadb`, `mongodb`, `redis` and `clickhouse` take the same block.
 
 ### 3. Restart the container
 
@@ -125,7 +125,7 @@ postgres:
     key: /etc/letsencrypt/live/<agent-domain>/privkey.pem
 ```
 
-`mariadb`, `mongodb` and `redis` take the same block. With acme.sh, lego or a certificate from another source, use the paths of those files instead.
+`mariadb`, `mongodb`, `redis` and `clickhouse` take the same block. With acme.sh, lego or a certificate from another source, use the paths of those files instead.
 
 ### 2. Restart DB Agent
 
@@ -172,7 +172,7 @@ Once the management API uses TLS, open **Admin → Database Agent Hosts → (you
 
 ## Connecting to Databases over TLS
 
-With TLS on a database proxy, clients turn it on in their own connection settings, for example `sslmode=require` for PostgreSQL, the `--ssl` option of the MariaDB client, `tls=true` for MongoDB, or a `rediss://` URL for Redis.
+With TLS on a database proxy, clients turn it on in their own connection settings, for example `sslmode=require` for PostgreSQL, the `--ssl` option of the MariaDB client, `tls=true` for MongoDB, a `rediss://` URL for Redis, or `--secure --port 9000` for `clickhouse-client`, which otherwise switches to ClickHouse's own TLS port `9440`.
 
 ## Troubleshooting
 

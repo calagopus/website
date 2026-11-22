@@ -26,7 +26,7 @@ The Wings Daemon is a lightweight agent that runs on remote servers to manage ga
 
 ## DB Agent
 
-DB Agent is a database proxy and provisioning agent that runs PostgreSQL, MariaDB/MySQL, MongoDB, and Redis databases in their own Docker containers on a host. Unlike Wings, the Panel does not proxy database traffic through its own backend, instead each DB Agent host exposes the native protocol ports directly (e.g. `5433` for Postgres, `3307` for MariaDB, `27018` for MongoDB, `6380` for Redis), and clients connect straight to the DB Agent host.
+DB Agent is a database proxy and provisioning agent that runs PostgreSQL, MariaDB/MySQL, MongoDB, Redis, and ClickHouse databases in their own Docker containers on a host. Unlike Wings, the Panel does not proxy database traffic through its own backend, instead each DB Agent host exposes the native protocol ports directly (e.g. `5432` for Postgres, `3306` for MariaDB, `27017` for MongoDB, `6379` for Redis, `9000` for ClickHouse), and clients connect straight to the DB Agent host.
 
 DB Agent authenticates and routes connections itself: the username sent by the client encodes a structured identifier (`u<short-uuid>_<label>`) that DB Agent looks up to find which container to route the connection to, independent of which database engine backs it. Once authenticated, DB Agent relays the connection to the matching container over a Unix socket. A separate REST API (secured with a bearer token, distinct from the database ports) is used by the Panel to provision instances, databases, and users, and to collect stats.
 

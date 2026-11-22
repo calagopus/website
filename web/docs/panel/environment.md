@@ -116,6 +116,39 @@ The number of HTTP requests the Panel writes a log line for each second, so a tr
 
 Default: `APP_REQUEST_LOG_LIMIT=250`
 
+## APP_PASSWORD_ALGORITHM <Badge type="info" text="Optional" />
+
+The algorithm the Panel hashes user passwords with.
+
+- `bcrypt` - Uses about 4 KB per hash. Passwords longer than 72 bytes only count their first 72 bytes. Tune with `APP_PASSWORD_BCRYPT_COST`.
+- `argon2id` - Memory-hard and uses the whole password, up to the 512 characters the Panel accepts, but every login or SFTP password check allocates `APP_PASSWORD_ARGON2_MEMORY`. Tune with `APP_PASSWORD_ARGON2_MEMORY` and `APP_PASSWORD_ARGON2_ITERATIONS`.
+
+Existing hashes keep working whichever algorithm they were written with. When a user logs in, the Panel rewrites their hash with the current algorithm and parameters, so changing this setting or a cost value takes effect one login at a time. Changing back is safe for the same reason. Use the same values on every Panel instance sharing a database, otherwise each login rewrites the hash back and forth.
+
+::: warning
+Panel versions without argon2id support cannot verify argon2id hashes. If you switch to `argon2id` and later downgrade the Panel, every user who logged in after the switch has to reset their password.
+:::
+
+Default: `APP_PASSWORD_ALGORITHM=bcrypt`
+
+## APP_PASSWORD_BCRYPT_COST <Badge type="info" text="Optional" />
+
+The bcrypt cost factor when `APP_PASSWORD_ALGORITHM=bcrypt`, between `10` and `16`. Each step doubles the time a hash takes, and cost `12` takes around 170ms on a modern CPU. A value outside the range stops the Panel from starting.
+
+Default: `APP_PASSWORD_BCRYPT_COST=12`
+
+## APP_PASSWORD_ARGON2_MEMORY <Badge type="info" text="Optional" />
+
+The memory in MiB each argon2id hash uses when `APP_PASSWORD_ALGORITHM=argon2id`, between `19` and `1024`. Concurrent hashes share a 1024 MiB budget, so at the default at most 16 can run at once and further logins wait. Independently of the algorithm, no more than twice the number of CPU threads hash at the same time.
+
+Default: `APP_PASSWORD_ARGON2_MEMORY=64`
+
+## APP_PASSWORD_ARGON2_ITERATIONS <Badge type="info" text="Optional" />
+
+The number of argon2id passes over the memory when `APP_PASSWORD_ALGORITHM=argon2id`, between `1` and `16`. Hashing time grows linearly with it.
+
+Default: `APP_PASSWORD_ARGON2_ITERATIONS=3`
+
 ## APP_ENABLE_WINGS_PROXY <Badge type="info" text="Optional" />
 
 When enabled, the Panel proxies traffic between users and Wings. This simplifies homelab setups but routes all Wings traffic through the panel, which can be a bottleneck in high-traffic environments. Typically leave this `false` in production.
@@ -158,7 +191,7 @@ Since Panel 1.2.10, spaces around the entries are ignored, and an entry that isn
 
 ## APP_BLOCKED_CIDRS <Badge type="info" text="Optional" />
 
-Comma-separated list of IP ranges the Panel refuses to connect to when it fetches a URL someone supplied through the UI, such as importing an egg from a URL, discovering an OpenID provider, importing a user's avatar from an OAuth provider, or syncing an egg repository over git. Hostnames are resolved first and every resulting address is checked, so a name pointing at an internal address is rejected too. A URL that names an IP address directly, such as `http://192.168.1.10/egg.json`, is checked against the same list before any connection is made. This keeps an administrator from using the Panel as a proxy to reach services on its own network.
+Comma-separated list of IP ranges the Panel refuses to connect to when it fetches a URL someone supplied through the UI, such as importing an egg from a URL, discovering an OpenID provider, signing in through an OAuth provider (since Panel 1.2.11), importing a user's avatar from an OAuth provider, or syncing an egg repository over git. Hostnames are resolved first and every resulting address is checked, so a name pointing at an internal address is rejected too. A URL that names an IP address directly, such as `http://192.168.1.10/egg.json`, is checked against the same list before any connection is made. This keeps an administrator from using the Panel as a proxy to reach services on its own network.
 
 The default blocks the unspecified and loopback addresses, the private ranges, carrier-grade NAT, link-local, IETF-reserved and benchmarking ranges, multicast, 6to4 and the remaining reserved space:
 
@@ -166,7 +199,7 @@ The default blocks the unspecified and loopback addresses, the private ranges, c
 APP_BLOCKED_CIDRS=0.0.0.0/8,127.0.0.0/8,10.0.0.0/8,100.64.0.0/10,172.16.0.0/12,192.168.0.0/16,169.254.0.0/16,192.0.0.0/24,198.18.0.0/15,224.0.0.0/4,240.0.0.0/4,::/128,::1/128,fe80::/10,fc00::/7,2002::/16,ff00::/8
 ```
 
-Set your own list if you host an internal egg repository or egg mirror that the Panel has to reach, remove only the range it lives in, rather than the whole list. Setting the variable to an empty value disables the protection entirely and lets the Panel connect anywhere.
+Set your own list if you host an internal egg repository, egg mirror or OAuth provider that the Panel has to reach, remove only the range it lives in, rather than the whole list. Setting the variable to an empty value disables the protection entirely and lets the Panel connect anywhere.
 
 ## APP_LOG_DIRECTORY <Badge type="info" text="Optional" />
 
