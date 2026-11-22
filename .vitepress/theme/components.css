@@ -156,7 +156,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .vp-doc .custom-block.details > summary {
+  .vp-doc .custom-block.details > summary,
+  .vp-doc .custom-block.details > summary::after {
     transition: none;
   }
 }
@@ -459,13 +460,14 @@
   z-index: 1;
   right: auto;
   bottom: 0;
-  left: var(--indicator-left);
-  width: var(--indicator-width);
+  left: 0;
+  width: 1px;
   height: 2px;
   background-color: var(--mantine-primary-color-filled);
-  transition:
-    left 200ms ease,
-    width 200ms ease;
+  /* Transform so it stays smooth while the page is busy. */
+  transform: translate(var(--indicator-left), var(--indicator-bottom)) scaleX(var(--indicator-width));
+  transform-origin: left;
+  transition: transform 200ms ease;
 }
 
 .vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator] .plugin-tabs--tab[aria-selected='true']::after,
@@ -480,9 +482,33 @@
   }
 }
 
+@media print {
+  .vp-doc .plugin-tabs .plugin-tabs--tab-list[data-indicator]::after {
+    display: none;
+  }
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-wrap] {
+  flex-wrap: wrap;
+}
+
+.vp-doc .plugin-tabs .plugin-tabs--tab-list[data-wrap] .plugin-tabs--tab {
+  flex-grow: 1;
+}
+
 .vp-doc .vp-code-group .tabs {
   padding: 0;
   box-shadow: inset 0 -2px var(--tab-border-color);
+}
+
+.vp-doc .plugin-tabs--content .vp-code-group .tabs {
+  margin-inline: 0;
+  border-radius: 8px 8px 0 0;
+}
+
+.vp-doc .plugin-tabs--content .vp-code-group div[class*='language-'] {
+  margin-inline: 0;
+  border-radius: 8px;
 }
 
 .vp-doc .vp-code-group .tabs label {
@@ -527,6 +553,7 @@
   flex-wrap: wrap;
   align-items: center;
   column-gap: var(--mantine-spacing-xs);
+  overflow-wrap: anywhere;
 }
 
 .vp-doc :is(h1, h2, h3, h4, h5, h6) > .VPBadge {

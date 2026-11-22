@@ -27,6 +27,7 @@
 }
 
 .filter-chip {
+  max-width: 100%;
   transition: opacity 0.2s;
 }
 
@@ -91,6 +92,12 @@
   }
   .toolbar-row {
     justify-content: flex-end;
+  }
+}
+
+@media (max-width: 440px) {
+  .filter-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

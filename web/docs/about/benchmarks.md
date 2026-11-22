@@ -633,5 +633,19 @@ Raw numbers are only part of the picture. For feature-by-feature breakdowns agai
   .env-spec {
     grid-column: 1 / -1;
   }
+  .env-detail {
+    display: grid;
+    grid-template-columns: 10px minmax(0, 1fr) auto auto;
+    column-gap: 0.5rem;
+  }
+  .env-stat-row {
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+  }
+  .env-stat-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>
