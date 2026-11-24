@@ -294,7 +294,7 @@ For the node agent that runs game servers, see [daemon benchmarks](./daemon-benc
 </Card>
 
 ::: tip Reading the CPU charts
-On `settings (unauth)`, Calagopus spends 0.03 to 0.16 ms per request. Pterodactyl, Pelican and Hydrodactyl spend 7 to 153 ms, two to three orders of magnitude more, and FeatherPanel, the cheapest PHP panel, spends 0.26 to 3 ms. PufferPanel, the other compiled panel, is in the same class as Calagopus and slightly cheaper on all but three configurations.
+On `settings (unauth)`, Calagopus spends 0.02 to 0.12 ms per request. Pterodactyl, Pelican and Hydrodactyl spend 7 to 171 ms, two to three orders of magnitude more, and FeatherPanel, the cheapest PHP panel, spends 0.22 to 3.4 ms. PufferPanel, the other compiled panel, is in the same class as Calagopus and cheaper on half of the configurations.
 
 This matters most when the panel shares a box with game servers. A game server runs under a hard CPU quota and a tick deadline, so time taken from it is lost rather than delayed. A PHP panel under load takes enough to notice. The [daemon](./daemon-benchmarks.md) always runs next to the game servers, so the same argument applies to it more strongly.
 :::
@@ -303,7 +303,7 @@ This matters most when the panel shares a box with game servers. A game server r
 
 <Card class="chart-card">
   <div class="chart-cap"><span>Resting (idle)</span></div>
-  <p class="chart-sub">↓ Lower is better - footprint with no traffic, sampled before the run.</p>
+  <p class="chart-sub">↓ Lower is better - footprint with no traffic, sampled for 3 seconds after startup.</p>
   <BenchChart :option="idleMem" :height="chartHeight" />
 </Card>
 
@@ -318,7 +318,7 @@ This matters most when the panel shares a box with game servers. A game server r
 </Card>
 
 ::: tip Reading the memory charts
-The gap between the idle and peak charts is what a panel costs above its resting footprint. Calagopus stays within about 10 MiB of idle, and PufferPanel starts smaller and ends up in the same range. The PHP panels grow: on the Ryzen at eight CPUs, Pelican rests at 178 MiB and reaches 328 MiB under load.
+The gap between the idle and peak charts is what a panel costs above its footprint at startup. Calagopus reads 55 to 75 MiB idle and 42 to 59 MiB at peak, most likely because memory held from startup is released once requests arrive. PufferPanel starts at about 16 MiB and reaches 45 to 54 MiB. The PHP panels grow: on the Ryzen at eight CPUs, Pelican rests at 186 MiB and reaches 474 MiB under load.
 :::
 
 ## Test setup

@@ -27,7 +27,7 @@ const features = [
     icon: faBolt,
     title: 'Performance',
     details:
-      'Calagopus provides high-performance game server management with low-level control and minimal overhead. Its panel API achieves up to 447x the throughput of alternatives. We keep binaries small through optimized compilation and use caching and other performance optimizations to reduce overhead and improve responsiveness.',
+      'Calagopus provides high-performance game server management with low-level control and minimal overhead. Its panel API achieves up to 583x the throughput of alternatives. We keep binaries small through optimized compilation and use caching and other performance optimizations to reduce overhead and improve responsiveness.',
     link: {
       href: '/docs/about/benchmarks',
       label: 'See the benchmarks',
